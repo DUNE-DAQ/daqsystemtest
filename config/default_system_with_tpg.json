@@ -1,0 +1,4 @@
+{
+  "readout": { "enable_software_tpg": true },
+  "trigger": { "enable_tpset_writing": true }
+}

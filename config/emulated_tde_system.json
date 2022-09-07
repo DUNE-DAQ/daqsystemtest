@@ -1,0 +1,8 @@
+{
+  "readout": {
+    "emulator_mode": true,
+    "data_rate_slowdown_factor": 1,
+    "trigger_rate_hz": 1,
+    "data_file": "/nfs/sw/rsipos/tde-frames.bin"
+  }
+}

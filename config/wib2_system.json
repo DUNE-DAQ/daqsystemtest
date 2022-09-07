@@ -1,0 +1,10 @@
+{
+  "readout": {
+    "emulator_mode": true,
+    "data_rate_slowdown_factor": 1,
+    "use_felix": true
+  },
+  "trigger": {
+    "trigger_rate_hz": 1
+  }
+}
