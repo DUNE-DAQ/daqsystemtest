@@ -1,4 +1,7 @@
 {
-  "readout": { "enable_software_tpg": true },
+  "readout": {
+    "enable_software_tpg": true,
+    "hardware_map_file": "default_system_with_tpg_HardwareMap.txt"
+  },
   "trigger": { "enable_tpset_writing": true }
 }

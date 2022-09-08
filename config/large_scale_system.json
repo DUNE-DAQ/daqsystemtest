@@ -104,6 +104,7 @@
   },
   "readout": {
     "use_fake_data_producers": true,
-    "clock_speed_hz": 62500000
+    "clock_speed_hz": 62500000,
+    "hardware_map_file": "large_scale_system_HardwareMap.txt"
   }
 }

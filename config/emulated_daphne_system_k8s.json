@@ -2,7 +2,8 @@
   "readout": {
     "emulator_mode": true,
     "clock-speed-hz": 62500000,
-    "use_felix": true
+    "use_felix": true,
+    "hardware_map_file": "emulated_daphne_system_with_k8s_HardwareMap.txt"
   },
   "trigger": {
     "trigger_window_after_ticks": 62144,

@@ -1,1 +1,5 @@
-{}
+{
+  "readout": {
+    "hardware_map_file": "default_system_HardwareMap.txt"
+  }
+}

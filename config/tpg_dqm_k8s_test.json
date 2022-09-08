@@ -12,7 +12,8 @@
   },
   "readout": {
     "enable_software_tpg": true,
-    "data_rate_slowdown_factor": 10
+    "data_rate_slowdown_factor": 10,
+    "hardware_map_file": "tpg_dqm_k8s_test_HardwareMap.txt"
   },
   "dataflow": {
     "host_dfo": "np04-srv-011",
