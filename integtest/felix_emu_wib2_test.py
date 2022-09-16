@@ -6,6 +6,8 @@ import sh
 
 import dfmodules.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
+import integrationtest.config_file_gen as config_file_gen
+import dfmodules.integtest_file_gen as integtest_file_gen
 
 # Values that help determine the running conditions
 number_of_data_producers=10
@@ -22,13 +24,15 @@ check_for_logfile_errors=True
 expected_event_count=run_duration*trigger_rate/number_of_dataflow_apps
 expected_event_count_tolerance=expected_event_count/10
 wib2_frag_hsi_trig_params={"fragment_type_description": "WIB2",
-                           "hdf5_detector_group": "TPC", "hdf5_region_prefix": "APA",
+                           "fragment_type": "WIB",
+                           "hdf5_source_subsystem": "Detector_Readout",
                            "expected_fragment_count": (number_of_data_producers*number_of_readout_apps),
                            "min_size_bytes": 295080, "max_size_bytes": 295080}
 triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
-                              "hdf5_detector_group": "Trigger", "hdf5_region_prefix": "Region",
+                              "fragment_type": "Trigger_Candidate",
+                              "hdf5_source_subsystem": "Trigger",
                               "expected_fragment_count": 1,
-                              "min_size_bytes": 130, "max_size_bytes": 150}
+                              "min_size_bytes": 120, "max_size_bytes": 150}
 
 # Determine if the conditions are right for these tests
 hostname=os.uname().nodename
@@ -50,12 +54,28 @@ confgen_name="daqconf_multiru_gen"
 
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
+
+hardware_map_contents = integtest_file_gen.generate_hwmap_file(number_of_data_producers, number_of_readout_apps)
+
+conf_dict = config_file_gen.get_default_config_dict()
+conf_dict["readout"]["data_rate_slowdown_factor"] = 10
+conf_dict["readout"]["clock_speed_hz"] = 62500000
+conf_dict["readout"]["latency_buffer_size"] = 200000
+conf_dict["readout"]["emulator_mode"] = True
+conf_dict["trigger"]["trigger_window_before_ticks"] = readout_window_time_before
+conf_dict["trigger"]["trigger_window_after_ticks"] = readout_window_time_after
+conf_dict["trigger"]["trigger_rate_hz"] = trigger_rate
+
+conf_dict["dataflow"]["apps"] = [] # Remove preconfigured dataflow0 app
+for df_app in range(number_of_dataflow_apps):
+    dfapp_conf = {}
+    dfapp_conf["app_name"] = f"dataflow{df_app}"
+    conf_dict["dataflow"]["apps"].append(dfapp_conf)
+
 if felix_is_connected:
-    confgen_arguments_base=["-o", ".", "-s", "10", "-n", str(number_of_data_producers), "-b", str(readout_window_time_before), "-a", str(readout_window_time_after), "-t", str(trigger_rate), "--latency-buffer-size", "200000", "--clock-speed-hz", "62500000", "--use-felix", "--emulator-mode", "--frontend-type", "wib2"] + [ "--host-ru", "localhost" ] * number_of_readout_apps + [ "--host-df", "localhost" ] * number_of_dataflow_apps
-    confgen_arguments={"Base_System": confgen_arguments_base,
-                      }
-else:
-    confgen_arguments=["-o", ".", "-s", "10"]
+    conf_dict["readout"]["use_felix"] = True
+
+confgen_arguments={"Base_System": conf_dict }
 
 # The commands to run in nanorc, as a list
 if felix_is_connected:

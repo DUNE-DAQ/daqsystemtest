@@ -46,12 +46,12 @@ triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
 triggertp_frag_params={"fragment_type_description": "Trigger with TPs",
                        "fragment_type": "SW_Trigger_Primitive",
                        "hdf5_source_subsystem": "Trigger",
-                       "expected_fragment_count": number_of_data_producers+2,
+                       "expected_fragment_count": number_of_data_producers,
                        "min_size_bytes": 72, "max_size_bytes": 16000}
 ignored_logfile_problems={"dqm": ["client will not be able to connect to Kafka cluster",
                                   "Unexpected Trigger Decision", "Unexpected Fragment"],
                           "trigger": ["zipped_tpset_q: Unable to push within timeout period"],
-                          "ruemu": ["Configuration Error: Binary file contains more data than expected"],
+                          "rulocalhost": ["Configuration Error: Binary file contains more data than expected"],
                          }
 
 # The next three variable declarations *must* be present as globals in the test
@@ -66,29 +66,25 @@ hardware_map_contents = integtest_file_gen.generate_hwmap_file(number_of_data_pr
 
 conf_dict = config_file_gen.get_default_config_dict()
 conf_dict["readout"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
-conf_dict["readout"]["system_type"] = "wib"
 
 swtpg_conf = copy.deepcopy(conf_dict)
 swtpg_conf["readout"]["enable_software_tpg"] = True
-swtpg_conf["readout"]["system_type"] = "wib"
 
 dqm_conf = copy.deepcopy(conf_dict)
 dqm_conf["dqm"]["enable_dqm"] = True
-dqm_conf["readout"]["system_type"] = "wib"
 
 wib2_conf = copy.deepcopy(conf_dict)
 wib2_conf["readout"]["clock_speed_hz"] = 62500000
-wib2_conf["readout"]["system_type"] = "wib2"
 
 pds_list_conf = copy.deepcopy(conf_dict)
 pds_list_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 2) # det_id = 2 for HD_PDS
-pds_list_conf["readout"]["system_type"] = "pds"
+
 #tde_conf = copy.deepcopy(conf_dict)
 #tde_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 11) # det_id = 11 for VD_Top_TPC
-#tde_conf["readout"]["system_type"] = "tde"
+
 #pacman_conf = copy.deepcopy(conf_dict)
 #pacman_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 32) # det_id = 32 for ND_LAR
-#pacman_conf["readout"]["system_type"] = "pacman"
+
 
 confgen_arguments={"WIB1_System": conf_dict,
                    "Software_TPG_System": swtpg_conf,
@@ -134,9 +130,10 @@ def test_data_files(run_nanorc):
         fragment_check_list.append(triggertp_frag_params)
     else:
         fragment_check_list.append(triggercandidate_frag_params)
-        if run_nanorc.confgen_config["readout"]["system_type"] == "pds":
+        current_test=os.environ.get('PYTEST_CURRENT_TEST')
+        if "PDS" in current_test:
             fragment_check_list.append(pds_frag_params)
-        elif run_nanorc.confgen_config["readout"]["system_type"] == "wib2":
+        elif "WIB2" in current_test:
             fragment_check_list.append(wib2_frag_params)
         else:
             fragment_check_list.append(wib1_frag_hsi_trig_params)
