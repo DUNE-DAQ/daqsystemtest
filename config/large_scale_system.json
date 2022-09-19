@@ -93,7 +93,7 @@
     "trigger_window_after_ticks": 62144,
     "host_trigger": "np04-srv-019"
   },
-  "daqconf": {
+  "boot": {
     "disable_trace": true,
     "opmon_impl": "cern",
     "ers_impl": "cern"

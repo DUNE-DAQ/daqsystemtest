@@ -9,7 +9,7 @@
 
     "host_hsi": "np04-srv-018"
   },
-  "daqconf": {
+  "boot": {
 
     "opmon_impl": "cern",
     "ers_impl": "cern",

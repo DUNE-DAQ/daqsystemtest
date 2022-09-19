@@ -1,5 +1,5 @@
 {
-  "daqconf": {
+  "boot": {
     "use_k8s": true,
     "disable_trace": true,
     "image": "plaso/dunedaq-v3.1.0-22-07-26:v3.1.0",

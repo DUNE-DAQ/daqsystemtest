@@ -81,7 +81,7 @@
     ],
     "host_dfo": "np04-srv-018"
   },
-  "daqconf": {
+  "boot": {
     "disable_trace": true,
     "opmon_impl": "cern",
     "ers_impl": "cern",

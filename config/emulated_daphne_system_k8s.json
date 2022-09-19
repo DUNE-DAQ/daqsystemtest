@@ -16,7 +16,7 @@
       "output_path": "/data0/test"
     }
   },
-  "daqconf": {
+  "boot": {
     "ers_impl": "cern",
     "opmon_impl": "cern",
     "use_k8s": true,
