@@ -1,0 +1,40 @@
+{
+	"trigger": {
+
+		"trigger_window_before_ticks": 1000,
+		"trigger_window_after_ticks": 1000,
+		"hsi_trigger_type_passthrough": true,
+		"ttcm_s1": 1,
+		"trigger_rate_hz": 1.0
+	},
+	"hsi": {
+		"use_hsi_hw": true,
+		"host_hsi": "localhost",
+		"control_hsi_hw": true,
+		"hsi_device_name": "TEST_EPT",
+		"hsi_source": 1,
+		"hsi_re_mask": 1,
+		"hsi-hw-connections-file": "/users/wx21978/projects/timing/test_automation/.test_connections.xml"
+	},
+	"readout": {
+		"use_fake_data_producers": true,
+		"clock_speed_hz": 62500000,
+		"latency_buffer_size": 200000,
+		"hardware_map_file": "timing_system_bristol_ouroboros_HardwareMap.txt"
+	},
+	"dataflow": {
+		"apps": [
+			{
+				"app_name": "dataflow0",
+				"output_path": ".",
+				"host_df": "localhost"
+			}
+		]
+	},
+	"timing": {
+		"host_timing": "it064574.users.bris.ac.uk",
+		"control_timing_partition": true,
+		"host_tprtc": "localhost",
+		"timing_partition_master_device_name": "TEST_MST"
+	}
+}

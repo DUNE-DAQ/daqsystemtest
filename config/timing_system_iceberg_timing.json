@@ -1,0 +1,9 @@
+{
+  "timing_hardware_interface": {
+    "host_thi": "iceberg01-priv"
+  },
+  "timing_master_controller": {
+    "host_tmc": "iceberg01-priv",
+    "master_device_name": "BOREAS_TLU_ICEBERG"
+  }
+}

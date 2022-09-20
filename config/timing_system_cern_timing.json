@@ -1,0 +1,9 @@
+{
+  "timing_hardware_interface": {
+    "host_thi": "np04-srv-019"
+  },
+  "timing_master_controller": {
+    "host_tmc": "np04-srv-019",
+    "master_device_name": "PROD_MASTER_VDC_CH"
+  }
+}
