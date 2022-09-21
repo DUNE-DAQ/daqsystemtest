@@ -8,7 +8,7 @@
   "dqm": {
     "host_dqm": "np04-srv-026",
     "enable_dqm": true,
-    "dqm_impl": "cern"
+    "impl": "cern"
   },
   "readout": {
     "enable_software_tpg": true,
