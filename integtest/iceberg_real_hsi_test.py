@@ -26,7 +26,7 @@ wib2_frag_hsi_trig_params={"fragment_type_description": "WIB2",
                            "fragment_type": "WIB",
                            "hdf5_source_subsystem": "Detector_Readout",
                            "expected_fragment_count": (number_of_data_producers*number_of_readout_apps),
-                           "min_size_bytes": 29816, "max_size_bytes": 29816}
+                           "min_size_bytes": 29808, "max_size_bytes": 29816}
 triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
                               "fragment_type": "Trigger_Candidate",
                               "hdf5_source_subsystem": "Trigger",
@@ -135,7 +135,8 @@ def test_data_files(run_nanorc):
     if not the_global_timing_partition_is_running:
         print(f"The global timing partition does not appear to be running on this computer ({hostname}).")
         print("    Please check whether it is, and start it, if needed.")
-        print("Hints: daqconf_timing_gen --host-thi iceberg01-priv --host-tmc iceberg01-priv --master-device-name BOREAS_TLU_ICEBERG --clock-speed-hz 62500000 timing_partition_config")
+        print("Hints: echo '{ \"timing_hardware_interface\": { \"host_thi\": \"iceberg01-priv\" }, \"timing_master_controller\": { \"host_tmc\": \"iceberg01-priv\", \"master_device_name\": \"BOREAS_TLU_ICEBERG\" } }' >> iceberg_timing_system_config_input.json")
+        print("       daqconf_timing_gen --config ./iceberg_timing_system_config_input.json timing_partition_config")
         print("       nanotimingrc timing_partition_config ${USER}-timing-partition boot conf wait 1200 scrap terminate")
         return
 

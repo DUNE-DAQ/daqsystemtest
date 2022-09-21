@@ -34,7 +34,7 @@ wib2_frag_params={"fragment_type_description": "WIB2",
                   "expected_fragment_count": number_of_data_producers,
                   "min_size_bytes": 29000, "max_size_bytes": 30000}
 pds_frag_params={"fragment_type_description": "PDS",
-                 "fragment_type": "PDS",
+                 "fragment_type": "DAPHNE",
                  "hdf5_source_subsystem": "Detector_Readout",
                  "expected_fragment_count": number_of_data_producers,
                  "min_size_bytes": 72, "max_size_bytes": 36000}
