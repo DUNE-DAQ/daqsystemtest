@@ -6,7 +6,7 @@
     "opmon_impl": "cern"
   },
   "dqm": {
-    "host_dqm": "np04-srv-026",
+    "host_dqm": [ "np04-srv-026" ],
     "enable_dqm": true,
     "impl": "cern"
   },
@@ -21,12 +21,12 @@
       {
         "app_name": "dataflow0",
         "host_df": "np04-srv-003",
-        "output_path": "/data3/plasorak-k8s"
+        "output_paths": [ "/data3/plasorak-k8s" ]
       },
       {
         "app_name": "dataflow1",
         "host_df": "np04-srv-003",
-        "output_path": "/data3/plasorak-k8s"
+        "output_paths": [ "/data3/plasorak-k8s" ]
       }
     ]
   },

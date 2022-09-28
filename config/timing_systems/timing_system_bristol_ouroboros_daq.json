@@ -14,7 +14,7 @@
 		"hsi_device_name": "TEST_EPT",
 		"hsi_source": 1,
 		"hsi_re_mask": 1,
-		"hsi-hw-connections-file": "/users/wx21978/projects/timing/test_automation/.test_connections.xml"
+		"hsi_hw_connections_file": "/users/wx21978/projects/timing/test_automation/.test_connections.xml"
 	},
 	"readout": {
 		"use_fake_data_producers": true,

@@ -97,10 +97,9 @@
     "disable_trace": true,
     "opmon_impl": "cern",
     "ers_impl": "cern"
-
   },
   "hsi": {
-    "host_hsi": "np04-srv-018",
+    "host_hsi": "np04-srv-018"
   },
   "readout": {
     "use_fake_data_producers": true,
