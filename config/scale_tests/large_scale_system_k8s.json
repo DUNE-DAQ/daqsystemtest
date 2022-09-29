@@ -1,110 +1,115 @@
 {
-  "dataflow": {
-    "apps": [
-      {
-        "app_name": "dataflow0",
-        "token_count": 2,
-        "output_path": "/data3/test",
-        "max_file_size": 8589934592,
-        "host_df": "np04-srv-002"
-      },
-      {
-        "app_name": "dataflow1",
-        "token_count": 2,
-        "output_path": "/data3/test",
-        "max_file_size": 8589934592,
-        "host_df": "np04-srv-003"
-      },
-      {
-        "app_name": "dataflow2",
-        "token_count": 2,
-        "output_path": "/data3/test",
-        "max_file_size": 8589934592,
-        "host_df": "np04-srv-004"
-      },
-      {
-        "app_name": "dataflow3",
-        "token_count": 2,
-        "output_path": "/data3/test",
-        "max_file_size": 8589934592,
-        "host_df": "np04-srv-002"
-      },
-      {
-        "app_name": "dataflow4",
-        "token_count": 2,
-        "output_path": "/data3/test",
-        "max_file_size": 8589934592,
-        "host_df": "np04-srv-003"
-      },
-      {
-        "app_name": "dataflow5",
-        "token_count": 2,
-        "output_path": "/data3/test",
-        "max_file_size": 8589934592,
-        "host_df": "np04-srv-004"
-      },
-      {
-        "app_name": "dataflow6",
-        "token_count": 2,
-        "output_path": "/data3/test",
-        "max_file_size": 8589934592,
-        "host_df": "np04-srv-002"
-      },
-      {
-        "app_name": "dataflow7",
-        "token_count": 2,
-        "output_path": "/data3/test",
-        "max_file_size": 8589934592,
-        "host_df": "np04-srv-003"
-      },
-      {
-        "app_name": "dataflow8",
-        "token_count": 2,
-        "output_path": "/data3/test",
-        "max_file_size": 8589934592,
-        "host_df": "np04-srv-004"
-      },
-      {
-        "app_name": "dataflow9",
-        "token_count": 2,
-        "output_path": "/data3/test",
-        "max_file_size": 8589934592,
-        "host_df": "np04-srv-002"
-      },
-      {
-        "app_name": "dataflow10",
-        "token_count": 2,
-        "output_path": "/data3/test",
-        "max_file_size": 8589934592,
-        "host_df": "np04-srv-003"
-      },
-      {
-        "app_name": "dataflow11",
-        "token_count": 2,
-        "output_path": "/data3/test",
-        "max_file_size": 8589934592,
-        "host_df": "np04-srv-004"
-      }
-    ],
-    "host_dfo": "np04-srv-018"
-  },
   "trigger": {
+
     "trigger_window_before_ticks": 200000,
     "trigger_window_after_ticks": 62144,
     "host_trigger": "np04-srv-019"
   },
-  "boot": {
-    "disable_trace": true,
-    "opmon_impl": "cern",
-    "ers_impl": "cern"
-
-  },
   "hsi": {
-    "host_hsi": "np04-srv-018",
+
+    "host_hsi": "np04-srv-018"
+  },
+  "boot": {
+
+    "opmon_impl": "cern",
+    "ers_impl": "cern",
+    "use_k8s": true,
+    "image": "<PUT IMAGE HERE>",
+    "disable_trace": true
   },
   "readout": {
     "use_fake_data_producers": true,
     "clock_speed_hz": 62500000,
     "hardware_map_file": "large_scale_system_HardwareMap.txt"
+  },
+  "dataflow": {
+
+    "host_dfo": "np04-srv-018",
+    "apps": [
+      {
+        "app_name": "dataflow0",
+        "token_count": 2,
+        "max_file_size": 8589934592,
+        "output_path": "/data3/test",
+        "host_df": "np04-srv-002"
+      },
+      {
+        "app_name": "dataflow1",
+        "token_count": 2,
+        "max_file_size": 8589934592,
+        "output_path": "/data3/test",
+        "host_df": "np04-srv-003"
+      },
+      {
+        "app_name": "dataflow2",
+        "token_count": 2,
+        "max_file_size": 8589934592,
+        "output_path": "/data3/test",
+        "host_df": "np04-srv-004"
+      },
+      {
+        "app_name": "dataflow3",
+        "token_count": 2,
+        "max_file_size": 8589934592,
+        "output_path": "/data3/test",
+        "host_df": "np04-srv-002"
+      },
+      {
+        "app_name": "dataflow4",
+        "token_count": 2,
+        "max_file_size": 8589934592,
+        "output_path": "/data3/test",
+        "host_df": "np04-srv-003"
+      },
+      {
+        "app_name": "dataflow5",
+        "token_count": 2,
+        "max_file_size": 8589934592,
+        "output_path": "/data3/test",
+        "host_df": "np04-srv-004"
+      },
+      {
+        "app_name": "dataflow6",
+        "token_count": 2,
+        "max_file_size": 8589934592,
+        "output_path": "/data3/test",
+        "host_df": "np04-srv-002"
+      },
+      {
+        "app_name": "dataflow7",
+        "token_count": 2,
+        "max_file_size": 8589934592,
+        "output_path": "/data3/test",
+        "host_df": "np04-srv-003"
+      },
+      {
+        "app_name": "dataflow8",
+        "token_count": 2,
+        "max_file_size": 8589934592,
+        "output_path": "/data3/test",
+        "host_df": "np04-srv-004"
+      },
+      {
+        "app_name": "dataflow9",
+        "token_count": 2,
+        "max_file_size": 8589934592,
+        "output_path": "/data3/test",
+        "host_df": "np04-srv-002"
+      },
+      {
+        "app_name": "dataflow10",
+        "token_count": 2,
+        "max_file_size": 8589934592,
+        "output_path": "/data3/test",
+        "host_df": "np04-srv-003"
+      },
+      {
+        "app_name": "dataflow11",
+        "token_count": 2,
+        "max_file_size": 8589934592,
+        "output_path": "/data3/test",
+        "host_df": "np04-srv-004"
+      }
+    ]
   }
 }

@@ -1,0 +1,5 @@
+{
+  "readout": {
+    "hardware_map_file": "emulated_pacman_system_HardwareMap.txt"
+  }
+}

@@ -1,20 +1,20 @@
 {
   "readout": {
     "emulator_mode": true,
-    "clock-speed-hz": 62500000,
+    "clock_speed_hz": 62500000,
     "use_felix": true,
-    "hardware_map_file": "emulated_daphne_system_with_k8s_HardwareMap.txt"
+    "hardware_map_file": "emulated_daphne_system_HardwareMap.txt"
   },
   "trigger": {
     "trigger_window_after_ticks": 62144,
     "trigger_window_before_ticks": 200000
   },
   "dataflow": {
-    "apps": {
+    "apps": [{
       "app_name": "dataflow0",
       "host_df": "np04-srv-004",
       "output_path": "/data0/test"
-    }
+    }]
   },
   "boot": {
     "ers_impl": "cern",
