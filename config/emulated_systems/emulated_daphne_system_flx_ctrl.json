@@ -1,0 +1,10 @@
+{
+    "flxcardcontroller": {
+        "hardware_map_file": "emulated_daphne_system_HardwareMap.txt",
+        "emulator_mode": true
+    },
+    "boot":{
+        "ers_impl": "cern",
+        "opmon_impl": "cern"
+    }
+}

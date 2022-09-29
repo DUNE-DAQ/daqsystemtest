@@ -1,0 +1,12 @@
+{
+    "flxcardcontroller": {
+        "hardware_map_file": "emulated_wib2_system_HardwareMap.txt",
+        "emulator_mode": true
+    },
+    "boot":{
+        "ers_impl": "cern",
+        "opmon_impl": "cern",
+	"use_k8s": true,
+	"image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest"
+    }
+}
