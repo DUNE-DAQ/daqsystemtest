@@ -1,7 +1,7 @@
 {
   "boot": {
     "use_k8s": true,
-    "image": "plaso/dunedaq-v3.1.0-22-07-26:v3.1.0",
+    "image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest",
     "ers_impl": "cern",
     "opmon_impl": "cern"
   },
