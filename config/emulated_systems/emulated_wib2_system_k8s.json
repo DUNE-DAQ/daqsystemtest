@@ -14,14 +14,17 @@
       {
         "app_name": "dataflow0",
         "host_df": "np04-srv-004",
-        "output_path": "/data0/test"
+        "output_paths": ["/data0/test"]
       }
     ]
+  },
+  "dqm": {
+      "impl": "cern"
   },
   "boot": {
     "ers_impl": "cern",
     "opmon_impl": "cern",
     "use_k8s": true,
-    "image": "<PUT IMAGE HERE>"
+    "image": "dunedaq/c8-minimal"
   }
 }
