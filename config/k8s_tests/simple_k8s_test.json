@@ -11,7 +11,7 @@
       {
         "app_name": "dataflow0",
         "token_count": 2,
-        "output_path": "/data3/test",
+        "output_paths": [ "/data3/test" ],
         "host_df": "np04-srv-003"
       }
     ],

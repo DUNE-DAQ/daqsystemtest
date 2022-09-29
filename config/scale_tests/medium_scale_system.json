@@ -26,73 +26,73 @@
       {
         "app_name": "dataflow0",
         "token_count": 2,
-        "output_path": "/data3/test",
+        "output_paths": [ "/data3/test" ],
         "host_df": "np04-srv-002"
       },
       {
         "app_name": "dataflow1",
         "token_count": 2,
-        "output_path": "/data3/test",
+        "output_paths": [ "/data3/test" ],
         "host_df": "np04-srv-003"
       },
       {
         "app_name": "dataflow2",
         "token_count": 2,
-        "output_path": "/data3/test",
+        "output_paths": [ "/data3/test" ],
         "host_df": "np04-srv-004"
       },
       {
         "app_name": "dataflow3",
         "token_count": 2,
-        "output_path": "/data3/test",
+        "output_paths": [ "/data3/test" ],
         "host_df": "np04-srv-002"
       },
       {
         "app_name": "dataflow4",
         "token_count": 2,
-        "output_path": "/data3/test",
+        "output_paths": [ "/data3/test" ],
         "host_df": "np04-srv-003"
       },
       {
         "app_name": "dataflow5",
         "token_count": 2,
-        "output_path": "/data3/test",
+        "output_paths": [ "/data3/test" ],
         "host_df": "np04-srv-004"
       },
       {
         "app_name": "dataflow6",
         "token_count": 2,
-        "output_path": "/data3/test",
+        "output_paths": [ "/data3/test" ],
         "host_df": "np04-srv-002"
       },
       {
         "app_name": "dataflow7",
         "token_count": 2,
-        "output_path": "/data3/test",
+        "output_paths": [ "/data3/test" ],
         "host_df": "np04-srv-003"
       },
       {
         "app_name": "dataflow8",
         "token_count": 2,
-        "output_path": "/data3/test",
+        "output_paths": [ "/data3/test" ],
         "host_df": "np04-srv-004"
       },
       {
         "app_name": "dataflow9",
         "token_count": 2,
-        "output_path": "/data3/test",
+        "output_paths": [ "/data3/test" ],
         "host_df": "np04-srv-002"
       },
       {
         "app_name": "dataflow10",
         "token_count": 2,
-        "output_path": "/data3/test",
+        "output_paths": [ "/data3/test" ],
         "host_df": "np04-srv-003"
       },
       {
         "app_name": "dataflow11",
         "token_count": 2,
-        "output_path": "/data3/test",
+        "output_paths": [ "/data3/test" ],
         "host_df": "np04-srv-004"
       }
     ]
