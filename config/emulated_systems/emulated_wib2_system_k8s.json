@@ -25,6 +25,6 @@
     "ers_impl": "cern",
     "opmon_impl": "cern",
     "use_k8s": true,
-    "image": "dunedaq/c8-minimal"
+    "image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest"
   }
 }

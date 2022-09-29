@@ -86,7 +86,7 @@
     "opmon_impl": "cern",
     "ers_impl": "cern",
     "use_k8s": true,
-    "image": "<PUT IMAGE HERE>"
+    "image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest"
   },
   "hsi": {
     "host_hsi": "np04-srv-018"
