@@ -9,6 +9,9 @@
     "trigger_window_after_ticks": 62144,
     "trigger_window_before_ticks": 200000
   },
+  "dqm": {
+      "impl": "cern"
+  },
   "boot": {
     "ers_impl": "cern",
     "opmon_impl": "cern"
@@ -18,7 +21,7 @@
       {
         "app_name": "dataflow0",
         "host_df": "np04-srv-004",
-        "output_path": "/data0/test"
+        "output_paths": ["/data0/test"]
       }
     ]
   }
