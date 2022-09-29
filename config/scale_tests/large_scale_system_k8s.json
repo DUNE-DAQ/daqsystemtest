@@ -1,6 +1,5 @@
 {
   "trigger": {
-
     "trigger_window_before_ticks": 200000,
     "trigger_window_after_ticks": 62144,
     "host_trigger": "np04-srv-019"
@@ -10,11 +9,10 @@
     "host_hsi": "np04-srv-018"
   },
   "boot": {
-
     "opmon_impl": "cern",
     "ers_impl": "cern",
     "use_k8s": true,
-    "image": "<PUT IMAGE HERE>",
+    "image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest",
     "disable_trace": true
   },
   "readout": {
