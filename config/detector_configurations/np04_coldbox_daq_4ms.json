@@ -2,7 +2,7 @@
 "readout": {
   "use_felix": true,
   "clock_speed_hz": 62500000,
-  "thread_pinning_file": "/nfs/sw/dunedaq/dunedaq-v3.1.0/configurations/thread_pinning_files/cpupin-np04-srv-028.json"
+  "thread_pinning_file": "cpupin-np04-srv-028.json"
 },
 "trigger": {
   "trigger_window_after_ticks": 2144,
