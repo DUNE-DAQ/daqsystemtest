@@ -31,7 +31,7 @@ These configurations use real hardware in data emulation mode, to test the full 
 * <details><summary>emulated_daphne_system_flx_ctrl_k8s.json: </summary>
   Same, but in a containerized environment
 * <details><summary>emulated_pacman_system.json:  </summary>
-  **Not Implemented for v3.2.0** Test PACMAN readout (Near Detector)</details>
+  <b>Not Implemented for v3.2.0</b> Test PACMAN readout (Near Detector)</details>
 * <details><summary>emulated_tde_system.json: </summary>
   Test VD TDE readout</details>
 * <details><summary>emulated_wib2_system.json: </summary>
