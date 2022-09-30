@@ -22,10 +22,11 @@
                 "address": "tcp://10.73.137.24:1234"
             }
         ],
-        "protowib": []
+	"protowib": []
     },
     "boot":{
         "ers_impl": "cern",
-        "opmon_impl": "cern"
+        "opmon_impl": "cern",
+        "op_env": "np04_coldbox"
     }
 }

@@ -1,0 +1,35 @@
+{
+"readout": {
+  "use_felix": true,
+  "clock_speed_hz": 62500000,
+  "thread_pinning_file": "/nfs/sw/dunedaq/dunedaq-v3.1.0/configurations/thread_pinning_files/cpupin-np04-srv-028.json"
+},
+"trigger": {
+  "trigger_window_after_ticks": 2144,
+  "trigger_window_before_ticks": 260000,
+  "hsi_trigger_type_passthrough": true,
+  "host_trigger": "np04-srv-001"
+},
+"dataflow": {
+  "host_dfo": "np04-srv-001",
+  "apps": [{
+    "app_name": "dataflow0",
+    "host_df": "np04-srv-001",
+    "output_paths": ["/data1"]
+  }]
+},
+"hsi": {
+  "host_hsi": "np04-srv-001"
+},
+"dqm": {
+  "enable_dqm": true,
+  "host_dqm": [ "np04-srv-001" ],
+  "cmap": "HDCB",
+  "impl": "cern"
+},
+"boot": {
+  "ers_impl": "cern",
+  "opmon_impl": "cern",
+  "op_env": "np04_coldbox"
+}
+}

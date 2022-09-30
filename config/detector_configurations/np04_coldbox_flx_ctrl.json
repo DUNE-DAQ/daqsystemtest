@@ -1,0 +1,10 @@
+{
+    "flxcardcontroller": {
+        "hardware_map_file": "./HardwareMap_HDColdbox.txt",
+        "emulator_mode": false
+    },
+    "boot":{
+        "ers_impl": "cern",
+        "opmon_impl": "cern"
+    }
+}
