@@ -1,5 +1,13 @@
 {
   "readout": {
     "hardware_map_file": "emulated_pacman_system_HardwareMap.txt"
+  },
+  "dqm": {
+    "enable_dqm": true,
+    "impl": "cern"
+  },
+  "boot": {
+    "ers_impl": "cern",
+    "opmon_impl": "cern"
   }
 }
