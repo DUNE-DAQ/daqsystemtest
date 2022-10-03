@@ -1,0 +1,10 @@
+{
+    "flxcardcontroller": {
+        "hardware_map_file": "HardwareMap_VST.txt",
+        "emulator_mode": false
+    },
+    "boot":{
+        "opmon_impl": "cern",
+        "ers_impl": "cern"
+    }
+}
