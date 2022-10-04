@@ -1,0 +1,1 @@
+../../../config/long_window_readout/README.md
