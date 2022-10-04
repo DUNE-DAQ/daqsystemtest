@@ -12,6 +12,6 @@ Version v1.0.1
 
 - The tests in timing_systems consist of a _daq.json file which should be run through `daqconf_multiru_gen` and a _timing.json file which should be run through `daqconf_timing_gen`
 - `detector_configurations/wib_hd_coldbox.json` is a configuration for `wibconf_gen`
-- For documentation on general integration tests, click [here](integtest/README.md).
-- For documentation on the long window readout test, click [here](config/long_window_readout/README.md).
+- For documentation on general integration tests, click [here](../integtest/README.md).
+- For documentation on the long window readout test, click [here](../config/long_window_readout/README.md).
 
