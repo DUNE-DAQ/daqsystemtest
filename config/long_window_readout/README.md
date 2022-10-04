@@ -4,6 +4,8 @@ These files have successfully been used on the iceberg01.fnal.gov computer, but 
 
 * "output_paths" (in dataflow::apps) - this parameter should be set to a disk location that is local to the computer *and* has sufficient free space to handle an extra 10+ GB of data. The reason that it should be local is that otherwise the disk writing might be slow, and you may see problems with inhibitted triggers and timeouts at run stop time.
 
+The existing parameter values in the JSON file specify a trigger every 20 seconds, a readout window of 2 seconds, a TriggerRecord max window of 4 msec, and a dataflow token count of 1 (to avoid overloading the system with multiple triggers in flight).
+
 Here is the command that I used to fetch a file that has WIB data in it (to be used in generating emulated data):
 
 * `wget https://www.dropbox.com/s/9b1xtkjbkfyakij/frames_wib2.bin`
@@ -12,7 +14,7 @@ Here are the steps that I used in my tests:
 
 * make any necessary edits to `long_window_readout.json`
 * `daqconf_multiru_gen -c ./long_window_readout.json --hardware-map-file ./long_window_readout_HardwareMap.txt lwr_config`
-* `wget https://www.dropbox.com/s/9b1xtkjbkfyakij/frames_wib2.bin`
+* `wget https://www.dropbox.com/s/9b1xtkjbkfyakij/frames_wib2.bin`  # if needed
 * `nanorc lwr_config ${USER}-test boot conf start_run 101 wait 35 stop_run scrap terminate`
 * `rm -i /tmp/dunedaq/swtest*.hdf5`
 
