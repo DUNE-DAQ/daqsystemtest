@@ -31,27 +31,27 @@
         "consumer-4": [25,55],
  
 
-        "postprocess-0": [0,32],
-        "postprocess-1": [2,34],
-        "postprocess-2": [4,36],
-        "postprocess-3": [6,38],
-        "postprocess-4": [8,40],
-        "postprocess-5": [10,42],
-        "postprocess-6": [12,44],
-        "postprocess-7": [14,46],
-        "postprocess-8": [16,48],
-        "postprocess-9": [18,50],
+        "postprocess-0-0": [20,52],
+        "postprocess-0-1": [22,54],
+        "postprocess-0-2": [24,56],
+        "postprocess-0-3": [26,58],
+        "postprocess-0-4": [28,60],
+        "postprocess-0-5": [30,62],
+        "postprocess-0-6": [8,40],
+        "postprocess-0-7": [10,42],
+        "postprocess-0-8": [12,44],
+        "postprocess-0-9": [14,46],
 
         "ind-hits-0": [20,52],
         "ind-hits-1": [22,54],
-        "ind-hits-2": [24],
-        "ind-hits-3": [26],
-        "ind-hits-4": [28],
-        "ind-hits-5": [30],
-        "ind-hits-6": [56],
-        "ind-hits-7": [58],
-        "ind-hits-8": [60],
-        "ind-hits-9": [62]
+        "ind-hits-2": [24,56],
+        "ind-hits-3": [26,58],
+        "ind-hits-4": [28,60],
+        "ind-hits-5": [30,62],
+        "ind-hits-6": [8,40],
+        "ind-hits-7": [10,42],
+        "ind-hits-8": [12,44],
+        "ind-hits-9": [14,46]
      }
     }
   }

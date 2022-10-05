@@ -22,7 +22,9 @@
                 "address": "tcp://10.73.137.24:1234"
             }
         ],
-        "protowib": []
+        "protowib": [],
+	"pulse_dac": 0,
+	"pulser": false
     },
     "boot":{
         "ers_impl": "cern",

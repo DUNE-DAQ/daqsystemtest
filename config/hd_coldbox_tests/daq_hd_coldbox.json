@@ -43,7 +43,7 @@
   "readout": {
     "hardware_map_file": "./hd_coldbox_HardwareMap.txt",
     "emulator_mode": false,
-    "thread_pinning_file": "/nfs/home/glehmann/configurations/cpupin-np04-srv-028_10links_integration_test.json",
+    "thread_pinning_file": "./cpupin-np04-srv-028_10links_integration_test.json",
     "data_rate_slowdown_factor": 1,
     "clock_speed_hz": 62500000,
     "data_file": "./frames.bin",
