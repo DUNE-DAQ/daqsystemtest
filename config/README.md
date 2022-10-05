@@ -1,1 +1,1 @@
-../docs/dummy_file.md
+../docs/non_softlink.md
