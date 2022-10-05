@@ -85,7 +85,7 @@
       {
         "app_name": "dataflow0",
         "token_count": 10,
-        "output_paths": [ "/data0/test", "/data1/test/" ],
+        "output_paths": [ "/data0/test"],
         "host_df": "np04-srv-001.cern.ch",
         "max_file_size": 4294967296,
         "max_trigger_record_window": 0
