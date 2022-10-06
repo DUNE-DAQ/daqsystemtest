@@ -6,7 +6,7 @@ This repository contains configurations for system-level DAQ tests. Currently, t
 
 These tests are meant to be run as part of the release testing procedure to ensure that all of the functionality needed by DUNE-DAQ is present.
 
-Version v1.0.1
+Version v1.0.2
 
 # Test-specific notes
 

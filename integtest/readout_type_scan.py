@@ -44,7 +44,7 @@ triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
                               "expected_fragment_count": 1,
                               "min_size_bytes": 120, "max_size_bytes": 150}
 triggertp_frag_params={"fragment_type_description": "Trigger with TPs",
-                       "fragment_type": "SW_Trigger_Primitive",
+                       "fragment_type": "Trigger_Primitive",
                        "hdf5_source_subsystem": "Trigger",
                        "expected_fragment_count": number_of_data_producers,
                        "min_size_bytes": 72, "max_size_bytes": 16000}
