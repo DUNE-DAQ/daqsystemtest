@@ -1,0 +1,6 @@
+{
+    "apparatus_id":"np04_coldbox",
+    "np04_coldbox_wib":"hd_coldbox_wib",
+    "np04_coldbox_flx": "hd_coldbox_cardctrl",
+    "np04_coldbox_daq":"hd_coldbox_daq"
+}

@@ -1,0 +1,46 @@
+{
+  "dataflow": {
+    "apps": [
+      {
+        "app_name": "dataflow0",
+        "token_count": 2,
+          "output_paths": [ "/data0/test", "/data1/test", "/data2/test", "/data3/test"  ],
+        "max_file_size": 8589934592,
+        "host_df": "np04-srv-002"
+      },
+      {
+        "app_name": "dataflow1",
+        "token_count": 2,
+        "output_paths": [ "/data0/test", "/data1/test", "/data2/test", "/data3/test"  ],
+        "max_file_size": 8589934592,
+        "host_df": "np04-srv-003"
+      },
+      {
+        "app_name": "dataflow2",
+        "token_count": 2,
+        "output_paths": [ "/data0/test", "/data1/test", "/data2/test", "/data3/test"  ],
+        "max_file_size": 8589934592,
+        "host_df": "np04-srv-004"
+      }
+    ],
+    "host_dfo": "np04-srv-018"
+  },
+  "trigger": {
+    "trigger_window_before_ticks": 200000,
+    "trigger_window_after_ticks": 62144,
+    "host_trigger": "np04-srv-019"
+  },
+  "boot": {
+    "disable_trace": true,
+    "opmon_impl": "cern",
+    "ers_impl": "cern"
+  },
+  "hsi": {
+    "host_hsi": "np04-srv-018"
+  },
+  "readout": {
+    "use_fake_data_producers": true,
+    "clock_speed_hz": 62500000,
+    "hardware_map_file": "large_scale_system_HardwareMap.txt"
+  }
+}
