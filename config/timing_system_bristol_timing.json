@@ -1,9 +1,0 @@
-{
-  "timing_hardware_interface": {
-    "host_thi": "it064574.users.bris.ac.uk"
-  },
-  "timing_master_controller": {
-    "host_tmc": "it064574.users.bris.ac.uk",
-    "master_device_name": "BOREAS_TLU_CH"
-  }
-}

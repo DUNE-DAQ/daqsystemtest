@@ -1,0 +1,12 @@
+{
+    "timing_hardware_interface": {
+        "host_thi": "it064574.users.bris.ac.uk",
+        "firmware_type": "pdii",
+        "timing_hw_connections_file": "~/projects/timing/test_automation/.test_connections.xml",
+        "hsi_device_name": "TEST_MST"
+    },
+    "timing_master_controller": {
+        "host_tmc": "it064574.users.bris.ac.uk",
+        "master_device_name": "TEST_MST"
+    }
+}
