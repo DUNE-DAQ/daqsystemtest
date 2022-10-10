@@ -56,7 +56,11 @@
     "enable_raw_recording": false,
     "raw_recording_output_dir": ".",
     "use_fake_data_producers": false,
-    "readout_sends_tp_fragments": false
+    "readout_sends_tp_fragments": false,
+    "numa_config": {
+	"default_id": 1,
+	"exceptions": []
+    }
   },
   "trigger": {
     "trigger_rate_hz": 1.0,
@@ -97,7 +101,7 @@
     "enable_dqm": true,
     "impl": "cern",
     "cmap": "HDCB",
-    "host_dqm": [ "np04-srv-024.cern.ch" ],
+    "host_dqm": [ "np04-srv-001.cern.ch" ],
     "raw_params": [
       60,
       50
