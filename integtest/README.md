@@ -14,11 +14,12 @@ For reference, here are the ideas behind the existing tests:
 
 Specialty tests:
 * `iceberg_real_hsi_test.py` - tests the generation of pulser triggers by the real TLU/HSI electronics at the ICEBERG teststand
-  * needs to be run on the the iceberg01 computer at the ICEBERG teststand
-  * for now, it needs the global timing partition to be started separately (hints provided in output of the test script)
-  * this test does not need `--frame-file $PWD/frames.bin`
-  * it is useful to run this test with a couple of partition numbers to verify that it can talk to the global timing partition independent of its own partition number
+    * needs to be run on the the iceberg01 computer at the ICEBERG teststand
+    * for now, it needs the global timing partition to be started separately (hints provided in output of the test script)
+    * this test does not need `--frame-file $PWD/frames.bin`
+    * it is useful to run this test with a couple of partition numbers to verify that it can talk to the global timing partition independent of its own partition number
+
 * `felix_emu_wib2_test.py` - tests the readout of emulated WIB2 data from a real FELIX card
-  * requires that the emulated data has already been loaded into the FELIX card (hints provided at the start of the output from the test script)
-  * has only been tested at the ICEBERG teststand so far
-  * this test does not need `--frame-file $PWD/frames.bin`
+    * requires that the emulated data has already been loaded into the FELIX card (hints provided at the start of the output from the test script)
+    * has only been tested at the ICEBERG teststand so far
+    * this test does not need `--frame-file $PWD/frames.bin`
