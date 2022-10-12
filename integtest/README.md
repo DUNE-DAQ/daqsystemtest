@@ -1,4 +1,6 @@
-# integtest/ README, 21-Sep-2022, ELF and KAB
+# integtest/ README
+
+* 21-Sep-2022, ELF and KAB
 
 Here is the command for fetching a file that has WIB data in it (to be used in generating emulated data):
 
