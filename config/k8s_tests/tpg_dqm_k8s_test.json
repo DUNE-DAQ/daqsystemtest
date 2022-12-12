@@ -1,0 +1,39 @@
+{
+  "boot": {
+    "use_k8s": true,
+    "image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest",
+    "ers_impl": "cern",
+    "opmon_impl": "cern"
+  },
+  "dqm": {
+    "host_dqm": [ "np04-srv-026" ],
+    "enable_dqm": true,
+    "impl": "cern"
+  },
+  "readout": {
+    "enable_software_tpg": true,
+    "data_rate_slowdown_factor": 10,
+    "hardware_map_file": "tpg_dqm_k8s_test_HardwareMap.txt"
+  },
+  "dataflow": {
+    "host_dfo": "np04-srv-011",
+    "apps": [
+      {
+        "app_name": "dataflow0",
+        "host_df": "np04-srv-003",
+        "output_paths": [ "/data3/plasorak-k8s" ]
+      },
+      {
+        "app_name": "dataflow1",
+        "host_df": "np04-srv-003",
+        "output_paths": [ "/data3/plasorak-k8s" ]
+      }
+    ]
+  },
+  "trigger": {
+    "host_trigger": "np04-srv-011"
+  },
+  "hsi": {
+    "host_hsi": "np04-srv-011"
+  }
+}

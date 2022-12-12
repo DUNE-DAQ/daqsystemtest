@@ -2,6 +2,7 @@ import pytest
 import os
 import re
 import copy
+import urllib.request
 
 import dfmodules.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
@@ -44,7 +45,7 @@ triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
                               "expected_fragment_count": 1,
                               "min_size_bytes": 120, "max_size_bytes": 150}
 triggertp_frag_params={"fragment_type_description": "Trigger with TPs",
-                       "fragment_type": "SW_Trigger_Primitive",
+                       "fragment_type": "Trigger_Primitive",
                        "hdf5_source_subsystem": "Trigger",
                        "expected_fragment_count": number_of_data_producers,
                        "min_size_bytes": 72, "max_size_bytes": 16000}
@@ -65,6 +66,12 @@ confgen_name="daqconf_multiru_gen"
 hardware_map_contents = integtest_file_gen.generate_hwmap_file(number_of_data_producers)
 
 conf_dict = config_file_gen.get_default_config_dict()
+try:
+  urllib.request.urlopen('http://localhost:5000').status
+  conf_dict["boot"]["use_connectivity_service"] = True
+except:
+  conf_dict["boot"]["use_connectivity_service"] = False
+  
 conf_dict["readout"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
 
 swtpg_conf = copy.deepcopy(conf_dict)

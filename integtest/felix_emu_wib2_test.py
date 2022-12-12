@@ -3,6 +3,7 @@ import os
 import re
 import psutil
 import sh
+import urllib.request
 
 import dfmodules.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
@@ -27,7 +28,7 @@ wib2_frag_hsi_trig_params={"fragment_type_description": "WIB2",
                            "fragment_type": "WIB",
                            "hdf5_source_subsystem": "Detector_Readout",
                            "expected_fragment_count": (number_of_data_producers*number_of_readout_apps),
-                           "min_size_bytes": 295080, "max_size_bytes": 295080}
+                           "min_size_bytes": 295072, "max_size_bytes": 295072}
 triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
                               "fragment_type": "Trigger_Candidate",
                               "hdf5_source_subsystem": "Trigger",
@@ -43,7 +44,9 @@ if "CERN" in lspci_output or "Xilinx" in lspci_output:
     if retcode == 0:
         felix_is_connected=True
 print(f"DEBUG: felix-is-connected flag is {felix_is_connected}.")
-print("HINT: flxlibs_emu_confgen --chunkSize 472; flx-config -d 0 load emuconfigreg_472_1_0; femu -d 0 -e; flx-config -d 1 load emuconfigreg_472_1_0; femu -d 1 -e")
+print("HINTS: run 'flx-init'")
+print("       follow the steps listed here: https://github.com/DUNE-DAQ/flxlibs/blob/develop/docs/Enabling-links-and-setting-the-superchunk-factor.md")
+print("       run 'flxlibs_emu_confgen --chunkSize 472; flx-config -d 0 load emuconfigreg_472_1_0; femu -d 0 -e; flx-config -d 1 load emuconfigreg_472_1_0; femu -d 1 -e'")
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
@@ -58,6 +61,11 @@ confgen_name="daqconf_multiru_gen"
 hardware_map_contents = integtest_file_gen.generate_hwmap_file(number_of_data_producers, number_of_readout_apps)
 
 conf_dict = config_file_gen.get_default_config_dict()
+try:
+  urllib.request.urlopen('http://localhost:5000').status
+  conf_dict["boot"]["use_connectivity_service"] = True
+except:
+  conf_dict["boot"]["use_connectivity_service"] = False
 conf_dict["readout"]["data_rate_slowdown_factor"] = 10
 conf_dict["readout"]["clock_speed_hz"] = 62500000
 conf_dict["readout"]["latency_buffer_size"] = 200000

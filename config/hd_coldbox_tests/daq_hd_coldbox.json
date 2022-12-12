@@ -1,0 +1,122 @@
+{
+  "boot": {
+    "base_command_port": 3333,
+    "disable_trace": false,
+    "opmon_impl": "cern",
+    "ers_impl": "cern",
+    "pocket_url": "127.0.0.1",
+    "image": "",
+    "use_k8s": false,
+    "op_env": "swtest",
+    "data_request_timeout_ms": 1000
+  },
+  "timing": {
+    "timing_partition_name": "timing",
+    "host_timing": "np04-srv-012.cern.ch",
+    "port_timing": 12345,
+    "host_tprtc": "localhost",
+    "control_timing_partition": false,
+    "timing_partition_master_device_name": "",
+    "timing_partition_id": 0,
+    "timing_partition_trigger_mask": 255,
+    "timing_partition_rate_control_enabled": false,
+    "timing_partition_spill_gate_enabled": false
+  },
+  "hsi": {
+    "host_hsi": "np04-srv-012.cern.ch",
+    "hsi_hw_connections_file": "${TIMING_SHARE}/config/etc/connections.xml",
+    "hsi_device_name": "",
+    "hsi_readout_period": 1e3,
+    "control_hsi_hw": false,
+    "hsi_endpoint_address": 1,
+    "hsi_endpoint_partition": 0,
+    "hsi_re_mask": 0,
+    "hsi_fe_mask": 0,
+    "hsi_inv_mask": 0,
+    "hsi_source": 1,
+    "use_hsi_hw": false,
+    "hsi_device_id": 0,
+    "mean_hsi_signal_multiplicity": 1,
+    "hsi_signal_emulation_mode": 0,
+    "enabled_hsi_signals": 1
+  },
+  "readout": {
+    "hardware_map_file": "./hd_coldbox_HardwareMap.txt",
+    "emulator_mode": false,
+    "thread_pinning_file": "./cpupin-np04-srv-028_10links_integration_test.json",
+    "data_rate_slowdown_factor": 1,
+    "clock_speed_hz": 62500000,
+    "data_file": "./frames.bin",
+    "use_felix": true,
+    "latency_buffer_size": 499968,
+    "enable_software_tpg": false,
+    "enable_firmware_tpg": false,
+    "firmware_hit_threshold": 20,
+    "dtp_connections_file": "${DTPCONTROLS_SHARE}/config/dtp_connections.xml",
+    "enable_raw_recording": false,
+    "raw_recording_output_dir": ".",
+    "use_fake_data_producers": false,
+    "readout_sends_tp_fragments": false
+  },
+  "trigger": {
+    "trigger_rate_hz": 1.0,
+    "trigger_window_before_ticks": 2144,
+    "trigger_window_after_ticks": 260000,
+    "host_trigger": "np04-srv-012.cern.ch",
+    "host_tpw": "np04-srv-012.cern.ch",
+    "ttcm_s1": 1,
+    "ttcm_s2": 2,
+    "trigger_activity_plugin": "TriggerActivityMakerPrescalePlugin",
+    "trigger_activity_config": { "prescale": 10000 },
+    "trigger_candidate_plugin": "TriggerCandidateMakerPrescalePlugin",
+    "trigger_candidate_config": { "prescale": 10000 },
+    "hsi_trigger_type_passthrough": false,
+    "enable_tpset_writing": false,
+    "tpset_output_path": ".",
+    "tpset_output_file_size": 4294967296,
+    "tpg_channel_map": "HDColdboxChannelMap",
+    "mlt_buffer_timeout": 100,
+    "mlt_send_timed_out_tds": false,
+    "mlt_max_td_length_ms": 1000
+  },
+  "dataflow": {
+    "host_dfo": "np04-srv-012.cern.ch",
+    "apps": [
+      {
+        "app_name": "dataflow0",
+        "token_count": 10,
+        "output_paths": [ "/data0/test"],
+        "host_df": "np04-srv-001.cern.ch",
+        "max_file_size": 4294967296,
+        "max_trigger_record_window": 0
+      }
+    ]
+  },
+
+  "dqm": {
+    "enable_dqm": true,
+    "impl": "cern",
+    "cmap": "HDCB",
+    "host_dqm": [ "np04-srv-024.cern.ch" ],
+    "raw_params": [
+      60,
+      50
+    ],
+    "std_params": [
+      10,
+      1000
+    ],
+    "fourier_channel_params": [
+      0,
+      0
+    ],
+    "fourier_plane_params": [
+      600,
+      10000
+    ],
+    "df_rate": 10,
+
+    "df_algs": "raw std fourier_plane"
+  }
+
+}
