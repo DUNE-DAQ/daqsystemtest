@@ -1,8 +1,0 @@
-{
-  "readout": {
-    "enable_software_tpg": true,
-    "data_rate_slowdown_factor": 10,
-    "hardware_map_file": "default_system_with_tpg_s10_HardwareMap.txt"
-  },
-  "trigger": { "enable_tpset_writing": true }
-}

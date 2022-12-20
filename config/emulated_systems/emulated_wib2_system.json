@@ -1,0 +1,28 @@
+{
+  "readout": {
+    "emulator_mode": true,
+    "use_felix": true,
+    "clock_speed_hz": 62500000,
+    "hardware_map_file": "emulated_wib2_system_HardwareMap.txt"
+  },
+  "trigger": {
+    "trigger_window_after_ticks": 62144,
+    "trigger_window_before_ticks": 200000
+  },
+  "dataflow": {
+    "apps": [
+      {
+        "app_name": "dataflow0",
+        "host_df": "np04-srv-004",
+        "output_paths": ["/data0/test"]
+      }
+    ]
+  },
+  "dqm": {
+      "impl": "cern"
+  },
+  "boot": {
+    "ers_impl": "cern",
+    "opmon_impl": "cern"
+  }
+}

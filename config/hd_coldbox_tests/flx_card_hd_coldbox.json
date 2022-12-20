@@ -1,0 +1,9 @@
+{
+    "flxcardcontroller": {
+        "emulator_mode": false
+    },
+    "boot":{
+        "opmon_impl": "cern",
+        "ers_impl": "cern"
+    }
+}
