@@ -90,7 +90,7 @@ pds_list_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_fil
 #tde_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 11) # det_id = 11 for VD_Top_TPC
 
 #pacman_conf = copy.deepcopy(conf_dict)
-#pacman_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 32) # det_id = 32 for ND_LAR
+#pacman_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 32) # det_id = 32 for NDLAr_TPC
 
 
 confgen_arguments={"WIB1_System": conf_dict,
