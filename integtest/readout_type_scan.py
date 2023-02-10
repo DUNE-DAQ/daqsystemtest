@@ -34,6 +34,11 @@ wib2_frag_params={"fragment_type_description": "WIB2",
                   "hdf5_source_subsystem": "Detector_Readout",
                   "expected_fragment_count": number_of_data_producers,
                   "min_size_bytes": 29000, "max_size_bytes": 30000}
+wibeth_frag_params={"fragment_type_description": "WIBEth",
+                  "fragment_type": "WIBEth",
+                  "hdf5_source_subsystem": "Detector_Readout",
+                  "expected_fragment_count": number_of_data_producers,
+                  "min_size_bytes": 7264, "max_size_bytes": 14456}
 pds_frag_params={"fragment_type_description": "PDS",
                  "fragment_type": "DAPHNE",
                  "hdf5_source_subsystem": "Detector_Readout",
@@ -83,6 +88,12 @@ dqm_conf["dqm"]["enable_dqm"] = True
 wib2_conf = copy.deepcopy(conf_dict)
 wib2_conf["readout"]["clock_speed_hz"] = 62500000
 
+wibeth_conf = copy.deepcopy(conf_dict)
+wibeth_conf["readout"]["clock_speed_hz"] = 62500000
+wibeth_conf["readout"]["data_rate_slowdown_factor"] = 1
+wibeth_conf["readout"]["eth_mode"] = True
+wibeth_conf["readout"]["data_file"] = "/nfs/home/glehmann/N23-02-10/ethframes.bin_0"
+
 pds_list_conf = copy.deepcopy(conf_dict)
 pds_list_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 2) # det_id = 2 for HD_PDS
 
@@ -94,11 +105,12 @@ pds_list_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_fil
 
 
 confgen_arguments={"WIB1_System": conf_dict,
+                   "WIBEth_System": wibeth_conf,
                    "Software_TPG_System": swtpg_conf,
                    "DQM_System": dqm_conf,
                    "WIB2_System": wib2_conf,
                    "PDS_(list)_System": pds_list_conf,
-                   #"TDE_System": tde_conf,
+                  #"TDE_System": tde_conf,
                    #"PACMAN_System": pacman_conf
                   }
 
@@ -142,6 +154,8 @@ def test_data_files(run_nanorc):
             fragment_check_list.append(pds_frag_params)
         elif "WIB2" in current_test:
             fragment_check_list.append(wib2_frag_params)
+        elif "WIBEth" in current_test:
+            fragment_check_list.append(wibeth_frag_params)
         else:
             fragment_check_list.append(wib1_frag_hsi_trig_params)
 
