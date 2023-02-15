@@ -26,7 +26,7 @@ wib1_frag_hsi_trig_params={"fragment_type_description": "WIB",
                            "fragment_type": "ProtoWIB",
                            "hdf5_source_subsystem": "Detector_Readout",
                            "expected_fragment_count": number_of_data_producers,
-                           "min_size_bytes": 37192, "max_size_bytes": 37192}
+                           "min_size_bytes": 37192, "max_size_bytes": 37656}
 wib1_frag_multi_trig_params={"fragment_type_description": "WIB",
                              "fragment_type": "ProtoWIB",
                              "hdf5_source_subsystem": "Detector_Readout",
@@ -36,7 +36,7 @@ wib2_frag_params={"fragment_type_description": "WIB2",
                   "fragment_type": "WIB",
                   "hdf5_source_subsystem": "Detector_Readout",
                   "expected_fragment_count": number_of_data_producers,
-                  "min_size_bytes": 29000, "max_size_bytes": 30000}
+                  "min_size_bytes": 29808, "max_size_bytes": 30280}
 wibeth_frag_params={"fragment_type_description": "WIBEth",
                   "fragment_type": "WIBEth",
                   "hdf5_source_subsystem": "Detector_Readout",
@@ -84,9 +84,13 @@ conf_dict["readout"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
 
 swtpg_conf = copy.deepcopy(conf_dict)
 swtpg_conf["readout"]["enable_software_tpg"] = True
+swtpg_conf["readout"]["clock_speed_hz"] = 50000000
+swtpg_conf["readout"]["data_file"] = os.popen('assets-list --status valid -l ProtoWIB | awk \'END{print}\' | awk \'{print $NF}\' | tr -d \'\n\' ').read()
 
 dqm_conf = copy.deepcopy(conf_dict)
 dqm_conf["dqm"]["enable_dqm"] = True
+dqm_conf["readout"]["clock_speed_hz"] = 50000000
+dqm_conf["readout"]["data_file"] = os.popen('assets-list --status valid -l ProtoWIB | awk \'END{print}\' | awk \'{print $NF}\' | tr -d \'\n\' ').read()
 
 
 wib1_conf = copy.deepcopy(conf_dict)
@@ -118,10 +122,10 @@ pds_list_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_fil
 
 confgen_arguments={
                    "WIB1_System": wib1_conf,
-                   "WIBEth_System": wibeth_conf
-                   #"Software_TPG_System": swtpg_conf,
+                   "WIBEth_System": wibeth_conf,
+                   "Software_TPG_System": swtpg_conf,
                    #"DQM_System": dqm_conf,
-                   #"WIB2_System": wib2_conf,
+                   "WIB2_System": wib2_conf
                    #"PDS_(list)_System": pds_list_conf,
                   #"TDE_System": tde_conf,
                    #"PACMAN_System": pacman_conf
