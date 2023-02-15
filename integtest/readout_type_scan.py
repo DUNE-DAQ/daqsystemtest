@@ -9,6 +9,9 @@ import integrationtest.log_file_checks as log_file_checks
 import integrationtest.config_file_gen as config_file_gen
 import dfmodules.integtest_file_gen as integtest_file_gen
 
+# Don't require frames file
+frame_file_required=False
+
 # Values that help determine the running conditions
 number_of_data_producers=2
 run_duration=20  # seconds
@@ -85,14 +88,23 @@ swtpg_conf["readout"]["enable_software_tpg"] = True
 dqm_conf = copy.deepcopy(conf_dict)
 dqm_conf["dqm"]["enable_dqm"] = True
 
+
+wib1_conf = copy.deepcopy(conf_dict)
+wib1_conf["readout"]["clock_speed_hz"] = 50000000
+wib1_conf["readout"]["data_file"] = os.popen('assets-list --status valid -l ProtoWIB | awk \'END{print}\' | awk \'{print $NF}\' | tr -d \'\n\' ').read()
+
+
 wib2_conf = copy.deepcopy(conf_dict)
 wib2_conf["readout"]["clock_speed_hz"] = 62500000
+wib2_conf["readout"]["data_file"] = os.popen('assets-list --status valid -l DuneWIB | awk \'END{print}\' | awk \'{print $NF}\' | tr -d \'\n\' ').read()
 
 wibeth_conf = copy.deepcopy(conf_dict)
 wibeth_conf["readout"]["clock_speed_hz"] = 62500000
 wibeth_conf["readout"]["data_rate_slowdown_factor"] = 1
 wibeth_conf["readout"]["eth_mode"] = True
-wibeth_conf["readout"]["data_file"] = "/nfs/home/glehmann/N23-02-10/ethframes.bin_0"
+wibeth_conf["readout"]["data_file"] = os.popen('assets-list --status valid -l WIBEth | awk \'END{print}\' | awk \'{print $NF}\' | tr -d \'\n\' ').read()
+
+#print (f" {wibeth_conf['readout']['data_file']=} ")
 
 pds_list_conf = copy.deepcopy(conf_dict)
 pds_list_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 2) # det_id = 2 for HD_PDS
@@ -104,12 +116,13 @@ pds_list_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_fil
 #pacman_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 32) # det_id = 32 for NDLAr_TPC
 
 
-confgen_arguments={"WIB1_System": conf_dict,
-                   "WIBEth_System": wibeth_conf,
-                   "Software_TPG_System": swtpg_conf,
-                   "DQM_System": dqm_conf,
-                   "WIB2_System": wib2_conf,
-                   "PDS_(list)_System": pds_list_conf,
+confgen_arguments={
+                   "WIB1_System": wib1_conf,
+                   "WIBEth_System": wibeth_conf
+                   #"Software_TPG_System": swtpg_conf,
+                   #"DQM_System": dqm_conf,
+                   #"WIB2_System": wib2_conf,
+                   #"PDS_(list)_System": pds_list_conf,
                   #"TDE_System": tde_conf,
                    #"PACMAN_System": pacman_conf
                   }
