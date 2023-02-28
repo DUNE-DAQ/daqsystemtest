@@ -78,7 +78,7 @@ for df_app in range(number_of_dataflow_apps):
     conf_dict["dataflow"]["apps"].append(dfapp_conf)
 
 
-if we_are_running_on_an_iceberg_computer and the_global_timing_partition_is_running:
+if we_are_running_on_an_iceberg_computer and the_global_timing_partition_is_running and conf_dict["boot"]["use_connectivity_service"]:
     conf_dict["trigger"]["ttcm_s1"] = 1
     conf_dict["trigger"]["hsi_trigger_type_passthrough"] = True
     conf_dict["trigger"]["trigger_rate_hz"] = base_trigger_rate
@@ -88,8 +88,7 @@ if we_are_running_on_an_iceberg_computer and the_global_timing_partition_is_runn
     conf_dict["hsi"]["use_hsi_hw"] = True
     conf_dict["hsi"]["host_hsi"] = "iceberg01-priv"
     conf_dict["hsi"]["hsi_re_mask"] = 1
-    conf_dict["timing"]["host_timing"] = "iceberg01-priv"
-    conf_dict["timing"]["host_tprtc"] =  "iceberg01-priv"
+    conf_dict["timing"]["timing_session_name"] = f"{username}-timing-partition"
     conf_dict["timing"]["control_timing_partition"]  = True
     conf_dict["timing"]["timing_partition_master_device_name"] = "BOREAS_TLU_ICEBERG"
 
@@ -141,9 +140,14 @@ def test_data_files(run_nanorc):
     if not the_global_timing_partition_is_running:
         print(f"The global timing partition does not appear to be running on this computer ({hostname}).")
         print("    Please check whether it is, and start it, if needed.")
-        print("Hints: echo '{ \"timing_hardware_interface\": { \"host_thi\": \"iceberg01-priv\" }, \"timing_master_controller\": { \"host_tmc\": \"iceberg01-priv\", \"master_device_name\": \"BOREAS_TLU_ICEBERG\" } }' >> iceberg_timing_system_config_input.json")
+        print("Hints: echo '{ \"boot\": { \"use_connectivity_service\": true }, \"timing_hardware_interface\": { \"host_thi\": \"iceberg01-priv\" }, \"timing_master_controller\": { \"host_tmc\": \"iceberg01-priv\", \"master_device_name\": \"BOREAS_TLU_ICEBERG\" } }' >> iceberg_timing_system_config_input.json")
         print("       daqconf_timing_gen --config ./iceberg_timing_system_config_input.json timing_partition_config")
         print("       nanotimingrc timing_partition_config ${USER}-timing-partition boot conf wait 1200 scrap terminate")
+        return
+    if not conf_dict["boot"]["use_connectivity_service"]:
+        print(f"The connectivity service must be running for this test. Please start it via")
+        print(f"      gunicorn -b 0.0.0.0:5000 --workers=1 --worker-class=gthread --threads=4 --timeout 5000000000 connection-service.connection-flask:app")
+        print("and try again")
         return
 
     fragment_check_list=[]
