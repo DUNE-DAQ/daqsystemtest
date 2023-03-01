@@ -73,7 +73,7 @@ except:
   conf_dict["boot"]["use_connectivity_service"] = False
   
 conf_dict["readout"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
-conf_dict["readout"]["default_data_file"] = "asset://label/ProtoWIB"
+conf_dict["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
 
 swtpg_conf = copy.deepcopy(conf_dict)
 swtpg_conf["readout"]["enable_software_tpg"] = True
@@ -83,23 +83,23 @@ dqm_conf["dqm"]["enable_dqm"] = True
 
 wib2_conf = copy.deepcopy(conf_dict)
 wib2_conf["readout"]["clock_speed_hz"] = 62500000
-wib2_conf["readout"]["default_data_file"] = "asset://label/DuneWIB"
+wib2_conf["readout"]["default_data_file"] = "asset://?label=DuneWIB&subsystem=readout"
 
 pds_list_conf = copy.deepcopy(conf_dict)
 pds_list_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 2) # det_id = 2 for HD_PDS
-pds_list_conf["readout"]["default_data_file"] = "asset://label/PDSList"
+pds_list_conf["readout"]["default_data_file"] = "asset://?label=PDSList&subsystem=readout"
 
 #tde_conf = copy.deepcopy(conf_dict)
 #tde_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 11) # det_id = 11 for VD_Top_TPC
-#tde_conf["readout"]["default_data_file"] = "asset://label/VDTPC"
+#tde_conf["readout"]["default_data_file"] = "asset://?label=VDTPC&subsystem=readout"
 
 #pacman_conf = copy.deepcopy(conf_dict)
 #pacman_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 32) # det_id = 32 for NDLAr_TPC
-#pacman_conf["readout"]["default_data_file"] = "asset://label/PACMAN"
+#pacman_conf["readout"]["default_data_file"] = "asset://?label=PACMAN&subsystem=readout"
 
 #mpd_conf = copy.deepcopy(conf_dict)
 #mpd_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 33) # det_id = 33 for NDLAr_PDS
-#mpd_conf["readout"]["default_data_file"] = "asset://label/MPD"
+#mpd_conf["readout"]["default_data_file"] = "asset://?label=MPD&subsystem=readout"
 
 
 confgen_arguments={"WIB1_System": conf_dict,
