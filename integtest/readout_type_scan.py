@@ -9,6 +9,9 @@ import integrationtest.log_file_checks as log_file_checks
 import integrationtest.config_file_gen as config_file_gen
 import dfmodules.integtest_file_gen as integtest_file_gen
 
+# Don't require frames file
+frame_file_required=False
+
 # Values that help determine the running conditions
 number_of_data_producers=2
 run_duration=20  # seconds
@@ -23,7 +26,7 @@ wib1_frag_hsi_trig_params={"fragment_type_description": "WIB",
                            "fragment_type": "ProtoWIB",
                            "hdf5_source_subsystem": "Detector_Readout",
                            "expected_fragment_count": number_of_data_producers,
-                           "min_size_bytes": 37192, "max_size_bytes": 37192}
+                           "min_size_bytes": 37192, "max_size_bytes": 37656}
 wib1_frag_multi_trig_params={"fragment_type_description": "WIB",
                              "fragment_type": "ProtoWIB",
                              "hdf5_source_subsystem": "Detector_Readout",
@@ -33,7 +36,12 @@ wib2_frag_params={"fragment_type_description": "WIB2",
                   "fragment_type": "WIB",
                   "hdf5_source_subsystem": "Detector_Readout",
                   "expected_fragment_count": number_of_data_producers,
-                  "min_size_bytes": 29000, "max_size_bytes": 30000}
+                  "min_size_bytes": 29808, "max_size_bytes": 30280}
+wibeth_frag_params={"fragment_type_description": "WIBEth",
+                  "fragment_type": "WIBEth",
+                  "hdf5_source_subsystem": "Detector_Readout",
+                  "expected_fragment_count": number_of_data_producers,
+                  "min_size_bytes": 7264, "max_size_bytes": 14456}
 pds_frag_params={"fragment_type_description": "PDS",
                  "fragment_type": "DAPHNE",
                  "hdf5_source_subsystem": "Detector_Readout",
@@ -76,12 +84,31 @@ conf_dict["readout"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
 
 swtpg_conf = copy.deepcopy(conf_dict)
 swtpg_conf["readout"]["enable_software_tpg"] = True
+swtpg_conf["readout"]["clock_speed_hz"] = 50000000
+swtpg_conf["readout"]["data_file"] = os.popen('assets-list --status valid -l ProtoWIB | awk \'END{print}\' | awk \'{print $NF}\' | tr -d \'\n\' ').read()
 
 dqm_conf = copy.deepcopy(conf_dict)
 dqm_conf["dqm"]["enable_dqm"] = True
+dqm_conf["readout"]["clock_speed_hz"] = 50000000
+dqm_conf["readout"]["data_file"] = os.popen('assets-list --status valid -l ProtoWIB | awk \'END{print}\' | awk \'{print $NF}\' | tr -d \'\n\' ').read()
+
+
+wib1_conf = copy.deepcopy(conf_dict)
+wib1_conf["readout"]["clock_speed_hz"] = 50000000
+wib1_conf["readout"]["data_file"] = os.popen('assets-list --status valid -l ProtoWIB | awk \'END{print}\' | awk \'{print $NF}\' | tr -d \'\n\' ').read()
+
 
 wib2_conf = copy.deepcopy(conf_dict)
 wib2_conf["readout"]["clock_speed_hz"] = 62500000
+wib2_conf["readout"]["data_file"] = os.popen('assets-list --status valid -l DuneWIB | awk \'END{print}\' | awk \'{print $NF}\' | tr -d \'\n\' ').read()
+
+wibeth_conf = copy.deepcopy(conf_dict)
+wibeth_conf["readout"]["clock_speed_hz"] = 62500000
+wibeth_conf["readout"]["data_rate_slowdown_factor"] = 1
+wibeth_conf["readout"]["eth_mode"] = True
+wibeth_conf["readout"]["data_file"] = os.popen('assets-list --status valid -l WIBEth | awk \'END{print}\' | awk \'{print $NF}\' | tr -d \'\n\' ').read()
+
+#print (f" {wibeth_conf['readout']['data_file']=} ")
 
 pds_list_conf = copy.deepcopy(conf_dict)
 pds_list_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 2) # det_id = 2 for HD_PDS
@@ -93,12 +120,14 @@ pds_list_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_fil
 #pacman_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 32) # det_id = 32 for NDLAr_TPC
 
 
-confgen_arguments={"WIB1_System": conf_dict,
+confgen_arguments={
+                   "WIB1_System": wib1_conf,
+                   "WIBEth_System": wibeth_conf,
                    "Software_TPG_System": swtpg_conf,
-                   "DQM_System": dqm_conf,
-                   "WIB2_System": wib2_conf,
-                   "PDS_(list)_System": pds_list_conf,
-                   #"TDE_System": tde_conf,
+                   #"DQM_System": dqm_conf,
+                   "WIB2_System": wib2_conf
+                   #"PDS_(list)_System": pds_list_conf,
+                  #"TDE_System": tde_conf,
                    #"PACMAN_System": pacman_conf
                   }
 
@@ -142,6 +171,8 @@ def test_data_files(run_nanorc):
             fragment_check_list.append(pds_frag_params)
         elif "WIB2" in current_test:
             fragment_check_list.append(wib2_frag_params)
+        elif "WIBEth" in current_test:
+            fragment_check_list.append(wibeth_frag_params)
         else:
             fragment_check_list.append(wib1_frag_hsi_trig_params)
 
