@@ -81,54 +81,63 @@ except:
   conf_dict["boot"]["use_connectivity_service"] = False
   
 conf_dict["readout"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
+conf_dict["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
 
 swtpg_conf = copy.deepcopy(conf_dict)
 swtpg_conf["readout"]["enable_software_tpg"] = True
 swtpg_conf["readout"]["clock_speed_hz"] = 50000000
-swtpg_conf["readout"]["data_file"] = os.popen('assets-list --status valid -l ProtoWIB | awk \'END{print}\' | awk \'{print $NF}\' | tr -d \'\n\' ').read()
+swtpg_conf["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
 
 dqm_conf = copy.deepcopy(conf_dict)
 dqm_conf["dqm"]["enable_dqm"] = True
 dqm_conf["readout"]["clock_speed_hz"] = 50000000
-dqm_conf["readout"]["data_file"] = os.popen('assets-list --status valid -l ProtoWIB | awk \'END{print}\' | awk \'{print $NF}\' | tr -d \'\n\' ').read()
+dqm_conf["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
 
 
 wib1_conf = copy.deepcopy(conf_dict)
 wib1_conf["readout"]["clock_speed_hz"] = 50000000
-wib1_conf["readout"]["data_file"] = os.popen('assets-list --status valid -l ProtoWIB | awk \'END{print}\' | awk \'{print $NF}\' | tr -d \'\n\' ').read()
+wib1_conf["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
 
 
 wib2_conf = copy.deepcopy(conf_dict)
 wib2_conf["readout"]["clock_speed_hz"] = 62500000
-wib2_conf["readout"]["data_file"] = os.popen('assets-list --status valid -l DuneWIB | awk \'END{print}\' | awk \'{print $NF}\' | tr -d \'\n\' ').read()
+wib2_conf["readout"]["default_data_file"] = "asset://?label=DuneWIB&subsystem=readout"
 
 wibeth_conf = copy.deepcopy(conf_dict)
 wibeth_conf["readout"]["clock_speed_hz"] = 62500000
 wibeth_conf["readout"]["data_rate_slowdown_factor"] = 1
 wibeth_conf["readout"]["eth_mode"] = True
-wibeth_conf["readout"]["data_file"] = os.popen('assets-list --status valid -l WIBEth | awk \'END{print}\' | awk \'{print $NF}\' | tr -d \'\n\' ').read()
+wibeth_conf["readout"]["default_data_file"] = "asset://?label=WIBEth&subsystem=readout"
 
 #print (f" {wibeth_conf['readout']['data_file']=} ")
 
-pds_list_conf = copy.deepcopy(conf_dict)
-pds_list_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 2) # det_id = 2 for HD_PDS
+#pds_list_conf = copy.deepcopy(conf_dict)
+#pds_list_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 2) # det_id = 2 for HD_PDS
+#pds_list_conf["readout"]["default_data_file"] = "asset://?label=PDSList&subsystem=readout"
 
 #tde_conf = copy.deepcopy(conf_dict)
 #tde_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 11) # det_id = 11 for VD_Top_TPC
+#tde_conf["readout"]["default_data_file"] = "asset://?label=VDTPC&subsystem=readout"
 
 #pacman_conf = copy.deepcopy(conf_dict)
 #pacman_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 32) # det_id = 32 for NDLAr_TPC
+#pacman_conf["readout"]["default_data_file"] = "asset://?label=PACMAN&subsystem=readout"
+
+#mpd_conf = copy.deepcopy(conf_dict)
+#mpd_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 33) # det_id = 33 for NDLAr_PDS
+#mpd_conf["readout"]["default_data_file"] = "asset://?label=MPD&subsystem=readout"
 
 
 confgen_arguments={
                    "WIB1_System": wib1_conf,
                    "WIBEth_System": wibeth_conf,
                    "Software_TPG_System": swtpg_conf,
-                   #"DQM_System": dqm_conf,
-                   "WIB2_System": wib2_conf
+                   "DQM_System": dqm_conf,
+                   "WIB2_System": wib2_conf,
                    #"PDS_(list)_System": pds_list_conf,
-                  #"TDE_System": tde_conf,
-                   #"PACMAN_System": pacman_conf
+                   #"TDE_System": tde_conf,
+                   #"PACMAN_System": pacman_conf,
+                   #"MPD_System": mpd_conf
                   }
 
 # The commands to run in nanorc, as a list

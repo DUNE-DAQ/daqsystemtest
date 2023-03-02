@@ -95,9 +95,6 @@ if felix_is_connected:
 else:
     nanorc_command_list=["integtest-partition", "boot", "terminate"]
 
-# Don't require the --frame-file option since we don't need it
-frame_file_required=False
-
 # The tests themselves
 
 def test_nanorc_success(run_nanorc):
