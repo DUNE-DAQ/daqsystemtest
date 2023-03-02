@@ -33,7 +33,6 @@
 		]
 	},
 	"timing": {
-		"host_timing": "iceberg01-priv",
 		"timing_session_name": "timing-tlu-hsi-test"
 	}
 }
