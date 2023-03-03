@@ -13,6 +13,7 @@
 		"use_hsi_hw": true,
 		"host_hsi": "np04-srv-019",
 		"control_hsi_hw": true,
+		"hsi_hw_connections_file": "connections.xml",
 		"hsi_device_name": "BOREAS_TLU_NP04",
 		"hsi_source": 1,
 		"hsi_re_mask": 1
