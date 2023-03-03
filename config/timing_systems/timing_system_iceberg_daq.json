@@ -1,16 +1,19 @@
 {
+	"boot": {
+		"use_connectivity_service": true
+	},
 	"trigger": {
-
 		"trigger_window_before_ticks": 1000,
 		"trigger_window_after_ticks": 1000,
 		"hsi_trigger_type_passthrough": true,
-		"ttcm_s1": 1,
+		"ttcm_s1": 128,
 		"trigger_rate_hz": 1.0
 	},
 	"hsi": {
 		"use_hsi_hw": true,
 		"host_hsi": "iceberg01-priv",
 		"control_hsi_hw": true,
+		"hsi_hw_connections_file": "connections.xml",
 		"hsi_device_name": "BOREAS_TLU_ICEBERG",
 		"hsi_source": 1,
 		"hsi_re_mask": 1
@@ -31,9 +34,6 @@
 		]
 	},
 	"timing": {
-		"host_timing": "iceberg01-priv",
-		"control_timing_partition": true,
-		"host_tprtc": "iceberg01-priv",
-		"timing_partition_master_device_name": "BOREAS_TLU_ICEBERG"
+		"timing_session_name": "timing-tlu-hsi-test"
 	}
 }

@@ -1,17 +1,20 @@
 {
+	"boot": {
+		"use_connectivity_service": true
+	},
 	"trigger": {
-
 		"trigger_window_before_ticks": 1000,
 		"trigger_window_after_ticks": 1000,
 		"hsi_trigger_type_passthrough": true,
-		"ttcm_s1": 1,
+		"ttcm_s1": 128,
 		"trigger_rate_hz": 1.0
 	},
 	"hsi": {
 		"use_hsi_hw": true,
 		"host_hsi": "np04-srv-019",
 		"control_hsi_hw": true,
-		"hsi_device_name": "PROD_MASTER_VDC_CH",
+		"hsi_hw_connections_file": "connections.xml",
+		"hsi_device_name": "BOREAS_TLU_NP04",
 		"hsi_source": 1,
 		"hsi_re_mask": 1
 	},
@@ -31,9 +34,6 @@
 		]
 	},
 	"timing": {
-		"host_timing": "np04-srv-019",
-		"control_timing_partition": true,
-		"host_tprtc": "np04-srv-019",
-		"timing_partition_master_device_name": "PROD_MASTER_VDC_CH"
+		"timing_session_name": "timing-tlu-hsi-test"
 	}
 }
