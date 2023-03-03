@@ -79,7 +79,7 @@ for df_app in range(number_of_dataflow_apps):
 
 
 if we_are_running_on_an_iceberg_computer and the_global_timing_partition_is_running and conf_dict["boot"]["use_connectivity_service"]:
-    conf_dict["trigger"]["ttcm_s1"] = 1
+    conf_dict["trigger"]["ttcm_s1"] = 128
     conf_dict["trigger"]["hsi_trigger_type_passthrough"] = True
     conf_dict["trigger"]["trigger_rate_hz"] = base_trigger_rate
     conf_dict["hsi"]["control_hsi_hw"]= True
@@ -89,8 +89,6 @@ if we_are_running_on_an_iceberg_computer and the_global_timing_partition_is_runn
     conf_dict["hsi"]["host_hsi"] = "iceberg01-priv"
     conf_dict["hsi"]["hsi_re_mask"] = 1
     conf_dict["timing"]["timing_session_name"] = f"{username}-timing-partition"
-    conf_dict["timing"]["control_timing_partition"]  = True
-    conf_dict["timing"]["timing_partition_master_device_name"] = "BOREAS_TLU_ICEBERG"
 
     trigger_factor_conf = copy.deepcopy(conf_dict)
     trigger_factor_conf["trigger"]["trigger_rate_hz"] = base_trigger_rate*trigger_rate_factor
