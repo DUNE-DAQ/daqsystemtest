@@ -68,6 +68,7 @@ conf_dict["hsi"] = {}
 conf_dict["readout"]["clock_speed_hz"] = 62500000
 conf_dict["readout"]["latency_buffer_size"] = 200000
 conf_dict["readout"]["use_fake_data_producers"] = True
+conf_dict["readout"]["default_data_file"] = "asset://?label=DuneWIB&subsystem=readout"
 conf_dict["trigger"]["trigger_window_before_ticks"] = 1000
 conf_dict["trigger"]["trigger_window_after_ticks"] = 1000
 
