@@ -10,6 +10,8 @@ import integrationtest.log_file_checks as log_file_checks
 import integrationtest.config_file_gen as config_file_gen
 import dfmodules.integtest_file_gen as integtest_file_gen
 
+my_dir = os.path.dirname(os.path.abspath(__file__))
+
 # Values that help determine the running conditions
 number_of_data_producers=2
 number_of_readout_apps=2
@@ -86,9 +88,10 @@ if we_are_running_on_an_iceberg_computer and the_global_timing_partition_is_runn
     conf_dict["hsi"]["control_hsi_hw"]= True
     conf_dict["hsi"]["hsi_device_name"]= "BOREAS_TLU_ICEBERG"
     conf_dict["hsi"]["hsi_source"] = 1
-    conf_dict["hsi"]["use_hsi_hw"] = True
-    conf_dict["hsi"]["host_hsi"] = "iceberg01-priv"
+    conf_dict["hsi"]["use_timing_hsi"] = True
+    conf_dict["hsi"]["host_timing_hsi"] = "iceberg01-priv"
     conf_dict["hsi"]["hsi_re_mask"] = 1
+    conf_dict["hsi"]["hsi_hw_connections_file"] = os.path.abspath(f"{my_dir}/../config/timing_systems/connections.xml")
     conf_dict["timing"]["timing_session_name"] = f"{username}-timing-partition"
 
     trigger_factor_conf = copy.deepcopy(conf_dict)
