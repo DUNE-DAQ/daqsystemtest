@@ -41,7 +41,7 @@ wibeth_frag_params={"fragment_type_description": "WIBEth",
                   "fragment_type": "WIBEth",
                   "hdf5_source_subsystem": "Detector_Readout",
                   "expected_fragment_count": number_of_data_producers,
-                  "min_size_bytes": 7264, "max_size_bytes": 14456}
+                  "min_size_bytes": 7272, "max_size_bytes": 14472}
 pds_frag_params={"fragment_type_description": "PDS",
                  "fragment_type": "DAPHNE",
                  "hdf5_source_subsystem": "Detector_Readout",
