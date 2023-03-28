@@ -87,47 +87,42 @@ except:
   
 conf_dict["readout"]["hardware_map"] = hardware_map_contents
 conf_dict["readout"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
-conf_dict["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
+conf_dict["readout"]["data_files"] = {"detector_id": 3, "data_file":"asset://?label=ProtoWIB&subsystem=readout"}
+conf_dict["trigger"]["trigger_window_before_ticks"] = 1000
+conf_dict["trigger"]["trigger_window_after_ticks"] = 1000
 
 swtpg_conf = copy.deepcopy(conf_dict)
 swtpg_conf["readout"]["enable_software_tpg"] = True
 swtpg_conf["readout"]["clock_speed_hz"] = 50000000
-swtpg_conf["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
+swtpg_conf["readout"]["data_files"] = {"detector_id": 3, "data_file":"asset://?label=ProtoWIB&subsystem=readout"}
 
 dqm_conf = copy.deepcopy(conf_dict)
 dqm_conf["dqm"]["enable_dqm"] = True
 dqm_conf["readout"]["clock_speed_hz"] = 50000000
-dqm_conf["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
+dqm_conf["readout"]["data_files"] = {"detector_id": 3, "data_file":"asset://?label=ProtoWIB&subsystem=readout"}
 
 
 wib1_conf = copy.deepcopy(conf_dict)
 wib1_conf["readout"]["clock_speed_hz"] = 50000000
-wib1_conf["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
+wib1_conf["readout"]["data_files"] = {"detector_id": 3, "data_file":"asset://?label=ProtoWIB&subsystem=readout"}
 
 
 wib2_conf = copy.deepcopy(conf_dict)
 wib2_conf["readout"]["clock_speed_hz"] = 62500000
-wib2_conf["readout"]["default_data_file"] = "asset://?label=DuneWIB&subsystem=readout"
+wib2_conf["readout"]"data_files"] = {"detector_id": 3, "data_file":"asset://?label=DuneWIB&subsystem=readout"}
 
 wibeth_conf = copy.deepcopy(conf_dict)
 wibeth_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(n_links=number_of_data_producers, det_id =10)
 wibeth_conf["readout"]["clock_speed_hz"] = 62500000
 #wibeth_conf["readout"]["data_rate_slowdown_factor"] = 1
 wibeth_conf["readout"]["eth_mode"] = True
-wibeth_conf["readout"]["default_data_file"] = "asset://?label=WIBEth&subsystem=readout"
+wibeth_conf["readout"]"data_files"] = {"detector_id": 10, "data_file":"asset://?label=WIBEth&subsystem=readout"}
 
 tde_conf = copy.deepcopy(conf_dict)
 tde_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(n_links=number_of_data_producers, det_id = 11)
 tde_conf["readout"]["clock_speed_hz"] = 62500000
 tde_conf["readout"]["eth_mode"] = True
-tde_conf["readout"]["default_data_file"] = "asset://?label=TDE16&subsystem=readout"
-tde_conf["trigger"]["trigger_window_before_ticks"] = 0
-tde_conf["trigger"]["trigger_window_after_ticks"] = 2000
-
-#tde_conf["readout"]["default_data_file"] = "/nfs/home/glehmann/tdeframes.bin"
-
-
-#print (f" {wibeth_conf['readout']['data_file']=} ")
+tde_conf["readout"]"data_files"] = {"detector_id": 11, "data_file":"asset://?label=TDE16&subsystem=readout"}
 
 #pds_list_conf = copy.deepcopy(conf_dict)
 #pds_list_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 2) # det_id = 2 for HD_PDS
@@ -143,13 +138,13 @@ tde_conf["trigger"]["trigger_window_after_ticks"] = 2000
 
 
 confgen_arguments={
-                   #"WIB1_System": wib1_conf,
+                   "WIB1_System": wib1_conf,
                    #"WIBEth_System": wibeth_conf,
                    #"Software_TPG_System": swtpg_conf,
                    #"DQM_System": dqm_conf,
                    #"WIB2_System": wib2_conf,
                    #"PDS_(list)_System": pds_list_conf,
-                   "TDE_System": tde_conf,
+                   #"TDE_System": tde_conf,
                    #"PACMAN_System": pacman_conf,
                    #"MPD_System": mpd_conf
                   }
