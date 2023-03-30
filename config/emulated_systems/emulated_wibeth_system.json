@@ -7,10 +7,15 @@
     "default_data_file": "asset://?label=WIBEth&subsystem=readout",
     "hardware_map_file": "emulated_wib2_system_HardwareMap.txt"
   },
+  "hsi": {
+    "host_fake_hsi": "np04-srv-004"
+  },
   "trigger": {
+    "host_trigger": "np04-srv-004",
     "trigger_rate_hz": 1
   },
   "dataflow": {
+    "host_dfo": "np04-srv-004",
     "apps": [
       {
         "app_name": "dataflow0",
@@ -19,9 +24,8 @@
       }
     ]
   },
-    "boot": {
+  "boot": {
     "ers_impl": "cern",
     "opmon_impl": "cern"
   }
-
 }
