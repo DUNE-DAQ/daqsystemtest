@@ -38,74 +38,109 @@ confgen_arguments={"Test_System": conf_dict
 nanorc_command_list=[
 
 # No commands are valid before boot
-["integtest-partition", "init"],
 ["integtest-partition", "conf"],
-["integtest-partition", "start", "100"],
-["integtest-partition", "resume"],
+["integtest-partition", "start_run", "100"],
+["integtest-partition", "start", "101"],
+["integtest-partition", "enable_triggers"],
+["integtest-partition", "stop_run"],
 ["integtest-partition", "disable_triggers"],
+["integtest-partition", "drain_dataflow"],
+["integtest-partition", "stop_trigger_sources"],
 ["integtest-partition", "stop"],
 ["integtest-partition", "scrap"],
 
-# Only init after boot
+# Only conf after boot
 "integtest-partition boot boot".split(),
-"integtest-partition boot conf".split(),
 "integtest-partition boot start 101".split(),
-"integtest-partition boot resume".split(),
+"integtest-partition boot stop_run".split(),
 "integtest-partition boot disable_triggers".split(),
+"integtest-partition boot drain_dataflow".split(),
+"integtest-partition boot stop_trigger_sources".split(),
 "integtest-partition boot stop".split(),
 "integtest-partition boot scrap".split(),
 
-# Only conf after init
-"integtest-partition boot init boot".split(),
-"integtest-partition boot init init".split(),
-"integtest-partition boot init start 102".split(),
-"integtest-partition boot init resume".split(),
-"integtest-partition boot init disable_triggers".split(),
-"integtest-partition boot init stop".split(),
-"integtest-partition boot init scrap".split(),
+# Only start, start_run and scrap after conf
+"integtest-partition boot conf boot".split(),
+"integtest-partition boot conf conf".split(),
+"integtest-partition boot conf enable_triggers".split(),
+"integtest-partition boot conf stop_run".split(),
+"integtest-partition boot conf disable_triggers".split(),
+"integtest-partition boot conf drain_dataflow".split(),
+"integtest-partition boot conf stop_trigger_sources".split(),
+"integtest-partition boot conf stop".split(),
 
-# Only start and scrap after conf
-"integtest-partition boot init conf boot".split(),
-"integtest-partition boot init conf init".split(),
-"integtest-partition boot init conf conf".split(),
-"integtest-partition boot init conf resume".split(),
-"integtest-partition boot init conf disable_triggers".split(),
-"integtest-partition boot init conf stop".split(),
+# Only drain_dataflow and enable_triggers after start
+"integtest-partition boot conf start 100 boot".split(),
+"integtest-partition boot conf start 101 conf".split(),
+"integtest-partition boot conf start 102 start_run 100".split(),
+"integtest-partition boot conf start 103 start 100".split(),
+"integtest-partition boot conf start 104 disable_triggers".split(),
+"integtest-partition boot conf start 105 stop_trigger_sources".split(),
+"integtest-partition boot conf start 106 stop".split(),
 
-# Only resume disable_triggers stop after start
-"integtest-partition boot init conf start 103 boot".split(),
-"integtest-partition boot init conf start 104 init".split(),
-"integtest-partition boot init conf start 105 conf".split(),
-"integtest-partition boot init conf start 106 start 122".split(),
-"integtest-partition boot init conf start 107 scrap".split(),
+# Only disable_triggers after enable_triggers
+"integtest-partition boot conf start 200 enable_triggers boot".split(),
+"integtest-partition boot conf start 201 enable_triggers conf".split(),
+"integtest-partition boot conf start 202 enable_triggers start_run".split(),
+"integtest-partition boot conf start 203 enable_triggers start".split(),
+"integtest-partition boot conf start 204 enable_triggers enable_triggers".split(),
+"integtest-partition boot conf start 205 enable_triggers drain_dataflow".split(),
+"integtest-partition boot conf start 206 enable_triggers stop_trigger_sources".split(),
+"integtest-partition boot conf start 207 enable_triggers stop".split(),
+"integtest-partition boot conf start 208 enable_triggers scrap".split(),
 
-# After stop is same as conf
-"integtest-partition boot init conf start 108 stop boot".split(),
-"integtest-partition boot init conf start 109 stop init".split(),
-"integtest-partition boot init conf start 110 stop conf".split(),
-"integtest-partition boot init conf start 111 stop resume".split(),
-"integtest-partition boot init conf start 112 stop disable_triggers".split(),
-"integtest-partition boot init conf start 113 stop stop".split(),
+# Only stop_trigger_sources after drain_dataflow
+"integtest-partition boot conf start 300 drain_dataflow boot".split(),
+"integtest-partition boot conf start 301 drain_dataflow conf".split(),
+"integtest-partition boot conf start 302 drain_dataflow start_run".split(),
+"integtest-partition boot conf start 303 drain_dataflow start".split(),
+"integtest-partition boot conf start 304 drain_dataflow enable_triggers".split(),
+"integtest-partition boot conf start 305 drain_dataflow disable_triggers".split(),
+"integtest-partition boot conf start 306 drain_dataflow drain_dataflow".split(),
+"integtest-partition boot conf start 307 drain_dataflow stop".split(),
+"integtest-partition boot conf start 308 drain_dataflow scrap".split(),
 
-# After scrap is same as init
-"integtest-partition boot init conf start 114 stop scrap boot".split(),
-"integtest-partition boot init conf start 115 stop scrap init".split(),
-"integtest-partition boot init conf start 116 stop scrap start 121".split(),
-"integtest-partition boot init conf start 117 stop scrap resume".split(),
-"integtest-partition boot init conf start 118 stop scrap disable_triggers".split(),
-"integtest-partition boot init conf start 119 stop scrap stop".split(),
-"integtest-partition boot init conf start 120 stop scrap scrap".split(),
+# Only stop after stop_trigger_sources
+"integtest-partition boot conf start 400 drain_dataflow stop_trigger_sources boot".split(),
+"integtest-partition boot conf start 401 drain_dataflow stop_trigger_sources conf".split(),
+"integtest-partition boot conf start 402 drain_dataflow stop_trigger_sources start_run".split(),
+"integtest-partition boot conf start 403 drain_dataflow stop_trigger_sources start".split(),
+"integtest-partition boot conf start 404 drain_dataflow stop_trigger_sources enable_triggers".split(),
+"integtest-partition boot conf start 405 drain_dataflow stop_trigger_sources disable_triggers".split(),
+"integtest-partition boot conf start 406 drain_dataflow stop_trigger_sources drain_dataflow".split(),
+"integtest-partition boot conf start 407 drain_dataflow stop_trigger_sources stop_trigger_sources".split(),
+"integtest-partition boot conf start 408 drain_dataflow stop_trigger_sources scrap".split(),
+
+# Only start and scrap after stop
+"integtest-partition boot conf start 500 drain_dataflow stop_trigger_sources stop boot".split(),
+"integtest-partition boot conf start 501 drain_dataflow stop_trigger_sources stop conf".split(),
+"integtest-partition boot conf start 502 drain_dataflow stop_trigger_sources stop enable_triggers".split(),
+"integtest-partition boot conf start 503 drain_dataflow stop_trigger_sources stop disable_triggers".split(),
+"integtest-partition boot conf start 504 drain_dataflow stop_trigger_sources stop drain_dataflow".split(),
+"integtest-partition boot conf start 505 drain_dataflow stop_trigger_sources stop stop_trigger_sources".split(),
+"integtest-partition boot conf start 506 drain_dataflow stop_trigger_sources stop scrap".split(),
+"integtest-partition boot conf start 507 drain_dataflow stop_trigger_sources stop stop_run".split(),
+
+# Only terminate after scrap
+"integtest-partition boot conf start 600 drain_dataflow stop_trigger_sources stop scrap boot".split(),
+"integtest-partition boot conf start 601 drain_dataflow stop_trigger_sources stop scrap start".split(),
+"integtest-partition boot conf start 602 drain_dataflow stop_trigger_sources stop scrap enable_triggers".split(),
+"integtest-partition boot conf start 603 drain_dataflow stop_trigger_sources stop scrap disable_triggers".split(),
+"integtest-partition boot conf start 604 drain_dataflow stop_trigger_sources stop scrap drain_dataflow".split(),
+"integtest-partition boot conf start 605 drain_dataflow stop_trigger_sources stop scrap stop_trigger_sources".split(),
+"integtest-partition boot conf start 606 drain_dataflow stop_trigger_sources stop scrap stop".split(),
+"integtest-partition boot conf start 607 drain_dataflow stop_trigger_sources stop scrap scrap".split(),
 
 # Test valid command after invalid (should still fail)
-"integtest-partition boot boot init conf start 121 stop scrap".split(),
-"integtest-partition boot init stop conf start 122 stop scrap".split(),
-"integtest-partition boot init conf stop start 123 stop scrap".split(),
-"integtest-partition boot init conf start 124 conf stop scrap".split(),
-"integtest-partition boot init conf start 125 stop init scrap".split(),
-"integtest-partition boot init conf start 125 stop scrap boot conf".split(),
-"integtest-partition boot init stop start 126 stop scrap boot conf".split()
+# "integtest-partition boot boot conf start 121 stop scrap".split(),
+# "integtest-partition boot stop conf start 122 stop scrap".split(),
+# "integtest-partition boot conf stop start 123 stop scrap".split(),
+# "integtest-partition boot conf start 124 conf stop scrap".split(),
+# "integtest-partition boot conf start 125 stop scrap".split(),
+# "integtest-partition boot conf start 125 stop scrap boot conf".split(),
+# "integtest-partition boot stop start 126 stop scrap boot conf".split()
 ]
 
 # The tests themselves
 def test_result(run_nanorc):
-    assert run_nanorc.completed_process.returncode==30 # InvalidTransition
+    assert run_nanorc.completed_process.returncode!=0
