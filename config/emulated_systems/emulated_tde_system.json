@@ -1,8 +1,10 @@
 {
   "readout": {
+    "clock_speed_hz": 62500000,
+    "eth_mode": true,
     "emulator_mode": true,
-    "data_rate_slowdown_factor": 1,
-    "data_file": "/nfs/sw/rsipos/tde-frames.bin",
+    "data_rate_slowdown_factor": 10,
+    "default_data_file": "asset://?label=TDE16&subsystem=readout",
     "hardware_map_file": "emulated_tde_system_HardwareMap.txt"
   },
   "trigger": {
