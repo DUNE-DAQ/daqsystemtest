@@ -1,0 +1,27 @@
+{
+  "readout": {
+    "clock_speed_hz": 62500000,
+    "eth_mode": true,
+    "emulator_mode": true,
+    "data_rate_slowdown_factor": 10,
+    "default_data_file": "asset://?label=WIBEth&subsystem=readout",
+    "hardware_map_file": "emulated_wib2_system_HardwareMap.txt"
+  },
+  "trigger": {
+    "trigger_rate_hz": 1
+  },
+  "dataflow": {
+    "apps": [
+      {
+        "app_name": "dataflow0",
+        "host_df": "np04-srv-004",
+        "output_paths": ["/data0/test"]
+      }
+    ]
+  },
+    "boot": {
+    "ers_impl": "cern",
+    "opmon_impl": "cern"
+  }
+
+}
