@@ -19,6 +19,7 @@ number_of_dataflow_apps=1
 base_trigger_rate=1.0 # Hz
 trigger_rate_factor=3.5
 run_duration=20  # seconds
+conn_svc_port=15879
 
 # Default values for validation parameters
 expected_number_of_data_files=3*number_of_dataflow_apps
@@ -39,15 +40,23 @@ triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
 # Determine if the conditions are right for these tests
 we_are_running_on_an_iceberg_computer=False
 hostname=os.uname().nodename
-#if "iceberg01" in hostname or "protodune-daq02" in hostname:
 if "iceberg01" in hostname:
     we_are_running_on_an_iceberg_computer=True
-the_global_timing_partition_is_running=False
-username=os.environ.get('USER')
-for proc in psutil.process_iter(['pid', 'name', 'username']):
-    if proc.username() == username and "nanotimingrc" in proc.name():
-        the_global_timing_partition_is_running=True
-print(f"DEBUG: hostname is {hostname}, iceberg-computer flag is {we_are_running_on_an_iceberg_computer} and global-timing-running flag is {the_global_timing_partition_is_running}.")
+the_global_timing_session_is_running=False
+global_timing_session_user="Unknown"
+for proc in psutil.process_iter():
+    if "nanotimingrc" in proc.name() and "iceberg-integtest-timing-session" in proc.cmdline():
+        the_global_timing_session_is_running=True
+        global_timing_session_user=proc.username()
+try:
+  urllib.request.urlopen(f'http://localhost:{conn_svc_port}').status
+  the_connection_server_is_running=True
+except:
+  the_connection_server_is_running=False
+if the_global_timing_session_is_running:
+    print(f"DEBUG: hostname is {hostname}, iceberg-computer flag is {we_are_running_on_an_iceberg_computer}, global-timing-running flag is {the_global_timing_session_is_running} (as user {global_timing_session_user}), connection-server-running flag is {the_connection_server_is_running}.")
+else:
+    print(f"DEBUG: hostname is {hostname}, iceberg-computer flag is {we_are_running_on_an_iceberg_computer}, global-timing-running flag is {the_global_timing_session_is_running}, connection-server-running flag is {the_connection_server_is_running}.")
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
@@ -61,11 +70,9 @@ confgen_name="daqconf_multiru_gen"
 hardware_map_contents = integtest_file_gen.generate_hwmap_file(number_of_data_producers, number_of_readout_apps)
 
 conf_dict = config_file_gen.get_default_config_dict()
-try:
-  urllib.request.urlopen('http://localhost:5000').status
-  conf_dict["boot"]["use_connectivity_service"] = True
-except:
-  conf_dict["boot"]["use_connectivity_service"] = False
+conf_dict["boot"]["use_connectivity_service"] = True
+conf_dict["boot"]["start_connectivity_service"] = False
+conf_dict["boot"]["connectivity_service_port"] = conn_svc_port
 conf_dict["hsi"] = {}
 conf_dict["readout"]["clock_speed_hz"] = 62500000
 conf_dict["readout"]["latency_buffer_size"] = 200000
@@ -80,8 +87,7 @@ for df_app in range(number_of_dataflow_apps):
     dfapp_conf["app_name"] = f"dataflow{df_app}"
     conf_dict["dataflow"]["apps"].append(dfapp_conf)
 
-
-if we_are_running_on_an_iceberg_computer and the_global_timing_partition_is_running and conf_dict["boot"]["use_connectivity_service"]:
+if we_are_running_on_an_iceberg_computer and the_global_timing_session_is_running and the_connection_server_is_running:
     conf_dict["trigger"]["ttcm_s1"] = 128
     conf_dict["trigger"]["hsi_trigger_type_passthrough"] = True
     conf_dict["trigger"]["trigger_rate_hz"] = base_trigger_rate
@@ -89,10 +95,11 @@ if we_are_running_on_an_iceberg_computer and the_global_timing_partition_is_runn
     conf_dict["hsi"]["hsi_device_name"]= "BOREAS_TLU_ICEBERG"
     conf_dict["hsi"]["hsi_source"] = 1
     conf_dict["hsi"]["use_timing_hsi"] = True
+    conf_dict["hsi"]["use_fake_hsi"] = False
     conf_dict["hsi"]["host_timing_hsi"] = "iceberg01-priv"
     conf_dict["hsi"]["hsi_re_mask"] = 1
     conf_dict["hsi"]["hsi_hw_connections_file"] = os.path.abspath(f"{my_dir}/../config/timing_systems/connections.xml")
-    conf_dict["timing"]["timing_session_name"] = f"{username}-timing-partition"
+    conf_dict["timing"]["timing_session_name"] = "iceberg-integtest-timing-session"
 
     trigger_factor_conf = copy.deepcopy(conf_dict)
     trigger_factor_conf["trigger"]["trigger_rate_hz"] = base_trigger_rate*trigger_rate_factor
@@ -101,17 +108,17 @@ if we_are_running_on_an_iceberg_computer and the_global_timing_partition_is_runn
                       }
 else:
     conf_dict["readout"]["data_rate_slowdown_factor"] = 10
-    confgen_arguments={"Not on ICEBERG, cannot run test": conf_dict}
+    confgen_arguments={"Invalid test conditions, cannot run test": conf_dict}
 
 # The commands to run in nanorc, as a list
-if we_are_running_on_an_iceberg_computer and the_global_timing_partition_is_running:
-    nanorc_command_list="integtest-partition boot conf".split()
+if we_are_running_on_an_iceberg_computer and the_global_timing_session_is_running and the_connection_server_is_running:
+    nanorc_command_list="integtest-session boot conf".split()
     nanorc_command_list+="start 101 enable_triggers wait ".split() + [str(run_duration)] + "stop_run wait 2".split()
     nanorc_command_list+="start 102 wait 1 enable_triggers wait ".split() + [str(run_duration)] + "disable_triggers wait 1 stop_run".split()
     nanorc_command_list+="start_run 103 wait ".split() + [str(run_duration)] + "disable_triggers wait 1 drain_dataflow wait 1 stop_trigger_sources wait 1 stop wait 2".split()
     nanorc_command_list+="scrap terminate".split()
 else:
-    nanorc_command_list=["integtest-partition", "boot", "terminate"]
+    nanorc_command_list=["integtest-session", "wait", "1"]
 
 # Don't require the --frame-file option since we don't need it
 frame_file_required=False
@@ -139,17 +146,18 @@ def test_data_files(run_nanorc):
     if not we_are_running_on_an_iceberg_computer:
         print(f"This computer ({hostname}) is not part of the ICEBERG DAQ cluster and therefore can not run this test.")
         return
-    if not the_global_timing_partition_is_running:
-        print(f"The global timing partition does not appear to be running on this computer ({hostname}).")
+    if not the_global_timing_session_is_running:
+        print(f"The global timing session does not appear to be running on this computer ({hostname}).")
         print("    Please check whether it is, and start it, if needed.")
-        print("Hints: echo '{ \"boot\": { \"use_connectivity_service\": true }, \"timing_hardware_interface\": { \"host_thi\": \"iceberg01-priv\", \"timing_hw_connections_file\": \"daq-systemtest/config/timing_systems/connections.xml\" }, \"timing_master_controller\": { \"host_tmc\": \"iceberg01-priv\", \"master_device_name\": \"BOREAS_TLU_ICEBERG\" } }' >> iceberg_timing_system_config_input.json")
-        print("       daqconf_timing_gen --config ./iceberg_timing_system_config_input.json timing_partition_config")
-        print("       nanotimingrc timing_partition_config ${USER}-timing-partition boot conf wait 1200 scrap terminate")
+        var1="Hints: echo '{\"boot\": { \"use_connectivity_service\": true, \"start_connectivity_service\": true, \"connectivity_service_port\": 13579 }, \"timing_hardware_interface\": { \"host_thi\": \"iceberg01-priv\", \"firmware_type\": \"pdii\", \"timing_hw_connections_file\": \""
+        var2=os.path.realpath(os.path.dirname(__file__) + "/../")
+        var3="/config/timing_systems/connections.xml\" }, \"timing_master_controller\": { \"host_tmc\": \"iceberg01-priv\", \"master_device_name\": \"BOREAS_TLU_ICEBERG\" } }' >> iceberg_integtest_timing_config_input.json"
+        print(f"{var1}{var2}{var3}")
+        print("       daqconf_timing_gen --config ./iceberg_integtest_timing_config_input.json iceberg_integtest_timing_session_config")
+        print("       nanotimingrc --partition-number 4 iceberg_integtest_timing_session_config iceberg-integtest-timing-session boot conf wait 1200 scrap terminate")
         return
-    if not conf_dict["boot"]["use_connectivity_service"]:
-        print(f"The connectivity service must be running for this test. Please start it via")
-        print(f"      gunicorn -b 0.0.0.0:5000 --workers=1 --worker-class=gthread --threads=4 --timeout 5000000000 connection-service.connection-flask:app")
-        print("and try again")
+    if not the_connection_server_is_running:
+        print(f"The connectivity service must be running for this test. Please confirm that it is being started as part of the timing session for this test.")
         return
 
     fragment_check_list=[]
