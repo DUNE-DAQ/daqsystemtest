@@ -150,8 +150,8 @@ def test_data_files(run_nanorc):
         print(f"The global timing session does not appear to be running on this computer ({hostname}).")
         print("    Please check whether it is, and start it, if needed.")
         var1="Hints: echo '{\"boot\": { \"use_connectivity_service\": true, \"start_connectivity_service\": true, \"connectivity_service_port\": 13579 }, \"timing_hardware_interface\": { \"host_thi\": \"iceberg01-priv\", \"firmware_type\": \"pdii\", \"timing_hw_connections_file\": \""
-        var2=os.environ.get('DBT_AREA_ROOT')
-        var3="/sourcecode/daq-systemtest/config/timing_systems/connections.xml\" }, \"timing_master_controller\": { \"host_tmc\": \"iceberg01-priv\", \"master_device_name\": \"BOREAS_TLU_ICEBERG\" } }' >> iceberg_integtest_timing_config_input.json"
+        var2=os.path.realpath(os.path.dirname(__file__) + "/../")
+        var3="/config/timing_systems/connections.xml\" }, \"timing_master_controller\": { \"host_tmc\": \"iceberg01-priv\", \"master_device_name\": \"BOREAS_TLU_ICEBERG\" } }' >> iceberg_integtest_timing_config_input.json"
         print(f"{var1}{var2}{var3}")
         print("       daqconf_timing_gen --config ./iceberg_integtest_timing_config_input.json iceberg_integtest_timing_session_config")
         print("       nanotimingrc --partition-number 4 iceberg_integtest_timing_session_config iceberg-integtest-timing-session boot conf wait 1200 scrap terminate")
