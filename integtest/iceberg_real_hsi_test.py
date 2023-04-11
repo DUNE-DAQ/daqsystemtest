@@ -19,6 +19,7 @@ number_of_dataflow_apps=1
 base_trigger_rate=1.0 # Hz
 trigger_rate_factor=3.5
 run_duration=20  # seconds
+conn_svc_port=15879
 
 # Default values for validation parameters
 expected_number_of_data_files=3*number_of_dataflow_apps
@@ -42,15 +43,20 @@ hostname=os.uname().nodename
 if "iceberg01" in hostname:
     we_are_running_on_an_iceberg_computer=True
 the_global_timing_session_is_running=False
+global_timing_session_user="Unknown"
 for proc in psutil.process_iter():
     if "nanotimingrc" in proc.name() and "iceberg-integtest-timing-session" in proc.cmdline():
         the_global_timing_session_is_running=True
+        global_timing_session_user=proc.username()
 try:
-  urllib.request.urlopen('http://localhost:15879').status
+  urllib.request.urlopen(f'http://localhost:{conn_svc_port}').status
   the_connection_server_is_running=True
 except:
   the_connection_server_is_running=False
-print(f"DEBUG: hostname is {hostname}, iceberg-computer flag is {we_are_running_on_an_iceberg_computer}, global-timing-running flag is {the_global_timing_session_is_running}, connection-server-running flag is {the_connection_server_is_running}.")
+if the_global_timing_session_is_running:
+    print(f"DEBUG: hostname is {hostname}, iceberg-computer flag is {we_are_running_on_an_iceberg_computer}, global-timing-running flag is {the_global_timing_session_is_running} (as user {global_timing_session_user}), connection-server-running flag is {the_connection_server_is_running}.")
+else:
+    print(f"DEBUG: hostname is {hostname}, iceberg-computer flag is {we_are_running_on_an_iceberg_computer}, global-timing-running flag is {the_global_timing_session_is_running}, connection-server-running flag is {the_connection_server_is_running}.")
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
@@ -66,7 +72,7 @@ hardware_map_contents = integtest_file_gen.generate_hwmap_file(number_of_data_pr
 conf_dict = config_file_gen.get_default_config_dict()
 conf_dict["boot"]["use_connectivity_service"] = True
 conf_dict["boot"]["start_connectivity_service"] = False
-conf_dict["boot"]["connectivity_service_port"] = 15879
+conf_dict["boot"]["connectivity_service_port"] = conn_svc_port
 conf_dict["hsi"] = {}
 conf_dict["readout"]["clock_speed_hz"] = 62500000
 conf_dict["readout"]["latency_buffer_size"] = 200000
