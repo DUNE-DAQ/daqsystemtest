@@ -12,12 +12,12 @@
 
   },
   "hsi": {
-    "host_hsi": "np04-srv-018"
+    "host_timing_hsi": "np04-srv-018"
   },
   "readout": {
     "use_fake_data_producers": true,
     "clock_speed_hz": 62500000,
-    "hardware_map_file": "medium_scale_system_HardwareMap.txt"
+    "detector_readout_map_file": "medium_scale_system_HardwareMap.txt"
   },
   "dataflow": {
 

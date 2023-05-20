@@ -1,6 +1,6 @@
 {
     "flxcardcontroller": {
-        "hardware_map_file": "emulated_wib2_system_HardwareMap.txt",
+        "detector_readout_map_file": "emulated_wib2_system_HardwareMap.txt",
         "emulator_mode": true
     },
     "boot":{

@@ -29,7 +29,7 @@ except:
   conf_dict["boot"]["use_connectivity_service"] = False
 conf_dict["readout"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
 conf_dict["readout"]["latency_buffer_size"] = 200000
-conf_dict["readout"]["enable_software_tpg"] = True
+conf_dict["readout"]["enable_tpg"] = True
 conf_dict["dqm"]["enable_dqm"] = True
 
 confgen_arguments={"Test_System": conf_dict

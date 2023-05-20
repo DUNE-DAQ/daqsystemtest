@@ -2,9 +2,8 @@
   "readout": {
     "emulator_mode": true,
     "data_rate_slowdown_factor": 1,
-    "use_felix": true,
     "clock_speed_hz": 62500000,
-    "hardware_map_file": "wib2_system_HardwareMap.txt"
+    "detector_readout_map_file": "wib2_system_HardwareMap.txt"
   },
   "trigger": {
     "trigger_rate_hz": 1
