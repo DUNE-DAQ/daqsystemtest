@@ -5,7 +5,9 @@
         "image": "np04docker.cern.ch/dunedaq-local/k8s-v400-rc3:rc-v4.0.0-3-01",
         "use_k8s": true,
         "RTE_script_settings": 2,
-        "start_connectivity_service": false
+        "start_connectivity_service": false,
+        "connectivity_service_host": "np04-srv-023",
+        "connectivity_service_port": 30005
     },
     "trigger": {
         "host_trigger": "np04-srv-003"
