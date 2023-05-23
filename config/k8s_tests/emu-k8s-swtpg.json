@@ -1,0 +1,78 @@
+{
+    "boot": {
+        "ers_impl": "cern",
+        "opmon_impl": "cern",
+        "image": "np04docker.cern.ch/dunedaq-local/k8s-v400-rc3:rc-v4.0.0-3-01",
+        "use_k8s": true,
+        "RTE_script_settings": 2,
+        "start_connectivity_service": false,
+        "connectivity_service_host": "np04-srv-023",
+        "connectivity_service_port": 30005
+    },
+    "trigger": {
+        "host_trigger": "np04-srv-003"
+    },
+    "dataflow": {
+        "host_dfo": "np04-srv-013",
+        "apps":[{
+            "host_df": "np04-srv-013"
+        }]
+    },
+    "hsi":{
+        "host_fake_hsi": "np04-srv-013"
+    },
+    "readout":{
+        "latency_buffer_size": 499968,
+        "enable_software_tpg": true,
+        "software_tpg_threshold": 250,
+        "software_tpg_algorithm": "SWTPG",
+        "software_tpg_channel_mask": [],
+        "enable_firmware_tpg": false,
+        "firmware_hit_threshold": 20,
+        "enable_raw_recording": false,
+        "raw_recording_output_dir": ".",
+        "thread_pinning_file": "${PWD}/cpupin-np04-srv-026_10links_SWTPG_enabled.json",
+        "numa_config": {
+            "default_id" : 1,
+            "exceptions": [
+                {
+                    "host": "np04-srv-028",
+                    "card": 1,
+                    "numa_id":1,
+                    "felix_card_id": 2,
+                    "latency_buffer_numa_aware": true,
+                    "latency_buffer_preallocation": true
+                },
+                {
+                    "host": "np04-srv-028",
+                    "card": 0,
+                    "numa_id":0,
+                    "latency_buffer_numa_aware": true,
+                    "latency_buffer_preallocation": true
+                },
+                {
+                    "host": "np04-srv-029",
+                    "card": 0,
+                    "numa_id":0,
+                    "latency_buffer_numa_aware": true,
+                    "latency_buffer_preallocation": true
+                },
+                {
+                    "host": "np04-srv-029",
+                    "card": 1,
+                    "numa_id": 1,
+                    "felix_card_id": 2,
+                    "latency_buffer_numa_aware": true,
+                    "latency_buffer_preallocation": true
+                },
+                {
+                    "host": "np04-srv-030",
+                    "card": 0,
+                    "numa_id": 1,
+                    "latency_buffer_numa_aware": false,
+                    "latency_buffer_preallocation": false
+                }
+            ]
+        }
+    }
+}
