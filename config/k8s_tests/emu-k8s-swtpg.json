@@ -35,10 +35,11 @@
     "readout":{
         "latency_buffer_size": 499968,
         "enable_software_tpg": true,
-        "software_tpg_threshold": 250,
+        "software_tpg_threshold": 1000,
         "software_tpg_algorithm": "SWTPG",
         "software_tpg_channel_mask": [],
         "enable_firmware_tpg": false,
+        "default_data_file": "asset://?label=DuneWIB&subsystem=readout",
         "firmware_hit_threshold": 20,
         "enable_raw_recording": false,
         "raw_recording_output_dir": ".",
