@@ -1,5 +1,5 @@
 {
   "readout": {
-    "detector_readout_map_file": "emulated_pacman_system_HardwareMap.txt"
+    "detector_readout_map_file": "emulated_pacman_system_DetReadoutMap.json"
   }
 }

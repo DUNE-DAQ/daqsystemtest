@@ -2,7 +2,7 @@
   "readout": {
     "enable_tpg": true,
     "data_rate_slowdown_factor": 10,
-    "detector_readout_map_file": "default_system_HardwareMap.txt"
+    "detector_readout_map_file": "default_system_DetReadoutMap.json"
   },
   "trigger": { "enable_tpset_writing": true }
 }

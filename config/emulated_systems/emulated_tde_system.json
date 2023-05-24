@@ -5,7 +5,7 @@
     "emulator_mode": true,
     "data_rate_slowdown_factor": 10,
     "default_data_file": "asset://?label=TDE16&subsystem=readout",
-    "detector_readout_map_file": "emulated_tde_system_HardwareMap.txt"
+    "detector_readout_map_file": "emulated_tde_system_DetReadoutMap.json"
   },
   "trigger": {
     "trigger_rate_hz": 1

@@ -14,7 +14,7 @@
   "readout": {
     "enable_tpg": true,
     "data_rate_slowdown_factor": 10,
-    "detector_readout_map_file": "tpg_dqm_k8s_test_HardwareMap.txt"
+    "detector_readout_map_file": "tpg_dqm_k8s_test_DetReadoutMap.json"
   },
   "dataflow": {
     "host_dfo": "np04-srv-011",
