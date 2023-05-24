@@ -5,7 +5,7 @@
   "timing": {},
   "readout": {
     "data_rate_slowdown_factor": 10,
-    "data_file": "./frames_wib2.bin",
+    "default_data_file": "asset://?name=wib2-frames.bin&label=DuneWIB&subsystem=readout",
     "clock_speed_hz": 62500000,
     "latency_buffer_size": 600000
   },

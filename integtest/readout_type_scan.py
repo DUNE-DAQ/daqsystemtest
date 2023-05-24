@@ -92,7 +92,7 @@ conf_dict["trigger"]["trigger_window_before_ticks"] = 1000
 conf_dict["trigger"]["trigger_window_after_ticks"] = 1000
 
 swtpg_conf = copy.deepcopy(conf_dict)
-swtpg_conf["readout"]["enable_software_tpg"] = True
+swtpg_conf["readout"]["enable_tpg"] = True
 swtpg_conf["readout"]["clock_speed_hz"] = 50000000
 swtpg_conf["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
 
@@ -181,7 +181,7 @@ def test_data_files(run_nanorc):
     local_expected_event_count=expected_event_count
     local_event_count_tolerance=expected_event_count_tolerance
     fragment_check_list=[]
-    if "enable_software_tpg" in run_nanorc.confgen_config["readout"].keys() and run_nanorc.confgen_config["readout"]["enable_software_tpg"]:
+    if "enable_tpg" in run_nanorc.confgen_config["readout"].keys() and run_nanorc.confgen_config["readout"]["enable_tpg"]:
         local_expected_event_count+=(285*number_of_data_producers*run_duration/100)
         local_event_count_tolerance+=(10*number_of_data_producers*run_duration/100)
         fragment_check_list.append(wib1_frag_multi_trig_params)

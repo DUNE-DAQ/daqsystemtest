@@ -4,7 +4,8 @@
     "disable_trace": true,
     "image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest",
     "opmon_impl": "cern",
-    "ers_impl": "cern"
+    "ers_impl": "cern",
+    "start_connectivity_service": false
   },
   "dataflow": {
     "apps": [
@@ -23,12 +24,11 @@
     "host_trigger": "np04-srv-026"
   },
   "hsi": {
-    "host_hsi": "np04-srv-013"
-
+    "host_timing_hsi": "np04-srv-013"
   },
   "readout": {
     "use_fake_data_producers": true,
     "clock_speed_hz": 62500000,
-    "hardware_map_file": "simple_k8s_test_HardwareMap.txt"
+    "detector_readout_map_file": "simple_k8s_test_DetReadoutMap.json"
   }
 }

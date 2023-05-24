@@ -5,7 +5,7 @@
     "emulator_mode": true,
     "data_rate_slowdown_factor": 10,
     "default_data_file": "asset://?label=WIBEth&subsystem=readout",
-    "hardware_map_file": "emulated_wib2_system_HardwareMap.txt"
+    "detector_readout_map_file": "emulated_wib2_system_DetReadoutMap.json"
   },
   "hsi": {
     "host_fake_hsi": "np04-srv-004"
