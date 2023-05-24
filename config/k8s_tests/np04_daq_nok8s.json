@@ -3,7 +3,7 @@
         "opmon_impl": "cern",
         "ers_impl": "cern",
         "image": "np04docker.cern.ch/dunedaq-local/k8s-v400-rc3:rc-v4.0.0-3-01",
-        "use_k8s": true,
+        "use_k8s": false,
         "RTE_script_settings": 2,
         "use_connectivity_service": false,
         "connectivity_service_host": "np04-srv-023",
@@ -91,7 +91,7 @@
                     "latency_buffer_numa_aware": true,
                     "latency_buffer_numa_node": 1,
                     "latency_buffer_preallocation": true
-                }
+		}
             ]
         }
     },
