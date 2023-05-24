@@ -1,9 +1,8 @@
 {
   "readout": {
     "emulator_mode": true,
-    "use_felix": true,
     "clock_speed_hz": 62500000,
-    "detector_readout_map_file": "emulated_wib2_system_HardwareMap.txt"
+    "detector_readout_map_file": "emulated_wib2_system_DetReadoutMap.json"
   },
   "trigger": {
     "trigger_window_after_ticks": 62144,

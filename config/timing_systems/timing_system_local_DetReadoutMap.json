@@ -7,8 +7,8 @@
             "slot_id": 0,
             "stream_id": 0
         },
-        "tech": "flx",
-        "config": {
+        "kind": "flx",
+        "parameters": {
             "protocol": "full",
             "mode": "fix_rate",
             "host": "localhost",
@@ -25,8 +25,8 @@
             "slot_id": 1,
             "stream_id": 0
         },
-        "tech": "flx",
-        "config": {
+        "kind": "flx",
+        "parameters": {
             "protocol": "full",
             "mode": "fix_rate",
             "host": "localhost",
@@ -43,8 +43,8 @@
             "slot_id": 0,
             "stream_id": 1
         },
-        "tech": "flx",
-        "config": {
+        "kind": "flx",
+        "parameters": {
             "protocol": "full",
             "mode": "fix_rate",
             "host": "localhost",
@@ -61,8 +61,8 @@
             "slot_id": 1,
             "stream_id": 1
         },
-        "tech": "flx",
-        "config": {
+        "kind": "flx",
+        "parameters": {
             "protocol": "full",
             "mode": "fix_rate",
             "host": "localhost",

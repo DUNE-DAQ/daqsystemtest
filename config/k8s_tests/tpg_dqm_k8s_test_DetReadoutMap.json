@@ -7,8 +7,8 @@
             "slot_id": 0,
             "stream_id": 0
         },
-        "tech": "flx",
-        "config": {
+        "kind": "flx",
+        "parameters": {
             "protocol": "full",
             "mode": "fix_rate",
             "host": "np04-srv-026",
@@ -25,8 +25,8 @@
             "slot_id": 0,
             "stream_id": 0
         },
-        "tech": "flx",
-        "config": {
+        "kind": "flx",
+        "parameters": {
             "protocol": "full",
             "mode": "fix_rate",
             "host": "np04-srv-028",
@@ -43,8 +43,8 @@
             "slot_id": 0,
             "stream_id": 0
         },
-        "tech": "flx",
-        "config": {
+        "kind": "flx",
+        "parameters": {
             "protocol": "full",
             "mode": "fix_rate",
             "host": "np04-srv-029",
@@ -61,8 +61,8 @@
             "slot_id": 0,
             "stream_id": 1
         },
-        "tech": "flx",
-        "config": {
+        "kind": "flx",
+        "parameters": {
             "protocol": "full",
             "mode": "fix_rate",
             "host": "np04-srv-026",
@@ -79,8 +79,8 @@
             "slot_id": 0,
             "stream_id": 1
         },
-        "tech": "flx",
-        "config": {
+        "kind": "flx",
+        "parameters": {
             "protocol": "full",
             "mode": "fix_rate",
             "host": "np04-srv-028",
@@ -97,8 +97,8 @@
             "slot_id": 0,
             "stream_id": 1
         },
-        "tech": "flx",
-        "config": {
+        "kind": "flx",
+        "parameters": {
             "protocol": "full",
             "mode": "fix_rate",
             "host": "np04-srv-029",
