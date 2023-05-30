@@ -1,0 +1,29 @@
+{
+    "boot": {
+        "opmon_impl": "cern",
+        "ers_impl": "cern",
+        "image": "np04docker.cern.ch/dunedaq-local/k8s-v400:v4.0.0-00",
+        "use_k8s": true,
+        "RTE_script_settings": 2,
+        "use_connectivity_service": false,
+        "connectivity_service_host": "np04-srv-023",
+        "connectivity_service_port": 30005,
+        "start_connectivity_service": false,
+        "op_env": "np04_hd"
+   },
+    "trigger": {
+        "host_trigger": "np04-srv-013"
+   },
+    "dataflow":{
+        "host_dfo": "np04-srv-016",
+	"apps":[{
+	     "app_name": "dataflow0",
+	     "host_df": "np04-srv-003",
+	     "output_paths": ["/data2/titavare"]
+	}]
+    },
+    "hsi":{
+	"host_fake_hsi": "np04-srv-012"
+    }
+}
+

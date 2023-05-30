@@ -1,0 +1,5 @@
+{
+   "apparatus_id": "flx-crtl-apa1",
+   "flx-ctrl": "db://flxcontroller-titavare",
+   "daq": "db://flx-apa1-titavare"
+}
