@@ -83,7 +83,7 @@
         "enable_raw_recording": false,
         "raw_recording_output_dir": ".",
         "fragment_send_timeout_ms": 10000,
-        "thread_pinning_file": "${PWD}/cpupin-np04_swtpg_enabled_srv_028_029.json",
+        "thread_pinning_file": "${PWD}/cpupin-node-optimal.json",
         "numa_config": {
             "default_id": 1,
             "exceptions": [
