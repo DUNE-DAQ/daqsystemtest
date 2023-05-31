@@ -10,8 +10,8 @@
 		"trigger_rate_hz": 1.0
 	},
 	"hsi": {
-		"use_hsi_hw": true,
-		"host_hsi": "np04-srv-019",
+		"use_timing_hsi": true,
+		"host_timing_hsi": "np04-srv-019",
 		"control_hsi_hw": true,
 		"hsi_hw_connections_file": "connections.xml",
 		"hsi_device_name": "BOREAS_TLU_NP04",
@@ -22,7 +22,7 @@
 		"use_fake_data_producers": true,
 		"clock_speed_hz": 62500000,
 		"latency_buffer_size": 200000,
-		"hardware_map_file": "timing_system_cern_HardwareMap.txt"
+		"detector_readout_map_file": "timing_system_cern_DetReadoutMap.json"
 	},
 	"dataflow": {
 		"apps": [

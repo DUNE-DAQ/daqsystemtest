@@ -1,0 +1,182 @@
+[
+    {
+        "src_id": 0,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 0,
+            "stream_id": 0
+        },
+        "kind": "flx",
+        "parameters": {
+            "protocol": "full",
+            "mode": "fix_rate",
+            "host": "np04-srv-029",
+            "card": 0,
+            "slr": 0,
+            "link": 0
+        }
+    },
+    {
+        "src_id": 2,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 1,
+            "stream_id": 0
+        },
+        "kind": "flx",
+        "parameters": {
+            "protocol": "full",
+            "mode": "fix_rate",
+            "host": "np04-srv-029",
+            "card": 0,
+            "slr": 0,
+            "link": 2
+        }
+    },
+    {
+        "src_id": 4,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 2,
+            "stream_id": 0
+        },
+        "kind": "flx",
+        "parameters": {
+            "protocol": "full",
+            "mode": "fix_rate",
+            "host": "np04-srv-029",
+            "card": 0,
+            "slr": 0,
+            "link": 4
+        }
+    },
+    {
+        "src_id": 6,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 3,
+            "stream_id": 0
+        },
+        "kind": "flx",
+        "parameters": {
+            "protocol": "full",
+            "mode": "fix_rate",
+            "host": "np04-srv-029",
+            "card": 0,
+            "slr": 1,
+            "link": 1
+        }
+    },
+    {
+        "src_id": 8,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 4,
+            "stream_id": 0
+        },
+        "kind": "flx",
+        "parameters": {
+            "protocol": "full",
+            "mode": "fix_rate",
+            "host": "np04-srv-029",
+            "card": 0,
+            "slr": 1,
+            "link": 3
+        }
+    },
+    {
+        "src_id": 1,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 0,
+            "stream_id": 1
+        },
+        "kind": "flx",
+        "parameters": {
+            "protocol": "full",
+            "mode": "fix_rate",
+            "host": "np04-srv-029",
+            "card": 0,
+            "slr": 0,
+            "link": 1
+        }
+    },
+    {
+        "src_id": 3,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 1,
+            "stream_id": 1
+        },
+        "kind": "flx",
+        "parameters": {
+            "protocol": "full",
+            "mode": "fix_rate",
+            "host": "np04-srv-029",
+            "card": 0,
+            "slr": 0,
+            "link": 3
+        }
+    },
+    {
+        "src_id": 5,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 2,
+            "stream_id": 1
+        },
+        "kind": "flx",
+        "parameters": {
+            "protocol": "full",
+            "mode": "fix_rate",
+            "host": "np04-srv-029",
+            "card": 0,
+            "slr": 1,
+            "link": 0
+        }
+    },
+    {
+        "src_id": 7,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 3,
+            "stream_id": 1
+        },
+        "kind": "flx",
+        "parameters": {
+            "protocol": "full",
+            "mode": "fix_rate",
+            "host": "np04-srv-029",
+            "card": 0,
+            "slr": 1,
+            "link": 2
+        }
+    },
+    {
+        "src_id": 9,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 4,
+            "stream_id": 1
+        },
+        "kind": "flx",
+        "parameters": {
+            "protocol": "full",
+            "mode": "fix_rate",
+            "host": "np04-srv-029",
+            "card": 0,
+            "slr": 1,
+            "link": 4
+        }
+    }
+]

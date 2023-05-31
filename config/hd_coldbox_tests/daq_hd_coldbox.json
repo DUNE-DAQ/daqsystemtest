@@ -11,9 +11,7 @@
     "data_request_timeout_ms": 1000
   },
   "timing": {
-    "timing_partition_name": "timing",
-    "host_timing": "np04-srv-012.cern.ch",
-    "port_timing": 12345,
+    "timing_session_name": "timing",
     "host_tprtc": "localhost",
     "control_timing_partition": false,
     "timing_partition_master_device_name": "",
@@ -23,7 +21,7 @@
     "timing_partition_spill_gate_enabled": false
   },
   "hsi": {
-    "host_hsi": "np04-srv-012.cern.ch",
+    "host_timing_hsi": "np04-srv-012.cern.ch",
     "hsi_hw_connections_file": "${TIMING_SHARE}/config/etc/connections.xml",
     "hsi_device_name": "",
     "hsi_readout_period": 1e3,
@@ -34,25 +32,20 @@
     "hsi_fe_mask": 0,
     "hsi_inv_mask": 0,
     "hsi_source": 1,
-    "use_hsi_hw": false,
+    "use_timing_hsi": false,
     "hsi_device_id": 0,
     "mean_hsi_signal_multiplicity": 1,
     "hsi_signal_emulation_mode": 0,
     "enabled_hsi_signals": 1
   },
   "readout": {
-    "hardware_map_file": "./hd_coldbox_HardwareMap.txt",
+    "detector_readout_map_file": "./hd_coldbox_DetReadoutMap.json",
     "emulator_mode": false,
     "thread_pinning_file": "./cpupin-np04-srv-028_10links_integration_test.json",
     "data_rate_slowdown_factor": 1,
     "clock_speed_hz": 62500000,
-    "data_file": "./frames.bin",
-    "use_felix": true,
     "latency_buffer_size": 499968,
-    "enable_software_tpg": false,
-    "enable_firmware_tpg": false,
-    "firmware_hit_threshold": 20,
-    "dtp_connections_file": "${DTPCONTROLS_SHARE}/config/dtp_connections.xml",
+    "enable_tpg": false,
     "enable_raw_recording": false,
     "raw_recording_output_dir": ".",
     "use_fake_data_producers": false,

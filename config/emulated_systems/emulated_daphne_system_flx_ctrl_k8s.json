@@ -1,12 +1,13 @@
 {
     "flxcardcontroller": {
-        "hardware_map_file": "emulated_daphne_system_HardwareMap.txt",
+        "detector_readout_map_file": "emulated_daphne_system_DetReadoutMap.json",
         "emulator_mode": true
     },
     "boot":{
         "ers_impl": "cern",
         "opmon_impl": "cern",
 	"use_k8s": true,
-	"image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest"
+	"image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest",
+    "start_connectivity_service": false
     }
 }
