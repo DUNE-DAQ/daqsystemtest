@@ -1,0 +1,25 @@
+{
+    "boot": {
+        "opmon_impl": "cern",
+        "ers_impl": "cern",
+        "image": "np04docker.cern.ch/dunedaq-local/k8s-v400:v4.0.0-00",
+        "use_k8s": true,
+        "RTE_script_settings": 2,
+        "use_connectivity_service": true,
+        "connectivity_service_host": "np04-srv-023",
+        "connectivity_service_port": 30005,
+        "start_connectivity_service": false,
+        "op_env": "np04_hd"
+     },
+     "timing_hardware_interface": {
+	"host_thi": "np04-srv-012",
+	"firmware_type": "pdii"
+     },
+     "timing_master_controller": {
+	     "host_tmc": "np04-srv-012",
+	     "master_device_name": "MASTER_PC059_0",
+	     "master_endpoint_scan_period": 10000
+     }
+
+}
+
