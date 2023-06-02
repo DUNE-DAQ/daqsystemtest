@@ -3,13 +3,18 @@
         "opmon_impl": "cern",
         "ers_impl": "cern",
         "image": "np04docker.cern.ch/dunedaq-local/k8s-v400-resolvenames:v4.0.0-01",
-        "use_k8s": true,
+        "process_manager": "k8s",
         "RTE_script_settings": 2,
         "use_connectivity_service": true,
         "connectivity_service_host": "np04-srv-023",
         "connectivity_service_port": 30005,
         "start_connectivity_service": false,
-        "op_env": "np04_hd"
+        "op_env": "np04_hd",
+        "capture_env_vars": [
+            "TIMING_SHARE",
+            "DETCHANNELMAPS_SHARE",
+            "HERMESMODULES_SHARE"
+        ]
     },
     "ctb_hsi": {
         "use_ctb_hsi": false,

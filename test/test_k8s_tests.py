@@ -9,10 +9,21 @@ script_path = pathlib.Path(__file__).parent
 
 cfg_dir = script_path.parent / "config" / "k8s_tests"
 
-commands = [
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/simple_k8s_test_DetReadoutMap.json -c {cfg_dir}/simple_k8s_test.json test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/tpg_dqm_k8s_test_DetReadoutMap.json -c {cfg_dir}/tpg_dqm_k8s_test.json test",
+common_flags = [
+    '-n',
 ]
+
+flx_commands = [
+    f"felixcardcontrollerconf_gen.py {' '.join(common_flags)} -m {cfg_dir}/hd_coldbox_DetReadoutMap.json -c {cfg_dir}/flx_card_hd_coldbox.json test",
+]
+
+daq_commands = [
+    f"daqconf_multiru_gen {' '.join(common_flags)} --force-pm k8s -c {cfg_dir}/np04_daq.json -m {cfg_dir}/np04_APA1_DetReadoutMap.json --debug daq_APA1_k8s"
+    f"daqconf_multiru_gen {' '.join(common_flags)} --force-pm ssh -c {cfg_dir}/np04_daq.json -m {cfg_dir}/np04_APA1_DetReadoutMap.json --debug daq_APA1_ssh"
+]
+
+commands = daq_commands
+
 
 failed = []
 success = []
