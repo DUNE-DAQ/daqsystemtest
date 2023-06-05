@@ -13,7 +13,8 @@
      },
      "timing_hardware_interface": {
 	"host_thi": "np04-srv-012",
-	"firmware_type": "pdii"
+	"firmware_type": "pdii",
+	"hsi_device_name": "BOREAS_TLU_NP04"
      },
      "timing_master_controller": {
 	     "host_tmc": "np04-srv-012",

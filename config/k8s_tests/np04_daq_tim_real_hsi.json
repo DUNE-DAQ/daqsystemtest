@@ -12,7 +12,8 @@
         "op_env": "np04_hd"
    },
     "trigger": {
-        "host_trigger": "np04-srv-013"
+        "host_trigger": "np04-srv-013",
+	"ttcm_s1":128
    },
     "dataflow":{
         "host_dfo": "np04-srv-016",
