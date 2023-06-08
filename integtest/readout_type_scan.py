@@ -46,7 +46,7 @@ tde_frag_params={"fragment_type_description": "TDE",
                   "fragment_type": "TDE_AMC",
                   "hdf5_source_subsystem": "Detector_Readout",
                   "expected_fragment_count": number_of_data_producers,
-                  "min_size_bytes": 574280, "max_size_bytes": 574280}
+                  "min_size_bytes": 9044, "max_size_bytes": 9044}
 pds_frag_params={"fragment_type_description": "PDS",
                  "fragment_type": "DAPHNE",
                  "hdf5_source_subsystem": "Detector_Readout",
@@ -76,18 +76,13 @@ ignored_logfile_problems={"dqm": ["client will not be able to connect to Kafka c
 confgen_name="daqconf_multiru_gen"
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
-hardware_map_contents = integtest_file_gen.generate_hwmap_file(n_links=number_of_data_producers, det_id = 3) # default HD_TPC
+dro_map_contents = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id = 3) # default HD_TPC
 
 conf_dict = config_file_gen.get_default_config_dict()
-try:
-  urllib.request.urlopen('http://localhost:5000').status
-  conf_dict["boot"]["use_connectivity_service"] = True
-except:
-  conf_dict["boot"]["use_connectivity_service"] = False
-  
-conf_dict["readout"]["hardware_map"] = hardware_map_contents
+conf_dict["readout"]["dro_map"] = dro_map_contents
 conf_dict["readout"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
 conf_dict["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
+conf_dict["readout"]["use_fake_cards"] = True
 conf_dict["trigger"]["trigger_window_before_ticks"] = 1000
 conf_dict["trigger"]["trigger_window_after_ticks"] = 1000
 
@@ -98,9 +93,9 @@ swtpg_conf["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=
 
 dqm_conf = copy.deepcopy(conf_dict)
 dqm_conf["dqm"]["enable_dqm"] = True
-dqm_conf["readout"]["clock_speed_hz"] = 50000000
-dqm_conf["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
-
+dqm_conf["readout"]["clock_speed_hz"] = 62500000
+dqm_conf["readout"]["default_data_file"] = "asset://?label=DuneWIB&subsystem=readout"
+dqm_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id=3, app_type='flx')
 
 wib1_conf = copy.deepcopy(conf_dict)
 wib1_conf["readout"]["clock_speed_hz"] = 50000000
@@ -108,20 +103,19 @@ wib1_conf["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=r
 
 
 wib2_conf = copy.deepcopy(conf_dict)
+wib2_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id=3, app_type='flx')
 wib2_conf["readout"]["clock_speed_hz"] = 62500000
 wib2_conf["readout"]["default_data_file"] = "asset://?label=DuneWIB&subsystem=readout"
 
 wibeth_conf = copy.deepcopy(conf_dict)
-wibeth_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(n_links=number_of_data_producers, det_id =10)
+wibeth_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id =10)
 wibeth_conf["readout"]["clock_speed_hz"] = 62500000
 #wibeth_conf["readout"]["data_rate_slowdown_factor"] = 1
-wibeth_conf["readout"]["eth_mode"] = True
 wibeth_conf["readout"]["default_data_file"] = "asset://?label=WIBEth&subsystem=readout"
 
 tde_conf = copy.deepcopy(conf_dict)
-tde_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(n_links=number_of_data_producers, det_id = 11)
+tde_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id = 11)
 tde_conf["readout"]["clock_speed_hz"] = 62500000
-tde_conf["readout"]["eth_mode"] = True
 tde_conf["readout"]["default_data_file"] = "asset://?label=TDE16&subsystem=readout"
 #tde_conf["readout"]["default_data_file"] = "/nfs/home/glehmann/tdeframes.bin"
 #tde_conf["trigger"]["trigger_window_before_ticks"] = 0
@@ -129,22 +123,22 @@ tde_conf["readout"]["default_data_file"] = "asset://?label=TDE16&subsystem=reado
 
 
 #pds_list_conf = copy.deepcopy(conf_dict)
-#pds_list_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 2) # det_id = 2 for HD_PDS
+#pds_list_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(number_of_data_producers, 1, 2) # det_id = 2 for HD_PDS
 #pds_list_conf["readout"]["default_data_file"] = "asset://?label=PDSList&subsystem=readout"
 
 #pacman_conf = copy.deepcopy(conf_dict)
-#pacman_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 32) # det_id = 32 for NDLAr_TPC
+#pacman_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(number_of_data_producers, 1, 32) # det_id = 32 for NDLAr_TPC
 #pacman_conf["readout"]["default_data_file"] = "asset://?label=PACMAN&subsystem=readout"
 
 #mpd_conf = copy.deepcopy(conf_dict)
-#mpd_conf["readout"]["hardware_map"] = integtest_file_gen.generate_hwmap_file(number_of_data_producers, 1, 33) # det_id = 33 for NDLAr_PDS
+#mpd_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(number_of_data_producers, 1, 33) # det_id = 33 for NDLAr_PDS
 #mpd_conf["readout"]["default_data_file"] = "asset://?label=MPD&subsystem=readout"
 
 
 confgen_arguments={
-                   "WIB1_System": wib1_conf,
+                   #"WIB1_System": wib1_conf,
                    "WIBEth_System": wibeth_conf,
-                   "Software_TPG_System": swtpg_conf,
+                   #"Software_TPG_System": swtpg_conf,
                    "DQM_System": dqm_conf,
                    "WIB2_System": wib2_conf,
                    #"PDS_(list)_System": pds_list_conf,
@@ -191,6 +185,8 @@ def test_data_files(run_nanorc):
         current_test=os.environ.get('PYTEST_CURRENT_TEST')
         if "PDS" in current_test:
             fragment_check_list.append(pds_frag_params)
+        elif "DQM" in current_test:
+            fragment_check_list.append(wib2_frag_params)
         elif "WIB2" in current_test:
             fragment_check_list.append(wib2_frag_params)
         elif "WIBEth" in current_test:
