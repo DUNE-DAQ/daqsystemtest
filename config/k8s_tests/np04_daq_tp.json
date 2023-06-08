@@ -2,14 +2,19 @@
     "boot": {
         "opmon_impl": "cern",
         "ers_impl": "cern",
-        "image": "np04docker.cern.ch/dunedaq-local/k8s-v400-rc3:rc-v4.0.0-3-01",
-        "use_k8s": true,
+        "image": "np04docker.cern.ch/dunedaq-local/k8s-resolvenames:N23-06-04-00",
+        "process_manager": "k8s",
         "RTE_script_settings": 2,
-        "use_connectivity_service": false,
+        "use_connectivity_service": true,
         "connectivity_service_host": "np04-srv-023",
         "connectivity_service_port": 30005,
         "start_connectivity_service": false,
-        "op_env": "np04_hd"
+        "op_env": "np04_hd",
+        "capture_env_vars": [
+            "TIMING_SHARE",
+            "DETCHANNELMAPS_SHARE",
+            "HERMESMODULES_SHARE"
+        ]
     },
     "ctb_hsi": {
         "use_ctb_hsi": false,
@@ -72,18 +77,15 @@
     "readout": {
         "emulator_mode": false,
         "clock_speed_hz": 62500000,
-        "use_felix": true,
         "latency_buffer_size": 499968,
-        "enable_software_tpg": true,
-        "software_tpg_threshold": 250,
-        "software_tpg_algorithm": "SWTPG",
-        "software_tpg_channel_mask": [],
-        "enable_firmware_tpg": false,
-        "firmware_hit_threshold": 20,
+        "enable_tpg": true,
+        "tpg_threshold": 250,
+        "tpg_algorithm": "SimpleThreshold",
+        "tpg_channel_mask": [],
         "enable_raw_recording": false,
         "raw_recording_output_dir": ".",
         "fragment_send_timeout_ms": 10000,
-        "thread_pinning_file": "${PWD}/cpupin-np04_swtpg_enabled_srv_028_029.json",
+        "thread_pinning_file": "cpupin-np04_swtpg_enabled_srv_028_029.json",
         "numa_config": {
             "default_id": 1,
             "exceptions": [

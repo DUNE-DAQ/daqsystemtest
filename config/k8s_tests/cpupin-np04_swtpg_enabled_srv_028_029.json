@@ -3,7 +3,7 @@
   
   "daq_application": {
 
-    "--name runp04srv0280": {
+    "--name runp04srv028flx0": {
      "parent": "0,2,4,6,8",
      "threads": {
         "flx-dma-0-1": [1,3],
@@ -56,7 +56,7 @@
 
       }
     },
-    "--name runp04srv0290": {
+    "--name runp04srv029flx0": {
      "parent": "0,2,4,6,8",
      "threads": {
         "flx-dma-0-1": [1,3],
