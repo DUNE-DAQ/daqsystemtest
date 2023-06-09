@@ -1,0 +1,15 @@
+{
+    "host_dfo": "np04-srv-013",
+    "token_count": 10,
+    "apps": [
+        {
+            "app_name": "dataflow0",
+            "host_df": "np04-srv-004",
+            "output_paths": [
+                "/data2"
+            ],
+            "max_file_size": 4294967296,
+            "max_trigger_record_window": 0
+        }
+    ]
+}

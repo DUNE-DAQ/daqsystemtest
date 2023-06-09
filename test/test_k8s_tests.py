@@ -25,12 +25,11 @@ flx_commands = [
 ]
 
 daq_commands = [
-    f"daqconf_multiru_gen {' '.join(common_flags)} --force-pm k8s -c {cfg_dir}/np04_daq_tp.json -m {cfg_dir}/np04_APA1_DetReadoutMap.json --debug daq_APA1_k8s",
-    f"daqconf_multiru_gen {' '.join(common_flags)} --force-pm ssh -c {cfg_dir}/np04_daq_tp.json -m {cfg_dir}/np04_APA1_DetReadoutMap.json --debug daq_APA1_ssh",
+    f"daqconf_multiru_gen {' '.join(common_flags)} --force-pm k8s -c {cfg_dir}/np04_daq_tpg_slim.json -m {cfg_dir}/np04_APA1_DetReadoutMap.json --debug daq_APA1_k8s",
+    f"daqconf_multiru_gen {' '.join(common_flags)} --force-pm ssh -c {cfg_dir}/np04_daq_tpg_slim.json -m {cfg_dir}/np04_APA1_DetReadoutMap.json --debug daq_APA1_ssh",
 ]
 
 commands = daq_commands + flx_commands + wib_commands
-commands = daq_commands 
 
 
 failed = []
