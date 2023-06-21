@@ -46,7 +46,7 @@ tde_frag_params={"fragment_type_description": "TDE",
                   "fragment_type": "TDE_AMC",
                   "hdf5_source_subsystem": "Detector_Readout",
                   "expected_fragment_count": number_of_data_producers,
-                  "min_size_bytes": 9044, "max_size_bytes": 18016}
+                  "min_size_bytes": 575048, "max_size_bytes": 575048}
 pds_frag_params={"fragment_type_description": "PDS",
                  "fragment_type": "DAPHNE",
                  "hdf5_source_subsystem": "Detector_Readout",
@@ -116,7 +116,7 @@ wibeth_conf["readout"]["default_data_file"] = "asset://?label=WIBEth&subsystem=r
 tde_conf = copy.deepcopy(conf_dict)
 tde_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id = 11)
 tde_conf["readout"]["clock_speed_hz"] = 62500000
-tde_conf["readout"]["default_data_file"] = "asset://?label=TDE16&subsystem=readout"
+tde_conf["readout"]["default_data_file"] = "asset://?checksum=759e5351436bead208cf4963932d6327"
 #tde_conf["readout"]["default_data_file"] = "/nfs/home/glehmann/tdeframes.bin"
 #tde_conf["trigger"]["trigger_window_before_ticks"] = 0
 #tde_conf["trigger"]["trigger_window_after_ticks"] = 2000
