@@ -1,6 +1,5 @@
 {
     "emulator_mode": false,
-    "clock_speed_hz": 62500000,
     "latency_buffer_size": 499968,
     "enable_tpg": false,
     "tpg_threshold": 250,

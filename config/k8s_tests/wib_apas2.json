@@ -17,26 +17,6 @@
          "host_wib": "np04-srv-025",
     	 "wibserver": [
             {
-                "name": "wib101",
-                "address": "tcp://10.73.137.26:1234"
-            },
-            {
-                "name": "wib102",
-                "address": "tcp://10.73.137.27:1234"
-            },
-            {
-                "name": "wib103",
-                "address": "tcp://10.73.137.28:1234"
-            },
-            {
-                "name": "wib104",
-                "address": "tcp://10.73.137.29:1234"
-            },
-            {
-                "name": "wib105",
-                "address": "tcp://10.73.137.30:1234"
-            },
-            {
                 "name": "wib201",
                 "address": "tcp://10.73.137.31:1234"
             },

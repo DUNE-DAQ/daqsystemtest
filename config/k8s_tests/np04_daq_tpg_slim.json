@@ -9,12 +9,16 @@
         "connectivity_service_host": "np04-srv-023",
         "connectivity_service_port": 30005,
         "start_connectivity_service": false,
-        "op_env": "np04_hd",
         "capture_env_vars": [
             "TIMING_SHARE",
             "DETCHANNELMAPS_SHARE",
             "HERMESMODULES_SHARE"
         ]
+    },
+    "detector": {
+        "op_env": "np04_hd",
+        "tpg_channel_map": "PD2HDChannelMap",
+        "clock_speed_hz": 62500000
     },
     "ctb_hsi": "apps/fake_ctb_hsi_np04.json",
     "dataflow": "apps/dataflow_np04_004.json",

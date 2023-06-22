@@ -8,7 +8,9 @@
         "use_connectivity_service": false,
         "connectivity_service_host": "np04-srv-023",
         "connectivity_service_port": 30005,
-        "start_connectivity_service": false,
+        "start_connectivity_service": false
+    },
+    "detector": {
         "op_env": "np04_hd"
     }
 }
