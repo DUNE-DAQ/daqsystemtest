@@ -35,8 +35,17 @@ daq_commands = [
     f"daqconf_multiru_gen {' '.join(common_flags)} --force-pm ssh -c {cfg_dir}/np04_daq_tpg_slim.json -m {cfg_dir}/np04_APA1_DetReadoutMap.json --debug daq_APA1_ssh",
 ]
 
+hermes_commands = [
+    f"hermesmodules_gen {' '.join(common_flags)} --force-pm k8s -c {cfg_dir}/hermes_default.json -m {cfg_dir}/np04_APA3_DetReadoutMap.json --debug hermes_APA3_k8s",
+    f"hermesmodules_gen {' '.join(common_flags)} --force-pm ssh -c {cfg_dir}/hermes_default.json -m {cfg_dir}/np04_APA3_DetReadoutMap.json --debug hermes_APA3_ssh",
+]
+
 commands = daq_commands + flx_commands + wib_commands
-commands = daq_commands
+# commands = daq_commands
+# commands = flx_commands
+# commands = wib_commands
+# commands = hermes_commands
+
 
 
 failed = []
