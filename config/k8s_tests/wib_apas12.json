@@ -10,9 +10,6 @@
         "connectivity_service_port": 30005,
         "start_connectivity_service": false
     },
-    "detector": {
-        "op_env": "np04_hd"
-    },
     "wibmod":{
          "host_wib": "np04-srv-025",
     	 "wibserver": [
