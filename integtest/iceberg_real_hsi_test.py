@@ -73,8 +73,7 @@ conf_dict = config_file_gen.get_default_config_dict()
 conf_dict["boot"]["use_connectivity_service"] = True
 conf_dict["boot"]["start_connectivity_service"] = False
 conf_dict["boot"]["connectivity_service_port"] = conn_svc_port
-conf_dict["hsi"] = {}
-conf_dict["readout"]["clock_speed_hz"] = 62500000
+conf_dict["detector"]["clock_speed_hz"] = 62500000
 conf_dict["readout"]["latency_buffer_size"] = 200000
 conf_dict["readout"]["use_fake_data_producers"] = True
 conf_dict["readout"]["default_data_file"] = "asset://?label=DuneWIB&subsystem=readout"
@@ -90,7 +89,7 @@ for df_app in range(number_of_dataflow_apps):
 if we_are_running_on_an_iceberg_computer and the_global_timing_session_is_running and the_connection_server_is_running:
     conf_dict["trigger"]["ttcm_s1"] = 128
     conf_dict["trigger"]["hsi_trigger_type_passthrough"] = True
-    conf_dict["trigger"]["trigger_rate_hz"] = base_trigger_rate
+    conf_dict["hsi"]["random_trigger_rate_hz"] = base_trigger_rate
     conf_dict["hsi"]["control_hsi_hw"]= True
     conf_dict["hsi"]["hsi_device_name"]= "BOREAS_TLU_ICEBERG"
     conf_dict["hsi"]["hsi_source"] = 1
@@ -102,12 +101,12 @@ if we_are_running_on_an_iceberg_computer and the_global_timing_session_is_runnin
     conf_dict["timing"]["timing_session_name"] = "iceberg-integtest-timing-session"
 
     trigger_factor_conf = copy.deepcopy(conf_dict)
-    trigger_factor_conf["trigger"]["trigger_rate_hz"] = base_trigger_rate*trigger_rate_factor
+    trigger_factor_conf["hsi"]["random_trigger_rate_hz"] = base_trigger_rate*trigger_rate_factor
     confgen_arguments={"Base_Trigger_Rate": conf_dict,
                        "Trigger_Rate_with_Factor": trigger_factor_conf
                       }
 else:
-    conf_dict["readout"]["data_rate_slowdown_factor"] = 10
+    conf_dict["daq_common"]["data_rate_slowdown_factor"] = 10
     confgen_arguments={"Invalid test conditions, cannot run test": conf_dict}
 
 # The commands to run in nanorc, as a list
@@ -126,6 +125,13 @@ frame_file_required=False
 # The tests themselves
 
 def test_nanorc_success(run_nanorc):
+    if not we_are_running_on_an_iceberg_computer:
+        pytest.skip(f"This computer ({hostname}) is not part of the ICEBERG DAQ cluster and therefore can not run this test.")
+    if not the_global_timing_session_is_running:
+        pytest.skip("The global timing session is not running.")
+    if not the_connection_server_is_running:
+        pytest.skip(f"The connectivity service must be running for this test.")
+
     current_test=os.environ.get('PYTEST_CURRENT_TEST')
     match_obj = re.search(r".*\[(.+)\].*", current_test)
     if match_obj:
@@ -138,14 +144,20 @@ def test_nanorc_success(run_nanorc):
     assert run_nanorc.completed_process.returncode==0
 
 def test_log_files(run_nanorc):
+    if not we_are_running_on_an_iceberg_computer:
+        pytest.skip(f"This computer ({hostname}) is not part of the ICEBERG DAQ cluster and therefore can not run this test.")
+    if not the_global_timing_session_is_running:
+        pytest.skip("The global timing session is not running.")
+    if not the_connection_server_is_running:
+        pytest.skip(f"The connectivity service must be running for this test.")
+
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(run_nanorc.log_files, True, True)
 
 def test_data_files(run_nanorc):
     if not we_are_running_on_an_iceberg_computer:
-        print(f"This computer ({hostname}) is not part of the ICEBERG DAQ cluster and therefore can not run this test.")
-        return
+        pytest.skip(f"This computer ({hostname}) is not part of the ICEBERG DAQ cluster and therefore can not run this test.")
     if not the_global_timing_session_is_running:
         print(f"The global timing session does not appear to be running on this computer ({hostname}).")
         print("    Please check whether it is, and start it, if needed.")
@@ -155,10 +167,9 @@ def test_data_files(run_nanorc):
         print(f"{var1}{var2}{var3}")
         print("       daqconf_timing_gen --config ./iceberg_integtest_timing_config_input.json iceberg_integtest_timing_session_config")
         print("       nanotimingrc --partition-number 4 iceberg_integtest_timing_session_config iceberg-integtest-timing-session boot conf wait 1200 scrap terminate")
-        return
+        pytest.skip("The global timing session is not running.")
     if not the_connection_server_is_running:
-        print(f"The connectivity service must be running for this test. Please confirm that it is being started as part of the timing session for this test.")
-        return
+        pytest.skip(f"The connectivity service must be running for this test. Please confirm that it is being started as part of the timing session for this test.")
 
     fragment_check_list=[]
     fragment_check_list.append(wib2_frag_hsi_trig_params)
