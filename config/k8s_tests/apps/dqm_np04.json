@@ -1,0 +1,8 @@
+{
+    "enable_dqm": false,
+    "impl": "cern",
+    "host_dqm": [
+        "np04-srv-016"
+    ],
+    "cmap": "PD2HD"
+}

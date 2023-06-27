@@ -23,8 +23,8 @@
   "boot": {
     "ers_impl": "cern",
     "opmon_impl": "cern",
-    "use_k8s": true,
-    "image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest",
+    "process_manager": "k8s",
+    "k8s_image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest",
     "start_connectivity_service": false
   }
 }

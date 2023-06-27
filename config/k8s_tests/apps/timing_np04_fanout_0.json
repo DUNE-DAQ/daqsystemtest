@@ -1,0 +1,10 @@
+{
+    "timing_session_name": "timing",
+    "host_tprtc": "np04-srv-012",
+    "control_timing_partition": false,
+    "timing_partition_master_device_name": "PROD_FANOUT_0_CH",
+    "timing_partition_id": 0,
+    "timing_partition_trigger_mask": 255,
+    "timing_partition_rate_control_enabled": false,
+    "timing_partition_spill_gate_enabled": false
+}

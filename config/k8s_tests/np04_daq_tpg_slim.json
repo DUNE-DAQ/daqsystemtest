@@ -1,0 +1,30 @@
+{
+    "boot": {
+        "opmon_impl": "cern",
+        "ers_impl": "cern",
+        "process_manager": "k8s",
+        "k8s_image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest",
+        "k8s_rte": "release",
+        "use_connectivity_service": true,
+        "connectivity_service_host": "np04-srv-023",
+        "connectivity_service_port": 30005,
+        "start_connectivity_service": false,
+        "capture_env_vars": [
+            "TIMING_SHARE",
+            "DETCHANNELMAPS_SHARE",
+            "HERMESMODULES_SHARE"
+        ]
+    },
+    "detector": {
+        "op_env": "np04_hd",
+        "tpg_channel_map": "PD2HDChannelMap",
+        "clock_speed_hz": 62500000
+    },
+    "ctb_hsi": "apps/fake_ctb_hsi_np04.json",
+    "dataflow": "apps/dataflow_np04_004.json",
+    "dqm": "apps/dqm_np04.json",
+    "hsi": "apps/fake_hsi_np04.json",
+    "readout": "apps/readout_028_029_tpg.json",
+    "timing": "apps/timing_np04_fanout_0.json",
+    "trigger": "apps/trigger_np04_prescale.json"
+}

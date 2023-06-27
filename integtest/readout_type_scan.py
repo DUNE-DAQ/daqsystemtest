@@ -80,7 +80,7 @@ dro_map_contents = integtest_file_gen.generate_dromap_contents(n_streams=number_
 
 conf_dict = config_file_gen.get_default_config_dict()
 conf_dict["readout"]["dro_map"] = dro_map_contents
-conf_dict["readout"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
+conf_dict["daq_common"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
 conf_dict["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
 conf_dict["readout"]["use_fake_cards"] = True
 conf_dict["trigger"]["trigger_window_before_ticks"] = 1000
@@ -88,34 +88,34 @@ conf_dict["trigger"]["trigger_window_after_ticks"] = 1000
 
 swtpg_conf = copy.deepcopy(conf_dict)
 swtpg_conf["readout"]["enable_tpg"] = True
-swtpg_conf["readout"]["clock_speed_hz"] = 50000000
+swtpg_conf["detector"]["clock_speed_hz"] = 50000000
 swtpg_conf["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
 
 dqm_conf = copy.deepcopy(conf_dict)
 dqm_conf["dqm"]["enable_dqm"] = True
-dqm_conf["readout"]["clock_speed_hz"] = 62500000
+dqm_conf["detector"]["clock_speed_hz"] = 62500000
 dqm_conf["readout"]["default_data_file"] = "asset://?label=DuneWIB&subsystem=readout"
 dqm_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id=3, app_type='flx')
 
 wib1_conf = copy.deepcopy(conf_dict)
-wib1_conf["readout"]["clock_speed_hz"] = 50000000
+wib1_conf["detector"]["clock_speed_hz"] = 50000000
 wib1_conf["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
 
 
 wib2_conf = copy.deepcopy(conf_dict)
 wib2_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id=3, app_type='flx')
-wib2_conf["readout"]["clock_speed_hz"] = 62500000
+wib2_conf["detector"]["clock_speed_hz"] = 62500000
 wib2_conf["readout"]["default_data_file"] = "asset://?label=DuneWIB&subsystem=readout"
 
 wibeth_conf = copy.deepcopy(conf_dict)
 wibeth_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id =10)
-wibeth_conf["readout"]["clock_speed_hz"] = 62500000
+wibeth_conf["detector"]["clock_speed_hz"] = 62500000
 #wibeth_conf["readout"]["data_rate_slowdown_factor"] = 1
 wibeth_conf["readout"]["default_data_file"] = "asset://?label=WIBEth&subsystem=readout"
 
 tde_conf = copy.deepcopy(conf_dict)
 tde_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id = 11)
-tde_conf["readout"]["clock_speed_hz"] = 62500000
+tde_conf["detector"]["clock_speed_hz"] = 62500000
 tde_conf["readout"]["default_data_file"] = "asset://?checksum=759e5351436bead208cf4963932d6327"
 #tde_conf["readout"]["default_data_file"] = "/nfs/home/glehmann/tdeframes.bin"
 #tde_conf["trigger"]["trigger_window_before_ticks"] = 0

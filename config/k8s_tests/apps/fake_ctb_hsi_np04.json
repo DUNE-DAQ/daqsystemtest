@@ -1,0 +1,28 @@
+{
+    "use_ctb_hsi": false,
+    "host_ctb_hsi": "np04-srv-013",
+    "hlt_triggers": [
+        {
+            "id": "HLT_4",
+            "description": "TEST HLT",
+            "enable": true,
+            "minc": "0x1",
+            "mexc": "0x0",
+            "prescale": "0x0"
+        }
+    ],
+    "fake_trig_1": {
+        "description": "Fake 1Hz LLT trigger",
+        "enable": true,
+        "fixed_freq": true,
+        "beam_mode": false,
+        "period": 62500000
+    },
+    "fake_trig_2": {
+        "description": "Fake 1Hz LLT trigger",
+        "enable": true,
+        "fixed_freq": true,
+        "beam_mode": false,
+        "period": 62500000
+    }
+}

@@ -1,0 +1,55 @@
+{
+    "emulator_mode": false,
+    "latency_buffer_size": 499968,
+    "enable_tpg": false,
+    "tpg_threshold": 250,
+    "tpg_algorithm": "SimpleThreshold",
+    "tpg_channel_mask": [],
+    "enable_raw_recording": false,
+    "raw_recording_output_dir": ".",
+    "fragment_send_timeout_ms": 10000,
+    "thread_pinning_file": "cpupin-node-optimal.json",
+    "numa_config": {
+        "default_id": 1,
+        "exceptions": [
+            {
+                "host": "np04-srv-028",
+                "card": 1,
+                "numa_id": 1,
+                "felix_card_id": 2,
+                "latency_buffer_numa_aware": true,
+                "latency_buffer_preallocation": true
+            },
+            {
+                "host": "np04-srv-028",
+                "card": 0,
+                "numa_id": 0,
+                "latency_buffer_numa_aware": true,
+                "latency_buffer_preallocation": true
+            },
+            {
+                "host": "np04-srv-029",
+                "card": 0,
+                "numa_id": 0,
+                "latency_buffer_numa_aware": true,
+                "latency_buffer_preallocation": true
+            },
+            {
+                "host": "np04-srv-029",
+                "card": 1,
+                "numa_id": 1,
+                "felix_card_id": 2,
+                "latency_buffer_numa_aware": true,
+                "latency_buffer_preallocation": true
+            },
+            {
+                "host": "np04-srv-030",
+                "card": 0,
+                "numa_id": 1,
+                "latency_buffer_numa_aware": false,
+                "latency_buffer_preallocation": false
+            }
+        ]
+    },
+    "dpdk_rxqueues_per_lcore": 3
+}

@@ -1,0 +1,20 @@
+{
+    "trigger_rate_hz": 1.0,
+    "trigger_window_before_ticks": 2144,
+    "trigger_window_after_ticks": 260000,
+    "host_trigger": "np04-srv-013",
+    "ttcm_s1": 1,
+    "ttcm_s2": 2,
+    "trigger_activity_plugin": "TriggerActivityMakerPrescalePlugin",
+    "trigger_activity_config": {
+        "prescale": 10000
+    },
+    "trigger_candidate_plugin": "TriggerCandidateMakerPrescalePlugin",
+    "trigger_candidate_config": {
+        "prescale": 10000
+    },
+    "hsi_trigger_type_passthrough": false,
+    "mlt_buffer_timeout": 100,
+    "mlt_send_timed_out_tds": false,
+    "mlt_max_td_length_ms": 1000
+}
