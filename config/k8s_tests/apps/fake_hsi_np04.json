@@ -1,4 +1,5 @@
 {
+    "random_trigger_rate_hz": 1.0,
     "host_timing_hsi": "np04-srv-012",
     "host_fake_hsi": "np04-srv-012",
     "use_fake_hsi": true,

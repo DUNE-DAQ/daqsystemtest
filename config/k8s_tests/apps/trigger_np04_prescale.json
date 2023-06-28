@@ -1,5 +1,4 @@
 {
-    "trigger_rate_hz": 1.0,
     "trigger_window_before_ticks": 2144,
     "trigger_window_after_ticks": 260000,
     "host_trigger": "np04-srv-013",
