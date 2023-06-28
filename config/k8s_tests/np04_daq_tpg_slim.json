@@ -17,7 +17,7 @@
     },
     "detector": {
         "op_env": "np04_hd",
-        "tpg_channel_map": "PD2HDChannelMap",
+        "tpc_channel_map": "PD2HDChannelMap",
         "clock_speed_hz": 62500000
     },
     "ctb_hsi": "apps/fake_ctb_hsi_np04.json",
