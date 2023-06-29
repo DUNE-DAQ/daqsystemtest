@@ -26,11 +26,11 @@ expected_number_of_data_files=3*number_of_dataflow_apps
 check_for_logfile_errors=True
 expected_event_count=run_duration*base_trigger_rate/number_of_dataflow_apps
 expected_event_count_tolerance=expected_event_count/10
-wib2_frag_hsi_trig_params={"fragment_type_description": "WIB2",
-                           "fragment_type": "WIB",
-                           "hdf5_source_subsystem": "Detector_Readout",
-                           "expected_fragment_count": (number_of_data_producers*number_of_readout_apps),
-                           "min_size_bytes": 29808, "max_size_bytes": 29816}
+wibeth_frag_hsi_trig_params={"fragment_type_description": "WIBEth",
+                             "fragment_type": "WIBEth",
+                             "hdf5_source_subsystem": "Detector_Readout",
+                             "expected_fragment_count": (number_of_data_producers*number_of_readout_apps),
+                             "min_size_bytes": 7272, "max_size_bytes": 14472}
 triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
                               "fragment_type": "Trigger_Candidate",
                               "hdf5_source_subsystem": "Trigger",
@@ -67,7 +67,7 @@ confgen_name="daqconf_multiru_gen"
 
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
-hardware_map_contents = integtest_file_gen.generate_hwmap_file(number_of_data_producers, number_of_readout_apps)
+dro_map_contents = integtest_file_gen.generate_dromap_contents(number_of_data_producers, number_of_readout_apps)
 
 conf_dict = config_file_gen.get_default_config_dict()
 conf_dict["boot"]["use_connectivity_service"] = True
@@ -76,7 +76,7 @@ conf_dict["boot"]["connectivity_service_port"] = conn_svc_port
 conf_dict["detector"]["clock_speed_hz"] = 62500000
 conf_dict["readout"]["latency_buffer_size"] = 200000
 conf_dict["readout"]["use_fake_data_producers"] = True
-conf_dict["readout"]["default_data_file"] = "asset://?label=DuneWIB&subsystem=readout"
+conf_dict["readout"]["default_data_file"] = "asset://?label=WIBEth&subsystem=readout"
 conf_dict["trigger"]["trigger_window_before_ticks"] = 1000
 conf_dict["trigger"]["trigger_window_after_ticks"] = 1000
 
@@ -172,7 +172,7 @@ def test_data_files(run_nanorc):
         pytest.skip(f"The connectivity service must be running for this test. Please confirm that it is being started as part of the timing session for this test.")
 
     fragment_check_list=[]
-    fragment_check_list.append(wib2_frag_hsi_trig_params)
+    fragment_check_list.append(wibeth_frag_hsi_trig_params)
     fragment_check_list.append(triggercandidate_frag_params)
 
     local_expected_event_count=expected_event_count
