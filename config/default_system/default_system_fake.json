@@ -4,7 +4,7 @@
     "opmon_impl": "cern"   
   }, 
   "readout": {
-    "detector_readout_map_file": "default_system_DetReadoutMap.json",
+    "detector_readout_map_file": "default_system_eth_DetReadoutMap.json",
     "use_fake_data_producers": true
   }
 }
