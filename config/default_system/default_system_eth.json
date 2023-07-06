@@ -5,6 +5,7 @@
   }, 
   "readout": {
     "detector_readout_map_file": "default_system_eth_DetReadoutMap.json",
-    "use_fake_data_producers": true
+    "use_fake_cards": true,
+    "default_data_file": "asset://?label=WIBEth&subsystem=readout"
   }
 }
