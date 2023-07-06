@@ -85,8 +85,7 @@
     "disable_trace": true,
     "opmon_impl": "cern",
     "ers_impl": "cern",
-    "use_k8s": true,
-    "image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest",
+    "k8s_image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest",
     "start_connectivity_service": false
   },
   "hsi": {
@@ -94,7 +93,6 @@
   },
   "readout": {
     "use_fake_data_producers": true,
-    "clock_speed_hz": 62500000,
     "detector_readout_map_file": "medium_scale_system_DetReadoutMap.json"
   }
 }

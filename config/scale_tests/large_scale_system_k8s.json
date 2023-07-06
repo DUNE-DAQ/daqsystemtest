@@ -11,14 +11,12 @@
   "boot": {
     "opmon_impl": "cern",
     "ers_impl": "cern",
-    "use_k8s": true,
-    "image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest",
+    "k8s_image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest",
     "disable_trace": true,
     "start_connectivity_service": false
   },
   "readout": {
     "use_fake_data_producers": true,
-    "clock_speed_hz": 62500000,
     "detector_readout_map_file": "large_scale_system_DetReadoutMap.json"
   },
   "dataflow": {

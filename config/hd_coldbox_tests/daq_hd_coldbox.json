@@ -5,9 +5,15 @@
     "opmon_impl": "cern",
     "ers_impl": "cern",
     "pocket_url": "127.0.0.1",
-    "image": "",
-    "use_k8s": false,
+    "k8s_image": ""
+  },
+  "detector": {
     "op_env": "swtest",
+    "clock_speed_hz": 62500000,
+    "tpc_channel_map": "HDColdboxChannelMap"
+  },
+  "daq_common": {
+    "data_rate_slowdown_factor": 1,
     "data_request_timeout_ms": 1000
   },
   "timing": {
@@ -36,27 +42,23 @@
     "hsi_device_id": 0,
     "mean_hsi_signal_multiplicity": 1,
     "hsi_signal_emulation_mode": 0,
-    "enabled_hsi_signals": 1
+    "enabled_hsi_signals": 1,
+    "random_trigger_rate_hz": 1.0
   },
   "readout": {
     "detector_readout_map_file": "./hd_coldbox_DetReadoutMap.json",
     "emulator_mode": false,
     "thread_pinning_file": "./cpupin-np04-srv-028_10links_integration_test.json",
-    "data_rate_slowdown_factor": 1,
-    "clock_speed_hz": 62500000,
     "latency_buffer_size": 499968,
     "enable_tpg": false,
     "enable_raw_recording": false,
     "raw_recording_output_dir": ".",
-    "use_fake_data_producers": false,
-    "readout_sends_tp_fragments": false
+    "use_fake_data_producers": false
   },
   "trigger": {
-    "trigger_rate_hz": 1.0,
     "trigger_window_before_ticks": 2144,
     "trigger_window_after_ticks": 260000,
     "host_trigger": "np04-srv-012.cern.ch",
-    "host_tpw": "np04-srv-012.cern.ch",
     "ttcm_s1": 1,
     "ttcm_s2": 2,
     "trigger_activity_plugin": "TriggerActivityMakerPrescalePlugin",
@@ -64,21 +66,21 @@
     "trigger_candidate_plugin": "TriggerCandidateMakerPrescalePlugin",
     "trigger_candidate_config": { "prescale": 10000 },
     "hsi_trigger_type_passthrough": false,
-    "enable_tpset_writing": false,
-    "tpset_output_path": ".",
-    "tpset_output_file_size": 4294967296,
-    "tpg_channel_map": "HDColdboxChannelMap",
     "mlt_buffer_timeout": 100,
     "mlt_send_timed_out_tds": false,
     "mlt_max_td_length_ms": 1000
   },
   "dataflow": {
+    "enable_tpset_writing": false,
+    "host_tpw": "np04-srv-012.cern.ch",
+    "tpset_output_path": ".",
+    "tpset_output_file_size": 4294967296,
     "host_dfo": "np04-srv-012.cern.ch",
     "apps": [
       {
         "app_name": "dataflow0",
         "token_count": 10,
-        "output_paths": [ "/data0/test"],
+        "output_paths": [ "/data0/test" ],
         "host_df": "np04-srv-001.cern.ch",
         "max_file_size": 4294967296,
         "max_trigger_record_window": 0

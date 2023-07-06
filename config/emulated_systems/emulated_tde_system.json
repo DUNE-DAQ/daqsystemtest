@@ -1,13 +1,13 @@
 {
   "readout": {
-    "clock_speed_hz": 62500000,
-    "eth_mode": true,
     "emulator_mode": true,
-    "data_rate_slowdown_factor": 10,
     "default_data_file": "asset://?label=TDE16&subsystem=readout",
     "detector_readout_map_file": "emulated_tde_system_DetReadoutMap.json"
   },
-  "trigger": {
-    "trigger_rate_hz": 1
+  "hsi": {
+    "random_trigger_rate_hz": 1
+  },
+  "daq_common": {
+    "data_rate_slowdown_factor": 10
   }
 }

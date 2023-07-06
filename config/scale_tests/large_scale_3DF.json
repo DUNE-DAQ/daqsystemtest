@@ -40,7 +40,6 @@
   },
   "readout": {
     "use_fake_data_producers": true,
-    "clock_speed_hz": 62500000,
     "detector_readout_map_file": "large_scale_system_DetReadoutMap.json"
   }
 }

@@ -1,18 +1,15 @@
 {
   "readout": {
-    "clock_speed_hz": 62500000,
-    "eth_mode": true,
     "emulator_mode": true,
-    "data_rate_slowdown_factor": 10,
     "default_data_file": "asset://?label=WIBEth&subsystem=readout",
     "detector_readout_map_file": "emulated_wib2_system_DetReadoutMap.json"
   },
   "hsi": {
-    "host_fake_hsi": "np04-srv-004"
+    "host_fake_hsi": "np04-srv-004",
+    "random_trigger_rate_hz": 1
   },
   "trigger": {
-    "host_trigger": "np04-srv-004",
-    "trigger_rate_hz": 1
+    "host_trigger": "np04-srv-004"
   },
   "dataflow": {
     "host_dfo": "np04-srv-004",
@@ -27,5 +24,8 @@
   "boot": {
     "ers_impl": "cern",
     "opmon_impl": "cern"
+  },
+  "daq_common": {
+    "data_rate_slowdown_factor": 10
   }
 }
