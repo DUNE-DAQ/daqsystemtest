@@ -1,4 +1,8 @@
 {
+  "boot": {
+    "ers_impl": "cern",
+    "opmon_impl": "cern"   
+  }, 
   "readout": {
     "enable_tpg": true,
     "detector_readout_map_file": "default_system_DetReadoutMap.json"

@@ -1,4 +1,8 @@
 {
+  "boot": {
+    "ers_impl": "cern",
+    "opmon_impl": "cern"   
+  }, 
   "readout": {
     "detector_readout_map_file": "default_system_DetReadoutMap.json",
     "use_fake_data_producers": true

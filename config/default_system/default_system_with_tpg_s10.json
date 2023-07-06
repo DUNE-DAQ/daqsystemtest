@@ -1,4 +1,8 @@
 {
+  "boot": {
+    "ers_impl": "cern",
+    "opmon_impl": "cern"   
+  }, 
   "readout": {
     "enable_tpg": true,
     "data_rate_slowdown_factor": 10,
