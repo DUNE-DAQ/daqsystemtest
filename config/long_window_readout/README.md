@@ -11,7 +11,7 @@ Independent of that, the existing parameter values in the `daqconf` file specify
 Here are the steps that I used in my tests:
 
 * make any necessary edits to `long_window_readout.json`
-* `daqconf_multiru_gen -c ./long_window_readout.json --detector_readout-map-file ./long_window_readout_DetReadoutMap.json lwr_config`
+* `daqconf_multiru_gen -c ./long_window_readout.json --detector-readout-map-file ./long_window_readout_DetReadoutMap.json lwr_config`
 * `nanorc lwr_config ${USER}-test boot conf start_run 101 wait 35 stop_run scrap terminate`
 * `rm -i /tmp/dunedaq/swtest*.hdf5`
 
