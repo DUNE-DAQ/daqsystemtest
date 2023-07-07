@@ -6,21 +6,20 @@
 		"trigger_window_before_ticks": 1000,
 		"trigger_window_after_ticks": 1000,
 		"hsi_trigger_type_passthrough": true,
-		"ttcm_s1": 128,
-		"trigger_rate_hz": 1.0
+		"ttcm_s1": 128
 	},
 	"hsi": {
-		"use_hsi_hw": true,
-		"host_hsi": "iceberg01-priv",
+		"use_timing_hsi": true,
+		"host_timing_hsi": "iceberg01-priv",
 		"control_hsi_hw": true,
 		"hsi_hw_connections_file": "connections.xml",
 		"hsi_device_name": "BOREAS_TLU_ICEBERG",
 		"hsi_source": 1,
-		"hsi_re_mask": 1
+		"hsi_re_mask": 1,
+		"random_trigger_rate_hz": 1.0
 	},
 	"readout": {
 		"use_fake_data_producers": true,
-		"clock_speed_hz": 62500000,
 		"latency_buffer_size": 200000,
 		"detector_readout_map_file": "timing_system_local_DetReadoutMap.json"
 	},

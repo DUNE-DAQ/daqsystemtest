@@ -1,15 +1,14 @@
 {
   "readout": {
     "emulator_mode": true,
-    "clock_speed_hz": 62500000,
     "detector_readout_map_file": "emulated_wib2_system_DetReadoutMap.json"
   },
   "hsi": {
-    "host_fake_hsi": "np04-srv-004"
+    "host_fake_hsi": "np04-srv-004",
+    "random_trigger_rate_hz": 1
   },
   "trigger": {
     "host_trigger": "np04-srv-004",
-    "trigger_rate_hz": 1,
     "trigger_window_after_ticks": 62144,
     "trigger_window_before_ticks": 200000
 

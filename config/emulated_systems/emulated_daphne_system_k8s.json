@@ -1,7 +1,6 @@
 {
   "readout": {
     "emulator_mode": true,
-    "clock_speed_hz": 62500000,
     "detector_readout_map_file": "emulated_daphne_system_DetReadoutMap.json"
   },
   "trigger": {
@@ -21,8 +20,7 @@
   "boot": {
     "ers_impl": "cern",
     "opmon_impl": "cern",
-    "use_k8s": true,
-    "image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest",
+    "k8s_image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest",
     "start_connectivity_service": false
   }
 }

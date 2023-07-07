@@ -4,20 +4,19 @@
 		"trigger_window_before_ticks": 1000,
 		"trigger_window_after_ticks": 1000,
 		"hsi_trigger_type_passthrough": true,
-		"ttcm_s1": 1,
-		"trigger_rate_hz": 1.0
+		"ttcm_s1": 1
 	},
 	"hsi": {
 		"use_timing_hsi": true,
-		"host_timing_hsi": "localhost",
+		"host_timing_hsi": "it064574.users.bris.ac.uk",
 		"control_hsi_hw": true,
 		"hsi_device_name": "BOREAS_TLU_CH",
 		"hsi_source": 1,
-		"hsi_re_mask": 1
+		"hsi_re_mask": 1,
+		"random_trigger_rate_hz": 1.0
 	},
 	"readout": {
 		"use_fake_data_producers": true,
-		"clock_speed_hz": 62500000,
 		"latency_buffer_size": 200000,
 		"detector_readout_map_file": "timing_system_local_DetReadoutMap.json"
 	},
@@ -31,7 +30,6 @@
 		]
 	},
 	"timing": {
-		"host_timing": "it064574.users.bris.ac.uk",
 		"control_timing_partition": true,
 		"host_tprtc": "localhost",
 		"timing_partition_master_device_name": "BOREAS_TLU_CH"

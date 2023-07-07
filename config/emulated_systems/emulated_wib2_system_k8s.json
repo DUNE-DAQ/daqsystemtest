@@ -1,7 +1,6 @@
 {
   "readout": {
     "emulator_mode": true,
-    "clock_speed_hz": 62500000,
     "detector_readout_map_file": "emulated_wib2_system_DetReadoutMap.json"
   },
   "trigger": {
