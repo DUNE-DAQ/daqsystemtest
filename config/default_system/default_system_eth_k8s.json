@@ -1,0 +1,16 @@
+{
+  "boot": {
+    "ers_impl": "cern",
+    "opmon_impl": "cern",
+    "start_connectivity_service": false,
+    "connectivity_service_host": "np04-srv-023",
+    "connectivity_service_port": 30005,
+    "process_manager": "k8s",
+    "k8s_rte": "release"
+  },
+  "readout": {
+    "detector_readout_map_file": "default_system_eth_DetReadoutMap.json",
+    "use_fake_cards": true,
+    "default_data_file": "asset://?label=WIBEth&subsystem=readout"
+  }
+}
