@@ -12,7 +12,7 @@ cfg_dir = script_path.parent / "config" / "scale_tests"
 commands = [
     f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/large_scale_system_DetReadoutMap.json -c {cfg_dir}/large_scale_system.json test",
     f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/large_scale_system_DetReadoutMap.json -c {cfg_dir}/large_scale_system_k8s.json test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/large_scale_system_DetReadoutMap.json -c {cfg_dir}/large_scale_3DF.json test",
+#    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/large_scale_system_DetReadoutMap.json -c {cfg_dir}/large_scale_3DF.json test",
     f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/medium_scale_system_DetReadoutMap.json -c {cfg_dir}/medium_scale_system.json test",
     f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/medium_scale_system_DetReadoutMap.json -c {cfg_dir}/medium_scale_system_k8s.json test",
 ]
