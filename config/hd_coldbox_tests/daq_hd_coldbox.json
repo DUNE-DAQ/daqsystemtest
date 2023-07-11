@@ -1,11 +1,11 @@
 {
-  "boot": {
-    "base_command_port": 3333,
-    "disable_trace": false,
-    "opmon_impl": "cern",
+  "boot":{
     "ers_impl": "cern",
-    "pocket_url": "127.0.0.1",
-    "k8s_image": ""
+    "opmon_impl": "cern",
+    "start_connectivity_service": false,
+    "connectivity_service_host": "np04-srv-023",
+    "connectivity_service_port": 30005,
+    "k8s_rte": "release"
   },
   "detector": {
     "op_env": "swtest",
