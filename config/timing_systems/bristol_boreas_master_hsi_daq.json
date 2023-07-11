@@ -13,7 +13,8 @@
   },
   "readout": {
     "use_fake_cards": true,
-    "default_data_file": "asset://?label=WIBEth&subsystem=readout"
+    "default_data_file": "asset://?label=WIBEth&subsystem=readout",
+    "detector_readout_map_file": "./daq-systemtest/config/timing_systems/fake_dro_map.json"
   },
   "trigger": {
     "trigger_window_before_ticks": 1000,
@@ -22,11 +23,11 @@
   "hsi": {
     "random_trigger_rate_hz": 1.0,
     "use_timing_hsi": true,
-	"host_timing_hsi": "localhost",
-	"control_hsi_hw": true,
-	"hsi_device_name": "BOREAS_TLU",
-	"hsi_source": 1,
-	"hsi_re_mask": 1
+	  "host_timing_hsi": "localhost",
+	  "control_hsi_hw": true,
+	  "hsi_device_name": "BOREAS_TLU",
+	  "hsi_source": 1,
+	  "hsi_re_mask": 1
   },
   "timing":
   {
