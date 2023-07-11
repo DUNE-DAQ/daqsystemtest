@@ -1,0 +1,36 @@
+{
+  "boot": {
+    "use_connectivity_service": true,
+    "start_connectivity_service": false,
+    "connectivity_service_host": "localhost",
+    "connectivity_service_port": 15432
+  }, 
+  "daq_common": {
+    "data_rate_slowdown_factor": 1
+  },
+  "detector": {
+    "clock_speed_hz": 62500000
+  },
+  "readout": {
+    "use_fake_cards": true,
+    "default_data_file": "asset://?label=WIBEth&subsystem=readout"
+  },
+  "trigger": {
+    "trigger_window_before_ticks": 1000,
+    "trigger_window_after_ticks": 1000
+  },
+  "hsi": {
+    "random_trigger_rate_hz": 1.0,
+    "use_timing_hsi": true,
+	"host_timing_hsi": "localhost",
+	"control_hsi_hw": true,
+	"hsi_device_name": "CHRONOS_FMC",
+	"hsi_source": 1,
+	"hsi_re_mask": 1,
+	"hsi_hw_connections_file": "connections.xml"
+  },
+  "timing":
+  {
+  	"timing_session_name": "pc059timing"
+  }
+}

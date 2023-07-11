@@ -1,0 +1,16 @@
+{
+  "boot": {
+    "use_connectivity_service": true,
+    "start_connectivity_service": true,
+    "connectivity_service_host": "localhost",
+    "connectivity_service_port": 15432
+  },
+  "timing_hardware_interface": {
+    "host_thi": "localhost",
+    "firmware_type": "pdii"
+  },
+  "timing_master_controller": {
+    "host_tmc": "localhost",
+    "master_device_name": "BOREAS_TLU"
+  }
+}

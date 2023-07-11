@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <connections>
-
+  <!-- CERN NP -->
   <connection id="MST_PC059_0"  uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=192.168.200.65:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/master_pc059/top_pc059.xml" />
   <connection id="MST_PC059_1"  uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=192.168.200.66:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/master_pc059/top_pc059.xml" />
   <connection id="MST_PC059_2"  uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=192.168.200.67:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/master_pc059/top_pc059.xml" />
 
-  <connection id="BOREAS_TLU_ICEBERG" uri="ipbusudp-2.0://192.168.121.10:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/boreas_tlu/top_tlu.xml" />
-  
   <connection id="BOREAS_TLU_NP04"    uri="chtcp-2.0://np04-srv-012.cern.ch:10203?target=10.73.137.84:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/boreas_tlu/top_tlu.xml" />
 
+  <!-- ICEBERG -->
+  <connection id="BOREAS_TLU_ICEBERG" uri="ipbusudp-2.0://192.168.121.10:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/boreas_tlu/top_tlu.xml" />
+
+  <!-- Bristol -->
+  <connection id="BOREAS_TLU"         uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.64:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/boreas_tlu/top_tlu.xml" />
+  <connection id="MASTER_PC059"       uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.65:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/master_pc059/top_pc059.xml" />
+  <connection id="CHRONOS_FMC"        uri="chtcp-2.0://kipper.phy.bris.ac.uk:10203?target=192.168.200.23:50001" address_table="file://${TIMING_SHARE}/config/etc/addrtab/v7xx/chronos_fmc/top_fmc.xml" />
 </connections>
-    
