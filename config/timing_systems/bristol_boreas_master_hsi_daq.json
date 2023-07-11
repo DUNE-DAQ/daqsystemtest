@@ -27,7 +27,8 @@
 	  "control_hsi_hw": true,
 	  "hsi_device_name": "BOREAS_TLU",
 	  "hsi_source": 1,
-	  "hsi_re_mask": 1
+	  "hsi_re_mask": 1,
+    "hsi_hw_connections_file": "./daq-systemtest/config/timing_systems/connections.xml"
   },
   "timing":
   {
