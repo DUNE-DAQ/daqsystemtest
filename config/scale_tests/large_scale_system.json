@@ -1,11 +1,12 @@
 {
   "boot": {
-    "disable_trace": true,
     "opmon_impl": "cern",
     "ers_impl": "cern",
     "start_connectivity_service": false,
     "connectivity_service_host": "np04-srv-023",
-    "connectivity_service_port": 30005
+    "connectivity_service_port": 30005,
+    "k8s_image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest",
+    "disable_trace": true
   },
   "dataflow": {
     "apps": [
@@ -49,7 +50,6 @@
     "host_timing_hsi": "np04-srv-018"
   },
   "readout": {
-    "use_fake_data_producers": true,
-    "detector_readout_map_file": "large_scale_system_DetReadoutMap.json"
+    "use_fake_data_producers": true
   }
 }
