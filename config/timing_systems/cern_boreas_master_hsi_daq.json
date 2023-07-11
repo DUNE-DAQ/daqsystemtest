@@ -1,0 +1,36 @@
+{
+  "boot": {
+    "use_connectivity_service": true,
+    "start_connectivity_service": false,
+    "connectivity_service_host": "np04-srv-023.cern.ch",
+    "connectivity_service_port": 30005
+  }, 
+  "daq_common": {
+    "data_rate_slowdown_factor": 1
+  },
+  "detector": {
+    "clock_speed_hz": 62500000
+  },
+  "readout": {
+    "use_fake_cards": true,
+    "default_data_file": "asset://?label=WIBEth&subsystem=readout",
+    "detector_readout_map_file": "./daq-systemtest/config/timing_systems/fake_dro_map.json"
+  },
+  "trigger": {
+    "trigger_window_before_ticks": 1000,
+    "trigger_window_after_ticks": 1000
+  },
+  "hsi": {
+    "random_trigger_rate_hz": 1.0,
+    "use_timing_hsi": true,
+	  "host_timing_hsi": "localhost",
+	  "control_hsi_hw": true,
+	  "hsi_device_name": "BOREAS_TLU",
+	  "hsi_source": 1,
+	  "hsi_re_mask": 1
+  },
+  "timing":
+  {
+  	"timing_session_name": "timing-tlu-hsi-test"
+  }
+}
