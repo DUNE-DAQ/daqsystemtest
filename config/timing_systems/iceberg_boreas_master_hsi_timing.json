@@ -1,0 +1,17 @@
+{
+  "boot": {
+    "use_connectivity_service": true,
+    "start_connectivity_service": true,
+    "connectivity_service_host": "iceberg01-priv",
+    "connectivity_service_port": 15432
+  },
+  "timing_hardware_interface": {
+    "host_thi": "iceberg01-priv",
+    "firmware_type": "pdii",
+    "timing_hw_connections_file": "./daq-systemtest/config/timing_systems/connections.xml"
+  },
+  "timing_master_controller": {
+    "host_tmc": "iceberg01-priv",
+    "master_device_name": "BOREAS_TLU_ICEBERG"
+  }
+}
