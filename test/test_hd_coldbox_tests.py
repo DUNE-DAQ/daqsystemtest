@@ -3,7 +3,7 @@
 import sys
 import sh
 import pathlib
-from rich import print, rule
+from rich import print
 
 script_path = pathlib.Path(__file__).parent
 
@@ -21,7 +21,7 @@ commands = [
 failed = {}
 success = []
 for cmd in commands:
-    rule(f"Executing '{cmd}'")
+    print(f"Executing '{cmd}'")
     cmd_tokens = cmd.split()
     try:
         exe = getattr(sh, cmd_tokens[0])
