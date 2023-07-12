@@ -5,7 +5,7 @@
     "start_connectivity_service": false,
     "connectivity_service_host": "np04-srv-023",
     "connectivity_service_port": 30005,
-    "k8s_image": "np04docker.cern.ch/ghcr/dune-daq/c8-spack:latest",
+    "k8s_rte": "release",
     "disable_trace": true
   },
   "dataflow": {
