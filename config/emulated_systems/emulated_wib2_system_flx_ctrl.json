@@ -1,9 +1,7 @@
 {
-
-    "flxcardcontroller": {
-        "detector_readout_map_file": "emulated_wib2_system_DetReadoutMap.json",
-        "emulator_mode": true
-    },
+  "flxcardcontroller": {
+    "emulator_mode": true
+  },
   "boot":{
     "ers_impl": "cern",
     "opmon_impl": "cern",

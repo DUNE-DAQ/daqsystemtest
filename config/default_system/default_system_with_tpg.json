@@ -9,16 +9,14 @@
   },
   "readout": {
     "enable_tpg": true,
-    "detector_readout_map_file": "default_system_eth_DetReadoutMap.json",
     "use_fake_cards": true,
     "default_data_file": "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798",
     "emulator_mode": true,
     "tpg_threshold": 500,
     "tpg_algorithm": "SimpleThreshold"
-
   },
   "dataflow": {
-      "enable_tpset_writing" : true
+    "enable_tpset_writing" : true
   },
   "daq_common" : {
     "data_rate_slowdown_factor" : 1

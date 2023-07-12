@@ -23,8 +23,8 @@
             }
         ],
         "protowib": [],
-	"pulse_dac": 0,
-	"pulser": false
+        "pulse_dac": 0,
+        "pulser": false
     },
     "boot":{
         "ers_impl": "cern",

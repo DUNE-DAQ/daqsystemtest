@@ -24,8 +24,8 @@ for cmd in commands:
     exe = getattr(sh, cmd_tokens[0])
     try:
         exe(*cmd_tokens[1:], _out=sys.stdout, _err=sys.stderr)
-    except sh.ErrorReturnCode:
-        failed.append(cmd)
+    except Exception as e:
+        failed[cmd] = str(e)
         continue
 
     success.append(cmd)

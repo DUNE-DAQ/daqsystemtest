@@ -46,7 +46,6 @@
     "random_trigger_rate_hz": 1.0
   },
   "readout": {
-    "detector_readout_map_file": "./hd_coldbox_DetReadoutMap.json",
     "emulator_mode": false,
     "thread_pinning_file": "./cpupin-np04-srv-028_10links_integration_test.json",
     "latency_buffer_size": 499968,

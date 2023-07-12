@@ -1,7 +1,6 @@
 {
   "readout": {
-    "emulator_mode": true,
-    "detector_readout_map_file": "emulated_daphne_system_DetReadoutMap.json"
+    "emulator_mode": true
   },
   "trigger": {
     "trigger_window_after_ticks": 62144,

@@ -1,7 +1,6 @@
 {
   "readout": {
-    "emulator_mode": true,
-    "detector_readout_map_file": "wib2_system_DetReadoutMap.json"
+    "emulator_mode": true
   },
   "hsi": {
     "random_trigger_rate_hz": 1

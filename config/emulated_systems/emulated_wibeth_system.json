@@ -2,7 +2,6 @@
   "readout": {
     "emulator_mode": true,
     "default_data_file": "asset://?label=WIBEth&subsystem=readout",
-    "detector_readout_map_file": "emulated_wibeth_system_DetReadoutMap.json",
     "use_fake_cards": true
   },
   "hsi": {

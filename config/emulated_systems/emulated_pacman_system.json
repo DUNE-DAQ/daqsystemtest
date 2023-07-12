@@ -1,7 +1,4 @@
 {
-  "readout": {
-    "detector_readout_map_file": "emulated_pacman_system_DetReadoutMap.json"
-  },
   "boot":{
     "ers_impl": "cern",
     "opmon_impl": "cern",

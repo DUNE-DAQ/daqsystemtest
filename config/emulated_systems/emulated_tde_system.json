@@ -9,10 +9,8 @@
   },
   "readout": {
     "use_fake_cards": true,
-    "default_data_file": "asset://?checksum=759e5351436bead208cf4963932d6327",
-    "detector_readout_map_file": "emulated_tde_system_DetReadoutMap.json"
+    "default_data_file": "asset://?checksum=759e5351436bead208cf4963932d6327"
   },
-
   "hsi": {
     "random_trigger_rate_hz": 1
   },

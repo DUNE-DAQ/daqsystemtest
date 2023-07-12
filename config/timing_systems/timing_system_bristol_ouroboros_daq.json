@@ -19,7 +19,6 @@
 	"readout": {
 		"use_fake_data_producers": true,
 		"latency_buffer_size": 200000,
-		"detector_readout_map_file": "timing_system_local_DetReadoutMap.json"
 	},
 	"dataflow": {
 		"apps": [

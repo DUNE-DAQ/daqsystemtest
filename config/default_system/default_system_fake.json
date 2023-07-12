@@ -8,7 +8,6 @@
     "k8s_rte": "release"
   },
   "readout": {
-    "detector_readout_map_file": "default_system_eth_DetReadoutMap.json",
     "use_fake_data_producers": true
   }
 }

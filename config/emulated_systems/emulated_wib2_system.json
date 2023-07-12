@@ -2,8 +2,7 @@
   "readout": {
     "emulator_mode": true,
     "use_fake_cards": true,
-    "default_data_file": "asset://?label=DuneWIB&subsystem=readout",
-    "detector_readout_map_file": "emulated_wib2_system_DetReadoutMap.json"
+    "default_data_file": "asset://?label=DuneWIB&subsystem=readout"
   },
   "hsi": {
     "host_fake_hsi": "np04-srv-004",
