@@ -1,6 +1,5 @@
 {
 	"trigger": {
-
 		"trigger_window_before_ticks": 1000,
 		"trigger_window_after_ticks": 1000,
 		"hsi_trigger_type_passthrough": true,
@@ -18,7 +17,6 @@
 	"readout": {
 		"use_fake_data_producers": true,
 		"latency_buffer_size": 200000,
-		"detector_readout_map_file": "timing_system_local_DetReadoutMap.json"
 	},
 	"dataflow": {
 		"apps": [

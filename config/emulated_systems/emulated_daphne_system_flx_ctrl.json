@@ -1,10 +1,13 @@
 {
     "flxcardcontroller": {
-        "detector_readout_map_file": "emulated_daphne_system_DetReadoutMap.json",
         "emulator_mode": true
     },
     "boot":{
         "ers_impl": "cern",
-        "opmon_impl": "cern"
+        "opmon_impl": "cern",
+        "start_connectivity_service": false,
+        "connectivity_service_host": "np04-srv-023",
+        "connectivity_service_port": 30005,
+        "k8s_rte": "release"
     }
 }
