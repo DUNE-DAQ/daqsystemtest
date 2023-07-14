@@ -1,7 +1,7 @@
 {
   "boot": {
     "use_connectivity_service": true,
-    "start_connectivity_service": true,
+    "start_connectivity_service": false,
     "connectivity_service_host": "localhost",
     "connectivity_service_port": 15432
   },
