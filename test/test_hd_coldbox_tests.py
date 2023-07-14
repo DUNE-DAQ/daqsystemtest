@@ -13,18 +13,21 @@ commands = [
     f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/hd_coldbox_DetReadoutMap.json -c {cfg_dir}/daq_hd_coldbox.json test",
     f"felixcardcontrollerconf_gen.py -n --detector-readout-map-file {cfg_dir}/hd_coldbox_DetReadoutMap.json -c {cfg_dir}/flx_card_hd_coldbox.json test",
     f"wibconf_gen -c {cfg_dir}/wib_hd_coldbox.json hd_coldbox_wib"
+    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/hd_coldbox_DetReadoutMap.json -c {cfg_dir}/daq_hd_coldbox.json --force-pm k8s test",
+    f"felixcardcontrollerconf_gen.py -n --detector-readout-map-file {cfg_dir}/hd_coldbox_DetReadoutMap.json -c {cfg_dir}/flx_card_hd_coldbox.json --force-pm k8s test",
+    f"wibconf_gen -c {cfg_dir}/wib_hd_coldbox.json --force-pm k8s hd_coldbox_wib"
 ]
 
-failed = []
+failed = {}
 success = []
 for cmd in commands:
     print(f"Executing '{cmd}'")
     cmd_tokens = cmd.split()
-    exe = getattr(sh, cmd_tokens[0])
     try:
+        exe = getattr(sh, cmd_tokens[0])
         exe(*cmd_tokens[1:], _out=sys.stdout, _err=sys.stderr)
-    except sh.ErrorReturnCode:
-        failed.append(cmd)
+    except Exception as e:
+        failed[cmd] = str(e)
         continue
 
     success.append(cmd)

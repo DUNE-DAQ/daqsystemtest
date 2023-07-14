@@ -1,11 +1,11 @@
 {
-  "boot": {
-    "base_command_port": 3333,
-    "disable_trace": false,
-    "opmon_impl": "cern",
+  "boot":{
     "ers_impl": "cern",
-    "pocket_url": "127.0.0.1",
-    "k8s_image": ""
+    "opmon_impl": "cern",
+    "start_connectivity_service": false,
+    "connectivity_service_host": "np04-srv-023",
+    "connectivity_service_port": 30005,
+    "k8s_rte": "release"
   },
   "detector": {
     "op_env": "swtest",
@@ -27,7 +27,7 @@
     "timing_partition_spill_gate_enabled": false
   },
   "hsi": {
-    "host_timing_hsi": "np04-srv-012.cern.ch",
+    "host_timing_hsi": "np04-srv-012",
     "hsi_hw_connections_file": "${TIMING_SHARE}/config/etc/connections.xml",
     "hsi_device_name": "",
     "hsi_readout_period": 1e3,
@@ -46,7 +46,6 @@
     "random_trigger_rate_hz": 1.0
   },
   "readout": {
-    "detector_readout_map_file": "./hd_coldbox_DetReadoutMap.json",
     "emulator_mode": false,
     "thread_pinning_file": "./cpupin-np04-srv-028_10links_integration_test.json",
     "latency_buffer_size": 499968,
@@ -58,7 +57,7 @@
   "trigger": {
     "trigger_window_before_ticks": 2144,
     "trigger_window_after_ticks": 260000,
-    "host_trigger": "np04-srv-012.cern.ch",
+    "host_trigger": "np04-srv-012",
     "ttcm_s1": 1,
     "ttcm_s2": 2,
     "trigger_activity_plugin": "TriggerActivityMakerPrescalePlugin",
@@ -72,16 +71,16 @@
   },
   "dataflow": {
     "enable_tpset_writing": false,
-    "host_tpw": "np04-srv-012.cern.ch",
+    "host_tpw": "np04-srv-012",
     "tpset_output_path": ".",
     "tpset_output_file_size": 4294967296,
-    "host_dfo": "np04-srv-012.cern.ch",
+    "host_dfo": "np04-srv-012",
     "apps": [
       {
         "app_name": "dataflow0",
         "token_count": 10,
         "output_paths": [ "/data0/test" ],
-        "host_df": "np04-srv-001.cern.ch",
+        "host_df": "np04-srv-001",
         "max_file_size": 4294967296,
         "max_trigger_record_window": 0
       }
@@ -92,7 +91,7 @@
     "enable_dqm": true,
     "impl": "cern",
     "cmap": "HDCB",
-    "host_dqm": [ "np04-srv-024.cern.ch" ],
+    "host_dqm": [ "np04-srv-024" ],
     "raw_params": [
       60,
       50
