@@ -1,11 +1,19 @@
 {
   "readout": {
-    "emulator_mode": true,
-    "data_rate_slowdown_factor": 1,
-    "clock_speed_hz": 62500000,
-    "detector_readout_map_file": "wib2_system_DetReadoutMap.json"
+    "emulator_mode": true
   },
-  "trigger": {
-    "trigger_rate_hz": 1
+  "hsi": {
+    "random_trigger_rate_hz": 1
+  },
+  "daq_common": {
+    "data_rate_slowdown_factor": 1
+  },
+  "boot":{
+    "ers_impl": "cern",
+    "opmon_impl": "cern",
+    "start_connectivity_service": false,
+    "connectivity_service_host": "np04-srv-023",
+    "connectivity_service_port": 30005,
+    "k8s_rte": "release"
   }
 }

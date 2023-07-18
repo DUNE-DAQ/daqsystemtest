@@ -1,8 +1,0 @@
-{
-  "readout": {
-    "detector_readout_map_file": "default_system_DetReadoutMap.json",
-    "use_fake_cards": true,
-    "data_rate_slowdown_factor": 10,
-    "default_data_file": "asset://?label=DuneWIB&subsystem=readout"
-  }
-}

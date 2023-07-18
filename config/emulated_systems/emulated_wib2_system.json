@@ -1,15 +1,15 @@
 {
   "readout": {
     "emulator_mode": true,
-    "clock_speed_hz": 62500000,
-    "detector_readout_map_file": "emulated_wib2_system_DetReadoutMap.json"
+    "use_fake_cards": true,
+    "default_data_file": "asset://?label=DuneWIB&subsystem=readout"
   },
   "hsi": {
-    "host_fake_hsi": "np04-srv-004"
+    "host_fake_hsi": "np04-srv-004",
+    "random_trigger_rate_hz": 1
   },
   "trigger": {
     "host_trigger": "np04-srv-004",
-    "trigger_rate_hz": 1,
     "trigger_window_after_ticks": 62144,
     "trigger_window_before_ticks": 200000
 
@@ -23,12 +23,16 @@
         "output_paths": ["/data0/test"]
       }
     ]
-  },  
+  },
   "dqm": {
       "impl": "cern"
   },
-  "boot": {
+  "boot":{
     "ers_impl": "cern",
-    "opmon_impl": "cern"
+    "opmon_impl": "cern",
+    "start_connectivity_service": false,
+    "connectivity_service_host": "np04-srv-023",
+    "connectivity_service_port": 30005,
+    "k8s_rte": "release"
   }
 }

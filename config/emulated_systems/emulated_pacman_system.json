@@ -1,5 +1,10 @@
 {
-  "readout": {
-    "detector_readout_map_file": "emulated_pacman_system_DetReadoutMap.json"
+  "boot":{
+    "ers_impl": "cern",
+    "opmon_impl": "cern",
+    "start_connectivity_service": false,
+    "connectivity_service_host": "np04-srv-023",
+    "connectivity_service_port": 30005,
+    "k8s_rte": "release"
   }
 }

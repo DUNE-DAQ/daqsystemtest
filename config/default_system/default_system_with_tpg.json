@@ -1,7 +1,28 @@
 {
+  "boot": {
+    "ers_impl": "cern",
+    "opmon_impl": "cern",
+    "start_connectivity_service": false,
+    "connectivity_service_host": "np04-srv-023",
+    "connectivity_service_port": 30005,
+    "k8s_rte": "release"
+  },
   "readout": {
     "enable_tpg": true,
-    "detector_readout_map_file": "default_system_DetReadoutMap.json"
+    "use_fake_cards": true,
+    "default_data_file": "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798",
+    "emulator_mode": true,
+    "tpg_threshold": 500,
+    "tpg_algorithm": "SimpleThreshold"
   },
-  "trigger": { "enable_tpset_writing": true }
+  "dataflow": {
+    "enable_tpset_writing" : true
+  },
+  "daq_common" : {
+    "data_rate_slowdown_factor" : 1
+  },
+  "trigger": {
+    "trigger_activity_config": {"prescale": 25},
+    "mlt_merge_overlapping_tcs": false
+  }
 }

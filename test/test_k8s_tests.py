@@ -48,16 +48,16 @@ commands = daq_commands + flx_commands + wib_commands
 
 
 
-failed = []
+failed = {}
 success = []
 for cmd in commands:
     print(f"Executing '{cmd}'")
     cmd_tokens = cmd.split()
-    exe = getattr(sh, cmd_tokens[0])
     try:
+        exe = getattr(sh, cmd_tokens[0])
         exe(*cmd_tokens[1:], _out=sys.stdout, _err=sys.stderr,  _new_session=False)
-    except sh.ErrorReturnCode:
-        raise SystemExit(-1)
+    except Exception as e:
+        failed[cmd] = str(e)
         failed.append(cmd)
         continue
 

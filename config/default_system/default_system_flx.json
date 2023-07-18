@@ -8,6 +8,7 @@
     "k8s_rte": "release"
   },
   "readout": {
-    "use_fake_data_producers": true
+    "use_fake_cards": true,
+    "default_data_file": "asset://?label=DuneWIB&subsystem=readout"
   }
 }
