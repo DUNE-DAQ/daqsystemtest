@@ -1,21 +1,20 @@
-# integtest/ README
+* 19-Jul-2023, ELF, KAB, and others: notes on existing integtests
 
-* 21-Sep-2022, ELF and KAB
+"integtests" are intended to be automated integration and/or system tests that make use of the
+"pytest" framework to validate the operation of the DAQ system in various scenarios.
 
 Here is a sample command for invoking a test (feel free to keep or drop the options in brackets, as you prefer):
 
-* `pytest -s readout_type_scan.py [--nanorc-option partition-number 3] [--nanorc-option timeout 300]`
+```
+pytest -s minimal_system_quick_test.py [--nanorc-option partition-number 2] [--nanorc-option timeout 300]
+```
 
-For reference, here are the ideas behind the existing tests:
-* `readout_type_scan.py` - verify that we can write different types of data (WIB2, PDS, TPG, etc.)
-* `command_order_test.py` - verify that only certain sequences of commands are allowed
-
-Specialty tests:
-* `iceberg_real_hsi_test.py` - tests the generation of pulser triggers by the real TLU/HSI electronics at the ICEBERG teststand
-    * needs to be run on the the iceberg01 computer at the ICEBERG teststand
-    * for now, it needs the global timing partition to be started separately (hints provided in output of the test script)
-    * it is useful to run this test with a couple of partition numbers to verify that it can talk to the global timing partition independent of its own partition number
-
-* `felix_emu_wib2_test.py` - tests the readout of emulated WIB2 data from a real FELIX card
-    * requires that the emulated data has already been loaded into the FELIX card (hints provided at the start of the output from the test script)
-    * has only been tested at the ICEBERG teststand so far
+For reference, here are the ideas behind the tests that currently exist in this repository:
+* `minimal_system_quick_test.py` - verify that a small emulator system works and successfully writes data in a short run
+* `readout_type_scan.py` - verify that we can write different types of data (WIBEth, PDS, TPG, etc.)
+* `3ru_3df_multirun_test.py` - verify that a system with multiple RUs and multiple DF Apps works as expected, including TPG
+* `fake_data_producer_test.py` - verify that the FakeDataProd DAQModule works as expected
+* `long_window_readout_test.py` - verify that readout windows that require TriggerRecords to be split into multiple sequences works as expected
+* `3ru_1df_multirun_test.py` - verify that we don't get empty fragments at end run
+  * this test is also useful in looking into high-CPU-usage scenarios because it uses 3 data producers in 3 RUs
+* `tpstream_writing_test.py` - verify that TPSets are written to the TP-stream file(s)
