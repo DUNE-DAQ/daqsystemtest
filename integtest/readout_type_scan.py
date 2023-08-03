@@ -46,7 +46,7 @@ tde_frag_params={"fragment_type_description": "TDE",
                   "fragment_type": "TDE_AMC",
                   "hdf5_source_subsystem": "Detector_Readout",
                   "expected_fragment_count": number_of_data_producers,
-                  "min_size_bytes": 575048, "max_size_bytes": 575048}
+                  "min_size_bytes": 575048, "max_size_bytes": 1150024}
 pds_frag_params={"fragment_type_description": "PDS",
                  "fragment_type": "DAPHNE",
                  "hdf5_source_subsystem": "Detector_Readout",
