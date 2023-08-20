@@ -123,13 +123,13 @@ tde_conf["detector"]["clock_speed_hz"] = 62500000
 tde_conf["readout"]["default_data_file"] = "asset://?checksum=759e5351436bead208cf4963932d6327"
 
 pds_stream_conf = copy.deepcopy(conf_dict)
-pds_stream_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, n_apps=1, det_id=2, app_type='flx', flx_mode='fix_rate', flx_protocol='half') # det_id = 2 for HD_PDS
+pds_stream_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, n_apps=1, det_id=2, app_type='flx', flx_mode='fix_rate', flx_protocol='half') # det_id = 2 for HD_PDS
 pds_stream_conf["readout"]["default_data_file"] = "asset://?label=DAPHNEStream&subsystem=readout"
 pds_stream_conf["trigger"]["trigger_window_before_ticks"] = 62000
 pds_stream_conf["trigger"]["trigger_window_after_ticks"] = 500
 
 pds_conf = copy.deepcopy(conf_dict)
-pds_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, n_apps=1, det_id=2, app_type='flx', flx_mode='var_rate', flx_protocol='half') # det_id = 2 for HD_PDS
+pds_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, n_apps=1, det_id=2, app_type='flx', flx_mode='var_rate', flx_protocol='half') # det_id = 2 for HD_PDS
 pds_conf["readout"]["default_data_file"] = "asset://?label=DAPHNE&subsystem=readout"
 pds_conf["trigger"]["trigger_window_before_ticks"] = 62000
 pds_conf["trigger"]["trigger_window_after_ticks"] = 500
