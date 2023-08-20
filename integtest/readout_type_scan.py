@@ -47,11 +47,16 @@ tde_frag_params={"fragment_type_description": "TDE",
                   "hdf5_source_subsystem": "Detector_Readout",
                   "expected_fragment_count": number_of_data_producers,
                   "min_size_bytes": 575048, "max_size_bytes": 1150024}
+pds_stream_frag_params={"fragment_type_description": "PDSStream",
+                        "fragment_type": "DAPHNEStream",
+                        "hdf5_source_subsystem": "Detector_Readout",
+                        "expected_fragment_count": number_of_data_producers,
+                        "min_size_bytes": 118072, "max_size_bytes": 306872}  # 250 x 472; 650 * 472 (+72)
 pds_frag_params={"fragment_type_description": "PDS",
                  "fragment_type": "DAPHNE",
                  "hdf5_source_subsystem": "Detector_Readout",
                  "expected_fragment_count": number_of_data_producers,
-                 "min_size_bytes": 72, "max_size_bytes": 36000}
+                 "min_size_bytes": 479496, "max_size_bytes": 1198632}  # 22 x 21792; 55 x 21792 (+72)
 triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
                               "fragment_type": "Trigger_Candidate",
                               "hdf5_source_subsystem": "Trigger",
@@ -101,7 +106,6 @@ wib1_conf = copy.deepcopy(conf_dict)
 wib1_conf["detector"]["clock_speed_hz"] = 50000000
 wib1_conf["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
 
-
 wib2_conf = copy.deepcopy(conf_dict)
 wib2_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id=3, app_type='flx')
 wib2_conf["detector"]["clock_speed_hz"] = 62500000
@@ -117,14 +121,18 @@ tde_conf = copy.deepcopy(conf_dict)
 tde_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id = 11)
 tde_conf["detector"]["clock_speed_hz"] = 62500000
 tde_conf["readout"]["default_data_file"] = "asset://?checksum=759e5351436bead208cf4963932d6327"
-#tde_conf["readout"]["default_data_file"] = "/nfs/home/glehmann/tdeframes.bin"
-#tde_conf["trigger"]["trigger_window_before_ticks"] = 0
-#tde_conf["trigger"]["trigger_window_after_ticks"] = 2000
 
+pds_stream_conf = copy.deepcopy(conf_dict)
+pds_stream_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, n_apps=1, det_id=2, app_type='flx', flx_mode='fix_rate', flx_protocol='half') # det_id = 2 for HD_PDS
+pds_stream_conf["readout"]["default_data_file"] = "asset://?label=DAPHNEStream&subsystem=readout"
+pds_stream_conf["trigger"]["trigger_window_before_ticks"] = 62000
+pds_stream_conf["trigger"]["trigger_window_after_ticks"] = 500
 
-#pds_list_conf = copy.deepcopy(conf_dict)
-#pds_list_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(number_of_data_producers, 1, 2) # det_id = 2 for HD_PDS
-#pds_list_conf["readout"]["default_data_file"] = "asset://?label=PDSList&subsystem=readout"
+pds_conf = copy.deepcopy(conf_dict)
+pds_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, n_apps=1, det_id=2, app_type='flx', flx_mode='var_rate', flx_protocol='half') # det_id = 2 for HD_PDS
+pds_conf["readout"]["default_data_file"] = "asset://?label=DAPHNE&subsystem=readout"
+pds_conf["trigger"]["trigger_window_before_ticks"] = 62000
+pds_conf["trigger"]["trigger_window_after_ticks"] = 500
 
 #pacman_conf = copy.deepcopy(conf_dict)
 #pacman_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(number_of_data_producers, 1, 32) # det_id = 32 for NDLAr_TPC
@@ -141,7 +149,8 @@ confgen_arguments={
                    #"Software_TPG_System": swtpg_conf,
                    "DQM_System": dqm_conf,
                    "WIB2_System": wib2_conf,
-                   #"PDS_(list)_System": pds_list_conf,
+                   "PDS_Stream_System": pds_stream_conf,
+                   "PDS_System": pds_conf,
                    "TDE_System": tde_conf,
                    #"PACMAN_System": pacman_conf,
                    #"MPD_System": mpd_conf
@@ -183,7 +192,9 @@ def test_data_files(run_nanorc):
     else:
         fragment_check_list.append(triggercandidate_frag_params)
         current_test=os.environ.get('PYTEST_CURRENT_TEST')
-        if "PDS" in current_test:
+        if "PDS_Stream" in current_test:
+            fragment_check_list.append(pds_stream_frag_params)
+        elif "PDS" in current_test:
             fragment_check_list.append(pds_frag_params)
         elif "DQM" in current_test:
             fragment_check_list.append(wib2_frag_params)
