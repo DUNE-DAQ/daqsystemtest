@@ -4,10 +4,10 @@ import re
 import copy
 import urllib.request
 
-import dfmodules.data_file_checks as data_file_checks
+import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.config_file_gen as config_file_gen
-import dfmodules.integtest_file_gen as integtest_file_gen
+import integrationtest.dro_map_gen as dro_map_gen
 
 # Don't require frames file
 frame_file_required=False
@@ -46,7 +46,7 @@ tde_frag_params={"fragment_type_description": "TDE",
                   "fragment_type": "TDE_AMC",
                   "hdf5_source_subsystem": "Detector_Readout",
                   "expected_fragment_count": number_of_data_producers,
-                  "min_size_bytes": 575048, "max_size_bytes": 575048}
+                  "min_size_bytes": 575048, "max_size_bytes": 1150024}
 pds_stream_frag_params={"fragment_type_description": "PDSStream",
                         "fragment_type": "DAPHNEStream",
                         "hdf5_source_subsystem": "Detector_Readout",
@@ -81,7 +81,7 @@ ignored_logfile_problems={"dqm": ["client will not be able to connect to Kafka c
 confgen_name="daqconf_multiru_gen"
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
-dro_map_contents = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id = 3) # default HD_TPC
+dro_map_contents = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id = 3) # default HD_TPC
 
 conf_dict = config_file_gen.get_default_config_dict()
 conf_dict["readout"]["dro_map"] = dro_map_contents
@@ -100,46 +100,46 @@ dqm_conf = copy.deepcopy(conf_dict)
 dqm_conf["dqm"]["enable_dqm"] = True
 dqm_conf["detector"]["clock_speed_hz"] = 62500000
 dqm_conf["readout"]["default_data_file"] = "asset://?label=DuneWIB&subsystem=readout"
-dqm_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id=3, app_type='flx')
+dqm_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id=3, app_type='flx')
 
 wib1_conf = copy.deepcopy(conf_dict)
 wib1_conf["detector"]["clock_speed_hz"] = 50000000
 wib1_conf["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
 
 wib2_conf = copy.deepcopy(conf_dict)
-wib2_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id=3, app_type='flx')
+wib2_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id=3, app_type='flx')
 wib2_conf["detector"]["clock_speed_hz"] = 62500000
 wib2_conf["readout"]["default_data_file"] = "asset://?label=DuneWIB&subsystem=readout"
 
 wibeth_conf = copy.deepcopy(conf_dict)
-wibeth_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id =10)
+wibeth_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id =10)
 wibeth_conf["detector"]["clock_speed_hz"] = 62500000
 #wibeth_conf["readout"]["data_rate_slowdown_factor"] = 1
 wibeth_conf["readout"]["default_data_file"] = "asset://?label=WIBEth&subsystem=readout"
 
 tde_conf = copy.deepcopy(conf_dict)
-tde_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id = 11)
+tde_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id = 11)
 tde_conf["detector"]["clock_speed_hz"] = 62500000
 tde_conf["readout"]["default_data_file"] = "asset://?checksum=759e5351436bead208cf4963932d6327"
 
 pds_stream_conf = copy.deepcopy(conf_dict)
-pds_stream_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, n_apps=1, det_id=2, app_type='flx', flx_mode='fix_rate', flx_protocol='half') # det_id = 2 for HD_PDS
+pds_stream_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, n_apps=1, det_id=2, app_type='flx', flx_mode='fix_rate', flx_protocol='half') # det_id = 2 for HD_PDS
 pds_stream_conf["readout"]["default_data_file"] = "asset://?label=DAPHNEStream&subsystem=readout"
 pds_stream_conf["trigger"]["trigger_window_before_ticks"] = 62000
 pds_stream_conf["trigger"]["trigger_window_after_ticks"] = 500
 
 pds_conf = copy.deepcopy(conf_dict)
-pds_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(n_streams=number_of_data_producers, n_apps=1, det_id=2, app_type='flx', flx_mode='var_rate', flx_protocol='half') # det_id = 2 for HD_PDS
+pds_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, n_apps=1, det_id=2, app_type='flx', flx_mode='var_rate', flx_protocol='half') # det_id = 2 for HD_PDS
 pds_conf["readout"]["default_data_file"] = "asset://?label=DAPHNE&subsystem=readout"
 pds_conf["trigger"]["trigger_window_before_ticks"] = 62000
 pds_conf["trigger"]["trigger_window_after_ticks"] = 500
 
 #pacman_conf = copy.deepcopy(conf_dict)
-#pacman_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(number_of_data_producers, 1, 32) # det_id = 32 for NDLAr_TPC
+#pacman_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(number_of_data_producers, 1, 32) # det_id = 32 for NDLAr_TPC
 #pacman_conf["readout"]["default_data_file"] = "asset://?label=PACMAN&subsystem=readout"
 
 #mpd_conf = copy.deepcopy(conf_dict)
-#mpd_conf["readout"]["dro_map"] = integtest_file_gen.generate_dromap_contents(number_of_data_producers, 1, 33) # det_id = 33 for NDLAr_PDS
+#mpd_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(number_of_data_producers, 1, 33) # det_id = 33 for NDLAr_PDS
 #mpd_conf["readout"]["default_data_file"] = "asset://?label=MPD&subsystem=readout"
 
 

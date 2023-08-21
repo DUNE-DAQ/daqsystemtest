@@ -6,10 +6,10 @@ import psutil
 import math
 import urllib.request
 
-import dfmodules.data_file_checks as data_file_checks
+import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.config_file_gen as config_file_gen
-import dfmodules.integtest_file_gen as integtest_file_gen
+import integrationtest.dro_map_gen as dro_map_gen
 
 # Values that help determine the running conditions
 number_of_data_producers=3
@@ -101,7 +101,7 @@ confgen_name="daqconf_multiru_gen"
 
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
-dro_map_contents = integtest_file_gen.generate_dromap_contents(number_of_data_producers, number_of_readout_apps)
+dro_map_contents = dro_map_gen.generate_dromap_contents(number_of_data_producers, number_of_readout_apps)
 
 conf_dict = config_file_gen.get_default_config_dict()
 conf_dict["daq_common"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
