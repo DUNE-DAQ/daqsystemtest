@@ -38,15 +38,20 @@ wib2_frag_params={"fragment_type_description": "WIB2",
                   "expected_fragment_count": number_of_data_producers,
                   "min_size_bytes": 29808, "max_size_bytes": 30280}
 wibeth_frag_params={"fragment_type_description": "WIBEth",
-                  "fragment_type": "WIBEth",
-                  "hdf5_source_subsystem": "Detector_Readout",
-                  "expected_fragment_count": number_of_data_producers,
-                  "min_size_bytes": 7272, "max_size_bytes": 14472}
+                    "fragment_type": "WIBEth",
+                    "hdf5_source_subsystem": "Detector_Readout",
+                    "expected_fragment_count": number_of_data_producers,
+                    "min_size_bytes": 7272, "max_size_bytes": 14472}
+wibeth_frag_multi_trig_params={"fragment_type_description": "WIBEth",
+                               "fragment_type": "WIBEth",
+                               "hdf5_source_subsystem": "Detector_Readout",
+                               "expected_fragment_count": number_of_data_producers,
+                               "min_size_bytes": 7272, "max_size_bytes": 14472}
 tde_frag_params={"fragment_type_description": "TDE",
-                  "fragment_type": "TDE_AMC",
-                  "hdf5_source_subsystem": "Detector_Readout",
-                  "expected_fragment_count": number_of_data_producers,
-                  "min_size_bytes": 575048, "max_size_bytes": 1150024}
+                 "fragment_type": "TDE_AMC",
+                 "hdf5_source_subsystem": "Detector_Readout",
+                 "expected_fragment_count": number_of_data_producers,
+                 "min_size_bytes": 575048, "max_size_bytes": 1150024}
 pds_stream_frag_params={"fragment_type_description": "PDSStream",
                         "fragment_type": "DAPHNEStream",
                         "hdf5_source_subsystem": "Detector_Readout",
@@ -92,9 +97,14 @@ conf_dict["trigger"]["trigger_window_before_ticks"] = 1000
 conf_dict["trigger"]["trigger_window_after_ticks"] = 1000
 
 swtpg_conf = copy.deepcopy(conf_dict)
+swtpg_conf["readout"]["generate_periodic_adc_pattern"] = True
+swtpg_conf["readout"]["emulated_TP_rate_per_ch"] = 4
 swtpg_conf["readout"]["enable_tpg"] = True
-swtpg_conf["detector"]["clock_speed_hz"] = 50000000
-swtpg_conf["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
+swtpg_conf["readout"]["tpg_threshold"] = 500
+swtpg_conf["readout"]["tpg_algorithm"] = "SimpleThreshold"
+swtpg_conf["readout"]["default_data_file"] = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
+swtpg_conf["trigger"]["trigger_activity_config"] = {"prescale": 10}
+swtpg_conf["trigger"]["mlt_merge_overlapping_tcs"] = False
 
 dqm_conf = copy.deepcopy(conf_dict)
 dqm_conf["dqm"]["enable_dqm"] = True
@@ -146,7 +156,7 @@ pds_conf["trigger"]["trigger_window_after_ticks"] = 500
 confgen_arguments={
                    #"WIB1_System": wib1_conf,
                    "WIBEth_System": wibeth_conf,
-                   #"Software_TPG_System": swtpg_conf,
+                   "Software_TPG_System": swtpg_conf,
                    "DQM_System": dqm_conf,
                    "WIB2_System": wib2_conf,
                    "PDS_Stream_System": pds_stream_conf,
@@ -185,9 +195,9 @@ def test_data_files(run_nanorc):
     local_event_count_tolerance=expected_event_count_tolerance
     fragment_check_list=[]
     if "enable_tpg" in run_nanorc.confgen_config["readout"].keys() and run_nanorc.confgen_config["readout"]["enable_tpg"]:
-        local_expected_event_count+=(285*number_of_data_producers*run_duration/100)
-        local_event_count_tolerance+=(10*number_of_data_producers*run_duration/100)
-        fragment_check_list.append(wib1_frag_multi_trig_params)
+        local_expected_event_count+=int(158*number_of_data_producers*run_duration/100)
+        local_event_count_tolerance+=int(10*number_of_data_producers*run_duration/100)
+        fragment_check_list.append(wibeth_frag_multi_trig_params)
         fragment_check_list.append(triggertp_frag_params)
     else:
         fragment_check_list.append(triggercandidate_frag_params)

@@ -109,7 +109,8 @@ conf_dict["hsi"]["random_trigger_rate_hz"] = pulser_trigger_rate
 conf_dict["dataflow"]["enable_tpset_writing"] = True
 conf_dict["dataflow"]["tpset_output_path"] = output_dir
 
-conf_dict["readout"]["emulator_mode"] = True
+conf_dict["readout"]["generate_periodic_adc_pattern"] = True
+conf_dict["readout"]["emulated_TP_rate_per_ch"] = 1
 conf_dict["readout"]["enable_tpg"] = True
 conf_dict["readout"]["tpg_threshold"] = 500
 conf_dict["readout"]["tpg_algorithm"] = "SimpleThreshold"
