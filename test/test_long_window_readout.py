@@ -10,8 +10,8 @@ script_path = pathlib.Path(__file__).parent
 cfg_dir = script_path.parent / "config" / "long_window_readout"
 
 commands = [
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/long_window_readout_DetReadoutMap.json -c {cfg_dir}/long_window_readout.json test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/long_window_readout_DetReadoutMap.json -c {cfg_dir}/long_window_readout.json --force-pm k8s test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/long_window_readout_DetReadoutMap.json -c {cfg_dir}/long_window_readout.json test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/long_window_readout_DetReadoutMap.json -c {cfg_dir}/long_window_readout.json --force-pm k8s test",
 ]
 
 failed = {}
