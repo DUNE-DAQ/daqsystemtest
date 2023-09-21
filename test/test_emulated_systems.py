@@ -13,20 +13,20 @@ commands = [
     # Daphne
     f"flx_ctrl_gen.py -n --detector-readout-map-file {cfg_dir}/emulated_daphne_system_DetReadoutMap.json -c {cfg_dir}/emulated_daphne_system_flx_ctrl.json test",
     f"flx_ctrl_gen -n --detector-readout-map-file {cfg_dir}/emulated_daphne_system_DetReadoutMap.json -c {cfg_dir}/emulated_daphne_system_flx_ctrl.json --force-pm k8s test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/emulated_daphne_system_DetReadoutMap.json -c {cfg_dir}/emulated_daphne_system.json test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/emulated_daphne_system_DetReadoutMap.json -c {cfg_dir}/emulated_daphne_system.json --force-pm k8s test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/emulated_daphne_system_DetReadoutMap.json -c {cfg_dir}/emulated_daphne_system.json test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/emulated_daphne_system_DetReadoutMap.json -c {cfg_dir}/emulated_daphne_system.json --force-pm k8s test",
     # Pacman
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/emulated_pacman_system_DetReadoutMap.json -c {cfg_dir}/emulated_pacman_system.json test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/emulated_pacman_system_DetReadoutMap.json -c {cfg_dir}/emulated_pacman_system.json --force-pm k8s test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/emulated_pacman_system_DetReadoutMap.json -c {cfg_dir}/emulated_pacman_system.json test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/emulated_pacman_system_DetReadoutMap.json -c {cfg_dir}/emulated_pacman_system.json --force-pm k8s test",
     # TDE
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/emulated_tde_system_DetReadoutMap.json -c {cfg_dir}/emulated_tde_system.json test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/emulated_tde_system_DetReadoutMap.json -c {cfg_dir}/emulated_tde_system.json --force-pm k8s test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/emulated_tde_system_DetReadoutMap.json -c {cfg_dir}/emulated_tde_system.json test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/emulated_tde_system_DetReadoutMap.json -c {cfg_dir}/emulated_tde_system.json --force-pm k8s test",
     # WIB2
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/emulated_wib2_system_DetReadoutMap.json -c {cfg_dir}/emulated_wib2_system.json test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/emulated_wib2_system_DetReadoutMap.json -c {cfg_dir}/emulated_wib2_system.json --force-pm k8s test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/emulated_wib2_system_DetReadoutMap.json -c {cfg_dir}/emulated_wib2_system.json test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/emulated_wib2_system_DetReadoutMap.json -c {cfg_dir}/emulated_wib2_system.json --force-pm k8s test",
     # WIBEth
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/emulated_wibeth_system_DetReadoutMap.json -c {cfg_dir}/emulated_wibeth_system.json test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/emulated_wibeth_system_DetReadoutMap.json -c {cfg_dir}/emulated_wibeth_system.json --force-pm k8s test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/emulated_wibeth_system_DetReadoutMap.json -c {cfg_dir}/emulated_wibeth_system.json test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/emulated_wibeth_system_DetReadoutMap.json -c {cfg_dir}/emulated_wibeth_system.json --force-pm k8s test",
 ]
 
 failed = {}

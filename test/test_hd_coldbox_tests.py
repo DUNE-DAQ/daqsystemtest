@@ -10,10 +10,10 @@ script_path = pathlib.Path(__file__).parent
 cfg_dir = script_path.parent / "config" / "hd_coldbox_tests"
 
 commands = [
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/hd_coldbox_DetReadoutMap.json -c {cfg_dir}/daq_hd_coldbox.json test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/hd_coldbox_DetReadoutMap.json -c {cfg_dir}/daq_hd_coldbox.json test",
     f"felixcardcontrollerconf_gen.py -n --detector-readout-map-file {cfg_dir}/hd_coldbox_DetReadoutMap.json -c {cfg_dir}/flx_card_hd_coldbox.json test",
     f"wibconf_gen -c {cfg_dir}/wib_hd_coldbox.json hd_coldbox_wib"
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/hd_coldbox_DetReadoutMap.json -c {cfg_dir}/daq_hd_coldbox.json --force-pm k8s test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/hd_coldbox_DetReadoutMap.json -c {cfg_dir}/daq_hd_coldbox.json --force-pm k8s test",
     f"felixcardcontrollerconf_gen.py -n --detector-readout-map-file {cfg_dir}/hd_coldbox_DetReadoutMap.json -c {cfg_dir}/flx_card_hd_coldbox.json --force-pm k8s test",
     f"wibconf_gen -c {cfg_dir}/wib_hd_coldbox.json --force-pm k8s hd_coldbox_wib"
 ]
