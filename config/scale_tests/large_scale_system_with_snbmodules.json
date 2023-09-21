@@ -1,0 +1,238 @@
+{
+  "boot": {
+    "ers_impl": "cern",
+    "opmon_impl": "cern",
+    "start_connectivity_service": false,
+    "connectivity_service_host": "np04-srv-023",
+    "connectivity_service_port": 30005,
+    "k8s_rte": "release",
+    "disable_trace": true
+  },
+  "dataflow": {
+    "apps": [
+      {
+        "app_name": "dataflow0",
+        "token_count": 4,
+        "output_paths": [
+          "/data0/test",
+          "/data1/test",
+          "/data2/test",
+          "/data3/test"
+        ],
+        "max_file_size": 8589934592,
+        "host_df": "np04-srv-001"
+      },
+      {
+        "app_name": "dataflow1",
+        "token_count": 4,
+        "output_paths": [
+          "/data0/test",
+          "/data1/test",
+          "/data2/test",
+          "/data3/test"
+        ],
+        "max_file_size": 8589934592,
+        "host_df": "np04-srv-002"
+      },
+      {
+        "app_name": "dataflow2",
+        "token_count": 4,
+        "output_paths": [
+          "/data0/test",
+          "/data1/test",
+          "/data2/test",
+          "/data3/test"
+        ],
+        "max_file_size": 8589934592,
+        "host_df": "np04-srv-003"
+      },
+      {
+        "app_name": "dataflow3",
+        "token_count": 4,
+        "output_paths": [
+          "/data1/test",
+          "/data1/test",
+          "/data2/test",
+          "/data3/test"
+        ],
+        "max_file_size": 8589934592,
+        "host_df": "np04-srv-004"
+      }
+    ],
+    "host_dfo": "np04-srv-018"
+  },
+  "trigger": {
+    "trigger_window_before_ticks": 200000,
+    "trigger_window_after_ticks": 62144,
+    "host_trigger": "np04-srv-019"
+  },
+  "hsi": {
+    "host_timing_hsi": "np04-srv-018"
+  },
+  "readout": {
+    "use_fake_data_producers": true,
+    "enable_raw_recording": true
+  },
+  "snbmodules": {
+    "apps": [
+      {
+        "host": "np04-srv-001",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-002",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-003",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-004",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-005",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-006",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-007",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-008",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-009",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-010",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-011",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-012",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-013",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-014",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-015",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-016",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-017",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-018",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-019",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-020",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-021",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-022",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-023",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-024",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-025",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-026",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-027",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-028",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-029",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      },
+      {
+        "host": "np04-srv-030",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      }
+    ],
+    "have_bookkeeper": true,
+    "bookkeeper_log_path": "./",
+    "bookkeeper_name": "snbbookkeeper",
+    "bookkeeper_refresh_rate": 1,
+    "host_bookkeeper": "np04-srv-001",
+    "snb_connections_prefix": "snbmodules",
+    "snb_timeout_notification_receive": 100,
+    "snb_timeout_notification_send": 10
+  }
+}

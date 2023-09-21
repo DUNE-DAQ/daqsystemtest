@@ -1,0 +1,45 @@
+{
+    "boot": {
+        "use_connectivity_service": true,
+        "start_connectivity_service": true,
+        "connectivity_service_host": "localhost",
+        "connectivity_service_port": 30005
+    },
+    "snbmodules": {
+        "apps": [
+            {
+                "host": "np04-srv-001",
+                "clients_root_dir": "./",
+                "interface": "0.0.0.0"
+            },
+            {
+                "host": "np04-srv-002",
+                "clients_root_dir": "./",
+                "interface": "0.0.0.0"
+            },
+            {
+                "host": "np04-srv-003",
+                "clients_root_dir": "./",
+                "interface": "0.0.0.0"
+            },
+            {
+                "host": "np04-srv-004",
+                "clients_root_dir": "./",
+                "interface": "0.0.0.0"
+            },
+            {
+                "host": "np04-srv-005",
+                "clients_root_dir": "./",
+                "interface": "0.0.0.0"
+            }
+        ],
+        "have_bookkeeper": true,
+        "bookkeeper_log_path": "./",
+        "bookkeeper_name": "snbbookkeeper",
+        "bookkeeper_refresh_rate": 1,
+        "host_bookkeeper": "np04-srv-001",
+        "snb_connections_prefix": "snbmodules",
+        "snb_timeout_notification_receive": 100,
+        "snb_timeout_notification_send": 10
+    }
+}

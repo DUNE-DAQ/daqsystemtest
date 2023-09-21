@@ -1,0 +1,27 @@
+{
+  "boot": {
+    "use_connectivity_service": true,
+    "start_connectivity_service": true,
+    "connectivity_service_host": "localhost",
+    "connectivity_service_port": 30005
+  },
+  "snbmodules": {
+    "apps": [
+      {
+        "host": "localhost",
+        "client_starting_port": 5001,
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0",
+        "client_num": 2
+      }
+    ],
+    "have_bookkeeper": true,
+    "bookkeeper_log_path": "./",
+    "bookkeeper_name": "snbbookkeeper",
+    "bookkeeper_refresh_rate": 1,
+    "host_bookkeeper": "localhost",
+    "snb_connections_prefix": "snbmodules",
+    "snb_timeout_notification_receive": 100,
+    "snb_timeout_notification_send": 10
+  }
+}

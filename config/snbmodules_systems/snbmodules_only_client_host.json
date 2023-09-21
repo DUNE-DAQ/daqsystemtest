@@ -1,0 +1,21 @@
+{
+  "boot": {
+    "use_connectivity_service": true,
+    "start_connectivity_service": true,
+    "connectivity_service_host": "localhost",
+    "connectivity_service_port": 30005
+  },
+  "snbmodules": {
+    "apps": [
+      {
+        "host": "localhost",
+        "clients_root_dir": "./",
+        "interface": "0.0.0.0"
+      }
+    ],
+    "have_bookkeeper": false,
+    "snb_connections_prefix": "snbmodules",
+    "snb_timeout_notification_receive": 100,
+    "snb_timeout_notification_send": 10
+  }
+}
