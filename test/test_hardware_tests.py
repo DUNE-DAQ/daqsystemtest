@@ -11,8 +11,8 @@ cfg_dir = script_path.parent / "config" / "hardware_tests"
 
 commands = [
     # WIB2
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/wib2_system_DetReadoutMap.json -c {cfg_dir}/wib2_system.json test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/wib2_system_DetReadoutMap.json -c {cfg_dir}/wib2_system.json --force-pm k8s test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/wib2_system_DetReadoutMap.json -c {cfg_dir}/wib2_system.json test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/wib2_system_DetReadoutMap.json -c {cfg_dir}/wib2_system.json --force-pm k8s test",
 ]
 
 failed = {}

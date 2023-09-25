@@ -10,14 +10,14 @@ script_path = pathlib.Path(__file__).parent
 cfg_dir = script_path.parent / "config" / "default_system"
 
 commands = [
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/default_system_eth_DetReadoutMap.json -c {cfg_dir}/default_system_eth.json test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/default_system_eth_DetReadoutMap.json -c {cfg_dir}/default_system_eth.json --force-pm k8s test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/default_system_eth_DetReadoutMap.json -c {cfg_dir}/default_system_fake.json test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/default_system_eth_DetReadoutMap.json -c {cfg_dir}/default_system_fake.json --force-pm k8s test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/default_system_eth_DetReadoutMap.json -c {cfg_dir}/default_system_with_tpg.json test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/default_system_eth_DetReadoutMap.json -c {cfg_dir}/default_system_with_tpg.json --force-pm k8s test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/default_system_flx_DetReadoutMap.json -c {cfg_dir}/default_system_flx.json test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/default_system_flx_DetReadoutMap.json -c {cfg_dir}/default_system_flx.json --force-pm k8s test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/default_system_eth_DetReadoutMap.json -c {cfg_dir}/default_system_eth.json test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/default_system_eth_DetReadoutMap.json -c {cfg_dir}/default_system_eth.json --force-pm k8s test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/default_system_eth_DetReadoutMap.json -c {cfg_dir}/default_system_fake.json test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/default_system_eth_DetReadoutMap.json -c {cfg_dir}/default_system_fake.json --force-pm k8s test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/default_system_eth_DetReadoutMap.json -c {cfg_dir}/default_system_with_tpg.json test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/default_system_eth_DetReadoutMap.json -c {cfg_dir}/default_system_with_tpg.json --force-pm k8s test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/default_system_flx_DetReadoutMap.json -c {cfg_dir}/default_system_flx.json test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/default_system_flx_DetReadoutMap.json -c {cfg_dir}/default_system_flx.json --force-pm k8s test",
 ]
 
 failed = {}

@@ -10,10 +10,10 @@ script_path = pathlib.Path(__file__).parent
 cfg_dir = script_path.parent / "config" / "scale_tests"
 
 commands = [
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/large_scale_system_DetReadoutMap.json -c {cfg_dir}/large_scale_system.json test",
-    f"daqconf_multiru_gen -n --force-pm k8s --detector-readout-map-file {cfg_dir}/large_scale_system_DetReadoutMap.json -c {cfg_dir}/large_scale_system.json test",
-    f"daqconf_multiru_gen -n --detector-readout-map-file {cfg_dir}/medium_scale_system_DetReadoutMap.json -c {cfg_dir}/large_scale_system.json test",
-    f"daqconf_multiru_gen -n --force-pm k8s --detector-readout-map-file {cfg_dir}/medium_scale_system_DetReadoutMap.json -c {cfg_dir}/large_scale_system.json test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/large_scale_system_DetReadoutMap.json -c {cfg_dir}/large_scale_system.json test",
+    f"fddaqconf_gen -n --force-pm k8s --detector-readout-map-file {cfg_dir}/large_scale_system_DetReadoutMap.json -c {cfg_dir}/large_scale_system.json test",
+    f"fddaqconf_gen -n --detector-readout-map-file {cfg_dir}/medium_scale_system_DetReadoutMap.json -c {cfg_dir}/large_scale_system.json test",
+    f"fddaqconf_gen -n --force-pm k8s --detector-readout-map-file {cfg_dir}/medium_scale_system_DetReadoutMap.json -c {cfg_dir}/large_scale_system.json test",
 ]
 
 failed = {}
