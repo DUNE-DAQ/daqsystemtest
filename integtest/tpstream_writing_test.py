@@ -117,7 +117,7 @@ conf_dict["readout"]["tpg_algorithm"] = "SimpleThreshold"
 conf_dict["readout"]["default_data_file"] = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
 conf_dict["trigger"]["trigger_activity_config"] = {"prescale": 25}
 
-conf_dict["dataflow"]["token_count"] = int(math.ceil(max(10, 3*number_of_data_producers*number_of_readout_apps)/number_of_dataflow_apps))
+conf_dict["dataflow"]["token_count"] = int(math.ceil(max(10, 6*number_of_data_producers*number_of_readout_apps)/number_of_dataflow_apps))
 conf_dict["dataflow"]["apps"] = [] # Remove preconfigured dataflow0 app
 for df_app in range(number_of_dataflow_apps):
     dfapp_conf = {}
