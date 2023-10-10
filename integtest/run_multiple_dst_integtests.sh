@@ -1,20 +1,72 @@
+#!/bin/bash
 # 30-Aug-2023, KAB
 
-# handle command-line arguments
-if [ $# -gt 0 ]; then
-    if [ "$1" == "-?" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
-        echo "Usage: $0 <session number> <number of tests>"
-        exit
-    fi
-fi
+integtest_list=( "minimal_system_quick_test.py" "readout_type_scan.py" "3ru_3df_multirun_test.py" "fake_data_producer_test.py" "long_window_readout_test.py" "3ru_1df_multirun_test.py" "tpstream_writing_test.py" )
+
+usage() {
+    declare -r script_name=$(basename "$0")
+    echo """
+Usage:
+"${script_name}" [option(s)]
+
+Options:
+    -h, --help
+    -s, --session-number <DAQ session number (formerly known as partition number), default=1)>
+    -f, --first-test <zero-based index of the first test to be run, default=0>
+    -l, --last-test <zero-based index of the last test to be run, default=999>
+    -n, --individual-iterations <number of times to run each individual test, default=1>
+    -N, --overall-iterations <number of times to run the full set of selected tests, default=1>
+"""
+    let counter=0
+    echo "List of available tests:"
+    for tst in ${integtest_list[@]}; do
+        echo "    ${counter}: $tst"
+        let counter=${counter}+1
+    done
+    echo ""
+}
+
+TEMP=`getopt -o hs:f:l:n:N: --long help,session_number,first-test,last-test,individual-iterations,overall-iterations -- "$@"`
+eval set -- "$TEMP"
+
 let session_number=1
-if [ $# -gt 0 ]; then
-    let session_number=$1
-fi
-let number_of_tests=99
-if [ $# -gt 1 ]; then
-    let number_of_tests=$2
-fi
+let first_test_index=0
+let last_test_index=999
+let individual_run_count=1
+let overall_run_count=1
+
+while true; do
+    case "$1" in
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        -s|--session-number)
+            let session_number=$2
+            shift 2
+            ;;
+        -f|--first-test)
+            let first_test_index=$2
+            shift 2
+            ;;
+        -l|--last-test)
+            let last_test_index=$2
+            shift 2
+            ;;
+        -n|--individual-iterations)
+            let individual_run_count=$2
+            shift 2
+            ;;
+        -N|--overall-iterations)
+            let overall_run_count=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+    esac
+done
 
 # other setup
 TIMESTAMP=`date '+%Y%m%d%H%M%S'`
@@ -22,41 +74,27 @@ mkdir -p /tmp/pytest-of-${USER}
 ITGRUNNER_LOG_FILE="/tmp/pytest-of-${USER}/daq-systemtest_integtest_bundle_${TIMESTAMP}.log"
 
 # run the tests
-if [ $number_of_tests -ge 1 ]; then
-  TEST_NAME="minimal_system_quick_test.py"
-  echo "===== Running ${TEST_NAME}" >> ${ITGRUNNER_LOG_FILE}
-  pytest -s ${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
-fi
-if [ $number_of_tests -ge 2 ]; then
-  TEST_NAME="readout_type_scan.py"
-  echo "===== Running ${TEST_NAME}" >> ${ITGRUNNER_LOG_FILE}
-  pytest -s ${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
-fi
-if [ $number_of_tests -ge 3 ]; then
-  TEST_NAME="3ru_3df_multirun_test.py"
-  echo "===== Running ${TEST_NAME}" >> ${ITGRUNNER_LOG_FILE}
-  pytest -s ${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
-fi
-if [ $number_of_tests -ge 4 ]; then
-  TEST_NAME="fake_data_producer_test.py"
-  echo "===== Running ${TEST_NAME}" >> ${ITGRUNNER_LOG_FILE}
-  pytest -s ${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
-fi
-if [ $number_of_tests -ge 5 ]; then
-  TEST_NAME="long_window_readout_test.py"
-  echo "===== Running ${TEST_NAME}" >> ${ITGRUNNER_LOG_FILE}
-  pytest -s ${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
-fi
-if [ $number_of_tests -ge 6 ]; then
-  TEST_NAME="3ru_1df_multirun_test.py"
-  echo "===== Running ${TEST_NAME}" >> ${ITGRUNNER_LOG_FILE}
-  pytest -s ${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
-fi
-if [ $number_of_tests -ge 7 ]; then
-  TEST_NAME="tpstream_writing_test.py"
-  echo "===== Running ${TEST_NAME}" >> ${ITGRUNNER_LOG_FILE}
-  pytest -s ${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
-fi
+let overall_loop_count=0
+while [[ ${overall_loop_count} -lt ${overall_run_count} ]]; do
+
+  let test_index=0
+  for TEST_NAME in ${integtest_list[@]}; do
+    if [[ ${test_index} -ge ${first_test_index} && ${test_index} -le ${last_test_index} ]]; then
+
+      let individual_loop_count=0
+      while [[ ${individual_loop_count} -lt ${individual_run_count} ]]; do
+        echo "===== Running ${TEST_NAME}" >> ${ITGRUNNER_LOG_FILE}
+        pytest -s ${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
+
+        let individual_loop_count=${individual_loop_count}+1
+      done
+
+    fi
+    let test_index=${test_index}+1
+  done
+
+  let overall_loop_count=${overall_loop_count}+1
+done
 
 # print out summary information
 echo ""
