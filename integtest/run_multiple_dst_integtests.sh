@@ -1,5 +1,5 @@
 #!/bin/bash
-# 30-Aug-2023, KAB
+# 10-Oct-2023, KAB
 
 integtest_list=( "minimal_system_quick_test.py" "readout_type_scan.py" "3ru_3df_multirun_test.py" "fake_data_producer_test.py" "long_window_readout_test.py" "3ru_1df_multirun_test.py" "tpstream_writing_test.py" )
 
@@ -79,7 +79,6 @@ while [[ ${overall_loop_count} -lt ${overall_run_count} ]]; do
 
   let test_index=0
   for TEST_NAME in ${integtest_list[@]}; do
-    echo "AAA $test_index $first_test_index $last_test_index"
     if [[ ${test_index} -ge ${first_test_index} && ${test_index} -le ${last_test_index} ]]; then
 
       let individual_loop_count=0
