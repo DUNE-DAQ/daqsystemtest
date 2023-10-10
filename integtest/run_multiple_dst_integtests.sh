@@ -11,11 +11,11 @@ Usage:
 
 Options:
     -h, --help
-    -s, --session-number <DAQ session number (formerly known as partition number), default=1)>
-    -f, --first-test <zero-based index of the first test to be run, default=0>
-    -l, --last-test <zero-based index of the last test to be run, default=999>
-    -n, --individual-iterations <number of times to run each individual test, default=1>
-    -N, --overall-iterations <number of times to run the full set of selected tests, default=1>
+    -s <DAQ session number (formerly known as partition number), default=1)>
+    -f <zero-based index of the first test to be run, default=0>
+    -l <zero-based index of the last test to be run, default=999>
+    -n <number of times to run each individual test, default=1>
+    -N <number of times to run the full set of selected tests, default=1>
 """
     let counter=0
     echo "List of available tests:"
@@ -26,7 +26,7 @@ Options:
     echo ""
 }
 
-TEMP=`getopt -o hs:f:l:n:N: --long help,session_number,first-test,last-test,individual-iterations,overall-iterations -- "$@"`
+TEMP=`getopt -o hs:f:l:n:N: --long help -- "$@"`
 eval set -- "$TEMP"
 
 let session_number=1
@@ -41,23 +41,23 @@ while true; do
             usage
             exit 0
             ;;
-        -s|--session-number)
+        -s)
             let session_number=$2
             shift 2
             ;;
-        -f|--first-test)
+        -f)
             let first_test_index=$2
             shift 2
             ;;
-        -l|--last-test)
+        -l)
             let last_test_index=$2
             shift 2
             ;;
-        -n|--individual-iterations)
+        -n)
             let individual_run_count=$2
             shift 2
             ;;
-        -N|--overall-iterations)
+        -N)
             let overall_run_count=$2
             shift 2
             ;;
@@ -79,6 +79,7 @@ while [[ ${overall_loop_count} -lt ${overall_run_count} ]]; do
 
   let test_index=0
   for TEST_NAME in ${integtest_list[@]}; do
+    echo "AAA $test_index $first_test_index $last_test_index"
     if [[ ${test_index} -ge ${first_test_index} && ${test_index} -le ${last_test_index} ]]; then
 
       let individual_loop_count=0
