@@ -63,7 +63,7 @@ hsi_frag_params ={"fragment_type_description": "HSI",
                              "hdf5_source_subsystem": "HW_Signals_Interface",
                              "expected_fragment_count": 1,
                              "min_size_bytes": 72, "max_size_bytes": 100}
-ignored_logfile_problems={"dqm": ["client will not be able to connect to Kafka cluster"]}
+ignored_logfile_problems={}
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
@@ -103,12 +103,8 @@ swtpg_conf["trigger"]["trigger_activity_config"] = {"prescale": 25}
 swtpg_conf["trigger"]["mlt_merge_overlapping_tcs"] = False
 swtpg_conf["dataflow"]["token_count"] = int(math.ceil(max(10, 6*number_of_data_producers*number_of_readout_apps)/number_of_dataflow_apps))
 
-dqm_conf = copy.deepcopy(conf_dict)
-dqm_conf["dqm"]["enable_dqm"] = True
-
 confgen_arguments={"WIBEth_System": conf_dict,
                    "Software_TPG_System": swtpg_conf,
-                   "DQM_System": dqm_conf,
                   }
 # The commands to run in nanorc, as a list
 nanorc_command_list="integtest-partition boot conf".split()
