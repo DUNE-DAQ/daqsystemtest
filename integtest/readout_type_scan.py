@@ -72,9 +72,7 @@ triggertp_frag_params={"fragment_type_description": "Trigger with TPs",
                        "hdf5_source_subsystem": "Trigger",
                        "expected_fragment_count": number_of_data_producers,
                        "min_size_bytes": 72, "max_size_bytes": 16000}
-ignored_logfile_problems={"dqm": ["client will not be able to connect to Kafka cluster",
-                                  "Unexpected Trigger Decision", "Unexpected Fragment"],
-                          "trigger": ["zipped_tpset_q: Unable to push within timeout period"],
+ignored_logfile_problems={"trigger": ["zipped_tpset_q: Unable to push within timeout period"],
                           "rulocalhost": ["Configuration Error: Binary file contains more data than expected"],
                          }
 
@@ -105,12 +103,6 @@ swtpg_conf["readout"]["tpg_algorithm"] = "SimpleThreshold"
 swtpg_conf["readout"]["default_data_file"] = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
 swtpg_conf["trigger"]["trigger_activity_config"] = {"prescale": 10}
 swtpg_conf["trigger"]["mlt_merge_overlapping_tcs"] = False
-
-dqm_conf = copy.deepcopy(conf_dict)
-dqm_conf["dqm"]["enable_dqm"] = True
-dqm_conf["detector"]["clock_speed_hz"] = 62500000
-dqm_conf["readout"]["default_data_file"] = "asset://?label=DuneWIB&subsystem=readout"
-dqm_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id=3, app_type='flx')
 
 wib1_conf = copy.deepcopy(conf_dict)
 wib1_conf["detector"]["clock_speed_hz"] = 50000000
@@ -157,7 +149,6 @@ confgen_arguments={
                    #"WIB1_System": wib1_conf,
                    "WIBEth_System": wibeth_conf,
                    "Software_TPG_System": swtpg_conf,
-                   "DQM_System": dqm_conf,
                    "WIB2_System": wib2_conf,
                    "PDS_Stream_System": pds_stream_conf,
                    "PDS_System": pds_conf,
@@ -206,8 +197,6 @@ def test_data_files(run_nanorc):
             fragment_check_list.append(pds_stream_frag_params)
         elif "PDS" in current_test:
             fragment_check_list.append(pds_frag_params)
-        elif "DQM" in current_test:
-            fragment_check_list.append(wib2_frag_params)
         elif "WIB2" in current_test:
             fragment_check_list.append(wib2_frag_params)
         elif "WIBEth" in current_test:
