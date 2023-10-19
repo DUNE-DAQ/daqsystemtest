@@ -84,7 +84,11 @@ while [[ ${overall_loop_count} -lt ${overall_run_count} ]]; do
       let individual_loop_count=0
       while [[ ${individual_loop_count} -lt ${individual_run_count} ]]; do
         echo "===== Running ${TEST_NAME}" >> ${ITGRUNNER_LOG_FILE}
-        pytest -s ${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
+        if [[ -e "./${TEST_NAME}" ]]; then
+          pytest -s ./${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
+        else
+          pytest -s ${DAQSYSTEMTEST_SHARE}/${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
+        fi
 
         let individual_loop_count=${individual_loop_count}+1
       done
@@ -97,13 +101,13 @@ while [[ ${overall_loop_count} -lt ${overall_run_count} ]]; do
 done
 
 # print out summary information
-echo ""
-echo ""
-echo "+++++++++++++++++++++++++++++++++++++++++++++++++"
-echo "++++++++++++++++++++ SUMMARY ++++++++++++++++++++"
-echo "+++++++++++++++++++++++++++++++++++++++++++++++++"
-echo ""
-date
-echo "Log file is: ${ITGRUNNER_LOG_FILE}"
-echo ""
-grep '=====' ${ITGRUNNER_LOG_FILE} | egrep ' in |Running'
+echo ""                                                   | tee -a ${ITGRUNNER_LOG_FILE}
+echo ""                                                   | tee -a ${ITGRUNNER_LOG_FILE}
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++"  | tee -a ${ITGRUNNER_LOG_FILE}
+echo "++++++++++++++++++++ SUMMARY ++++++++++++++++++++"  | tee -a ${ITGRUNNER_LOG_FILE}
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++"  | tee -a ${ITGRUNNER_LOG_FILE}
+echo ""                                                   | tee -a ${ITGRUNNER_LOG_FILE}
+date                                                      | tee -a ${ITGRUNNER_LOG_FILE}
+echo "Log file is: ${ITGRUNNER_LOG_FILE}"                 | tee -a ${ITGRUNNER_LOG_FILE}
+echo ""                                                   | tee -a ${ITGRUNNER_LOG_FILE}
+grep '=====' ${ITGRUNNER_LOG_FILE} | egrep ' in |Running' | tee -a ${ITGRUNNER_LOG_FILE}
