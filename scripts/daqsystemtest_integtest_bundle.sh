@@ -87,7 +87,7 @@ while [[ ${overall_loop_count} -lt ${overall_run_count} ]]; do
         if [[ -e "./${TEST_NAME}" ]]; then
           pytest -s ./${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
         else
-          pytest -s ${DAQSYSTEMTEST_SHARE}/${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
+          pytest -s ${DAQSYSTEMTEST_SHARE}/integtest/${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
         fi
 
         let individual_loop_count=${individual_loop_count}+1
