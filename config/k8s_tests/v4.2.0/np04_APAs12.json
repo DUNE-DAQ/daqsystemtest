@@ -1,0 +1,1880 @@
+[
+    {
+        "src_id": 100,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 0,
+            "stream_id": 0
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-101",
+            "tx_mac": "80:d3:36:00:52:10",
+            "tx_ip": "10.73.139.84"
+        }
+    },
+    {
+        "src_id": 101,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 0,
+            "stream_id": 1
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-101",
+            "tx_mac": "80:d3:36:00:52:10",
+            "tx_ip": "10.73.139.84"
+        }
+    },
+    {
+        "src_id": 102,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 0,
+            "stream_id": 2
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-101",
+            "tx_mac": "80:d3:36:00:52:10",
+            "tx_ip": "10.73.139.84"
+        }
+    },
+    {
+        "src_id": 103,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 0,
+            "stream_id": 3
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-101",
+            "tx_mac": "80:d3:36:00:52:10",
+            "tx_ip": "10.73.139.84"
+        }
+    },
+    {
+        "src_id": 104,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 0,
+            "stream_id": 64
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-101",
+            "tx_mac": "80:d3:36:00:52:11",
+            "tx_ip": "10.73.139.85"
+        }
+    },
+    {
+        "src_id": 105,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 0,
+            "stream_id": 65
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-101",
+            "tx_mac": "80:d3:36:00:52:11",
+            "tx_ip": "10.73.139.85"
+        }
+    },
+    {
+        "src_id": 106,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 0,
+            "stream_id": 66
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-101",
+            "tx_mac": "80:d3:36:00:52:11",
+            "tx_ip": "10.73.139.85"
+        }
+    },
+    {
+        "src_id": 107,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 0,
+            "stream_id": 67
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-101",
+            "tx_mac": "80:d3:36:00:52:11",
+            "tx_ip": "10.73.139.85"
+        }
+    },
+    {
+        "src_id": 108,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 1,
+            "stream_id": 0
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-102",
+            "tx_mac": "80:d3:36:00:52:12",
+            "tx_ip": "10.73.139.86"
+        }
+    },
+    {
+        "src_id": 109,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 1,
+            "stream_id": 1
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-102",
+            "tx_mac": "80:d3:36:00:52:12",
+            "tx_ip": "10.73.139.86"
+        }
+    },
+    {
+        "src_id": 110,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 1,
+            "stream_id": 2
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-102",
+            "tx_mac": "80:d3:36:00:52:12",
+            "tx_ip": "10.73.139.86"
+        }
+    },
+    {
+        "src_id": 111,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 1,
+            "stream_id": 3
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-102",
+            "tx_mac": "80:d3:36:00:52:12",
+            "tx_ip": "10.73.139.86"
+        }
+    },
+    {
+        "src_id": 112,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 1,
+            "stream_id": 64
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-102",
+            "tx_mac": "80:d3:36:00:52:13",
+            "tx_ip": "10.73.139.88"
+        }
+    },
+    {
+        "src_id": 113,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 1,
+            "stream_id": 65
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-102",
+            "tx_mac": "80:d3:36:00:52:13",
+            "tx_ip": "10.73.139.88"
+        }
+    },
+    {
+        "src_id": 114,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 1,
+            "stream_id": 66
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-102",
+            "tx_mac": "80:d3:36:00:52:13",
+            "tx_ip": "10.73.139.88"
+        }
+    },
+    {
+        "src_id": 115,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 1,
+            "stream_id": 67
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-102",
+            "tx_mac": "80:d3:36:00:52:13",
+            "tx_ip": "10.73.139.88"
+        }
+    },
+    {
+        "src_id": 116,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 2,
+            "stream_id": 0
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-103",
+            "tx_mac": "80:d3:36:00:52:14",
+            "tx_ip": "10.73.139.87"
+        }
+    },
+    {
+        "src_id": 117,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 2,
+            "stream_id": 1
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-103",
+            "tx_mac": "80:d3:36:00:52:14",
+            "tx_ip": "10.73.139.87"
+        }
+    },
+    {
+        "src_id": 118,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 2,
+            "stream_id": 2
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-103",
+            "tx_mac": "80:d3:36:00:52:14",
+            "tx_ip": "10.73.139.87"
+        }
+    },
+    {
+        "src_id": 119,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 2,
+            "stream_id": 3
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-103",
+            "tx_mac": "80:d3:36:00:52:14",
+            "tx_ip": "10.73.139.87"
+        }
+    },
+    {
+        "src_id": 120,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 2,
+            "stream_id": 64
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-103",
+            "tx_mac": "80:d3:36:00:52:15",
+            "tx_ip": "10.73.139.89"
+        }
+    },
+    {
+        "src_id": 121,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 2,
+            "stream_id": 65
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-103",
+            "tx_mac": "80:d3:36:00:52:15",
+            "tx_ip": "10.73.139.89"
+        }
+    },
+    {
+        "src_id": 122,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 2,
+            "stream_id": 66
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-103",
+            "tx_mac": "80:d3:36:00:52:15",
+            "tx_ip": "10.73.139.89"
+        }
+    },
+    {
+        "src_id": 123,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 2,
+            "stream_id": 67
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-103",
+            "tx_mac": "80:d3:36:00:52:15",
+            "tx_ip": "10.73.139.89"
+        }
+    },
+    {
+        "src_id": 124,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 3,
+            "stream_id": 0
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-104",
+            "tx_mac": "80:d3:36:00:52:16",
+            "tx_ip": "10.73.139.91"
+        }
+    },
+    {
+        "src_id": 125,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 3,
+            "stream_id": 1
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-104",
+            "tx_mac": "80:d3:36:00:52:16",
+            "tx_ip": "10.73.139.91"
+        }
+    },
+    {
+        "src_id": 126,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 3,
+            "stream_id": 2
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-104",
+            "tx_mac": "80:d3:36:00:52:16",
+            "tx_ip": "10.73.139.91"
+        }
+    },
+    {
+        "src_id": 127,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 3,
+            "stream_id": 3
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-104",
+            "tx_mac": "80:d3:36:00:52:16",
+            "tx_ip": "10.73.139.91"
+        }
+    },
+    {
+        "src_id": 128,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 3,
+            "stream_id": 64
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-104",
+            "tx_mac": "80:d3:36:00:52:17",
+            "tx_ip": "10.73.139.90"
+        }
+    },
+    {
+        "src_id": 129,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 3,
+            "stream_id": 65
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-104",
+            "tx_mac": "80:d3:36:00:52:17",
+            "tx_ip": "10.73.139.90"
+        }
+    },
+    {
+        "src_id": 130,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 3,
+            "stream_id": 66
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-104",
+            "tx_mac": "80:d3:36:00:52:17",
+            "tx_ip": "10.73.139.90"
+        }
+    },
+    {
+        "src_id": 131,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 3,
+            "stream_id": 67
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-104",
+            "tx_mac": "80:d3:36:00:52:17",
+            "tx_ip": "10.73.139.90"
+        }
+    },
+    {
+        "src_id": 132,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 4,
+            "stream_id": 0
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-105",
+            "tx_mac": "80:d3:36:00:52:18",
+            "tx_ip": "10.73.139.92"
+        }
+    },
+    {
+        "src_id": 133,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 4,
+            "stream_id": 1
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-105",
+            "tx_mac": "80:d3:36:00:52:18",
+            "tx_ip": "10.73.139.92"
+        }
+    },
+    {
+        "src_id": 134,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 4,
+            "stream_id": 2
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-105",
+            "tx_mac": "80:d3:36:00:52:18",
+            "tx_ip": "10.73.139.92"
+        }
+    },
+    {
+        "src_id": 135,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 4,
+            "stream_id": 3
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-105",
+            "tx_mac": "80:d3:36:00:52:18",
+            "tx_ip": "10.73.139.92"
+        }
+    },
+    {
+        "src_id": 136,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 4,
+            "stream_id": 64
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-105",
+            "tx_mac": "80:d3:36:00:52:19",
+            "tx_ip": "10.73.139.93"
+        }
+    },
+    {
+        "src_id": 137,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 4,
+            "stream_id": 65
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-105",
+            "tx_mac": "80:d3:36:00:52:19",
+            "tx_ip": "10.73.139.93"
+        }
+    },
+    {
+        "src_id": 138,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 4,
+            "stream_id": 66
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-105",
+            "tx_mac": "80:d3:36:00:52:19",
+            "tx_ip": "10.73.139.93"
+        }
+    },
+    {
+        "src_id": 139,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 1,
+            "slot_id": 4,
+            "stream_id": 67
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-028",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:99:08",
+            "rx_ip": "10.73.139.104",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-105",
+            "tx_mac": "80:d3:36:00:52:19",
+            "tx_ip": "10.73.139.93"
+        }
+    },
+    {
+        "src_id": 200,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 0,
+            "stream_id": 0
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-201",
+            "tx_mac": "80:d3:36:00:52:20",
+            "tx_ip": "10.73.139.96"
+        }
+    },
+    {
+        "src_id": 201,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 0,
+            "stream_id": 1
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-201",
+            "tx_mac": "80:d3:36:00:52:20",
+            "tx_ip": "10.73.139.96"
+        }
+    },
+    {
+        "src_id": 202,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 0,
+            "stream_id": 2
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-201",
+            "tx_mac": "80:d3:36:00:52:20",
+            "tx_ip": "10.73.139.96"
+        }
+    },
+    {
+        "src_id": 203,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 0,
+            "stream_id": 3
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-201",
+            "tx_mac": "80:d3:36:00:52:20",
+            "tx_ip": "10.73.139.96"
+        }
+    },
+    {
+        "src_id": 204,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 0,
+            "stream_id": 64
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-201",
+            "tx_mac": "80:d3:36:00:52:21",
+            "tx_ip": "10.73.139.97"
+        }
+    },
+    {
+        "src_id": 205,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 0,
+            "stream_id": 65
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-201",
+            "tx_mac": "80:d3:36:00:52:21",
+            "tx_ip": "10.73.139.97"
+        }
+    },
+    {
+        "src_id": 206,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 0,
+            "stream_id": 66
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-201",
+            "tx_mac": "80:d3:36:00:52:21",
+            "tx_ip": "10.73.139.97"
+        }
+    },
+    {
+        "src_id": 207,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 0,
+            "stream_id": 67
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-201",
+            "tx_mac": "80:d3:36:00:52:21",
+            "tx_ip": "10.73.139.97"
+        }
+    },
+    {
+        "src_id": 208,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 1,
+            "stream_id": 0
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-202",
+            "tx_mac": "80:d3:36:00:52:22",
+            "tx_ip": "10.73.139.99"
+        }
+    },
+    {
+        "src_id": 209,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 1,
+            "stream_id": 1
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-202",
+            "tx_mac": "80:d3:36:00:52:22",
+            "tx_ip": "10.73.139.99"
+        }
+    },
+    {
+        "src_id": 210,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 1,
+            "stream_id": 2
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-202",
+            "tx_mac": "80:d3:36:00:52:22",
+            "tx_ip": "10.73.139.99"
+        }
+    },
+    {
+        "src_id": 211,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 1,
+            "stream_id": 3
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-202",
+            "tx_mac": "80:d3:36:00:52:22",
+            "tx_ip": "10.73.139.99"
+        }
+    },
+    {
+        "src_id": 212,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 1,
+            "stream_id": 64
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-202",
+            "tx_mac": "80:d3:36:00:52:23",
+            "tx_ip": "10.73.139.98"
+        }
+    },
+    {
+        "src_id": 213,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 1,
+            "stream_id": 65
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-202",
+            "tx_mac": "80:d3:36:00:52:23",
+            "tx_ip": "10.73.139.98"
+        }
+    },
+    {
+        "src_id": 214,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 1,
+            "stream_id": 66
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-202",
+            "tx_mac": "80:d3:36:00:52:23",
+            "tx_ip": "10.73.139.98"
+        }
+    },
+    {
+        "src_id": 215,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 1,
+            "stream_id": 67
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-202",
+            "tx_mac": "80:d3:36:00:52:23",
+            "tx_ip": "10.73.139.98"
+        }
+    },
+    {
+        "src_id": 216,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 2,
+            "stream_id": 0
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-203",
+            "tx_mac": "80:d3:36:00:52:24",
+            "tx_ip": "10.73.139.100"
+        }
+    },
+    {
+        "src_id": 217,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 2,
+            "stream_id": 1
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-203",
+            "tx_mac": "80:d3:36:00:52:24",
+            "tx_ip": "10.73.139.100"
+        }
+    },
+    {
+        "src_id": 218,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 2,
+            "stream_id": 2
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-203",
+            "tx_mac": "80:d3:36:00:52:24",
+            "tx_ip": "10.73.139.100"
+        }
+    },
+    {
+        "src_id": 219,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 2,
+            "stream_id": 3
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-203",
+            "tx_mac": "80:d3:36:00:52:24",
+            "tx_ip": "10.73.139.100"
+        }
+    },
+    {
+        "src_id": 220,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 2,
+            "stream_id": 64
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-203",
+            "tx_mac": "80:d3:36:00:52:25",
+            "tx_ip": "10.73.139.101"
+        }
+    },
+    {
+        "src_id": 221,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 2,
+            "stream_id": 65
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-203",
+            "tx_mac": "80:d3:36:00:52:25",
+            "tx_ip": "10.73.139.101"
+        }
+    },
+    {
+        "src_id": 222,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 2,
+            "stream_id": 66
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-203",
+            "tx_mac": "80:d3:36:00:52:25",
+            "tx_ip": "10.73.139.101"
+        }
+    },
+    {
+        "src_id": 223,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 2,
+            "stream_id": 67
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-203",
+            "tx_mac": "80:d3:36:00:52:25",
+            "tx_ip": "10.73.139.101"
+        }
+    },
+    {
+        "src_id": 224,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 3,
+            "stream_id": 0
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-204",
+            "tx_mac": "80:d3:36:00:52:26",
+            "tx_ip": "10.73.139.102"
+        }
+    },
+    {
+        "src_id": 225,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 3,
+            "stream_id": 1
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-204",
+            "tx_mac": "80:d3:36:00:52:26",
+            "tx_ip": "10.73.139.102"
+        }
+    },
+    {
+        "src_id": 226,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 3,
+            "stream_id": 2
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-204",
+            "tx_mac": "80:d3:36:00:52:26",
+            "tx_ip": "10.73.139.102"
+        }
+    },
+    {
+        "src_id": 227,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 3,
+            "stream_id": 3
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-204",
+            "tx_mac": "80:d3:36:00:52:26",
+            "tx_ip": "10.73.139.102"
+        }
+    },
+    {
+        "src_id": 228,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 3,
+            "stream_id": 64
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-204",
+            "tx_mac": "80:d3:36:00:52:27",
+            "tx_ip": "10.73.139.103"
+        }
+    },
+    {
+        "src_id": 229,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 3,
+            "stream_id": 65
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-204",
+            "tx_mac": "80:d3:36:00:52:27",
+            "tx_ip": "10.73.139.103"
+        }
+    },
+    {
+        "src_id": 230,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 3,
+            "stream_id": 66
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-204",
+            "tx_mac": "80:d3:36:00:52:27",
+            "tx_ip": "10.73.139.103"
+        }
+    },
+    {
+        "src_id": 231,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 3,
+            "stream_id": 67
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-204",
+            "tx_mac": "80:d3:36:00:52:27",
+            "tx_ip": "10.73.139.103"
+        }
+    },
+    {
+        "src_id": 232,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 4,
+            "stream_id": 0
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-205",
+            "tx_mac": "80:d3:36:00:52:28",
+            "tx_ip": "10.73.139.94"
+        }
+    },
+    {
+        "src_id": 233,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 4,
+            "stream_id": 1
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-205",
+            "tx_mac": "80:d3:36:00:52:28",
+            "tx_ip": "10.73.139.94"
+        }
+    },
+    {
+        "src_id": 234,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 4,
+            "stream_id": 2
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-205",
+            "tx_mac": "80:d3:36:00:52:28",
+            "tx_ip": "10.73.139.94"
+        }
+    },
+    {
+        "src_id": 235,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 4,
+            "stream_id": 3
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-205",
+            "tx_mac": "80:d3:36:00:52:28",
+            "tx_ip": "10.73.139.94"
+        }
+    },
+    {
+        "src_id": 236,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 4,
+            "stream_id": 64
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-205",
+            "tx_mac": "80:d3:36:00:52:29",
+            "tx_ip": "10.73.139.95"
+        }
+    },
+    {
+        "src_id": 237,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 4,
+            "stream_id": 65
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-205",
+            "tx_mac": "80:d3:36:00:52:29",
+            "tx_ip": "10.73.139.95"
+        }
+    },
+    {
+        "src_id": 238,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 4,
+            "stream_id": 66
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-205",
+            "tx_mac": "80:d3:36:00:52:29",
+            "tx_ip": "10.73.139.95"
+        }
+    },
+    {
+        "src_id": 239,
+        "geo_id": {
+            "det_id": 3,
+            "crate_id": 2,
+            "slot_id": 4,
+            "stream_id": 67
+        },
+        "kind": "eth",
+        "parameters": {
+            "rx_host": "np04-srv-029",
+            "protocol": "udp",
+            "mode": "fix_rate",
+            "rx_mac": "6c:fe:54:59:98:f8",
+            "rx_ip": "10.73.139.21",
+            "rx_iface": 0,
+            "tx_host": "np04-wib-205",
+            "tx_mac": "80:d3:36:00:52:29",
+            "tx_ip": "10.73.139.95"
+        }
+    },
+    {
+        "src_id": 240,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 4,
+            "stream_id": 0
+        },
+        "kind": "flx",
+        "parameters": {
+            "host": "np04-srv-030",
+            "protocol": "half",
+            "mode": "fix_rate",
+            "card": 0,
+            "slr": 0,
+            "link": 0
+        }
+    },
+    {
+        "src_id": 241,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 4,
+            "stream_id": 1
+        },
+        "kind": "flx",
+        "parameters": {
+            "host": "np04-srv-030",
+            "protocol": "half",
+            "mode": "fix_rate",
+            "card": 0,
+            "slr": 0,
+            "link": 1
+        }
+    },
+    {
+        "src_id": 242,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 4,
+            "stream_id": 2
+        },
+        "kind": "flx",
+        "parameters": {
+            "host": "np04-srv-030",
+            "protocol": "half",
+            "mode": "fix_rate",
+            "card": 0,
+            "slr": 0,
+            "link": 2
+        }
+    },
+    {
+        "src_id": 243,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 4,
+            "stream_id": 3
+        },
+        "kind": "flx",
+        "parameters": {
+            "host": "np04-srv-030",
+            "protocol": "half",
+            "mode": "fix_rate",
+            "card": 0,
+            "slr": 0,
+            "link": 3
+        }
+    },
+    {
+        "src_id": 244,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 5,
+            "stream_id": 0
+        },
+        "kind": "flx",
+        "parameters": {
+            "host": "np04-srv-030",
+            "protocol": "half",
+            "mode": "fix_rate",
+            "card": 0,
+            "slr": 0,
+            "link": 4
+        }
+    },
+    {
+        "src_id": 245,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 5,
+            "stream_id": 1
+        },
+        "kind": "flx",
+        "parameters": {
+            "host": "np04-srv-030",
+            "protocol": "half",
+            "mode": "fix_rate",
+            "card": 0,
+            "slr": 0,
+            "link": 5
+        }
+    },
+    {
+        "src_id": 246,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 5,
+            "stream_id": 2
+        },
+        "kind": "flx",
+        "parameters": {
+            "host": "np04-srv-030",
+            "protocol": "half",
+            "mode": "fix_rate",
+            "card": 0,
+            "slr": 1,
+            "link": 0
+        }
+    },
+    {
+        "src_id": 247,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 5,
+            "stream_id": 3
+        },
+        "kind": "flx",
+        "parameters": {
+            "host": "np04-srv-030",
+            "protocol": "half",
+            "mode": "fix_rate",
+            "card": 0,
+            "slr": 1,
+            "link": 4
+        }
+    },
+    {
+        "src_id": 248,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 7,
+            "stream_id": 0
+        },
+        "kind": "flx",
+        "parameters": {
+            "host": "np04-srv-030",
+            "protocol": "half",
+            "mode": "fix_rate",
+            "card": 0,
+            "slr": 1,
+            "link": 5
+        }
+    },
+    {
+        "src_id": 249,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 7,
+            "stream_id": 1
+        },
+        "kind": "flx",
+        "parameters": {
+            "host": "np04-srv-030",
+            "protocol": "half",
+            "mode": "fix_rate",
+            "card": 0,
+            "slr": 1,
+            "link": 1
+        }
+    },
+    {
+        "src_id": 250,
+        "geo_id": {
+            "det_id": 2,
+            "crate_id": 1,
+            "slot_id": 9,
+            "stream_id": 0
+        },
+        "kind": "flx",
+        "parameters": {
+            "host": "np04-srv-026",
+            "protocol": "half",
+            "mode": "var_rate",
+            "card": 0,
+            "slr": 0,
+            "link": 0
+        }
+    }
+]
