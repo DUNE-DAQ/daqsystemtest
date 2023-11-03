@@ -1,10 +1,15 @@
 {
   "boot": {
+      "opmon_impl": "cern",
+      "ers_impl": "cern",
       "process_manager": "k8s",
       "start_connectivity_service": false,
+      "use_connectivity_service": true,
+      "connectivity_service_host": "np04-srv-023",
+      "connectivity_service_port": 30005,
       "k8s_image": "np04docker.cern.ch/ghcr/dune-daq/alma9-run"
     },
-  "daq_common": {
+    "daq_common": {
       "data_rate_slowdown_factor": 1
     },
     "detector": {
@@ -16,9 +21,12 @@
     },
     "trigger": {
       "trigger_window_before_ticks": 1000,
+      "host_trigger": "np04-srv-015",
       "trigger_window_after_ticks": 1000
     },
     "hsi": {
+      "use_fake_hsi": true,
+      "host_fake_hsi": "np04-srv-012",
       "random_trigger_rate_hz": 1.0
     }
 }
