@@ -1,0 +1,412 @@
+{
+    "boot": {
+        "base_command_port": 3333,
+        "capture_env_vars": [
+            "TIMING_SHARE",
+            "DETCHANNELMAPS_SHARE"
+        ],
+        "connectivity_service_host": "np04-srv-023",
+        "connectivity_service_interval": 1000,
+        "connectivity_service_port": 30005,
+        "connectivity_service_threads": 2,
+        "disable_trace": false,
+        "ers_impl": "cern",
+        "opmon_impl": "cern",
+        "pocket_url": "127.0.0.1",
+        "process_manager": "k8s",
+        "start_connectivity_service": false,
+        "use_connectivity_service": true
+    },
+    "ctb_hsi": {
+        "beam_llt_triggers": [],
+        "crt_llt_triggers": [],
+        "fake_trig_1": {
+            "beam_mode": false,
+            "description": "Fake 1Hz LLT trigger",
+            "enable": true,
+            "fixed_freq": true,
+            "period": 62500000
+        },
+        "fake_trig_2": {
+            "beam_mode": false,
+            "description": "Fake 1Hz LLT trigger",
+            "enable": true,
+            "fixed_freq": true,
+            "period": 62500000
+        },
+        "hlt_triggers": [
+            {
+                "description": "TEST HLT",
+                "enable": true,
+                "id": "HLT_4",
+                "mexc": "0x0",
+                "minc": "0x1",
+                "prescale": "0x0"
+            }
+        ],
+        "host_ctb_hsi": "np04-srv-012",
+        "pds_llt_triggers": [],
+        "use_ctb_hsi": false
+    },
+    "daq_common": {
+        "data_rate_slowdown_factor": 1,
+        "data_request_timeout_ms": 1000,
+        "use_data_network": false
+    },
+    "dataflow": {
+        "apps": [
+            {
+                "app_name": "dataflow0",
+                "data_store_mode": "all-per-file",
+                "host_df": "np04-srv-004",
+                "max_file_size": 4294967296,
+                "max_trigger_record_window": 0,
+                "output_paths": [
+                    "/data1"
+                ]
+            }
+        ],
+        "enable_tpset_writing": false,
+        "host_dfo": "np04-srv-024",
+        "host_tpw": "localhost",
+        "token_count": 10,
+        "tpset_output_file_size": 4294967296,
+        "tpset_output_path": "."
+    },
+    "detector": {
+        "clock_speed_hz": 62500000,
+        "op_env": "np04_hd",
+        "tpc_channel_map": "PD2HDChannelMap"
+    },
+    "hsi": {
+        "control_hsi_hw": false,
+        "control_hsi_hw_io": false,
+        "enable_hardware_state_recovery": true,
+        "enabled_hsi_signals": 1,
+        "host_fake_hsi": "np04-srv-012",
+        "host_timing_hsi": "np04-srv-012",
+        "hsi_device_id": 0,
+        "hsi_device_name": "",
+        "hsi_endpoint_address": 1,
+        "hsi_endpoint_partition": 0,
+        "hsi_fe_mask": 0,
+        "hsi_hw_connections_file": "${TIMING_SHARE}/config/etc/connections.xml",
+        "hsi_inv_mask": 0,
+        "hsi_re_mask": 0,
+        "hsi_readout_period": 1000,
+        "hsi_signal_emulation_mode": 0,
+        "hsi_source": 1,
+        "mean_hsi_signal_multiplicity": 1,
+        "random_trigger_rate_hz": 1.0,
+        "use_fake_hsi": true,
+        "use_timing_hsi": false
+    },
+    "readout": {
+        "data_files": [],
+        "default_data_file": "/cvmfs/dunedaq.opensciencegrid.org/assets/files/9/f/1/frames.bin",
+        "detector_readout_map_file": "DRO/dro_maps/np04_WIB_APAs12.json",
+        "dpdk_eal_args": "-l 0-1 -n 3 -- -m [0:1].0 -j",
+        "dpdk_lcores_config": {
+            "default_lcore_id_set": [
+                1,
+                2,
+                3,
+                4
+            ],
+            "exceptions": [
+                {
+                    "host": "np04-srv-028",
+                    "iface": 0,
+                    "lcore_id_set": [
+                        3,
+                        5,
+                        7,
+                        9,
+                        35,
+                        37,
+                        39,
+                        41
+                    ]
+                },
+                {
+                    "host": "np04-srv-029",
+                    "iface": 0,
+                    "lcore_id_set": [
+                        3,
+                        5,
+                        7,
+                        9,
+                        35,
+                        37,
+                        39,
+                        41
+                    ]
+                },
+                {
+                    "host": "np04-srv-021",
+                    "iface": 0,
+                    "lcore_id_set": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        25,
+                        26,
+                        27,
+                        28,
+                        29
+                    ]
+                },
+                {
+                    "host": "np04-srv-022",
+                    "iface": 0,
+                    "lcore_id_set": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        25,
+                        26,
+                        27,
+                        28,
+                        29
+                    ]
+                },
+                {
+                    "host": "np02-srv-002",
+                    "iface": 0,
+                    "lcore_id_set": [
+                        1,
+                        33,
+                        2,
+                        34,
+                        3,
+                        35
+                    ]
+                },
+                {
+                    "host": "np02-srv-001",
+                    "iface": 0,
+                    "lcore_id_set": [
+                        3,
+                        7,
+                        11,
+                        15,
+                        35,
+                        39,
+                        43,
+                        47
+                    ]
+                }
+            ]
+        },
+        "emulated_TP_rate_per_ch": 1.0,
+        "emulated_data_times_start_with_now": false,
+        "emulator_mode": false,
+        "enable_raw_recording": false,
+        "enable_tpg": false,
+        "fragment_send_timeout_ms": 10000,
+        "generate_periodic_adc_pattern": false,
+        "latency_buffer_size": 124992,
+        "numa_config": {
+            "default_id": 1,
+            "default_latency_numa_aware": true,
+            "default_latency_preallocation": false,
+            "exceptions": [
+                {
+                    "card": 0,
+                    "felix_card_id": -1,
+                    "host": "np04-srv-028",
+                    "latency_buffer_numa_aware": true,
+                    "latency_buffer_preallocation": true,
+                    "numa_id": 1
+                },
+                {
+                    "card": 0,
+                    "felix_card_id": -1,
+                    "host": "np04-srv-029",
+                    "latency_buffer_numa_aware": true,
+                    "latency_buffer_preallocation": true,
+                    "numa_id": 1
+                },
+                {
+                    "card": 0,
+                    "felix_card_id": -1,
+                    "host": "np04-srv-021",
+                    "latency_buffer_numa_aware": true,
+                    "latency_buffer_preallocation": true,
+                    "numa_id": 1
+                },
+                {
+                    "card": 0,
+                    "felix_card_id": -1,
+                    "host": "np04-srv-022",
+                    "latency_buffer_numa_aware": true,
+                    "latency_buffer_preallocation": true,
+                    "numa_id": 1
+                },
+                {
+                    "card": 0,
+                    "felix_card_id": -1,
+                    "host": "np04-srv-030",
+                    "latency_buffer_numa_aware": false,
+                    "latency_buffer_preallocation": false,
+                    "numa_id": 1
+                },
+                {
+                    "card": 0,
+                    "felix_card_id": -1,
+                    "host": "np04-srv-026",
+                    "latency_buffer_numa_aware": false,
+                    "latency_buffer_preallocation": false,
+                    "numa_id": 1
+                },
+                {
+                    "card": 0,
+                    "felix_card_id": -1,
+                    "host": "np02-srv-002",
+                    "latency_buffer_numa_aware": true,
+                    "latency_buffer_preallocation": true,
+                    "numa_id": 0
+                },
+                {
+                    "card": 0,
+                    "felix_card_id": -1,
+                    "host": "np02-srv-001",
+                    "latency_buffer_numa_aware": true,
+                    "latency_buffer_preallocation": true,
+                    "numa_id": 0
+                }
+            ]
+        },
+        "raw_recording_output_dir": ".",
+        "source_queue_sleep_us": 500,
+        "source_queue_timeout_ms": 0,
+        "thread_pinning_file": "${PWD}/cpupin_files/cpupin-all.json",
+        "tpg_algorithm": "SimpleThreshold",
+        "tpg_channel_mask": [],
+        "tpg_threshold": 120,
+        "use_fake_cards": false,
+        "use_fake_data_producers": false
+    },
+    "timing": {
+        "control_timing_partition": false,
+        "host_tprtc": "np04-srv-012",
+        "timing_partition_id": 0,
+        "timing_partition_master_device_name": "MASTER_PC059_0",
+        "timing_partition_rate_control_enabled": false,
+        "timing_partition_spill_gate_enabled": false,
+        "timing_partition_trigger_mask": 255,
+        "timing_session_name": "np04-timing-fanout-1"
+    },
+    "trigger": {
+        "completeness_tolerance": 1,
+        "ctcm_timestamp_method": "kSystemClock",
+        "ctcm_trigger_intervals": [
+            10000000
+        ],
+        "ctcm_trigger_types": [
+            4
+        ],
+        "host_trigger": "np04-srv-018",
+        "hsi_trigger_type_passthrough": false,
+        "mlt_buffer_timeout": 100,
+        "mlt_ignore_tc": [],
+        "mlt_max_td_length_ms": 1000,
+        "mlt_merge_overlapping_tcs": true,
+        "mlt_send_timed_out_tds": false,
+        "mlt_td_readout_map": {
+            "c0": {
+                "candidate_type": 0,
+                "time_after": 1001,
+                "time_before": 1000
+            },
+            "c1": {
+                "candidate_type": 1,
+                "time_after": 1001,
+                "time_before": 1000
+            },
+            "c2": {
+                "candidate_type": 2,
+                "time_after": 1001,
+                "time_before": 1000
+            },
+            "c3": {
+                "candidate_type": 3,
+                "time_after": 1001,
+                "time_before": 1000
+            },
+            "c4": {
+                "candidate_type": 4,
+                "time_after": 1001,
+                "time_before": 1000
+            },
+            "c5": {
+                "candidate_type": 5,
+                "time_after": 1001,
+                "time_before": 1000
+            },
+            "c6": {
+                "candidate_type": 6,
+                "time_after": 1001,
+                "time_before": 1000
+            },
+            "c7": {
+                "candidate_type": 7,
+                "time_after": 1001,
+                "time_before": 1000
+            },
+            "c8": {
+                "candidate_type": 8,
+                "time_after": 1001,
+                "time_before": 1000
+            },
+            "c9": {
+                "candidate_type": 9,
+                "time_after": 1001,
+                "time_before": 1000
+            }
+        },
+        "mlt_trigger_bitwords": [],
+        "mlt_use_bitwords": false,
+        "mlt_use_readout_map": false,
+        "rtcm_time_distribution": "kUniform",
+        "rtcm_timestamp_method": "kSystemClock",
+        "rtcm_trigger_interval_ticks": 62500000,
+        "tolerate_incompleteness": false,
+        "trigger_activity_config": [{
+            "adc_threshold": 10000,
+            "adj_tolerance": 4,
+            "adjacency_threshold": 6,
+            "n_channels_threshold": 8,
+            "prescale": 10000,
+            "print_tp_info": false,
+            "trigger_on_adc": false,
+            "trigger_on_adjacency": true,
+            "trigger_on_n_channels": false,
+            "window_length": 10000
+        }],
+        "trigger_activity_plugin": "TriggerActivityMakerPrescalePlugin",
+        "trigger_candidate_config": [{
+            "adc_threshold": 10000,
+            "adj_tolerance": 4,
+            "adjacency_threshold": 6,
+            "n_channels_threshold": 8,
+            "prescale": 10000,
+            "print_tp_info": false,
+            "trigger_on_adc": false,
+            "trigger_on_adjacency": true,
+            "trigger_on_n_channels": false,
+            "window_length": 10000
+        }],
+        "trigger_candidate_plugin": "TriggerCandidateMakerPrescalePlugin",
+        "trigger_window_after_ticks": 260000,
+        "trigger_window_before_ticks": 2144,
+        "ttcm_s1": 1,
+        "ttcm_s2": 2,
+        "use_custom_maker": false,
+        "use_random_maker": false
+    }
+}
