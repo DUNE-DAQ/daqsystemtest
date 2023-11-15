@@ -86,8 +86,8 @@ while [[ ${overall_loop_count} -lt ${overall_run_count} ]]; do
         echo "===== Running ${TEST_NAME}" >> ${ITGRUNNER_LOG_FILE}
         if [[ -e "./${TEST_NAME}" ]]; then
           pytest -s ./${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
-        elif [[ -e "${DBT_AREA_ROOT}/sourcecode/daqsystemtest/integtest}/${TEST_NAME}" ]]; then
-          pytest -s ${DBT_AREA_ROOT}/sourcecode/daqsystemtest/integtest}/${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
+        elif [[ -e "${DBT_AREA_ROOT}/sourcecode/daqsystemtest/integtest/${TEST_NAME}" ]]; then
+          pytest -s ${DBT_AREA_ROOT}/sourcecode/daqsystemtest/integtest/${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
         else
           pytest -s ${DAQSYSTEMTEST_SHARE}/integtest/${TEST_NAME} --nanorc-option partition-number ${session_number} | tee -a ${ITGRUNNER_LOG_FILE}
         fi
