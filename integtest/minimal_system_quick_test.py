@@ -6,6 +6,8 @@ import integrationtest.dro_map_gen as dro_map_gen
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.config_file_gen as config_file_gen
 
+from integrationtest.integrationtest_nanorc import run_nanorc
+
 # Values that help determine the running conditions
 number_of_data_producers=2
 data_rate_slowdown_factor=1 # 10 for ProtoWIB/DuneWIB
