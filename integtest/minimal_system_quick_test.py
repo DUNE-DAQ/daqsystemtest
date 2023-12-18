@@ -84,7 +84,7 @@ def make_nanorc_conf():
         confgen_arguments,
         nanorc_command_list,
         confgen_name,
-        dro_map_contents
+        dro_map_contents = dro_map_contents
     )
 
 nanorc_conf = make_nanorc_conf()
