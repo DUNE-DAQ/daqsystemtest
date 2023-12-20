@@ -115,6 +115,7 @@ conf_dict["readout"]["enable_tpg"] = True
 conf_dict["readout"]["tpg_threshold"] = 500
 conf_dict["readout"]["tpg_algorithm"] = "SimpleThreshold"
 conf_dict["readout"]["default_data_file"] = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
+conf_dict["readout"]["tpset_min_latency_ticks"] = 9375000
 conf_dict["trigger"]["trigger_activity_plugin"] = ["TriggerActivityMakerPrescalePlugin"]
 conf_dict["trigger"]["trigger_activity_config"] = [ {"prescale": 25} ]
 conf_dict["trigger"]["trigger_candidate_plugin"] = ["TriggerCandidateMakerPrescalePlugin"]
