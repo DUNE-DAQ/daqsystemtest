@@ -74,6 +74,16 @@ while true; do
     esac
 done
 
+# check if the numad daemon is running
+numad_grep_output=`ps -ef | grep numad | grep -v grep`
+if [[ "${numad_grep_output}" != "" ]]; then
+   echo "*******************************************************"
+   echo "*** DANGER, DANGER, numad is running on this computer!"
+   echo "*** <ctrl-c> now if you want to abort this testing."
+   echo "*******************************************************"
+   sleep 3
+fi
+
 # other setup
 TIMESTAMP=`date '+%Y%m%d%H%M%S'`
 mkdir -p /tmp/pytest-of-${USER}
@@ -126,3 +136,16 @@ date                                                      | tee -a ${ITGRUNNER_L
 echo "Log file is: ${ITGRUNNER_LOG_FILE}"                 | tee -a ${ITGRUNNER_LOG_FILE}
 echo ""                                                   | tee -a ${ITGRUNNER_LOG_FILE}
 grep '=====' ${ITGRUNNER_LOG_FILE} | egrep ' in |Running' | tee -a ${ITGRUNNER_LOG_FILE}
+
+# check again if the numad daemon is running
+numad_grep_output=`ps -ef | grep numad | grep -v grep`
+if [[ "${numad_grep_output}" != "" ]]; then
+   echo ""                                                                                 | tee -a ${ITGRUNNER_LOG_FILE}
+   echo "********************************************************************************" | tee -a ${ITGRUNNER_LOG_FILE}
+   echo "*** WARNING: numad is running on this computer!"                                  | tee -a ${ITGRUNNER_LOG_FILE}
+   echo "*** This daemon can adversely affect the running of these tests, especially ones" | tee -a ${ITGRUNNER_LOG_FILE}
+   echo "*** that are resource intensive in the Readout Apps. This is because numad moves" | tee -a ${ITGRUNNER_LOG_FILE}
+   echo "*** processes (threads?) to different cores/numa nodes periodically, and that"    | tee -a ${ITGRUNNER_LOG_FILE}
+   echo "*** context switch is bad for the stable running of the DAQ processes."           | tee -a ${ITGRUNNER_LOG_FILE}
+   echo "********************************************************************************" | tee -a ${ITGRUNNER_LOG_FILE}
+fi
