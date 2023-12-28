@@ -146,6 +146,6 @@ if [[ "${numad_grep_output}" != "" ]]; then
    echo "*** This daemon can adversely affect the running of these tests, especially ones" | tee -a ${ITGRUNNER_LOG_FILE}
    echo "*** that are resource intensive in the Readout Apps. This is because numad moves" | tee -a ${ITGRUNNER_LOG_FILE}
    echo "*** processes (threads?) to different cores/numa nodes periodically, and that"    | tee -a ${ITGRUNNER_LOG_FILE}
-   echo "*** context switch is bad for the stable running of the DAQ processes."           | tee -a ${ITGRUNNER_LOG_FILE}
+   echo "*** context switch can disrupt the stable running of the DAQ processes."          | tee -a ${ITGRUNNER_LOG_FILE}
    echo "********************************************************************************" | tee -a ${ITGRUNNER_LOG_FILE}
 fi
