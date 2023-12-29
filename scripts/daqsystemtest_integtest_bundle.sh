@@ -77,10 +77,11 @@ done
 # check if the numad daemon is running
 numad_grep_output=`ps -ef | grep numad | grep -v grep`
 if [[ "${numad_grep_output}" != "" ]]; then
-   echo "*******************************************************"
-   echo "*** DANGER, DANGER, numad is running on this computer!"
+   echo "*********************************************************************"
+   echo "*** DANGER, DANGER, 'numad' appears to be running on this computer!"
+   echo "*** 'ps' output:  ${numad_grep_output}"
    echo "*** <ctrl-c> now if you want to abort this testing."
-   echo "*******************************************************"
+   echo "*********************************************************************"
    sleep 3
 fi
 
@@ -142,7 +143,8 @@ numad_grep_output=`ps -ef | grep numad | grep -v grep`
 if [[ "${numad_grep_output}" != "" ]]; then
    echo ""                                                                                 | tee -a ${ITGRUNNER_LOG_FILE}
    echo "********************************************************************************" | tee -a ${ITGRUNNER_LOG_FILE}
-   echo "*** WARNING: numad is running on this computer!"                                  | tee -a ${ITGRUNNER_LOG_FILE}
+   echo "*** WARNING: 'numad' appears to be running on this computer!"                     | tee -a ${ITGRUNNER_LOG_FILE}
+   echo "*** 'ps' output:  ${numad_grep_output}"                                           | tee -a ${ITGRUNNER_LOG_FILE}
    echo "*** This daemon can adversely affect the running of these tests, especially ones" | tee -a ${ITGRUNNER_LOG_FILE}
    echo "*** that are resource intensive in the Readout Apps. This is because numad moves" | tee -a ${ITGRUNNER_LOG_FILE}
    echo "*** processes (threads?) to different cores/numa nodes periodically, and that"    | tee -a ${ITGRUNNER_LOG_FILE}
