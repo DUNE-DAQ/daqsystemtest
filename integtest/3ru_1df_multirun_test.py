@@ -140,6 +140,12 @@ else:
 
 # The tests themselves
 
+def test_computer_resources():
+    print(f"Resources on computer ({hostname}):")
+    print(f"    (CPU count is {cpu_count}, free and total memory are {free_mem} GB and {total_mem} GB.)")
+    print(f"    (Minimum CPU count is {minimum_cpu_count} and minimum free memory is {minimum_free_memory_gb} GB.)")
+    assert sufficient_resources_on_this_computer
+
 def test_nanorc_success(run_nanorc):
     if not sufficient_resources_on_this_computer:
         pytest.skip(f"This computer ({hostname}) does not have enough resources to run this test.")
@@ -169,6 +175,8 @@ def test_data_files(run_nanorc):
         print(f"    (CPU count is {cpu_count}, free and total memory are {free_mem} GB and {total_mem} GB.)")
         print(f"    (Minimum CPU count is {minimum_cpu_count} and minimum free memory is {minimum_free_memory_gb} GB.)")
         pytest.skip(f"This computer ({hostname}) does not have enough resources to run this test.")
+
+    print('TEST DEBUG print statements in test_data_files')
 
     local_expected_event_count=expected_event_count
     local_event_count_tolerance=expected_event_count_tolerance
