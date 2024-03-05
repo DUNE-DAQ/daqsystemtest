@@ -114,8 +114,10 @@ def test_data_files(run_nanorc):
         #frag_params["max_size_bytes"]=72+(464*161)
         #frag_params["min_size_bytes"]=72+(472*math.ceil(4001/32)) # 126 frames of 472 bytes each with 72-byte Fragment header # DuneWIB
         #frag_params["max_size_bytes"]=72+(472*math.ceil(4001/32))
-        frag_params["min_size_bytes"]=72+(7200*math.ceil(4001/2048)) # 2 frames of 7200 bytes each with 72-byte Fragment header # WIBEth
-        frag_params["max_size_bytes"]=72+(7200*math.ceil(4001/2048))
+        #frag_params["min_size_bytes"]=72+(7200*math.ceil(4001/2048)) # 2 frames of 7200 bytes each with 72-byte Fragment header # WIBEth
+        #frag_params["max_size_bytes"]=72+(7200*math.ceil(4001/2048))
+        frag_params["min_size_bytes"]=72+(72000*math.ceil(4001/2048)) # 2 frames of 7200 bytes each with 72-byte Fragment header # WIBEth
+        frag_params["max_size_bytes"]=72+(72000*math.ceil(4001/2048))
     fragment_check_list=[frag_params, hsi_frag_params]
 
     # Run some tests on the output data file
