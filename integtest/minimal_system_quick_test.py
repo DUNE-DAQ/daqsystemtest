@@ -2,9 +2,11 @@ import pytest
 import urllib.request
 
 import integrationtest.data_file_checks as data_file_checks
-import integrationtest.dro_map_gen as dro_map_gen
+import integrationtest.oks_dro_map_gen as dro_map_gen
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.config_file_gen as config_file_gen
+
+pytest_plugins="integrationtest.integrationtest_drunc"
 
 # Values that help determine the running conditions
 number_of_data_producers=2
@@ -29,20 +31,20 @@ wib2_frag_params={"fragment_type_description": "WIB2",
                   "expected_fragment_count": number_of_data_producers,
                   "min_size_bytes": 29808, "max_size_bytes": 30280}
 wibeth_frag_params={"fragment_type_description": "WIBEth",
-                  "fragment_type": "WIBEth",
-                  "hdf5_source_subsystem": "Detector_Readout",
-                  "expected_fragment_count": number_of_data_producers,
-                  "min_size_bytes": 7272, "max_size_bytes": 14472}
+                    "fragment_type": "WIBEth",
+                    "hdf5_source_subsystem": "Detector_Readout",
+                    "expected_fragment_count": number_of_data_producers,
+                    "min_size_bytes": 7272, "max_size_bytes": 14472}
 triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
                               "fragment_type": "Trigger_Candidate",
                               "hdf5_source_subsystem": "Trigger",
                               "expected_fragment_count": 1,
                               "min_size_bytes": 72, "max_size_bytes": 216}
 hsi_frag_params ={"fragment_type_description": "HSI",
-                             "fragment_type": "Hardware_Signal",
-                             "hdf5_source_subsystem": "HW_Signals_Interface",
-                             "expected_fragment_count": 1,
-                             "min_size_bytes": 72, "max_size_bytes": 100}
+                  "fragment_type": "Hardware_Signal",
+                  "hdf5_source_subsystem": "HW_Signals_Interface",
+                  "expected_fragment_count": 1,
+                  "min_size_bytes": 72, "max_size_bytes": 100}
 ignored_logfile_problems={"connectionservice": ["Searching for connections matching uid_regex<errored_frames_q> and data_type Unknown"]}
 
 # The next three variable declarations *must* be present as globals in the test
@@ -72,7 +74,7 @@ conf_dict["readout"]["data_files"].append(datafile_conf)
 
 confgen_arguments={"MinimalSystem": conf_dict}
 # The commands to run in nanorc, as a list
-nanorc_command_list="integtest-partition boot conf start 101 wait 1 enable_triggers wait ".split() + [str(run_duration)] + "disable_triggers wait 2 stop_run wait 2 scrap terminate".split()
+nanorc_command_list="boot conf start 101 wait 1 enable_triggers wait ".split() + [str(run_duration)] + "disable_triggers wait 2 stop_run wait 2 scrap terminate".split()
 
 # The tests themselves
 
