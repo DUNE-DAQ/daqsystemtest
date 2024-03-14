@@ -51,8 +51,7 @@ ignored_logfile_problems={"connectionservice": ["Searching for connections match
 # file. They're read by the "fixtures" in conftest.py to determine how
 # to run the config generation and nanorc
 
-# The name of the python module for the config generation
-confgen_name="fddaqconf_gen"
+base_oks_config="test-config-notpg.data.xml"
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 
