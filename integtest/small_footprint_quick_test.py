@@ -2,9 +2,11 @@ import pytest
 import urllib.request
 
 import integrationtest.data_file_checks as data_file_checks
-import integrationtest.dro_map_gen as dro_map_gen
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.config_file_gen as config_file_gen
+import integrationtest.oks_dro_map_gen as dro_map_gen
+
+pytest_plugins="integrationtest.integrationtest_drunc"
 
 # Values that help determine the running conditions
 number_of_data_producers=1
@@ -49,8 +51,8 @@ ignored_logfile_problems={"connectionservice": ["Searching for connections match
 # file. They're read by the "fixtures" in conftest.py to determine how
 # to run the config generation and nanorc
 
-# The name of the python module for the config generation
-confgen_name="fddaqconf_gen"
+base_oks_config="INTEGTEST_CONFDIR/test-config-notpg.data.xml"
+
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 
@@ -73,7 +75,7 @@ conf_dict["readout"]["data_files"].append(datafile_conf)
 
 confgen_arguments={"MinimalSystem": conf_dict}
 # The commands to run in nanorc, as a list
-nanorc_command_list="integtest-partition boot conf start 101 wait 1 enable_triggers wait ".split() + [str(run_duration)] + "disable_triggers wait 2 stop_run wait 2 scrap terminate".split()
+nanorc_command_list="boot conf start 101 wait 1 enable_triggers wait ".split() + [str(run_duration)] + "disable_triggers wait 2 stop_run wait 2 scrap terminate".split()
 
 # The tests themselves
 

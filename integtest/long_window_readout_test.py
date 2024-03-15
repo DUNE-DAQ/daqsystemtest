@@ -9,7 +9,9 @@ import urllib.request
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.config_file_gen as config_file_gen
-import integrationtest.dro_map_gen as dro_map_gen
+import integrationtest.oks_dro_map_gen as dro_map_gen
+
+pytest_plugins="integrationtest.integrationtest_drunc"
 
 # Values that help determine the running conditions
 output_path_parameter="."
@@ -86,8 +88,8 @@ if cpu_count < minimum_cpu_count or free_mem < minimum_free_memory_gb:
 # file. They're read by the "fixtures" in conftest.py to determine how
 # to run the config generation and nanorc
 
-# The name of the python module for the config generation
-confgen_name="fddaqconf_gen"
+base_oks_config="INTEGTEST_CONFDIR/test-config.data.xml"
+
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 dro_map_contents = dro_map_gen.generate_dromap_contents(number_of_data_producers, number_of_readout_apps)
@@ -123,12 +125,12 @@ confgen_arguments={#"No_TR_Splitting": conf_dict,
 
 # The commands to run in nanorc, as a list
 if sufficient_disk_space and sufficient_resources_on_this_computer:
-    nanorc_command_list="integtest-partition boot conf".split()
+    nanorc_command_list="boot conf".split()
     nanorc_command_list+="start_run --wait 15 101 wait ".split() + [str(run_duration)] + "stop_run --wait 2 wait 2".split()
     nanorc_command_list+="start 102 wait 15 enable_triggers wait ".split() + [str(run_duration)] + "stop_run wait 2".split()
     nanorc_command_list+="scrap terminate".split()
 else:
-    nanorc_command_list=["integtest-partition", "boot", "terminate"]
+    nanorc_command_list=["boot", "terminate"]
 
 # The tests themselves
 

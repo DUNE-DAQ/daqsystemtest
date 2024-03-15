@@ -8,7 +8,9 @@ import math
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.config_file_gen as config_file_gen
-import integrationtest.dro_map_gen as dro_map_gen
+import integrationtest.oks_dro_map_gen as dro_map_gen
+
+pytest_plugins="integrationtest.integrationtest_drunc"
 
 # Values that help determine the running conditions
 run_duration=20  # seconds
@@ -50,8 +52,8 @@ ignored_logfile_problems={}
 # file. They're read by the "fixtures" in conftest.py to determine how
 # to run the config generation and nanorc
 
-# The name of the python module for the config generation
-confgen_name="fddaqconf_gen"
+base_oks_config="INTEGTEST_CONFDIR/test-config.data.xml"
+
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 dro_map_contents = dro_map_gen.generate_dromap_contents(number_of_data_producers)
@@ -74,7 +76,7 @@ confgen_arguments={"Baseline_Window_Size": conf_dict,
 # The commands to run in nanorc, as a list
 # (the first run [#100] is included to warm up the DAQ processes and avoid warnings and errors caused by
 # startup sluggishness seen on slower test computers)
-nanorc_command_list="integtest-partition boot conf".split()
+nanorc_command_list="boot conf".split()
 nanorc_command_list+="start_run          101 wait ".split() + [str(run_duration)] + "stop_run --wait 2 wait 2".split()
 nanorc_command_list+="start_run --wait 1 102 wait ".split() + [str(run_duration)] + "stop_run          wait 2".split()
 nanorc_command_list+="start_run --wait 2 103 wait ".split() + [str(run_duration)] + "stop_run --wait 1 wait 2".split()

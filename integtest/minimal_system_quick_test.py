@@ -51,7 +51,7 @@ ignored_logfile_problems={"connectionservice": ["Searching for connections match
 # file. They're read by the "fixtures" in conftest.py to determine how
 # to run the config generation and nanorc
 
-base_oks_config="test-config-notpg.data.xml"
+base_oks_config="INTEGTEST_CONFDIR/test-config-notpg.data.xml"
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 
