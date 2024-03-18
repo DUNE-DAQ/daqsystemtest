@@ -530,7 +530,8 @@
   <ref class="NetworkConnectionRule" id="td-dfo-net-rule"/>
  </rel>
  <rel name="mlt_conf" class="ModuleLevelTriggerConf" id="mlt-conf"/>
- <rel name="standalone_candidate_maker_confs">
+ <rel name="standalone_candidate_maker_confs"> 
+   <ref class="RandomTriggerCandidateMakerConf" id="random-tc-generator"/>
  </rel>
 </obj>
 
@@ -879,7 +880,7 @@
 <obj class="RandomTriggerCandidateMakerConf" id="random-tc-generator">
  <attr name="timestamp_method" type="enum" val="kTimeSync"/>
  <attr name="template_for" type="class" val="RandomTriggerCandidateMaker"/>
- <attr name="trigger_interval_ticks" type="u32" val="125000000"/>
+ <attr name="trigger_interval_ticks" type="u32" val="62500000"/>
  <attr name="clock_frequency_hz" type="u32" val="62500000"/>
  <attr name="time_distribution" type="enum" val="kUniform"/>
 </obj>
@@ -1069,7 +1070,6 @@
   <ref class="Segment" id="ru-segment"/>
   <ref class="Segment" id="df-segment"/>
   <ref class="Segment" id="trg-segment"/>
-  <ref class="Segment" id="hsi-segment"/>
  </rel>
  <rel name="controller" class="RCApplication" id="root-controller"/>
 </obj>
@@ -1083,7 +1083,7 @@
 
 <obj class="Segment" id="trg-segment">
  <rel name="applications">
-  <ref class="HSIEventToTCApplication" id="hsi-to-tc-app"/>
+  <!--<ref class="HSIEventToTCApplication" id="hsi-to-tc-app"/>-->
   <ref class="TriggerApplication" id="tc-maker-1"/>
   <ref class="TriggerApplication" id="tc-buffer-1"/>
   <ref class="MLTApplication" id="mlt"/>
