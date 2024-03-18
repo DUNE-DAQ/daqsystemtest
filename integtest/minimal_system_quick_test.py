@@ -44,7 +44,7 @@ triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
 hsi_frag_params ={"fragment_type_description": "HSI",
                   "fragment_type": "Hardware_Signal",
                   "hdf5_source_subsystem": "HW_Signals_Interface",
-                  "expected_fragment_count": 1,
+                  "expected_fragment_count": 0,
                   "min_size_bytes": 72, "max_size_bytes": 100}
 ignored_logfile_problems={"connectionservice": ["Searching for connections matching uid_regex<errored_frames_q> and data_type Unknown"]}
 

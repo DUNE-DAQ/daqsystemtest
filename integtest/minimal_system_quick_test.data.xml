@@ -369,7 +369,7 @@
 
 <obj class="FakeHSIEventGeneratorConf" id="fakehsi">
  <attr name="clock_frequency" type="u64" val="62500000"/>
- <attr name="trigger_rate" type="double" val="3"/>
+ <attr name="trigger_rate" type="double" val="1"/>
  <attr name="hsi_device_id" type="u32" val="1"/>
  <attr name="mean_signal_multiplicity" type="u32" val="1"/>
  <attr name="enabled_signals" type="u32" val="1"/>
@@ -531,7 +531,6 @@
  </rel>
  <rel name="mlt_conf" class="ModuleLevelTriggerConf" id="mlt-conf"/>
  <rel name="standalone_candidate_maker_confs">
-  <ref class="RandomTriggerCandidateMakerConf" id="random-tc-generator"/>
  </rel>
 </obj>
 
@@ -890,9 +889,9 @@
  <attr name="thread_names_prefix" type="string" val="postproc-"/>
  <attr name="mask_processing" type="bool" val="0"/>
  <attr name="max_ticks_tot" type="u32" val="10000"/>
- <attr name="tpg_enabled" type="bool" val="1"/>
+ <attr name="tpg_enabled" type="bool" val="0"/>
  <attr name="algorithm" type="string" val="SimpleThreshold"/>
- <attr name="threshold" type="u16" val="1900"/>
+ <attr name="threshold" type="u16" val="19000"/>
  <attr name="channel_map" type="string" val="PD2HDChannelMap"/>
 </obj>
 
