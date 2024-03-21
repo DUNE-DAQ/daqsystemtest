@@ -7,7 +7,9 @@ import urllib.request
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.config_file_gen as config_file_gen
-import integrationtest.dro_map_gen as dro_map_gen
+import integrationtest.oks_dro_map_gen as dro_map_gen
+
+pytest_plugins="integrationtest.integrationtest_drunc"
 
 # Don't require frames file
 frame_file_required=False
@@ -80,8 +82,8 @@ ignored_logfile_problems={"trigger": ["zipped_tpset_q: Unable to push within tim
 # file. They're read by the "fixtures" in conftest.py to determine how
 # to run the config generation and nanorc
 
-# The name of the python module for the config generation
-confgen_name="fddaqconf_gen"
+base_oks_config="INTEGTEST_CONFDIR/test-config.data.xml"
+
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 dro_map_contents = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id = 3) # default HD_TPC
@@ -161,7 +163,7 @@ confgen_arguments={
                   }
 
 # The commands to run in nanorc, as a list
-nanorc_command_list="integtest-partition boot conf start 101 wait 2 enable_triggers wait ".split() + [str(run_duration)] + "disable_triggers wait 2 stop_run wait 2 scrap terminate".split()
+nanorc_command_list="boot conf start 101 wait 2 enable_triggers wait ".split() + [str(run_duration)] + "disable_triggers wait 2 stop_run wait 2 scrap terminate".split()
 
 # The tests themselves
 

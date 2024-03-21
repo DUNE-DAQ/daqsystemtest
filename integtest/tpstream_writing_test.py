@@ -7,7 +7,9 @@ import urllib.request
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.config_file_gen as config_file_gen
-import integrationtest.dro_map_gen as dro_map_gen
+import integrationtest.oks_dro_map_gen as dro_map_gen
+
+pytest_plugins="integrationtest.integrationtest_drunc"
 
 # Values that help determine the running conditions
 number_of_data_producers=2
@@ -94,8 +96,8 @@ ignored_logfile_problems={}
 # file. They're read by the "fixtures" in conftest.py to determine how
 # to run the config generation and nanorc
 
-# The name of the python module for the config generation
-confgen_name="fddaqconf_gen"
+base_oks_config="INTEGTEST_CONFDIR/test-config.data.xml"
+
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 dro_map_contents = dro_map_gen.generate_dromap_contents(number_of_data_producers, number_of_readout_apps)
@@ -132,7 +134,7 @@ for df_app in range(number_of_dataflow_apps):
 confgen_arguments={"Software_TPG_System": conf_dict                  }
 
 # The commands to run in nanorc, as a list
-nanorc_command_list="integtest-partition boot conf".split()
+nanorc_command_list="boot conf".split()
 nanorc_command_list+="start_run --wait 2 101 wait ".split() + [str(run_duration)] + "stop_run          wait 2".split()
 nanorc_command_list+="start_run          102 wait ".split() + [str(run_duration)] + "stop_run --wait 2 wait 2".split()
 nanorc_command_list+="scrap terminate".split()
