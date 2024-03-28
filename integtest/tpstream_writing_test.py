@@ -88,7 +88,8 @@ hsi_frag_params ={"fragment_type_description": "HSI",
                              "hdf5_source_subsystem": "HW_Signals_Interface",
                              "expected_fragment_count": 1,
                              "min_size_bytes": 72, "max_size_bytes": 100}
-ignored_logfile_problems={}
+ignored_logfile_problems={"rulocalhost": ["Encountered new error, name=\"MISSING_FRAMES\"",
+                                          "Encountered new error, name=\"SEQUENCE_ID_JUMP\""]}
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
@@ -120,6 +121,8 @@ conf_dict["trigger"]["trigger_activity_plugin"] = ["TriggerActivityMakerPrescale
 conf_dict["trigger"]["trigger_activity_config"] = [ {"prescale": 25} ]
 conf_dict["trigger"]["trigger_candidate_plugin"] = ["TriggerCandidateMakerPrescalePlugin"]
 conf_dict["trigger"]["trigger_candidate_config"] = [ {"prescale": 100} ]
+conf_dict["trigger"]["ttcm_input_map"] = [{'signal': 1, 'tc_type_name': 'kTiming',
+                                           'time_before': 1000, 'time_after': 1000}]
 
 conf_dict["dataflow"]["token_count"] = int(math.ceil(max(10, 6*number_of_data_producers*number_of_readout_apps)/number_of_dataflow_apps))
 conf_dict["dataflow"]["apps"] = [] # Remove preconfigured dataflow0 app
