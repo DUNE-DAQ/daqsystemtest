@@ -63,12 +63,12 @@ conf_dict["daq_common"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
 conf_dict["readout"]["use_fake_data_producers"] = True
 #conf_dict["readout"]["clock_speed_hz"] = 50000000 # ProtoWIB
 conf_dict["detector"]["clock_speed_hz"] = 62500000 # DuneWIB/WIBEth
-conf_dict["trigger"]["trigger_window_before_ticks"] = 1000
-conf_dict["trigger"]["trigger_window_after_ticks"] = 1001
+ttcm_conf = [{'signal': 1, 'tc_type_name': 'kTiming', 'time_before': 1000, 'time_after': 1001}]
+conf_dict["trigger"]["ttcm_input_map"] = ttcm_conf
 
 doublewindow_conf = copy.deepcopy(conf_dict)
-doublewindow_conf["trigger"]["trigger_window_before_ticks"] = 2000
-doublewindow_conf["trigger"]["trigger_window_after_ticks"] = 2001
+ttcm_conf2 = [{'signal': 1, 'tc_type_name': 'kTiming', 'time_before': 2000, 'time_after': 2001}]
+doublewindow_conf["trigger"]["ttcm_input_map"] = ttcm_conf2
 
 confgen_arguments={"Baseline_Window_Size": conf_dict,
                    "Double_Window_Size": doublewindow_conf,
@@ -111,7 +111,7 @@ def test_data_files(run_nanorc):
     #frag_params=wib1_frag_hsi_trig_params # ProtoWIB
     #frag_params=wib2_frag_params # DuneWIB
     frag_params=wibeth_frag_params
-    if run_nanorc.confgen_config["trigger"]["trigger_window_before_ticks"] == 2000:
+    if run_nanorc.confgen_config["trigger"]["ttcm_input_map"][0]["time_before"] == 2000:
         #frag_params["min_size_bytes"]=72+(464*161) # 161 frames of 464 bytes each with 72-byte Fragment header # ProtoWIB
         #frag_params["max_size_bytes"]=72+(464*161)
         #frag_params["min_size_bytes"]=72+(472*math.ceil(4001/32)) # 126 frames of 472 bytes each with 72-byte Fragment header # DuneWIB
