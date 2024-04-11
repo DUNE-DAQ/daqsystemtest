@@ -1,6 +1,5 @@
 import pytest
 import urllib.request
-import os
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.oks_dro_map_gen as dro_map_gen
@@ -52,9 +51,6 @@ ignored_logfile_problems={"connectionservice": ["Searching for connections match
 # file. They're read by the "fixtures" in conftest.py to determine how
 # to run the config generation and nanorc
 
-base_oks_config=os.path.dirname(__file__) + "/minimal_system_quick_test.data.xml"
-skip_readout_gen=True # Using a static configuration
-
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 
@@ -63,10 +59,10 @@ dro_map_contents = dro_map_gen.generate_dromap_contents(number_of_data_producers
 conf_dict = config_file_gen.get_default_config_dict()
 conf_dict["detector"]["op_env"] = "integtest"
 conf_dict["daq_common"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
-conf_dict["detector"]["clock_speed_hz"] = 62500000 # DuneWIB/WIBEth
 conf_dict["readout"]["use_fake_cards"] = True
-conf_dict["trigger"]["trigger_window_before_ticks"] = readout_window_time_before
-conf_dict["trigger"]["trigger_window_after_ticks"] = readout_window_time_after
+conf_dict["trigger"]["ttcm_input_map"] = [{'signal': 1, 'tc_type_name': 'kTiming',
+                                           'time_before': readout_window_time_before,
+                                           'time_after': readout_window_time_after}]
 
 conf_dict["readout"]["data_files"] = []
 datafile_conf = {}
