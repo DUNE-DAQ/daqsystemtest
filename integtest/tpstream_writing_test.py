@@ -121,6 +121,7 @@ conf_dict["trigger"]["trigger_activity_plugin"] = ["TriggerActivityMakerPrescale
 conf_dict["trigger"]["trigger_activity_config"] = [ {"prescale": 25} ]
 conf_dict["trigger"]["trigger_candidate_plugin"] = ["TriggerCandidateMakerPrescalePlugin"]
 conf_dict["trigger"]["trigger_candidate_config"] = [ {"prescale": 100} ]
+conf_dict["trigger"]["mlt_merge_overlapping_tcs"] = False
 conf_dict["trigger"]["ttcm_input_map"] = [{'signal': 1, 'tc_type_name': 'kTiming',
                                            'time_before': 1000, 'time_after': 1000}]
 
@@ -132,7 +133,7 @@ for df_app in range(number_of_dataflow_apps):
     dfapp_conf["output_path"] = output_dir
     conf_dict["dataflow"]["apps"].append(dfapp_conf)
 
-confgen_arguments={"Software_TPG_System": conf_dict                  }
+confgen_arguments={"Software_TPG_System": conf_dict}
 
 # The commands to run in nanorc, as a list
 nanorc_command_list="integtest-partition boot conf".split()
