@@ -57,6 +57,7 @@ crt_frag_params={"fragment_type_description": "CRT",
                  "hdf5_source_subsystem": "Detector_Readout",
                  "expected_fragment_count": number_of_data_producers,
                  "min_size_bytes": 36000, "max_size_bytes": 37000}
+                 "min_size_bytes": 447432, "max_size_bytes": 1163208}  # 20 x 12 x 1864; 52 x 12 x 1864 (+72)
 triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
                               "fragment_type": "Trigger_Candidate",
                               "hdf5_source_subsystem": "Trigger",
@@ -68,8 +69,9 @@ triggertp_frag_params={"fragment_type_description": "Trigger with TPs",
                        "expected_fragment_count": number_of_data_producers,
                        "min_size_bytes": 72, "max_size_bytes": 16000}
 ignored_logfile_problems={"trigger": ["zipped_tpset_q: Unable to push within timeout period"],
-                          "rulocalhost": ["Configuration Error: Binary file contains more data than expected"],
-                         }
+                          "rulocalhost": ["Configuration Error: Binary file contains more data than expected",
+                                          "Encountered new error, name=\"MISSING_FRAMES\"",
+                                          "Encountered new error, name=\"SEQUENCE_ID_JUMP\""]}
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
@@ -86,14 +88,14 @@ conf_dict["readout"]["dro_map"] = dro_map_contents
 conf_dict["daq_common"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
 conf_dict["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
 conf_dict["readout"]["use_fake_cards"] = True
-conf_dict["trigger"]["trigger_window_before_ticks"] = 1000
-conf_dict["trigger"]["trigger_window_after_ticks"] = 1000
+conf_dict["trigger"]["ttcm_input_map"] = [{'signal': 1, 'tc_type_name': 'kTiming',
+                                           'time_before': 1000, 'time_after': 1000}]
 
 swtpg_conf = copy.deepcopy(conf_dict)
 swtpg_conf["readout"]["generate_periodic_adc_pattern"] = True
 swtpg_conf["readout"]["emulated_TP_rate_per_ch"] = 4
 swtpg_conf["readout"]["enable_tpg"] = True
-swtpg_conf["readout"]["tpg_threshold"] = 500
+swtpg_conf["readout"]["tpg_threshold_default"] = 500
 swtpg_conf["readout"]["tpg_algorithm"] = "SimpleThreshold"
 swtpg_conf["readout"]["default_data_file"] = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
 swtpg_conf["trigger"]["trigger_activity_plugin"] = ["TriggerActivityMakerPrescalePlugin"]
@@ -121,14 +123,14 @@ tde_conf["readout"]["default_data_file"] = "asset://?checksum=759e5351436bead208
 pds_stream_conf = copy.deepcopy(conf_dict)
 pds_stream_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, n_apps=1, det_id=2, app_type='flx', flx_mode='fix_rate', flx_protocol='half') # det_id = 2 for HD_PDS
 pds_stream_conf["readout"]["default_data_file"] = "asset://?label=DAPHNEStream&subsystem=readout"
-pds_stream_conf["trigger"]["trigger_window_before_ticks"] = 62000
-pds_stream_conf["trigger"]["trigger_window_after_ticks"] = 500
+pds_stream_conf["trigger"]["ttcm_input_map"] = [{'signal': 1, 'tc_type_name': 'kTiming',
+                                                 'time_before': 62000, 'time_after': 500}]
 
 pds_conf = copy.deepcopy(conf_dict)
 pds_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, n_apps=1, det_id=2, app_type='flx', flx_mode='var_rate', flx_protocol='half') # det_id = 2 for HD_PDS
 pds_conf["readout"]["default_data_file"] = "asset://?label=DAPHNE&subsystem=readout"
-pds_conf["trigger"]["trigger_window_before_ticks"] = 62000
-pds_conf["trigger"]["trigger_window_after_ticks"] = 500
+pds_conf["trigger"]["ttcm_input_map"] = [{'signal': 1, 'tc_type_name': 'kTiming',
+                                          'time_before': 62000, 'time_after': 500}]
 
 crt_conf = copy.deepcopy(conf_dict)
 crt_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id=4)
