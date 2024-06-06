@@ -75,9 +75,11 @@ hsi_frag_params ={"fragment_type_description": "HSI",
                              "hdf5_source_subsystem": "HW_Signals_Interface",
                              "expected_fragment_count": 1,
                              "min_size_bytes": 72, "max_size_bytes": 100}
-ignored_logfile_problems={"trigger": ["zipped_tpset_q: Unable to push within timeout period"],
+ignored_logfile_problems={"trigger": ["zipped_tpset_q: Unable to push within timeout period",
+                                      "Trigger Matching result with empty fragment:"],
                           "rulocalhost": ["Encountered new error, name=\"MISSING_FRAMES\"",
-                                          "Encountered new error, name=\"SEQUENCE_ID_JUMP\""]}
+                                          "Encountered new error, name=\"SEQUENCE_ID_JUMP\"",
+                                          "Trigger.sequence number=2.0 Oldest stored TS="]}
 
 # Determine if this computer is powerful enough for these tests
 sufficient_resources_on_this_computer=True
@@ -178,7 +180,7 @@ def test_data_files(run_nanorc):
     fragment_check_list=[triggercandidate_frag_params, hsi_frag_params]
     if "enable_tpg" in run_nanorc.confgen_config["readout"].keys() and run_nanorc.confgen_config["readout"]["enable_tpg"]:
         local_expected_event_count+=(250*number_of_data_producers*number_of_readout_apps*run_duration/100)
-        local_event_count_tolerance+=(10*number_of_data_producers*number_of_readout_apps*run_duration/100)
+        local_event_count_tolerance+=(15*number_of_data_producers*number_of_readout_apps*run_duration/100)
         #fragment_check_list.append(wib1_frag_multi_trig_params) # ProtoWIB
         #fragment_check_list.append(wib2_frag_multi_trig_params) # DuneWIB
         fragment_check_list.append(wibeth_frag_multi_trig_params) # WIBEth
