@@ -147,11 +147,11 @@
         "host_tpw": "np04-srv-001",
         "ttcm_s1": 1,
         "ttcm_s2": 2,
-        "trigger_activity_plugin": "TriggerActivityMakerPrescalePlugin",
+        "trigger_activity_plugin": "TAMakerPrescaleAlgorithm",
         "trigger_activity_config": {
             "prescale": 10000
         },
-        "trigger_candidate_plugin": "TriggerCandidateMakerPrescalePlugin",
+        "trigger_candidate_plugin": "TCMakerPrescaleAlgorithm",
         "trigger_candidate_config": {
             "prescale": 10000
         },
