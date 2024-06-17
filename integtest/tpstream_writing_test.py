@@ -12,6 +12,7 @@ import integrationtest.dro_map_gen as dro_map_gen
 # Values that help determine the running conditions
 number_of_data_producers=2
 number_of_readout_apps=2
+number_pf_tpc_wire_planes_per_readout_app=3
 number_of_dataflow_apps=2
 pulser_trigger_rate=1.0 # Hz
 run_duration=30  # seconds
@@ -66,7 +67,7 @@ wibeth_frag_multi_trig_params={"fragment_type_description": "WIBEth",
 wibeth_tpset_params={"fragment_type_description": "TP Stream", 
                    "fragment_type": "Trigger_Primitive",
                    "hdf5_source_subsystem": "Trigger",
-                   "expected_fragment_count": (3*number_of_readout_apps),
+                   "expected_fragment_count": (number_pf_tpc_wire_planes_per_readout_app*number_of_readout_apps),
                    "min_size_bytes": 72, "max_size_bytes": 3291080}
 triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate", 
                               "fragment_type": "Trigger_Candidate",
@@ -76,12 +77,12 @@ triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
 triggeractivity_frag_params={"fragment_type_description": "Trigger Activity",
                               "fragment_type": "Trigger_Activity",
                               "hdf5_source_subsystem": "Trigger",
-                              "expected_fragment_count": (3*number_of_readout_apps),
+                              "expected_fragment_count": (number_pf_tpc_wire_planes_per_readout_app*number_of_readout_apps),
                               "min_size_bytes": 72, "max_size_bytes": 216}
 triggertp_frag_params={"fragment_type_description": "Trigger with TPs",
                        "fragment_type": "Trigger_Primitive",
                        "hdf5_source_subsystem": "Trigger",
-                       "expected_fragment_count": (3*number_of_readout_apps),
+                       "expected_fragment_count": (number_pf_tpc_wire_planes_per_readout_app*number_of_readout_apps),
                        "min_size_bytes": 72, "max_size_bytes": 16000}
 hsi_frag_params ={"fragment_type_description": "HSI",
                              "fragment_type": "Hardware_Signal",
