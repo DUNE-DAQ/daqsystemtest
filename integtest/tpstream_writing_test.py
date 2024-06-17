@@ -66,7 +66,7 @@ wibeth_frag_multi_trig_params={"fragment_type_description": "WIBEth",
 wibeth_tpset_params={"fragment_type_description": "TP Stream", 
                    "fragment_type": "Trigger_Primitive",
                    "hdf5_source_subsystem": "Trigger",
-                   "expected_fragment_count": number_of_readout_apps,
+                   "expected_fragment_count": (3*number_of_readout_apps),
                    "min_size_bytes": 72, "max_size_bytes": 3291080}
 triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate", 
                               "fragment_type": "Trigger_Candidate",
@@ -76,12 +76,12 @@ triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
 triggeractivity_frag_params={"fragment_type_description": "Trigger Activity",
                               "fragment_type": "Trigger_Activity",
                               "hdf5_source_subsystem": "Trigger",
-                              "expected_fragment_count": number_of_readout_apps,
+                              "expected_fragment_count": (3*number_of_readout_apps),
                               "min_size_bytes": 72, "max_size_bytes": 216}
 triggertp_frag_params={"fragment_type_description": "Trigger with TPs",
                        "fragment_type": "Trigger_Primitive",
                        "hdf5_source_subsystem": "Trigger",
-                       "expected_fragment_count": (number_of_data_producers*number_of_readout_apps),
+                       "expected_fragment_count": (3*number_of_readout_apps),
                        "min_size_bytes": 72, "max_size_bytes": 16000}
 hsi_frag_params ={"fragment_type_description": "HSI",
                              "fragment_type": "Hardware_Signal",
@@ -137,8 +137,8 @@ confgen_arguments={"Software_TPG_System": conf_dict}
 
 # The commands to run in nanorc, as a list
 nanorc_command_list="integtest-partition boot conf".split()
-nanorc_command_list+="start_run --wait 2 101 wait ".split() + [str(run_duration)] + "stop_run          wait 2".split()
-nanorc_command_list+="start_run          102 wait ".split() + [str(run_duration)] + "stop_run --wait 2 wait 2".split()
+nanorc_command_list+="start_run --wait 4 101 wait ".split() + [str(run_duration)] + "stop_run          wait 2".split()
+nanorc_command_list+="start_run --wait 2 102 wait ".split() + [str(run_duration)] + "stop_run --wait 2 wait 2".split()
 nanorc_command_list+="scrap terminate".split()
 
 # The tests themselves
