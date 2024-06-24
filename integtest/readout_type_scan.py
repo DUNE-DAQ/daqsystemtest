@@ -57,12 +57,12 @@ pds_stream_frag_params={"fragment_type_description": "PDSStream",
                         "fragment_type": "DAPHNEStream",
                         "hdf5_source_subsystem": "Detector_Readout",
                         "expected_fragment_count": number_of_data_producers,
-                        "min_size_bytes": 108632, "max_size_bytes": 297432}  # 230 x 472; 630 * 472 (+72)
+                        "min_size_bytes": 1936, "max_size_bytes": 93272}
 pds_frag_params={"fragment_type_description": "PDS",
                  "fragment_type": "DAPHNE",
                  "hdf5_source_subsystem": "Detector_Readout",
                  "expected_fragment_count": number_of_data_producers,
-                 "min_size_bytes": 447432, "max_size_bytes": 1163208}  # 20 x 12 x 1864; 52 x 12 x 1864 (+72)
+                 "min_size_bytes": 134280, "max_size_bytes": 268488}  # 6 x 12 x 1864; 12 x 12 x 1864 (+72)
 triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
                               "fragment_type": "Trigger_Candidate",
                               "hdf5_source_subsystem": "Trigger",
