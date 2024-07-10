@@ -116,9 +116,9 @@ confgen_arguments={"WIBEth_System": conf_dict,
                   }
 # The commands to run in nanorc, as a list
 nanorc_command_list="integtest-partition boot conf".split()
-nanorc_command_list+="start 101 enable_triggers wait ".split() + [str(run_duration)] + "stop_run wait 2".split()
-nanorc_command_list+="start 102 wait 1 enable_triggers wait ".split() + [str(run_duration)] + "disable_triggers wait 1 stop_run".split()
-nanorc_command_list+="start_run 103 wait ".split() + [str(run_duration)] + "disable_triggers wait 1 drain_dataflow wait 1 stop_trigger_sources wait 1 stop wait 2".split()
+nanorc_command_list+="start 101 wait 2 enable_triggers wait ".split() + [str(run_duration)] + "stop_run wait 2".split()
+nanorc_command_list+="start 102 wait 5 enable_triggers wait ".split() + [str(run_duration)] + "disable_triggers wait 1 stop_run".split()
+nanorc_command_list+="start_run --wait 2 103 wait ".split() + [str(run_duration)] + "disable_triggers wait 1 drain_dataflow wait 1 stop_trigger_sources wait 1 stop wait 2".split()
 nanorc_command_list+="shutdown".split()
 
 # The tests themselves

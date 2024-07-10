@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(daqsystemtest VERSION 2.3.4)
+project(daqsystemtest VERSION 2.3.5)
 
 find_package(daq-cmake REQUIRED)
 
