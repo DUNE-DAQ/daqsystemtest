@@ -114,9 +114,9 @@ conf_dict["readout"]["tpg_threshold"] = 500
 conf_dict["readout"]["tpg_algorithm"] = "SimpleThreshold"
 conf_dict["readout"]["default_data_file"] = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
 conf_dict["readout"]["tpset_min_latency_ticks"] = 9375000
-conf_dict["trigger"]["trigger_activity_plugin"] = ["TriggerActivityMakerPrescalePlugin"]
+conf_dict["trigger"]["trigger_activity_plugin"] = ["TAMakerPrescaleAlgorithm"]
 conf_dict["trigger"]["trigger_activity_config"] = [ {"prescale": 25} ]
-conf_dict["trigger"]["trigger_candidate_plugin"] = ["TriggerCandidateMakerPrescalePlugin"]
+conf_dict["trigger"]["trigger_candidate_plugin"] = ["TCMakerPrescaleAlgorithm"]
 conf_dict["trigger"]["trigger_candidate_config"] = [ {"prescale": 100} ]
 conf_dict["trigger"]["ttcm_input_map"] = [{'signal': 1, 'tc_type_name': 'kTiming',
                                            'time_before': 1000, 'time_after': 1000}]
@@ -192,7 +192,7 @@ def test_data_files(run_nanorc):
 
 def test_tpstream_files(run_nanorc):
     tpstream_files = run_nanorc.tpset_files
-    local_expected_event_count=run_duration+2 # TPStreamWriter is currently configured to write at 1 Hz
+    local_expected_event_count=run_duration+2 # TPStreamWriterModule is currently configured to write at 1 Hz
     local_event_count_tolerance = local_expected_event_count / 10
     #fragment_check_list=[wib1_tpset_params] # ProtoWIB
     #fragment_check_list=[wib2_tpset_params] # DuneWIB
