@@ -103,7 +103,7 @@ conf_dict["detector"]["clock_speed_hz"] = 62500000 # DuneWIB/WIBEth
 conf_dict["readout"]["use_fake_cards"] = True
 conf_dict["readout"]["emulated_data_times_start_with_now"] = True
 conf_dict["hsi"]["random_trigger_rate_hz"] = trigger_rate
-conf_dict["trigger"]["ttcm_input_map"] = [{'signal': 1, 'tc_type_name': 'kTiming',
+conf_dict["trigger"]["ttcm_input_map"] = [{'signal': 0, 'tc_type_name': 'kTiming',
                                            'time_before': readout_window_time_before,
                                            'time_after': readout_window_time_after}]
 
