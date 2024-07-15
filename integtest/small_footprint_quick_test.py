@@ -51,8 +51,6 @@ ignored_logfile_problems={"connectionservice": ["Searching for connections match
 # file. They're read by the "fixtures" in conftest.py to determine how
 # to run the config generation and nanorc
 
-base_oks_config="INTEGTEST_CONFDIR/test-config-notpg.data.xml"
-
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 
@@ -73,6 +71,8 @@ datafile_conf = {}
 datafile_conf["data_file"] = "asset://?checksum=e96fd6efd3f98a9a3bfaba32975b476e" # WIBEth
 datafile_conf["detector_id"] = 3
 conf_dict["readout"]["data_files"].append(datafile_conf)
+conf_dict["hsi"]["use_hsi"] = True
+conf_dict["trigger"]["segment_config"] = "INTEGTEST_CONFDIR/trigger-segment-fakehsi.data.xml"
 
 confgen_arguments={"MinimalSystem": conf_dict}
 # The commands to run in nanorc, as a list

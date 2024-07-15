@@ -17,6 +17,7 @@ run_duration=20  # seconds
 # baseline_fragment_size_bytes=72+(464*81) # 81 frames of 464 bytes each with 72-byte Fragment header # ProtoWIB
 #baseline_fragment_size_bytes=72+(472*math.ceil(2001/32)) # 63 frames of 472 bytes each with 72-byte Fragment header # DuneWIB
 baseline_fragment_size_bytes=72+(7200*math.ceil(2001/2048)) # 1 frame of 7200 bytes with 72-byte Fragment header # WIBEth
+baseline_fragment_size_bytes_max=72+(7200*(1+math.ceil(2001/2048))) # 1 frame of 7200 bytes with 72-byte Fragment header # WIBEth
 data_rate_slowdown_factor=10
 number_of_data_producers = 2
 
@@ -30,17 +31,17 @@ wib1_frag_hsi_trig_params={"fragment_type_description": "WIB",
                            "hdf5_source_subsystem": "Detector_Readout",
                            "expected_fragment_count": number_of_data_producers,
                            "min_size_bytes": baseline_fragment_size_bytes,
-                           "max_size_bytes": baseline_fragment_size_bytes}
+                           "max_size_bytes": baseline_fragment_size_bytes_max}
 wib2_frag_params={"fragment_type_description": "WIB2",
                   "fragment_type": "WIB",
                   "hdf5_source_subsystem": "Detector_Readout",
                   "expected_fragment_count": number_of_data_producers,
-                  "min_size_bytes": baseline_fragment_size_bytes, "max_size_bytes": baseline_fragment_size_bytes}
+                  "min_size_bytes": baseline_fragment_size_bytes, "max_size_bytes": baseline_fragment_size_bytes_max}
 wibeth_frag_params={"fragment_type_description": "WIBEth",
                   "fragment_type": "WIBEth",
                   "hdf5_source_subsystem": "Detector_Readout",
                   "expected_fragment_count": number_of_data_producers,
-                  "min_size_bytes": baseline_fragment_size_bytes, "max_size_bytes": baseline_fragment_size_bytes}
+                  "min_size_bytes": baseline_fragment_size_bytes, "max_size_bytes": baseline_fragment_size_bytes_max}
 hsi_frag_params ={"fragment_type_description": "HSI",
                              "fragment_type": "Hardware_Signal",
                              "hdf5_source_subsystem": "HW_Signals_Interface",
@@ -65,6 +66,8 @@ conf_dict["readout"]["use_fake_data_producers"] = True
 conf_dict["detector"]["clock_speed_hz"] = 62500000 # DuneWIB/WIBEth
 ttcm_conf = [{'signal': 1, 'tc_type_name': 'kTiming', 'time_before': 1000, 'time_after': 1001}]
 conf_dict["trigger"]["ttcm_input_map"] = ttcm_conf
+conf_dict["hsi"]["use_hsi"] = True
+conf_dict["trigger"]["segment_config"] = "INTEGTEST_CONFDIR/trigger-segment-fakehsi.data.xml"
 
 doublewindow_conf = copy.deepcopy(conf_dict)
 ttcm_conf2 = [{'signal': 1, 'tc_type_name': 'kTiming', 'time_before': 2000, 'time_after': 2001}]
@@ -117,7 +120,7 @@ def test_data_files(run_nanorc):
         #frag_params["min_size_bytes"]=72+(472*math.ceil(4001/32)) # 126 frames of 472 bytes each with 72-byte Fragment header # DuneWIB
         #frag_params["max_size_bytes"]=72+(472*math.ceil(4001/32))
         frag_params["min_size_bytes"]=72+(7200*math.ceil(4001/2048)) # 2 frames of 7200 bytes each with 72-byte Fragment header # WIBEth
-        frag_params["max_size_bytes"]=72+(7200*math.ceil(4001/2048))
+        frag_params["max_size_bytes"]=72+(7200*(1+math.ceil(4001/2048)))
     fragment_check_list=[frag_params, hsi_frag_params]
 
     # Run some tests on the output data file

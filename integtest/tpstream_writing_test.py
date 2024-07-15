@@ -93,12 +93,6 @@ hsi_frag_params ={"fragment_type_description": "HSI",
 ignored_logfile_problems={"rulocalhost": ["Encountered new error, name=\"MISSING_FRAMES\"",
                                           "Encountered new error, name=\"SEQUENCE_ID_JUMP\""]}
 
-# The next three variable declarations *must* be present as globals in the test
-# file. They're read by the "fixtures" in conftest.py to determine how
-# to run the config generation and nanorc
-
-base_oks_config="INTEGTEST_CONFDIR/test-config.data.xml"
-
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 dro_map_contents = dro_map_gen.generate_dromap_contents(number_of_data_producers, number_of_readout_apps)
@@ -111,6 +105,7 @@ conf_dict["readout"]["use_fake_cards"] = True # WIBEth
 conf_dict["hsi"]["random_trigger_rate_hz"] = pulser_trigger_rate
 conf_dict["dataflow"]["enable_tpset_writing"] = True
 conf_dict["dataflow"]["tpset_output_path"] = output_dir
+conf_dict["dataflow"]["segment_config"] = "INTEGTEST_CONFDIR/df-segment-1df-tpw.data.xml"
 
 conf_dict["readout"]["generate_periodic_adc_pattern"] = True
 conf_dict["readout"]["emulated_TP_rate_per_ch"] = 1
