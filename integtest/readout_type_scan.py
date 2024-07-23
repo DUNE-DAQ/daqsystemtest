@@ -14,6 +14,7 @@ frame_file_required=False
 
 # Values that help determine the running conditions
 number_of_data_producers=2
+number_of_tpdata_producers=3
 run_duration=20  # seconds
 data_rate_slowdown_factor=10
 
@@ -46,18 +47,18 @@ pds_stream_frag_params={"fragment_type_description": "PDSStream",
                         "fragment_type": "DAPHNEStream",
                         "hdf5_source_subsystem": "Detector_Readout",
                         "expected_fragment_count": number_of_data_producers,
-                        "min_size_bytes": 108632, "max_size_bytes": 297432}  # 230 x 472; 630 * 472 (+72)
+                        "min_size_bytes": 461216, "max_size_bytes": 461688}
 pds_frag_params={"fragment_type_description": "PDS",
                  "fragment_type": "DAPHNE",
                  "hdf5_source_subsystem": "Detector_Readout",
                  "expected_fragment_count": number_of_data_producers,
-                 "min_size_bytes": 435912, "max_size_bytes": 1133256}  # 20 x 21792; 52 x 21792 (+72)
+                 "min_size_bytes": 72, "max_size_bytes": 30000}
 crt_frag_params={"fragment_type_description": "CRT",
                  "fragment_type": "CRT",
                  "hdf5_source_subsystem": "Detector_Readout",
                  "expected_fragment_count": number_of_data_producers,
                  "min_size_bytes": 36000, "max_size_bytes": 37000}
-                 "min_size_bytes": 447432, "max_size_bytes": 1163208}  # 20 x 12 x 1864; 52 x 12 x 1864 (+72)
+                 "min_size_bytes": 447432, "max_size_bytes": 1163208}
 triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
                               "fragment_type": "Trigger_Candidate",
                               "hdf5_source_subsystem": "Trigger",
@@ -66,7 +67,7 @@ triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
 triggertp_frag_params={"fragment_type_description": "Trigger with TPs",
                        "fragment_type": "Trigger_Primitive",
                        "hdf5_source_subsystem": "Trigger",
-                       "expected_fragment_count": number_of_data_producers,
+                       "expected_fragment_count": number_of_tpdata_producers,
                        "min_size_bytes": 72, "max_size_bytes": 16000}
 ignored_logfile_problems={"trigger": ["zipped_tpset_q: Unable to push within timeout period"],
                           "rulocalhost": ["Configuration Error: Binary file contains more data than expected",

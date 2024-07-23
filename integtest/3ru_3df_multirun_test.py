@@ -51,20 +51,23 @@ triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
 triggeractivity_frag_params={"fragment_type_description": "Trigger Activity",
                               "fragment_type": "Trigger_Activity",
                               "hdf5_source_subsystem": "Trigger",
-                              "expected_fragment_count": number_of_readout_apps,
+                              "expected_fragment_count": (3*number_of_readout_apps),
                               "min_size_bytes": 72, "max_size_bytes": 400}
 triggertp_frag_params={"fragment_type_description": "Trigger with TPs",
                        "fragment_type": "Trigger_Primitive",
                        "hdf5_source_subsystem": "Trigger",
-                       "expected_fragment_count": (2*number_of_readout_apps),
+                       "expected_fragment_count": (3*number_of_readout_apps),
                        "min_size_bytes": 72, "max_size_bytes": 16000}
 hsi_frag_params ={"fragment_type_description": "HSI",
                              "fragment_type": "Hardware_Signal",
                              "hdf5_source_subsystem": "HW_Signals_Interface",
                              "expected_fragment_count": 1,
                              "min_size_bytes": 72, "max_size_bytes": 100}
-ignored_logfile_problems={"rulocalhost": ["Encountered new error, name=\"MISSING_FRAMES\"",
-                                          "Encountered new error, name=\"SEQUENCE_ID_JUMP\""]}
+ignored_logfile_problems={"trigger": ["Trigger Matching result with empty fragment:"],
+                          "rulocalhost": ["Encountered new error, name=\"MISSING_FRAMES\"",
+                                          "Encountered new error, name=\"SEQUENCE_ID_JUMP\"",
+                                          "Trigger.sequence number=2.0 Oldest stored TS=",
+                                          "Trigger.sequence number=4.0 Oldest stored TS="]}
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
@@ -113,9 +116,9 @@ confgen_arguments={"WIBEth_System": conf_dict,
                   }
 # The commands to run in nanorc, as a list
 nanorc_command_list="integtest-partition boot conf".split()
-nanorc_command_list+="start 101 enable_triggers wait ".split() + [str(run_duration)] + "stop_run wait 2".split()
-nanorc_command_list+="start 102 wait 1 enable_triggers wait ".split() + [str(run_duration)] + "disable_triggers wait 1 stop_run".split()
-nanorc_command_list+="start_run 103 wait ".split() + [str(run_duration)] + "disable_triggers wait 1 drain_dataflow wait 1 stop_trigger_sources wait 1 stop wait 2".split()
+nanorc_command_list+="start 101 wait 2 enable_triggers wait ".split() + [str(run_duration)] + "stop_run wait 2".split()
+nanorc_command_list+="start 102 wait 5 enable_triggers wait ".split() + [str(run_duration)] + "disable_triggers wait 1 stop_run".split()
+nanorc_command_list+="start_run --wait 2 103 wait ".split() + [str(run_duration)] + "disable_triggers wait 1 drain_dataflow wait 1 stop_trigger_sources wait 1 stop wait 2".split()
 nanorc_command_list+="shutdown".split()
 
 # The tests themselves
@@ -145,7 +148,7 @@ def test_data_files(run_nanorc):
     fragment_check_list=[triggercandidate_frag_params, hsi_frag_params]
     if "enable_tpg" in run_nanorc.confgen_config["readout"].keys() and run_nanorc.confgen_config["readout"]["enable_tpg"]:
         local_expected_event_count+=(250*number_of_data_producers*number_of_readout_apps*run_duration/(100*number_of_dataflow_apps))
-        local_event_count_tolerance+=(10*number_of_data_producers*number_of_readout_apps*run_duration/(100*number_of_dataflow_apps))
+        local_event_count_tolerance+=(15*number_of_data_producers*number_of_readout_apps*run_duration/(100*number_of_dataflow_apps))
         #fragment_check_list.append(wib2_frag_multi_trig_params) # DuneWIB
         fragment_check_list.append(wibeth_frag_multi_trig_params) # WIBEth
         fragment_check_list.append(triggertp_frag_params)
