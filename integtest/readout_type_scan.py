@@ -57,8 +57,7 @@ crt_frag_params={"fragment_type_description": "CRT",
                  "fragment_type": "CRT",
                  "hdf5_source_subsystem": "Detector_Readout",
                  "expected_fragment_count": number_of_data_producers,
-                 "min_size_bytes": 36000, "max_size_bytes": 37000}
-                 "min_size_bytes": 447432, "max_size_bytes": 1163208}
+                 "min_size_bytes": 72, "max_size_bytes": 37000}
 triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
                               "fragment_type": "Trigger_Candidate",
                               "hdf5_source_subsystem": "Trigger",
