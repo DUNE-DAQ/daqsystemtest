@@ -23,16 +23,6 @@ expected_number_of_data_files=1
 check_for_logfile_errors=True
 expected_event_count=run_duration
 expected_event_count_tolerance=2
-wib1_frag_hsi_trig_params={"fragment_type_description": "WIB", 
-                           "fragment_type": "ProtoWIB",
-                           "hdf5_source_subsystem": "Detector_Readout",
-                           "expected_fragment_count": number_of_data_producers,
-                           "min_size_bytes": 37192, "max_size_bytes": 37656}
-wib1_frag_multi_trig_params={"fragment_type_description": "WIB",
-                             "fragment_type": "ProtoWIB",
-                             "hdf5_source_subsystem": "Detector_Readout",
-                             "expected_fragment_count": number_of_data_producers,
-                             "min_size_bytes": 72, "max_size_bytes": 54000}
 wib2_frag_params={"fragment_type_description": "WIB2",
                   "fragment_type": "WIB",
                   "hdf5_source_subsystem": "Detector_Readout",
@@ -63,6 +53,11 @@ pds_frag_params={"fragment_type_description": "PDS",
                  "hdf5_source_subsystem": "Detector_Readout",
                  "expected_fragment_count": number_of_data_producers,
                  "min_size_bytes": 72, "max_size_bytes": 30000}
+crt_frag_params={"fragment_type_description": "CRT",
+                 "fragment_type": "CRT",
+                 "hdf5_source_subsystem": "Detector_Readout",
+                 "expected_fragment_count": number_of_data_producers,
+                 "min_size_bytes": 72, "max_size_bytes": 37000}
 triggercandidate_frag_params={"fragment_type_description": "Trigger Candidate",
                               "fragment_type": "Trigger_Candidate",
                               "hdf5_source_subsystem": "Trigger",
@@ -109,17 +104,13 @@ swtpg_conf["trigger"]["trigger_candidate_plugin"] = ["TriggerCandidateMakerPresc
 swtpg_conf["trigger"]["trigger_candidate_config"] = [ {"prescale": 100} ]
 swtpg_conf["trigger"]["mlt_merge_overlapping_tcs"] = False
 
-wib1_conf = copy.deepcopy(conf_dict)
-wib1_conf["detector"]["clock_speed_hz"] = 50000000
-wib1_conf["readout"]["default_data_file"] = "asset://?label=ProtoWIB&subsystem=readout"
-
 wib2_conf = copy.deepcopy(conf_dict)
 wib2_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id=3, app_type='flx')
 wib2_conf["detector"]["clock_speed_hz"] = 62500000
 wib2_conf["readout"]["default_data_file"] = "asset://?label=DuneWIB&subsystem=readout"
 
 wibeth_conf = copy.deepcopy(conf_dict)
-wibeth_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id =10)
+wibeth_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id = 10)
 wibeth_conf["detector"]["clock_speed_hz"] = 62500000
 #wibeth_conf["readout"]["data_rate_slowdown_factor"] = 1
 wibeth_conf["readout"]["default_data_file"] = "asset://?label=WIBEth&subsystem=readout"
@@ -141,6 +132,11 @@ pds_conf["readout"]["default_data_file"] = "asset://?label=DAPHNE&subsystem=read
 pds_conf["trigger"]["ttcm_input_map"] = [{'signal': 1, 'tc_type_name': 'kTiming',
                                           'time_before': 62000, 'time_after': 500}]
 
+crt_conf = copy.deepcopy(conf_dict)
+crt_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(n_streams=number_of_data_producers, det_id=4)
+crt_conf["detector"]["clock_speed_hz"] = 62500000
+crt_conf["readout"]["default_data_file"] = "asset://?label=WIBEth&subsystem=readout"
+
 #pacman_conf = copy.deepcopy(conf_dict)
 #pacman_conf["readout"]["dro_map"] = dro_map_gen.generate_dromap_contents(number_of_data_producers, 1, 32) # det_id = 32 for NDLAr_TPC
 #pacman_conf["readout"]["default_data_file"] = "asset://?label=PACMAN&subsystem=readout"
@@ -151,13 +147,13 @@ pds_conf["trigger"]["ttcm_input_map"] = [{'signal': 1, 'tc_type_name': 'kTiming'
 
 
 confgen_arguments={
-                   #"WIB1_System": wib1_conf,
                    "WIBEth_System": wibeth_conf,
                    "Software_TPG_System": swtpg_conf,
                    "WIB2_System": wib2_conf,
                    "PDS_Stream_System": pds_stream_conf,
                    "PDS_System": pds_conf,
                    "TDE_System": tde_conf,
+                   "CRT_System": crt_conf,
                    #"PACMAN_System": pacman_conf,
                    #"MPD_System": mpd_conf
                   }
@@ -207,7 +203,9 @@ def test_data_files(run_nanorc):
         elif "WIBEth" in current_test:
             fragment_check_list.append(wibeth_frag_params)
         elif "TDE" in current_test:
-            fragment_check_list.append(tde_frag_params)    
+            fragment_check_list.append(tde_frag_params)
+        elif "CRT" in current_test:
+            fragment_check_list.append(crt_frag_params)
         else:
             fragment_check_list.append(wib1_frag_hsi_trig_params)
 
