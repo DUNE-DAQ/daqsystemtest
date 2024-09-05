@@ -54,25 +54,27 @@ ignored_logfile_problems={"connectionservice": ["Searching for connections match
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 
-dro_map_contents = dro_map_gen.generate_dromap_contents(number_of_data_producers)
+object_databases = []
 
-conf_dict = config_file_gen.get_default_config_dict()
-conf_dict["detector"]["op_env"] = "integtest"
-conf_dict["daq_common"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
-conf_dict["readout"]["use_fake_cards"] = True
-conf_dict["trigger"]["ttcm_input_map"] = [{'signal': 1, 'tc_type_name': 'kTiming',
-                                           'time_before': readout_window_time_before,
-                                           'time_after': readout_window_time_after}]
+conf_dict = config_file_gen.get_default_oks_config_dict()
+conf_dict.op_env = "integtest"
 
-conf_dict["readout"]["data_files"] = []
-datafile_conf = {}
-datafile_conf["data_file"] = "asset://?checksum=e96fd6efd3f98a9a3bfaba32975b476e" # WIBEth
-datafile_conf["detector_id"] = 3
-conf_dict["readout"]["data_files"].append(datafile_conf)
+#conf_dict["detector"]["op_env"] = "integtest"
+#conf_dict["daq_common"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
+#conf_dict["readout"]["use_fake_cards"] = True
+#conf_dict["trigger"]["ttcm_input_map"] = [{'signal': 1, 'tc_type_name': 'kTiming',
+#                                           'time_before': readout_window_time_before,
+#                                           'time_after': readout_window_time_after}]
+
+#conf_dict["readout"]["data_files"] = []
+#datafile_conf = {}
+#datafile_conf["data_file"] = "asset://?checksum=e96fd6efd3f98a9a3bfaba32975b476e" # WIBEth
+#datafile_conf["detector_id"] = 3
+#conf_dict["readout"]["data_files"].append(datafile_conf)
 
 confgen_arguments={"MinimalSystem": conf_dict}
 # The commands to run in nanorc, as a list
-nanorc_command_list="boot conf start 101 wait 1 enable_triggers wait ".split() + [str(run_duration)] + "disable_triggers wait 2 stop_run wait 2 scrap terminate".split()
+nanorc_command_list="boot conf start 101 wait 1 enable-triggers wait ".split() + [str(run_duration)] + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop scrap terminate".split()
 
 # The tests themselves
 
