@@ -1573,11 +1573,6 @@
  <attr name="time_after" type="u32" val="1000"/>
 </obj>
 
-<obj class="Variable" id="daqapp-cli-configuration">
- <attr name="name" type="string" val="DAQAPP_CLI_CONFIG_SVC"/>
- <attr name="value" type="string" val="oksconflibs:test/config/test-session.data.xml"/>
-</obj>
-
 <obj class="Variable" id="file-logbook-file-name">
  <attr name="name" type="string" val="file_name"/>
  <attr name="value" type="string" val="logbook.txt"/>
