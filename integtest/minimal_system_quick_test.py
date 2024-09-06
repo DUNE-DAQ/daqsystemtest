@@ -54,12 +54,12 @@ ignored_logfile_problems={"connectionservice": ["Searching for connections match
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 
-object_databases = []
+object_databases = ["config/daqsystemtest/regression-test-objects.data.xml"]
 
 conf_dict = config_file_gen.get_default_oks_config_dict()
 conf_dict.op_env = "integtest"
+conf_dict.session = "test-session"
 
-#conf_dict["detector"]["op_env"] = "integtest"
 #conf_dict["daq_common"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
 #conf_dict["readout"]["use_fake_cards"] = True
 #conf_dict["trigger"]["ttcm_input_map"] = [{'signal': 1, 'tc_type_name': 'kTiming',
