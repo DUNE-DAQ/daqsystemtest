@@ -57,8 +57,10 @@ ignored_logfile_problems={"connectionservice": ["Searching for connections match
 object_databases = ["config/daqsystemtest/regression-test-objects.data.xml"]
 
 conf_dict = config_file_gen.get_default_oks_config_dict()
+conf_dict.dro_map_config.n_streams = number_of_data_producers
 conf_dict.op_env = "integtest"
 conf_dict.session = "minimal"
+conf_dict.tpg_enabled=  True
 
 #conf_dict["daq_common"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
 #conf_dict["readout"]["use_fake_cards"] = True

@@ -1222,7 +1222,7 @@
 <obj class="RandomTCMakerConf" id="random-tc-generator">
  <attr name="timestamp_method" type="enum" val="kTimeSync"/>
  <attr name="template_for" type="class" val="RandomTCMakerModule"/>
- <attr name="trigger_interval_ticks" type="u32" val="125000000"/>
+ <attr name="trigger_interval_ticks" type="u32" val="62500000"/>
  <attr name="clock_frequency_hz" type="u32" val="62500000"/>
  <attr name="time_distribution" type="enum" val="kUniform"/>
 </obj>
@@ -1528,12 +1528,12 @@
 
 <obj class="TCReadoutMap" id="def-hsi-tc-map">
  <attr name="candidate_type" type="u32" val="1"/>
- <attr name="time_before" type="u32" val="3000"/>
+ <attr name="time_before" type="u32" val="1000"/>
  <attr name="time_after" type="u32" val="1001"/>
 </obj>
 
 <obj class="TCReadoutMap" id="def-tc-map">
- <attr name="time_before" type="u32" val="3000"/>
+ <attr name="time_before" type="u32" val="1000"/>
  <attr name="time_after" type="u32" val="1001"/>
 </obj>
 
@@ -1558,19 +1558,19 @@
 
 <obj class="TimingTriggerOffsetMap" id="ttcm-off-0">
  <attr name="time_before" type="u32" val="1000"/>
- <attr name="time_after" type="u32" val="1000"/>
+ <attr name="time_after" type="u32" val="1001"/>
 </obj>
 
 <obj class="TimingTriggerOffsetMap" id="ttcm-off-1">
  <attr name="signal_type" type="u32" val="1"/>
  <attr name="time_before" type="u32" val="1000"/>
- <attr name="time_after" type="u32" val="1000"/>
+ <attr name="time_after" type="u32" val="1001"/>
 </obj>
 
 <obj class="TimingTriggerOffsetMap" id="ttcm-off-2">
  <attr name="signal_type" type="u32" val="2"/>
  <attr name="time_before" type="u32" val="1000"/>
- <attr name="time_after" type="u32" val="1000"/>
+ <attr name="time_after" type="u32" val="1001"/>
 </obj>
 
 <obj class="Variable" id="file-logbook-file-name">
