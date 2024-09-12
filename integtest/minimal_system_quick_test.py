@@ -2,7 +2,6 @@ import pytest
 import urllib.request
 
 import integrationtest.data_file_checks as data_file_checks
-import integrationtest.oks_dro_map_gen as dro_map_gen
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.config_file_gen as config_file_gen
 
