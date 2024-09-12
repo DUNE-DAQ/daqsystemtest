@@ -109,6 +109,13 @@ def test_nanorc_success(run_nanorc):
 
 
 def test_log_files(run_nanorc):
+
+    # Check that at least some of the expected log files are present
+    assert any(f"{run_nanorc.session}_df-01" in str(logname) for logname in run_nanorc.log_files)
+    assert any(f"{run_nanorc.session}_dfo" in str(logname) for logname in run_nanorc.log_files)
+    assert any(f"{run_nanorc.session}_mlt" in str(logname) for logname in run_nanorc.log_files)
+    assert any(f"{run_nanorc.session}_ru" in str(logname) for logname in run_nanorc.log_files)
+
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
