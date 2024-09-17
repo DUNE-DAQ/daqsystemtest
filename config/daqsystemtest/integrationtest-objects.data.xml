@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="ASCII"?>
+
+<!-- oks-data version 2.2 -->
+
+
+<!DOCTYPE oks-data [
+  <!ELEMENT oks-data (info, (include)?, (comments)?, (obj)+)>
+  <!ELEMENT info EMPTY>
+  <!ATTLIST info
+      name CDATA #IMPLIED
+      type CDATA #IMPLIED
+      num-of-items CDATA #REQUIRED
+      oks-format CDATA #FIXED "data"
+      oks-version CDATA #REQUIRED
+      created-by CDATA #IMPLIED
+      created-on CDATA #IMPLIED
+      creation-time CDATA #IMPLIED
+      last-modified-by CDATA #IMPLIED
+      last-modified-on CDATA #IMPLIED
+      last-modification-time CDATA #IMPLIED
+  >
+  <!ELEMENT include (file)*>
+  <!ELEMENT file EMPTY>
+  <!ATTLIST file
+      path CDATA #REQUIRED
+  >
+  <!ELEMENT comments (comment)*>
+  <!ELEMENT comment EMPTY>
+  <!ATTLIST comment
+      creation-time CDATA #REQUIRED
+      created-by CDATA #REQUIRED
+      created-on CDATA #REQUIRED
+      author CDATA #REQUIRED
+      text CDATA #REQUIRED
+  >
+  <!ELEMENT obj (attr | rel)*>
+  <!ATTLIST obj
+      class CDATA #REQUIRED
+      id CDATA #REQUIRED
+  >
+  <!ELEMENT attr (data)*>
+  <!ATTLIST attr
+      name CDATA #REQUIRED
+      type (bool|s8|u8|s16|u16|s32|u32|s64|u64|float|double|date|time|string|uid|enum|class|-) "-"
+      val CDATA ""
+  >
+  <!ELEMENT data EMPTY>
+  <!ATTLIST data
+      val CDATA #REQUIRED
+  >
+  <!ELEMENT rel (ref)*>
+  <!ATTLIST rel
+      name CDATA #REQUIRED
+      class CDATA ""
+      id CDATA ""
+  >
+  <!ELEMENT ref EMPTY>
+  <!ATTLIST ref
+      class CDATA #REQUIRED
+      id CDATA #REQUIRED
+  >
+]>
+
+<oks-data>
+
+<info name="" type="" num-of-items="11" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T181031"/>
+
+<include>
+ <file path="schema/confmodel/dunedaq.schema.xml"/>
+ <file path="schema/appmodel/application.schema.xml"/>
+ <file path="config/daqsystemtest/fsm.data.xml"/>
+ <file path="config/daqsystemtest/hosts.data.xml"/>
+ <file path="config/daqsystemtest/ccm.data.xml"/>
+ <file path="config/daqsystemtest/connections.data.xml"/>
+ <file path="config/daqsystemtest/moduleconfs.data.xml"/>
+</include>
+
+<comments>
+ <comment creation-time="20240208T094131" created-by="eflumerf" created-on="ironvirt9.mshome.net" author="eflumerf" text="reformat"/>
+ <comment creation-time="20240909T081245" created-by="glehmann" created-on="np04-srv-024.cern.ch" author="glehmann" text=" "/>
+</comments>
+
+
+<obj class="DFHWConf" id="dfhw-01">
+ <rel name="uses">
+  <ref class="StorageDevice" id="storage-01"/>
+ </rel>
+</obj>
+
+<obj class="DetectorConfig" id="dummy-detector">
+ <attr name="tpg_channel_map" type="string" val="PD2HDChannelMap"/>
+ <attr name="clock_speed_hz" type="u32" val="62500000"/>
+ <attr name="op_env" type="string" val="test"/>
+</obj>
+
+<obj class="OpMonURI" id="local-opmon-uri">
+ <attr name="path" type="string" val="./info.json"/>
+ <attr name="type" type="enum" val="file"/>
+</obj>
+
+<obj class="Service" id="dfo-01_control">
+ <attr name="protocol" type="string" val="rest"/>
+ <attr name="port" type="u16" val="5604"/>
+</obj>
+
+<obj class="Service" id="mlt_control">
+ <attr name="protocol" type="string" val="rest"/>
+ <attr name="port" type="u16" val="5702"/>
+</obj>
+
+<obj class="Service" id="tc-maker-1_control">
+ <attr name="protocol" type="string" val="rest"/>
+ <attr name="port" type="u16" val="5703"/>
+</obj>
+
+<obj class="Service" id="tp-stream-writer_control">
+ <attr name="protocol" type="string" val="rest"/>
+ <attr name="port" type="u16" val="5605"/>
+</obj>
+
+<obj class="SourceIDConf" id="srcid-tp-stream-writer">
+ <attr name="sid" type="u32" val="1"/>
+ <attr name="subsystem" type="enum" val="TR_Builder"/>
+</obj>
+
+<obj class="SourceIDConf" id="ta-srcid-1">
+ <attr name="sid" type="u32" val="1100"/>
+ <attr name="subsystem" type="enum" val="Trigger"/>
+</obj>
+
+<obj class="SourceIDConf" id="tc-srcid-1">
+ <attr name="sid" type="u32" val="10000"/>
+ <attr name="subsystem" type="enum" val="Trigger"/>
+</obj>
+
+<obj class="StorageDevice" id="storage-01">
+ <attr name="storage" type="u32" val="1000"/>
+</obj>
+
+</oks-data>
