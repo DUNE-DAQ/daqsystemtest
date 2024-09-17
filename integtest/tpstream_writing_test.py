@@ -136,7 +136,7 @@ ignored_logfile_problems = {
 }
 
 
-object_databases = [ "config/daqsystemtest/regression-test-objects.data.xml"]
+object_databases = ["config/daqsystemtest/ccm.data.xml","config/daqsystemtest/connections.data.xml","config/daqsystemtest/fsm.data.xml","config/daqsystemtest/hosts.data.xml","config/daqsystemtest/moduleconfs.data.xml"]
 
 conf_dict = config_file_gen.get_default_oks_config_dict()
 conf_dict.dro_map_config.n_streams = number_of_data_producers

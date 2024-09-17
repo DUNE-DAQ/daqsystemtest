@@ -72,7 +72,8 @@ ignored_logfile_problems = {
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 
-object_databases = ["config/daqsystemtest/regression-test-objects.data.xml"]
+# CCM includes FSM, hosts; moduleconfs includes connections
+object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 
 conf_dict = config_file_gen.get_default_oks_config_dict()
 conf_dict.dro_map_config.n_streams = number_of_data_producers

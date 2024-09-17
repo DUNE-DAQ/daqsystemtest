@@ -63,11 +63,12 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="27" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="glehmann" last-modified-on="np04-srv-024.cern.ch" last-modification-time="20240909T081245"/>
+<info name="" type="" num-of-items="24" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T153633"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
- <file path="config/oks_configs/fsm.data.xml"/>
+ <file path="config/daqsystemtest/fsm.data.xml"/>
+ <file path="config/daqsystemtest/hosts.data.xml"/>
 </include>
 
 <comments>
@@ -89,7 +90,7 @@
   <ref class="Service" id="local-connectivity-service"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
- </obj>
+</obj>
 
 <obj class="OpMonConf" id="fast-all-monitoring">
  <attr name="level" type="u32" val="4294967295"/>
@@ -105,7 +106,6 @@
  <attr name="path" type="string" val="monkafka.cern.ch:30092/opmon_stream"/>
  <attr name="type" type="enum" val="stream"/>
 </obj>
-
 
 <obj class="RCApplication" id="root-controller">
  <attr name="application_name" type="string" val="drunc-controller"/>

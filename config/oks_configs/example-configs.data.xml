@@ -63,12 +63,12 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="15" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="glehmann" last-modified-on="np04-srv-024.cern.ch" last-modification-time="20240909T082108"/>
+<info name="" type="" num-of-items="15" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T153645"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
- <file path="config/oks_configs/ccm.data.xml"/>
- <file path="config/oks_configs/hosts.data.xml"/>
+ <file path="config/daqsystemtest/ccm.data.xml"/>
+ <file path="config/daqsystemtest/hosts.data.xml"/>
  <file path="config/oks_configs/ru-segment.data.xml"/>
  <file path="config/oks_configs/df-segment.data.xml"/>
  <file path="config/oks_configs/hsi-segment.data.xml"/>
@@ -117,7 +117,7 @@
  <rel name="segment" class="Segment" id="root-segment"/>
  <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
  <rel name="opmon_uri" class="OpMonURI" id="cern-opmon-uri"/>
- </obj>
+</obj>
 
 <obj class="Session" id="ehn1-local-2x3-config">
  <attr name="use_connectivity_server" type="bool" val="1"/>
@@ -133,7 +133,7 @@
  <rel name="segment" class="Segment" id="root-segment"/>
  <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
  <rel name="opmon_uri" class="OpMonURI" id="cern-opmon-uri"/>
- </obj>
+</obj>
 
 <obj class="Session" id="local-1x1-config">
  <attr name="use_connectivity_server" type="bool" val="1"/>
@@ -163,7 +163,7 @@
  </rel>
  <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
  <rel name="opmon_uri" class="OpMonURI" id="cern-opmon-uri"/>
- </obj>
+</obj>
 
 <obj class="Session" id="local-2x3-config">
  <attr name="use_connectivity_server" type="bool" val="1"/>
@@ -188,7 +188,7 @@
  </rel>
  <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
  <rel name="opmon_uri" class="OpMonURI" id="cern-opmon-uri"/>
- </obj>
+</obj>
 
 <obj class="Variable" id="daqapp-cli-configuration">
  <attr name="name" type="string" val="DAQAPP_CLI_CONFIG_SVC"/>

@@ -63,16 +63,16 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="12" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="aoranday" last-modified-on="np04-srv-031.cern.ch" last-modification-time="20240829T102857"/>
+<info name="" type="" num-of-items="46" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T153645"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
  <file path="schema/appmodel/application.schema.xml"/>
  <file path="schema/appmodel/fdmodules.schema.xml"/>
  <file path="schema/appmodel/wiec.schema.xml"/>
- <file path="config/oks_configs/connections.data.xml"/>
- <file path="config/oks_configs/moduleconfs.data.xml"/>
- <file path="config/oks_configs/hosts.data.xml"/>
+ <file path="config/daqsystemtest/connections.data.xml"/>
+ <file path="config/daqsystemtest/moduleconfs.data.xml"/>
+ <file path="config/daqsystemtest/hosts.data.xml"/>
 </include>
 
 <comments>
@@ -315,7 +315,7 @@
  <rel name="exposes_service">
   <ref class="Service" id="ru-controller_control"/>
  </rel>
-  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="fsm" class="FSMconfiguration" id="FSMconfiguration_noAction"/>
 </obj>
 
@@ -334,7 +334,7 @@
   <ref class="Service" id="triggerActivities"/>
   <ref class="Service" id="triggerPrimitives"/>
  </rel>
-  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="fa-queue-rule"/>
   <ref class="QueueConnectionRule" id="tp-queue-rule"/>
@@ -351,7 +351,7 @@
   <ref class="ActionPlan" id="readout-start"/>
   <ref class="ActionPlan" id="readout-stop"/>
  </rel>
-  <rel name="tp_source_ids">
+ <rel name="tp_source_ids">
   <ref class="SourceIDConf" id="tp-srcid-1000"/>
   <ref class="SourceIDConf" id="tp-srcid-1001"/>
   <ref class="SourceIDConf" id="tp-srcid-1002"/>
@@ -373,7 +373,7 @@
  <rel name="exposes_service">
   <ref class="Service" id="ru-02_control"/>
  </rel>
-  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="fa-queue-rule"/>
   <ref class="QueueConnectionRule" id="tp-queue-rule"/>
@@ -390,7 +390,7 @@
   <ref class="ActionPlan" id="readout-start"/>
   <ref class="ActionPlan" id="readout-stop"/>
  </rel>
-  <rel name="tp_source_ids">
+ <rel name="tp_source_ids">
   <ref class="SourceIDConf" id="tp-srcid-2000"/>
   <ref class="SourceIDConf" id="tp-srcid-2001"/>
   <ref class="SourceIDConf" id="tp-srcid-2002"/>
@@ -438,6 +438,7 @@
  <attr name="protocol" type="string" val="grpc"/>
  <attr name="port" type="u16" val="5500"/>
 </obj>
+
 <obj class="SourceIDConf" id="tp-srcid-1000">
  <attr name="sid" type="u32" val="1000"/>
  <attr name="subsystem" type="enum" val="Trigger"/>

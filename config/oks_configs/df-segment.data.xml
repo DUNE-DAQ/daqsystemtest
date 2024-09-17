@@ -63,18 +63,15 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="23" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="thea" last-modified-on="np04-srv-031.cern.ch" last-modification-time="20240628T062322"/>
+<info name="" type="" num-of-items="20" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T153645"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
  <file path="schema/appmodel/application.schema.xml"/>
- <file path="config/oks_configs/connections.data.xml"/>
- <file path="config/oks_configs/moduleconfs.data.xml"/>
- <file path="config/oks_configs/hosts.data.xml"/>
+ <file path="config/daqsystemtest/connections.data.xml"/>
+ <file path="config/daqsystemtest/moduleconfs.data.xml"/>
+ <file path="config/daqsystemtest/hosts.data.xml"/>
 </include>
-
-<comments>
-</comments>
 
 
 <obj class="DFApplication" id="df-01">
@@ -83,7 +80,7 @@
  <rel name="exposes_service">
   <ref class="Service" id="df-01_control"/>
  </rel>
-  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="srcid-df-01"/>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="trigger-record-q-rule"/>
@@ -135,7 +132,7 @@
  <rel name="exposes_service">
   <ref class="Service" id="df-03_control"/>
  </rel>
-  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="srcid-df-03"/>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="trigger-record-q-rule"/>
@@ -167,7 +164,7 @@
  <rel name="exposes_service">
   <ref class="Service" id="dfo-01_control"/>
  </rel>
-  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="network_rules">
   <ref class="NetworkConnectionRule" id="td-dfo-net-rule"/>
   <ref class="NetworkConnectionRule" id="ti-net-rule"/>
@@ -182,7 +179,7 @@
  <rel name="exposes_service">
   <ref class="Service" id="df-controller_control"/>
  </rel>
-  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="fsm" class="FSMconfiguration" id="FSMconfiguration_noAction"/>
 </obj>
 
@@ -257,7 +254,7 @@
  <rel name="exposes_service">
   <ref class="Service" id="tp-stream-writer_control"/>
  </rel>
-  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="srcid-tp-stream-writer"/>
  <rel name="network_rules">
   <ref class="NetworkConnectionRule" id="tpset-net-rule"/>

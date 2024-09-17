@@ -63,19 +63,16 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="31" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240903T185101"/>
+<info name="" type="" num-of-items="58" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T153633"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
  <file path="schema/appmodel/application.schema.xml"/>
  <file path="schema/appmodel/trigger.schema.xml"/>
  <file path="schema/appmodel/fdmodules.schema.xml"/>
- <file path="config/oks_configs/connections.data.xml"/>
- <file path="config/oks_configs/fsm.data.xml"/>
+ <file path="config/daqsystemtest/connections.data.xml"/>
+ <file path="config/daqsystemtest/fsm.data.xml"/>
 </include>
-
-<comments>
-</comments>
 
 
 <obj class="AVXThresholdProcessor" id="tpg-threshold-proc">
@@ -104,6 +101,20 @@
   <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
  </rel>
+</obj>
+
+<obj class="CustomTCMakerConf" id="cstm-tc-generator">
+ <attr name="timestamp_method" type="enum" val="kTimeSync"/>
+ <attr name="template_for" type="class" val="CustomTCMaker"/>
+ <attr name="trigger_types" type="u32">
+  <data val="3"/>
+  <data val="7"/>
+ </attr>
+ <attr name="trigger_intervals" type="u32">
+  <data val="62500000"/>
+  <data val="62500000"/>
+ </attr>
+ <attr name="clock_frequency_hz" type="u32" val="62500000"/>
 </obj>
 
 <obj class="DFOConf" id="dfoconf-01">
@@ -158,6 +169,24 @@
  <rel name="data_processor" class="RawDataProcessor" id="def-wib-processor"/>
 </obj>
 
+<obj class="DataHandlerConf" id="def-ta-handler">
+ <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
+ <attr name="input_data_type" type="string" val="TriggerActivity"/>
+ <attr name="generate_timesync" type="bool" val="0"/>
+ <rel name="request_handler" class="RequestHandler" id="def-ta-request-handler"/>
+ <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
+ <rel name="data_processor" class="TADataProcessor" id="def-ta-processor"/>
+</obj>
+
+<obj class="DataHandlerConf" id="def-tc-handler">
+ <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
+ <attr name="input_data_type" type="string" val="TriggerCandidate"/>
+ <attr name="generate_timesync" type="bool" val="0"/>
+ <rel name="request_handler" class="RequestHandler" id="def-tc-request-handler"/>
+ <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
+ <rel name="data_processor" class="TCDataProcessor" id="def-tc-processor"/>
+</obj>
+
 <obj class="DataHandlerConf" id="def-tp-handler">
  <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="TriggerPrimitive"/>
@@ -191,126 +220,6 @@
  <attr name="emulation_mode" type="bool" val="0"/>
 </obj>
 
-<obj class="DataWriterConf" id="dw-01">
- <attr name="data_storage_prescale" type="s32" val="1"/>
- <attr name="min_write_retry_time_ms" type="s32" val="1"/>
- <attr name="max_write_retry_time_ms" type="s32" val="1000"/>
- <attr name="write_retry_time_increase_factor" type="s32" val="2"/>
- <rel name="data_store_params" class="DataStoreConf" id="default"/>
-</obj>
-
-<obj class="HSI2TCTranslatorConf" id="hsi-to-tc-conf">
- <attr name="template_for" type="class" val="DataReaderModule"/>
- <attr name="emulation_mode" type="bool" val="0"/>
- <attr name="prescale" type="u32" val="1"/>
- <rel name="signals">
-  <ref class="HSISignalWindow" id="def-hsi-signal-window"/>
- </rel>
-</obj>
-
-<obj class="HSISignalWindow" id="def-hsi-signal-window">
- <attr name="signal_type" type="u32" val="1"/>
- <attr name="tc_type_name" type="string" val="kTiming"/>
- <attr name="time_before" type="u32" val="10000"/>
- <attr name="time_after" type="u32" val="20000"/>
-</obj>
-
-<obj class="LatencyBuffer" id="def-latency-buf">
- <attr name="size" type="u32" val="139008"/>
- <attr name="numa_aware" type="bool" val="0"/>
- <attr name="numa_node" type="s16" val="1"/>
- <attr name="intrinsic_allocator" type="bool" val="0"/>
- <attr name="alignment_size" type="u32" val="4096"/>
- <attr name="preallocation" type="bool" val="0"/>
-</obj>
-
-<obj class="MLTConf" id="def-mlt-conf">
- <attr name="template_for" type="class" val="MLTModule"/>
- <attr name="td_out_of_timeout" type="bool" val="1"/>
- <attr name="buffer_timeout" type="u32" val="1"/>
- <attr name="td_readout_limit" type="u32" val="1"/>
-</obj>
-
-<obj class="NICStatsConf" id="def-nic-stats">
- <attr name="analyze_nth_packet" type="s32" val="1"/>
- <attr name="expected_packet_size" type="u32" val="7243"/>
- <attr name="expected_seq_id_step" type="u32" val="1"/>
- <attr name="expected_timestamp_step" type="s32" val="1000"/>
-</obj>
-
-<obj class="RawDataProcessor" id="def-wib-processor">
- <attr name="queue_sizes" type="u32" val="10000"/>
- <attr name="thread_names_prefix" type="string" val="postproc-"/>
- <attr name="channel_map" type="string" val="PD2HDChannelMap"/>
- <rel name="processing_steps">
-  <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
-  <ref class="AVXThresholdProcessor" id="tpg-threshold-proc"/>
- </rel>
-</obj>
-
-<obj class="RequestHandler" id="def-data-request-handler">
- <attr name="handler_threads" type="u16" val="1"/>
- <attr name="request_timeout" type="u32" val="10000"/>
- <attr name="pop_limit_pct" type="float" val="0.5"/>
- <attr name="pop_size_pct" type="float" val="0.8"/>
- <attr name="warn_on_timeout" type="bool" val="1"/>
- <attr name="warn_on_empty_buffer" type="bool" val="1"/>
-</obj>
-
-<obj class="RequestHandler" id="def-tp-request-handler">
- <attr name="handler_threads" type="u16" val="1"/>
- <attr name="request_timeout" type="u32" val="10000"/>
- <attr name="pop_limit_pct" type="float" val="0.5"/>
- <attr name="pop_size_pct" type="float" val="0.8"/>
- <attr name="warn_on_timeout" type="bool" val="1"/>
- <attr name="warn_on_empty_buffer" type="bool" val="1"/>
- <attr name="periodic_data_transmission_ms" type="u32" val="5"/>
-</obj>
-
-<obj class="StreamEmulationParameters" id="stream-emu">
- <attr name="data_file_name" type="string" val="/cvmfs/dunedaq.opensciencegrid.org/assets/files/d/d/1/wibeth_output_all_zeros.bin"/>
- <attr name="input_file_size_limit" type="u32" val="1000000"/>
- <attr name="set_t0" type="bool" val="1"/>
- <attr name="random_population_size" type="u32" val="100000"/>
- <attr name="frame_error_rate_hz" type="float" val="0"/>
- <attr name="generate_periodic_adc_pattern" type="bool" val="1"/>
- <attr name="TP_rate_per_channel" type="float" val="1"/>
-</obj>
-
-<obj class="TAMakerADCSimpleWindowAlgorithm" id="ta-maker-adcwindow">
- <attr name="prescale" type="u32" val="10"/>
- <attr name="max_time_over_threshold" type="u32" val="10000"/>
- <attr name="adc_threshold" type="u32" val="1000000"/>
- <attr name="window_length" type="u32" val="10000"/>
-</obj>
-
-<obj class="TAMakerChannelDistanceAlgorithm" id="ta-maker-channeldistance">
- <attr name="prescale" type="u32" val="100"/>
- <attr name="max_time_over_threshold" type="u32" val="10000"/>
- <attr name="window_length" type="u32" val="10000"/>
- <attr name="min_tps" type="u32" val="10"/>
- <attr name="max_channel_distance" type="u32" val="5"/>
-</obj>
-
-<obj class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker">
- <attr name="prescale" type="u32" val="1000"/>
- <attr name="max_time_over_threshold" type="u32" val="10000"/>
-</obj>
-
-<obj class="TPDataProcessor" id="tp-processor">
- <attr name="queue_sizes" type="u32" val="10000"/>
- <attr name="thread_names_prefix" type="string" val="proc-"/>
- <attr name="print_tp_info" type="bool" val="0"/>
- <rel name="algorithms">
-  <ref class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker"/>
- </rel>
-</obj>
-
-<obj class="TRBConf" id="trb-01">
- <attr name="queues_timeout" type="u32" val="100"/>
- <attr name="trigger_record_timeout_ms" type="u32" val="2858"/>
-</obj>
-
 <obj class="DataStoreConf" id="default">
  <attr name="type" type="string" val="HDF5DataStore"/>
  <attr name="directory_path" type="string" val="."/>
@@ -322,8 +231,35 @@
  <rel name="filename_params" class="FilenameParams" id="default"/>
 </obj>
 
+<obj class="DataStoreConf" id="default_tp_store_conf">
+ <attr name="type" type="string" val="HDF5DataStore"/>
+ <attr name="directory_path" type="string" val="./"/>
+ <attr name="mode" type="enum" val="all-per-file"/>
+ <attr name="max_file_size" type="u64" val="4294967296"/>
+ <attr name="disable_unique_filename_suffix" type="bool" val="0"/>
+ <attr name="free_space_safety_factor" type="s32" val="5"/>
+ <rel name="file_layout_params" class="HDF5FileLayoutParams" id="tp_file_layout"/>
+ <rel name="filename_params" class="FilenameParams" id="tp-file-params"/>
+</obj>
+
+<obj class="DataWriterConf" id="dw-01">
+ <attr name="data_storage_prescale" type="s32" val="1"/>
+ <attr name="min_write_retry_time_ms" type="s32" val="1"/>
+ <attr name="max_write_retry_time_ms" type="s32" val="1000"/>
+ <attr name="write_retry_time_increase_factor" type="s32" val="2"/>
+ <rel name="data_store_params" class="DataStoreConf" id="default"/>
+</obj>
+
 <obj class="FilenameParams" id="default">
  <attr name="file_type_prefix" type="enum" val="raw"/>
+ <attr name="run_number_prefix" type="string" val="run"/>
+ <attr name="digits_for_run_number" type="s32" val="6"/>
+ <attr name="digits_for_file_index" type="s32" val="4"/>
+ <attr name="digits_for_trigger_number" type="s32" val="6"/>
+</obj>
+
+<obj class="FilenameParams" id="tp-file-params">
+ <attr name="file_type_prefix" type="enum" val="tp"/>
  <attr name="run_number_prefix" type="string" val="run"/>
  <attr name="digits_for_run_number" type="s32" val="6"/>
  <attr name="digits_for_file_index" type="s32" val="4"/>
@@ -343,6 +279,18 @@
   <ref class="HDF5PathParams" id="NDLArPDS"/>
   <ref class="HDF5PathParams" id="NDLarTPC"/>
   <ref class="HDF5PathParams" id="PDS"/>
+  <ref class="HDF5PathParams" id="TPC"/>
+ </rel>
+</obj>
+
+<obj class="HDF5FileLayoutParams" id="tp_file_layout">
+ <attr name="record_name_prefix" type="string" val="TimeSlice"/>
+ <attr name="digits_for_record_number" type="s32" val="6"/>
+ <attr name="digits_for_sequence_number" type="s32" val="0"/>
+ <attr name="record_header_dataset_name" type="string" val="TimeSliceHeader"/>
+ <attr name="raw_data_group_name" type="string" val="RawData"/>
+ <attr name="view_group_name" type="string" val="Views"/>
+ <rel name="path_params_list">
   <ref class="HDF5PathParams" id="TPC"/>
  </rel>
 </obj>
@@ -389,67 +337,43 @@
  <attr name="digits_for_element_number" type="s32" val="5"/>
 </obj>
 
-<obj class="DataStoreConf" id="default_tp_store_conf">
- <attr name="type" type="string" val="HDF5DataStore"/>
- <attr name="directory_path" type="string" val="./"/>
- <attr name="mode" type="enum" val="all-per-file"/>
- <attr name="max_file_size" type="u64" val="4294967296"/>
- <attr name="disable_unique_filename_suffix" type="bool" val="0"/>
- <attr name="free_space_safety_factor" type="s32" val="5"/>
- <rel name="file_layout_params" class="HDF5FileLayoutParams" id="tp_file_layout"/>
- <rel name="filename_params" class="FilenameParams" id="tp-file-params"/>
-</obj>
-
-<obj class="FilenameParams" id="tp-file-params">
- <attr name="file_type_prefix" type="enum" val="tp"/>
- <attr name="run_number_prefix" type="string" val="run"/>
- <attr name="digits_for_run_number" type="s32" val="6"/>
- <attr name="digits_for_file_index" type="s32" val="4"/>
- <attr name="digits_for_trigger_number" type="s32" val="6"/>
-</obj>
-
-<obj class="HDF5FileLayoutParams" id="tp_file_layout">
- <attr name="record_name_prefix" type="string" val="TimeSlice"/>
- <attr name="digits_for_record_number" type="s32" val="6"/>
- <attr name="digits_for_sequence_number" type="s32" val="0"/>
- <attr name="record_header_dataset_name" type="string" val="TimeSliceHeader"/>
- <attr name="raw_data_group_name" type="string" val="RawData"/>
- <attr name="view_group_name" type="string" val="Views"/>
- <rel name="path_params_list">
-  <ref class="HDF5PathParams" id="TPC"/>
+<obj class="HSI2TCTranslatorConf" id="hsi-to-tc-conf">
+ <attr name="template_for" type="class" val="DataReaderModule"/>
+ <attr name="emulation_mode" type="bool" val="0"/>
+ <attr name="prescale" type="u32" val="1"/>
+ <rel name="signals">
+  <ref class="HSISignalWindow" id="def-hsi-signal-window"/>
  </rel>
 </obj>
 
-<obj class="CustomTCMakerConf" id="cstm-tc-generator">
- <attr name="timestamp_method" type="enum" val="kTimeSync"/>
- <attr name="template_for" type="class" val="CustomTCMaker"/>
- <attr name="trigger_types" type="u32">
-  <data val="3"/>
-  <data val="7"/>
- </attr>
- <attr name="trigger_intervals" type="u32">
-  <data val="62500000"/>
-  <data val="62500000"/>
- </attr>
- <attr name="clock_frequency_hz" type="u32" val="62500000"/>
+<obj class="HSISignalWindow" id="def-hsi-signal-window">
+ <attr name="signal_type" type="u32" val="1"/>
+ <attr name="tc_type_name" type="string" val="kTiming"/>
+ <attr name="time_before" type="u32" val="10000"/>
+ <attr name="time_after" type="u32" val="20000"/>
 </obj>
 
-<obj class="DataHandlerConf" id="def-ta-handler">
- <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
- <attr name="input_data_type" type="string" val="TriggerActivity"/>
- <attr name="generate_timesync" type="bool" val="0"/>
- <rel name="request_handler" class="RequestHandler" id="def-ta-request-handler"/>
- <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="TADataProcessor" id="def-ta-processor"/>
+<obj class="LatencyBuffer" id="def-latency-buf">
+ <attr name="size" type="u32" val="139008"/>
+ <attr name="numa_aware" type="bool" val="0"/>
+ <attr name="numa_node" type="s16" val="1"/>
+ <attr name="intrinsic_allocator" type="bool" val="0"/>
+ <attr name="alignment_size" type="u32" val="4096"/>
+ <attr name="preallocation" type="bool" val="0"/>
 </obj>
 
-<obj class="DataHandlerConf" id="def-tc-handler">
- <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
- <attr name="input_data_type" type="string" val="TriggerCandidate"/>
- <attr name="generate_timesync" type="bool" val="0"/>
- <rel name="request_handler" class="RequestHandler" id="def-tc-request-handler"/>
- <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="TCDataProcessor" id="def-tc-processor"/>
+<obj class="MLTConf" id="def-mlt-conf">
+ <attr name="template_for" type="class" val="MLTModule"/>
+ <attr name="td_out_of_timeout" type="bool" val="1"/>
+ <attr name="buffer_timeout" type="u32" val="1"/>
+ <attr name="td_readout_limit" type="u32" val="1"/>
+</obj>
+
+<obj class="NICStatsConf" id="def-nic-stats">
+ <attr name="analyze_nth_packet" type="s32" val="1"/>
+ <attr name="expected_packet_size" type="u32" val="7243"/>
+ <attr name="expected_seq_id_step" type="u32" val="1"/>
+ <attr name="expected_timestamp_step" type="s32" val="1000"/>
 </obj>
 
 <obj class="RandomTCMakerConf" id="random-tc-generator">
@@ -458,6 +382,25 @@
  <attr name="trigger_interval_ticks" type="u32" val="125000000"/>
  <attr name="clock_frequency_hz" type="u32" val="62500000"/>
  <attr name="time_distribution" type="enum" val="kUniform"/>
+</obj>
+
+<obj class="RawDataProcessor" id="def-wib-processor">
+ <attr name="queue_sizes" type="u32" val="10000"/>
+ <attr name="thread_names_prefix" type="string" val="postproc-"/>
+ <attr name="channel_map" type="string" val="PD2HDChannelMap"/>
+ <rel name="processing_steps">
+  <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
+  <ref class="AVXThresholdProcessor" id="tpg-threshold-proc"/>
+ </rel>
+</obj>
+
+<obj class="RequestHandler" id="def-data-request-handler">
+ <attr name="handler_threads" type="u16" val="1"/>
+ <attr name="request_timeout" type="u32" val="10000"/>
+ <attr name="pop_limit_pct" type="float" val="0.5"/>
+ <attr name="pop_size_pct" type="float" val="0.8"/>
+ <attr name="warn_on_timeout" type="bool" val="1"/>
+ <attr name="warn_on_empty_buffer" type="bool" val="1"/>
 </obj>
 
 <obj class="RequestHandler" id="def-ta-request-handler">
@@ -478,6 +421,26 @@
  <attr name="warn_on_empty_buffer" type="bool" val="1"/>
 </obj>
 
+<obj class="RequestHandler" id="def-tp-request-handler">
+ <attr name="handler_threads" type="u16" val="1"/>
+ <attr name="request_timeout" type="u32" val="10000"/>
+ <attr name="pop_limit_pct" type="float" val="0.5"/>
+ <attr name="pop_size_pct" type="float" val="0.8"/>
+ <attr name="warn_on_timeout" type="bool" val="1"/>
+ <attr name="warn_on_empty_buffer" type="bool" val="1"/>
+ <attr name="periodic_data_transmission_ms" type="u32" val="5"/>
+</obj>
+
+<obj class="StreamEmulationParameters" id="stream-emu">
+ <attr name="data_file_name" type="string" val="/cvmfs/dunedaq.opensciencegrid.org/assets/files/d/d/1/wibeth_output_all_zeros.bin"/>
+ <attr name="input_file_size_limit" type="u32" val="1000000"/>
+ <attr name="set_t0" type="bool" val="1"/>
+ <attr name="random_population_size" type="u32" val="100000"/>
+ <attr name="frame_error_rate_hz" type="float" val="0"/>
+ <attr name="generate_periodic_adc_pattern" type="bool" val="1"/>
+ <attr name="TP_rate_per_channel" type="float" val="1"/>
+</obj>
+
 <obj class="TADataProcessor" id="def-ta-processor">
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="proc-"/>
@@ -485,6 +448,26 @@
  <rel name="algorithms">
   <ref class="TCMakerPrescaleAlgorithm" id="tc-pass-through-algo"/>
  </rel>
+</obj>
+
+<obj class="TAMakerADCSimpleWindowAlgorithm" id="ta-maker-adcwindow">
+ <attr name="prescale" type="u32" val="10"/>
+ <attr name="max_time_over_threshold" type="u32" val="10000"/>
+ <attr name="adc_threshold" type="u32" val="1000000"/>
+ <attr name="window_length" type="u32" val="10000"/>
+</obj>
+
+<obj class="TAMakerChannelDistanceAlgorithm" id="ta-maker-channeldistance">
+ <attr name="prescale" type="u32" val="100"/>
+ <attr name="max_time_over_threshold" type="u32" val="10000"/>
+ <attr name="window_length" type="u32" val="10000"/>
+ <attr name="min_tps" type="u32" val="10"/>
+ <attr name="max_channel_distance" type="u32" val="5"/>
+</obj>
+
+<obj class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker">
+ <attr name="prescale" type="u32" val="1000"/>
+ <attr name="max_time_over_threshold" type="u32" val="10000"/>
 </obj>
 
 <obj class="TCDataProcessor" id="def-tc-processor">
@@ -523,6 +506,20 @@
  <attr name="time_after" type="u32" val="1001"/>
 </obj>
 
+<obj class="TPDataProcessor" id="tp-processor">
+ <attr name="queue_sizes" type="u32" val="10000"/>
+ <attr name="thread_names_prefix" type="string" val="proc-"/>
+ <attr name="print_tp_info" type="bool" val="0"/>
+ <rel name="algorithms">
+  <ref class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker"/>
+ </rel>
+</obj>
+
+<obj class="TRBConf" id="trb-01">
+ <attr name="queues_timeout" type="u32" val="100"/>
+ <attr name="trigger_record_timeout_ms" type="u32" val="2858"/>
+</obj>
+
 <obj class="TimingTriggerOffsetMap" id="ttcm-off-0">
  <attr name="time_before" type="u32" val="1000"/>
  <attr name="time_after" type="u32" val="1000"/>
@@ -539,6 +536,5 @@
  <attr name="time_before" type="u32" val="1000"/>
  <attr name="time_after" type="u32" val="1000"/>
 </obj>
-
 
 </oks-data>
