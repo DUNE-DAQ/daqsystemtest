@@ -3,7 +3,7 @@ import urllib.request
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
-import integrationtest.config_file_gen as config_file_gen
+import integrationtest.data_classes as data_classes
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -60,9 +60,18 @@ hsi_frag_params = {
     "max_size_bytes": 100,
 }
 ignored_logfile_problems = {
-    "connectionservice": [
-        "Searching for connections matching uid_regex<errored_frames_q> and data_type Unknown"
-    ]
+    "-controller": [
+        'ERROR    "Broadcast": Propagating take_control to children',
+        'WARNING  "Broadcast": There is no broadcasting service!',
+        "Worker with pid \\d+ was terminated due to signal",
+        'WARNING  "BroadcastHandler": Could not understand the BroadcastHandler technology you want to use',
+    ],
+    "local-connection-server": [
+        "errorlog: -",
+        "Worker with pid \\d+ was terminated due to signal",
+    ],
+    "tc-maker-1": ["Request on empty buffer: Data not found"],
+    "log_.*_minimal_": ["connect: Connection refused"],
 }
 
 # The next three variable declarations *must* be present as globals in the test
@@ -75,11 +84,19 @@ ignored_logfile_problems = {
 # CCM includes FSM, hosts; moduleconfs includes connections
 object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 
-conf_dict = config_file_gen.get_default_oks_config_dict()
+conf_dict = data_classes.drunc_config()
 conf_dict.dro_map_config.n_streams = number_of_data_producers
 conf_dict.op_env = "integtest"
 conf_dict.session = "minimal"
 conf_dict.tpg_enabled = False
+
+substitution = data_classes.config_substitution(
+    obj_id="random-tc-generator",
+    obj_class="RandomTCMakerConf",
+    attribute_name="trigger_interval_ticks",
+    new_value=62500000,
+)
+conf_dict.config_substitutions.append(substitution)
 
 # conf_dict["daq_common"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
 # conf_dict["readout"]["use_fake_cards"] = True
@@ -112,10 +129,19 @@ def test_nanorc_success(run_nanorc):
 def test_log_files(run_nanorc):
 
     # Check that at least some of the expected log files are present
-    assert any(f"{run_nanorc.session}_df-01" in str(logname) for logname in run_nanorc.log_files)
-    assert any(f"{run_nanorc.session}_dfo" in str(logname) for logname in run_nanorc.log_files)
-    assert any(f"{run_nanorc.session}_mlt" in str(logname) for logname in run_nanorc.log_files)
-    assert any(f"{run_nanorc.session}_ru" in str(logname) for logname in run_nanorc.log_files)
+    assert any(
+        f"{run_nanorc.session}_df-01" in str(logname)
+        for logname in run_nanorc.log_files
+    )
+    assert any(
+        f"{run_nanorc.session}_dfo" in str(logname) for logname in run_nanorc.log_files
+    )
+    assert any(
+        f"{run_nanorc.session}_mlt" in str(logname) for logname in run_nanorc.log_files
+    )
+    assert any(
+        f"{run_nanorc.session}_ru" in str(logname) for logname in run_nanorc.log_files
+    )
 
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files

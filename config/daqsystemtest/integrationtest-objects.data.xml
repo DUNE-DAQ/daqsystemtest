@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="1" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T153633"/>
+<info name="" type="" num-of-items="11" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T181031"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -81,9 +81,60 @@
 </comments>
 
 
+<obj class="DFHWConf" id="dfhw-01">
+ <rel name="uses">
+  <ref class="StorageDevice" id="storage-01"/>
+ </rel>
+</obj>
+
+<obj class="DetectorConfig" id="dummy-detector">
+ <attr name="tpg_channel_map" type="string" val="PD2HDChannelMap"/>
+ <attr name="clock_speed_hz" type="u32" val="62500000"/>
+ <attr name="op_env" type="string" val="test"/>
+</obj>
+
+<obj class="OpMonURI" id="local-opmon-uri">
+ <attr name="path" type="string" val="./info.json"/>
+ <attr name="type" type="enum" val="file"/>
+</obj>
+
+<obj class="Service" id="dfo-01_control">
+ <attr name="protocol" type="string" val="rest"/>
+ <attr name="port" type="u16" val="5604"/>
+</obj>
+
+<obj class="Service" id="mlt_control">
+ <attr name="protocol" type="string" val="rest"/>
+ <attr name="port" type="u16" val="5702"/>
+</obj>
+
+<obj class="Service" id="tc-maker-1_control">
+ <attr name="protocol" type="string" val="rest"/>
+ <attr name="port" type="u16" val="5703"/>
+</obj>
+
+<obj class="Service" id="tp-stream-writer_control">
+ <attr name="protocol" type="string" val="rest"/>
+ <attr name="port" type="u16" val="5605"/>
+</obj>
+
 <obj class="SourceIDConf" id="srcid-tp-stream-writer">
  <attr name="sid" type="u32" val="1"/>
  <attr name="subsystem" type="enum" val="TR_Builder"/>
+</obj>
+
+<obj class="SourceIDConf" id="ta-srcid-1">
+ <attr name="sid" type="u32" val="1100"/>
+ <attr name="subsystem" type="enum" val="Trigger"/>
+</obj>
+
+<obj class="SourceIDConf" id="tc-srcid-1">
+ <attr name="sid" type="u32" val="10000"/>
+ <attr name="subsystem" type="enum" val="Trigger"/>
+</obj>
+
+<obj class="StorageDevice" id="storage-01">
+ <attr name="storage" type="u32" val="1000"/>
 </obj>
 
 </oks-data>
