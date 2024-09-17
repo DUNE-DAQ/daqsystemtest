@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="ASCII"?>
+
+<!-- oks-data version 2.2 -->
+
+
+<!DOCTYPE oks-data [
+  <!ELEMENT oks-data (info, (include)?, (comments)?, (obj)+)>
+  <!ELEMENT info EMPTY>
+  <!ATTLIST info
+      name CDATA #IMPLIED
+      type CDATA #IMPLIED
+      num-of-items CDATA #REQUIRED
+      oks-format CDATA #FIXED "data"
+      oks-version CDATA #REQUIRED
+      created-by CDATA #IMPLIED
+      created-on CDATA #IMPLIED
+      creation-time CDATA #IMPLIED
+      last-modified-by CDATA #IMPLIED
+      last-modified-on CDATA #IMPLIED
+      last-modification-time CDATA #IMPLIED
+  >
+  <!ELEMENT include (file)*>
+  <!ELEMENT file EMPTY>
+  <!ATTLIST file
+      path CDATA #REQUIRED
+  >
+  <!ELEMENT comments (comment)*>
+  <!ELEMENT comment EMPTY>
+  <!ATTLIST comment
+      creation-time CDATA #REQUIRED
+      created-by CDATA #REQUIRED
+      created-on CDATA #REQUIRED
+      author CDATA #REQUIRED
+      text CDATA #REQUIRED
+  >
+  <!ELEMENT obj (attr | rel)*>
+  <!ATTLIST obj
+      class CDATA #REQUIRED
+      id CDATA #REQUIRED
+  >
+  <!ELEMENT attr (data)*>
+  <!ATTLIST attr
+      name CDATA #REQUIRED
+      type (bool|s8|u8|s16|u16|s32|u32|s64|u64|float|double|date|time|string|uid|enum|class|-) "-"
+      val CDATA ""
+  >
+  <!ELEMENT data EMPTY>
+  <!ATTLIST data
+      val CDATA #REQUIRED
+  >
+  <!ELEMENT rel (ref)*>
+  <!ATTLIST rel
+      name CDATA #REQUIRED
+      class CDATA ""
+      id CDATA ""
+  >
+  <!ELEMENT ref EMPTY>
+  <!ATTLIST ref
+      class CDATA #REQUIRED
+      id CDATA #REQUIRED
+  >
+]>
+
+<oks-data>
+
+<info name="" type="" num-of-items="15" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="glehmann" last-modified-on="np04-srv-024.cern.ch" last-modification-time="20240909T082108"/>
+
+<include>
+ <file path="schema/confmodel/dunedaq.schema.xml"/>
+ <file path="config/oks_configs/ccm.data.xml"/>
+ <file path="config/oks_configs/hosts.data.xml"/>
+ <file path="config/oks_configs/ru-segment.data.xml"/>
+ <file path="config/oks_configs/df-segment.data.xml"/>
+ <file path="config/oks_configs/hsi-segment.data.xml"/>
+ <file path="config/oks_configs/trigger-segment.data.xml"/>
+</include>
+
+<comments>
+ <comment creation-time="20240826T084126" created-by="maroda" created-on="np04-srv-015.cern.ch" author="maroda" text="Correct cern stream"/>
+ <comment creation-time="20240909T081245" created-by="glehmann" created-on="np04-srv-024.cern.ch" author="glehmann" text=" "/>
+ <comment creation-time="20240909T082108" created-by="glehmann" created-on="np04-srv-024.cern.ch" author="glehmann" text=" "/>
+</comments>
+
+
+<obj class="DetectorConfig" id="dummy-detector">
+ <attr name="tpg_channel_map" type="string" val="PD2HDChannelMap"/>
+ <attr name="clock_speed_hz" type="u32" val="62500000"/>
+ <attr name="op_env" type="string" val="test"/>
+</obj>
+
+<obj class="Segment" id="root-segment">
+ <rel name="segments">
+  <ref class="Segment" id="ru-segment"/>
+  <ref class="Segment" id="df-segment"/>
+  <ref class="Segment" id="trg-segment"/>
+  <ref class="Segment" id="hsi-segment"/>
+ </rel>
+ <rel name="controller" class="RCApplication" id="root-controller"/>
+</obj>
+
+<obj class="Session" id="ehn1-local-1x1-config">
+ <attr name="use_connectivity_server" type="bool" val="1"/>
+ <attr name="connectivity_service_interval_ms" type="u32" val="2000"/>
+ <attr name="data_request_timeout_ms" type="u32" val="1000"/>
+ <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
+ <rel name="environment">
+  <ref class="Variable" id="ehn1-local-1x1-config-partition-name"/>
+  <ref class="Variable" id="ehn1-local-1x1-config-session-name"/>
+  <ref class="VariableSet" id="ehn1-variables"/>
+  <ref class="Variable" id="daqapp-cli-configuration"/>
+ </rel>
+ <rel name="disabled">
+  <ref class="DFApplication" id="df-02"/>
+  <ref class="DFApplication" id="df-03"/>
+  <ref class="ReadoutApplication" id="ru-02"/>
+ </rel>
+ <rel name="segment" class="Segment" id="root-segment"/>
+ <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
+ <rel name="opmon_uri" class="OpMonURI" id="cern-opmon-uri"/>
+ </obj>
+
+<obj class="Session" id="ehn1-local-2x3-config">
+ <attr name="use_connectivity_server" type="bool" val="1"/>
+ <attr name="connectivity_service_interval_ms" type="u32" val="2000"/>
+ <attr name="data_request_timeout_ms" type="u32" val="1000"/>
+ <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
+ <rel name="environment">
+  <ref class="Variable" id="ehn1-local-2x3-config-partition-name"/>
+  <ref class="Variable" id="ehn1-local-2x3-config-session-name"/>
+  <ref class="VariableSet" id="ehn1-variables"/>
+  <ref class="Variable" id="daqapp-cli-configuration"/>
+ </rel>
+ <rel name="segment" class="Segment" id="root-segment"/>
+ <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
+ <rel name="opmon_uri" class="OpMonURI" id="cern-opmon-uri"/>
+ </obj>
+
+<obj class="Session" id="local-1x1-config">
+ <attr name="use_connectivity_server" type="bool" val="1"/>
+ <attr name="connectivity_service_interval_ms" type="u32" val="2000"/>
+ <attr name="data_request_timeout_ms" type="u32" val="1000"/>
+ <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
+ <rel name="environment">
+  <ref class="Variable" id="local-1x1-config-partition-name"/>
+  <ref class="Variable" id="local-1x1-config-session-name"/>
+  <ref class="Variable" id="local-env-ers-verb"/>
+  <ref class="Variable" id="local-env-ers-info"/>
+  <ref class="Variable" id="local-env-ers-warning"/>
+  <ref class="Variable" id="local-env-ers-error"/>
+  <ref class="Variable" id="local-env-ers-fatal"/>
+  <ref class="Variable" id="local-env-connectivity-server"/>
+  <ref class="Variable" id="local-env-connectivity-port"/>
+  <ref class="Variable" id="daqapp-cli-configuration"/>
+ </rel>
+ <rel name="disabled">
+  <ref class="DFApplication" id="df-02"/>
+  <ref class="DFApplication" id="df-03"/>
+  <ref class="ReadoutApplication" id="ru-02"/>
+ </rel>
+ <rel name="segment" class="Segment" id="root-segment"/>
+ <rel name="infrastructure_applications">
+  <ref class="ConnectionService" id="local-connection-server"/>
+ </rel>
+ <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
+ <rel name="opmon_uri" class="OpMonURI" id="cern-opmon-uri"/>
+ </obj>
+
+<obj class="Session" id="local-2x3-config">
+ <attr name="use_connectivity_server" type="bool" val="1"/>
+ <attr name="connectivity_service_interval_ms" type="u32" val="2000"/>
+ <attr name="data_request_timeout_ms" type="u32" val="1000"/>
+ <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
+ <rel name="environment">
+  <ref class="Variable" id="local-2x3-config-partition-name"/>
+  <ref class="Variable" id="local-2x3-config-session-name"/>
+  <ref class="Variable" id="local-env-ers-verb"/>
+  <ref class="Variable" id="local-env-ers-info"/>
+  <ref class="Variable" id="local-env-ers-warning"/>
+  <ref class="Variable" id="local-env-ers-error"/>
+  <ref class="Variable" id="local-env-ers-fatal"/>
+  <ref class="Variable" id="local-env-connectivity-server"/>
+  <ref class="Variable" id="local-env-connectivity-port"/>
+  <ref class="Variable" id="daqapp-cli-configuration"/>
+ </rel>
+ <rel name="segment" class="Segment" id="root-segment"/>
+ <rel name="infrastructure_applications">
+  <ref class="ConnectionService" id="local-connection-server"/>
+ </rel>
+ <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
+ <rel name="opmon_uri" class="OpMonURI" id="cern-opmon-uri"/>
+ </obj>
+
+<obj class="Variable" id="daqapp-cli-configuration">
+ <attr name="name" type="string" val="DAQAPP_CLI_CONFIG_SVC"/>
+ <attr name="value" type="string" val="oksconflibs:config/oks_configs/example-configs.data.xml"/>
+</obj>
+
+<obj class="Variable" id="ehn1-local-1x1-config-partition-name">
+ <attr name="name" type="string" val="DUNEDAQ_PARTITION"/>
+ <attr name="value" type="string" val="ehn1-local-1x1-config"/>
+</obj>
+
+<obj class="Variable" id="ehn1-local-1x1-config-session-name">
+ <attr name="name" type="string" val="DUNEDAQ_SESSION"/>
+ <attr name="value" type="string" val="ehn1-local-1x1-config"/>
+</obj>
+
+<obj class="Variable" id="ehn1-local-2x3-config-partition-name">
+ <attr name="name" type="string" val="DUNEDAQ_PARTITION"/>
+ <attr name="value" type="string" val="ehn1-local-2x3-config"/>
+</obj>
+
+<obj class="Variable" id="ehn1-local-2x3-config-session-name">
+ <attr name="name" type="string" val="DUNEDAQ_SESSION"/>
+ <attr name="value" type="string" val="ehn1-local-2x3-config"/>
+</obj>
+
+<obj class="Variable" id="local-1x1-config-partition-name">
+ <attr name="name" type="string" val="DUNEDAQ_PARTITION"/>
+ <attr name="value" type="string" val="local-1x1-config"/>
+</obj>
+
+<obj class="Variable" id="local-1x1-config-session-name">
+ <attr name="name" type="string" val="DUNEDAQ_SESSION"/>
+ <attr name="value" type="string" val="local-1x1-config"/>
+</obj>
+
+<obj class="Variable" id="local-2x3-config-partition-name">
+ <attr name="name" type="string" val="DUNEDAQ_PARTITION"/>
+ <attr name="value" type="string" val="local-2x3-config"/>
+</obj>
+
+<obj class="Variable" id="local-2x3-config-session-name">
+ <attr name="name" type="string" val="DUNEDAQ_SESSION"/>
+ <attr name="value" type="string" val="local-2x3-config"/>
+</obj>
+
+</oks-data>
