@@ -88,35 +88,24 @@
  <rel name="exposes_service">
   <ref class="Service" id="local-connectivity-service"/>
  </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ </obj>
+
+<obj class="OpMonConf" id="fast-all-monitoring">
+ <attr name="level" type="u32" val="4294967295"/>
+ <attr name="interval_s" type="u32" val="2"/>
 </obj>
 
-<obj class="OpMonService" id="cern-opmon-application-service">
- <rel name="runs_on" class="VirtualHost" id="kafka-cern-vhost"/>
- <rel name="exposes_service">
-  <ref class="Service" id="daq-k8s-opmon-service"/>
- </rel>
+<obj class="OpMonConf" id="slow-all-monitoring">
+ <attr name="level" type="u32" val="4294967295"/>
+ <attr name="interval_s" type="u32" val="10"/>
 </obj>
 
-<obj class="OpMonService" id="local-opmon-application-service">
- <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
- <rel name="exposes_service">
-  <ref class="Service" id="local-opmon-service"/>
- </rel>
+<obj class="OpMonURI" id="cern-opmon-uri">
+ <attr name="path" type="string" val="monkafka.cern.ch:30092/opmon_stream"/>
+ <attr name="type" type="enum" val="stream"/>
 </obj>
 
-<obj class="OpMonService" id="pocket-opmon-application-service">
- <attr name="application_name" type="string" val="sh"/>
- <attr name="commandline_parameters" type="string">
-  <data val="-c"/>
-  <data val="echo Not starting kafka/grafana/postgres/influx"/>
-  <data val="&amp;&amp;"/>
-  <data val="sleep 10000"/>
- </attr>
- <rel name="runs_on" class="VirtualHost" id="kafka-pocket-vhost"/>
- <rel name="exposes_service">
-  <ref class="Service" id="daq-k8s-opmon-service"/>
- </rel>
-</obj>
 
 <obj class="RCApplication" id="root-controller">
  <attr name="application_name" type="string" val="drunc-controller"/>
@@ -124,13 +113,8 @@
  <rel name="exposes_service">
   <ref class="Service" id="root-controller_control"/>
  </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="fsm" class="FSMconfiguration" id="fsmConf-test"/>
-</obj>
-
-<obj class="Service" id="daq-k8s-opmon-service">
- <attr name="protocol" type="string" val="stream"/>
- <attr name="port" type="u16" val="30092"/>
- <attr name="path" type="string" val="/opmon_stream"/>
 </obj>
 
 <obj class="Service" id="local-connectivity-service">
@@ -138,20 +122,9 @@
  <attr name="port" type="u16" val="5000"/>
 </obj>
 
-<obj class="Service" id="local-opmon-service">
- <attr name="protocol" type="string" val="file"/>
- <attr name="port" type="u16" val="0"/>
- <attr name="path" type="string" val="info.json"/>
-</obj>
-
 <obj class="Service" id="root-controller_control">
  <attr name="protocol" type="string" val="grpc"/>
  <attr name="port" type="u16" val="3333"/>
-</obj>
-
-<obj class="Variable" id="ehn1-daqapp-cli-monitoring">
- <attr name="name" type="string" val="DAQAPP_CLI_INFO_SVC"/>
- <attr name="value" type="string" val="kafka://monkafka.cern.ch:30092/opmon"/>
 </obj>
 
 <obj class="Variable" id="ehn1-env-connectivity-port">
@@ -232,7 +205,6 @@
 
 <obj class="VariableSet" id="ehn1-variables">
  <rel name="contains">
-  <ref class="Variable" id="ehn1-daqapp-cli-monitoring"/>
   <ref class="Variable" id="ehn1-env-connectivity-port"/>
   <ref class="Variable" id="ehn1-env-connectivity-server"/>
   <ref class="Variable" id="ehn1-env-ers-error"/>

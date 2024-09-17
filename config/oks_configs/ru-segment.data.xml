@@ -315,11 +315,11 @@
  <rel name="exposes_service">
   <ref class="Service" id="ru-controller_control"/>
  </rel>
+  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="fsm" class="FSMconfiguration" id="FSMconfiguration_noAction"/>
 </obj>
 
 <obj class="ReadoutApplication" id="ru-01">
- <attr name="tp_source_id" type="u32" val="1000"/>
  <attr name="application_name" type="string" val="daq_application"/>
  <attr name="tp_generation_enabled" type="bool" val="1"/>
  <attr name="ta_generation_enabled" type="bool" val="1"/>
@@ -334,6 +334,7 @@
   <ref class="Service" id="triggerActivities"/>
   <ref class="Service" id="triggerPrimitives"/>
  </rel>
+  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="fa-queue-rule"/>
   <ref class="QueueConnectionRule" id="tp-queue-rule"/>
@@ -350,6 +351,11 @@
   <ref class="ActionPlan" id="readout-start"/>
   <ref class="ActionPlan" id="readout-stop"/>
  </rel>
+  <rel name="tp_source_ids">
+  <ref class="SourceIDConf" id="tp-srcid-1000"/>
+  <ref class="SourceIDConf" id="tp-srcid-1001"/>
+  <ref class="SourceIDConf" id="tp-srcid-1002"/>
+ </rel>
  <rel name="uses" class="RoHwConfig" id="rohw-1"/>
  <rel name="link_handler" class="DataHandlerConf" id="def-link-handler"/>
  <rel name="tp_handler" class="DataHandlerConf" id="def-tp-handler"/>
@@ -357,7 +363,6 @@
 </obj>
 
 <obj class="ReadoutApplication" id="ru-02">
- <attr name="tp_source_id" type="u32" val="200"/>
  <attr name="application_name" type="string" val="daq_application"/>
  <attr name="tp_generation_enabled" type="bool" val="1"/>
  <attr name="ta_generation_enabled" type="bool" val="1"/>
@@ -368,6 +373,7 @@
  <rel name="exposes_service">
   <ref class="Service" id="ru-02_control"/>
  </rel>
+  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="fa-queue-rule"/>
   <ref class="QueueConnectionRule" id="tp-queue-rule"/>
@@ -383,6 +389,11 @@
  <rel name="action_plans">
   <ref class="ActionPlan" id="readout-start"/>
   <ref class="ActionPlan" id="readout-stop"/>
+ </rel>
+  <rel name="tp_source_ids">
+  <ref class="SourceIDConf" id="tp-srcid-2000"/>
+  <ref class="SourceIDConf" id="tp-srcid-2001"/>
+  <ref class="SourceIDConf" id="tp-srcid-2002"/>
  </rel>
  <rel name="uses" class="RoHwConfig" id="rohw-1"/>
  <rel name="link_handler" class="DataHandlerConf" id="def-link-handler"/>
@@ -426,6 +437,35 @@
 <obj class="Service" id="ru-controller_control">
  <attr name="protocol" type="string" val="grpc"/>
  <attr name="port" type="u16" val="5500"/>
+</obj>
+<obj class="SourceIDConf" id="tp-srcid-1000">
+ <attr name="sid" type="u32" val="1000"/>
+ <attr name="subsystem" type="enum" val="Trigger"/>
+</obj>
+
+<obj class="SourceIDConf" id="tp-srcid-1001">
+ <attr name="sid" type="u32" val="1001"/>
+ <attr name="subsystem" type="enum" val="Trigger"/>
+</obj>
+
+<obj class="SourceIDConf" id="tp-srcid-1002">
+ <attr name="sid" type="u32" val="1002"/>
+ <attr name="subsystem" type="enum" val="Trigger"/>
+</obj>
+
+<obj class="SourceIDConf" id="tp-srcid-2000">
+ <attr name="sid" type="u32" val="2000"/>
+ <attr name="subsystem" type="enum" val="Trigger"/>
+</obj>
+
+<obj class="SourceIDConf" id="tp-srcid-2001">
+ <attr name="sid" type="u32" val="2001"/>
+ <attr name="subsystem" type="enum" val="Trigger"/>
+</obj>
+
+<obj class="SourceIDConf" id="tp-srcid-2002">
+ <attr name="sid" type="u32" val="2002"/>
+ <attr name="subsystem" type="enum" val="Trigger"/>
 </obj>
 
 </oks-data>

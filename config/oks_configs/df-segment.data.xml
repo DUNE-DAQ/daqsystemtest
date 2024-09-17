@@ -83,6 +83,7 @@
  <rel name="exposes_service">
   <ref class="Service" id="df-01_control"/>
  </rel>
+  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="srcid-df-01"/>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="trigger-record-q-rule"/>
@@ -108,6 +109,7 @@
  <rel name="exposes_service">
   <ref class="Service" id="df-02_control"/>
  </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="srcid-df-02"/>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="trigger-record-q-rule"/>
@@ -133,6 +135,7 @@
  <rel name="exposes_service">
   <ref class="Service" id="df-03_control"/>
  </rel>
+  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="srcid-df-03"/>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="trigger-record-q-rule"/>
@@ -164,6 +167,7 @@
  <rel name="exposes_service">
   <ref class="Service" id="dfo-01_control"/>
  </rel>
+  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="network_rules">
   <ref class="NetworkConnectionRule" id="td-dfo-net-rule"/>
   <ref class="NetworkConnectionRule" id="ti-net-rule"/>
@@ -178,6 +182,7 @@
  <rel name="exposes_service">
   <ref class="Service" id="df-controller_control"/>
  </rel>
+  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="fsm" class="FSMconfiguration" id="FSMconfiguration_noAction"/>
 </obj>
 
@@ -252,6 +257,7 @@
  <rel name="exposes_service">
   <ref class="Service" id="tp-stream-writer_control"/>
  </rel>
+  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="srcid-tp-stream-writer"/>
  <rel name="network_rules">
   <ref class="NetworkConnectionRule" id="tpset-net-rule"/>

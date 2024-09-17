@@ -115,11 +115,9 @@
   <ref class="ReadoutApplication" id="ru-02"/>
  </rel>
  <rel name="segment" class="Segment" id="root-segment"/>
- <rel name="infrastructure_applications">
-  <ref class="OpMonService" id="cern-opmon-application-service"/>
- </rel>
  <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
-</obj>
+ <rel name="opmon_uri" class="OpMonURI" id="cern-opmon-uri"/>
+ </obj>
 
 <obj class="Session" id="ehn1-local-2x3-config">
  <attr name="use_connectivity_server" type="bool" val="1"/>
@@ -133,11 +131,9 @@
   <ref class="Variable" id="daqapp-cli-configuration"/>
  </rel>
  <rel name="segment" class="Segment" id="root-segment"/>
- <rel name="infrastructure_applications">
-  <ref class="OpMonService" id="cern-opmon-application-service"/>
- </rel>
  <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
-</obj>
+ <rel name="opmon_uri" class="OpMonURI" id="cern-opmon-uri"/>
+ </obj>
 
 <obj class="Session" id="local-1x1-config">
  <attr name="use_connectivity_server" type="bool" val="1"/>
@@ -164,10 +160,10 @@
  <rel name="segment" class="Segment" id="root-segment"/>
  <rel name="infrastructure_applications">
   <ref class="ConnectionService" id="local-connection-server"/>
-  <ref class="OpMonService" id="local-opmon-application-service"/>
  </rel>
  <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
-</obj>
+ <rel name="opmon_uri" class="OpMonURI" id="cern-opmon-uri"/>
+ </obj>
 
 <obj class="Session" id="local-2x3-config">
  <attr name="use_connectivity_server" type="bool" val="1"/>
@@ -189,10 +185,10 @@
  <rel name="segment" class="Segment" id="root-segment"/>
  <rel name="infrastructure_applications">
   <ref class="ConnectionService" id="local-connection-server"/>
-  <ref class="OpMonService" id="local-opmon-application-service"/>
  </rel>
  <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
-</obj>
+ <rel name="opmon_uri" class="OpMonURI" id="cern-opmon-uri"/>
+ </obj>
 
 <obj class="Variable" id="daqapp-cli-configuration">
  <attr name="name" type="string" val="DAQAPP_CLI_CONFIG_SVC"/>

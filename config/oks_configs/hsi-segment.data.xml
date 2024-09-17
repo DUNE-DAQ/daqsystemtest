@@ -100,6 +100,7 @@
  <rel name="exposes_service">
   <ref class="Service" id="hsi-01_control"/>
  </rel>
+  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="hsi-srcid-01"/>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="hsi-dlh-data-requests-queue-rule"/>
@@ -129,6 +130,7 @@
   <ref class="Service" id="HSIEvents"/>
   <ref class="Service" id="hsi-to-tc-app_control"/>
  </rel>
+  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="hsi-tc-srcid-1"/>
  <rel name="network_rules">
   <ref class="NetworkConnectionRule" id="hsi-rule"/>
@@ -155,6 +157,7 @@
  <rel name="exposes_service">
   <ref class="Service" id="hsi-controller_control"/>
  </rel>
+  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="fsm" class="FSMconfiguration" id="FSMconfiguration_noAction"/>
 </obj>
 
