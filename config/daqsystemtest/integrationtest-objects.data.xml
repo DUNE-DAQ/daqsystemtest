@@ -93,11 +93,6 @@
  <attr name="op_env" type="string" val="test"/>
 </obj>
 
-<obj class="OpMonURI" id="local-opmon-uri">
- <attr name="path" type="string" val="./info.json"/>
- <attr name="type" type="enum" val="file"/>
-</obj>
-
 <obj class="Service" id="dfo-01_control">
  <attr name="protocol" type="string" val="rest"/>
  <attr name="port" type="u16" val="5604"/>
