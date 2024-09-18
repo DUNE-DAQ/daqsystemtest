@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="24" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T153633"/>
+<info name="" type="" num-of-items="25" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="maroda" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20240918T094920"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -74,6 +74,7 @@
 <comments>
  <comment creation-time="20240208T094131" created-by="eflumerf" created-on="ironvirt9.mshome.net" author="eflumerf" text="reformat"/>
  <comment creation-time="20240909T081245" created-by="glehmann" created-on="np04-srv-024.cern.ch" author="glehmann" text=" "/>
+ <comment creation-time="20240918T094920" created-by="maroda" created-on="np04-srv-015.cern.ch" author="maroda" text="add local file"/>
 </comments>
 
 
@@ -105,6 +106,11 @@
 <obj class="OpMonURI" id="cern-opmon-uri">
  <attr name="path" type="string" val="monkafka.cern.ch:30092/opmon_stream"/>
  <attr name="type" type="enum" val="stream"/>
+</obj>
+
+<obj class="OpMonURI" id="local-opmon-uri">
+ <attr name="path" type="string" val="./info.json"/>
+ <attr name="type" type="enum" val="file"/>
 </obj>
 
 <obj class="RCApplication" id="root-controller">
