@@ -8,8 +8,7 @@ import urllib.request
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
-import integrationtest.config_file_gen as config_file_gen
-import integrationtest.oks_dro_map_gen as dro_map_gen
+import integrationtest.data_classes as data_classes
 
 pytest_plugins="integrationtest.integrationtest_drunc"
 
@@ -88,37 +87,37 @@ if cpu_count < minimum_cpu_count or free_mem < minimum_free_memory_gb:
 # file. They're read by the "fixtures" in conftest.py to determine how
 # to run the config generation and nanorc
 
-base_oks_config="INTEGTEST_CONFDIR/test-config.data.xml"
+object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
-dro_map_contents = dro_map_gen.generate_dromap_contents(number_of_data_producers, number_of_readout_apps)
+#dro_map_contents = dro_map_gen.generate_dromap_contents(number_of_data_producers, number_of_readout_apps)
 
-conf_dict = config_file_gen.get_default_config_dict()
-conf_dict["daq_common"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
-conf_dict["readout"]["latency_buffer_size"] = latency_buffer_size
-#conf_dict["readout"]["default_data_file"] = "asset://?label=DuneWIB&subsystem=readout" # DuneWIB
-conf_dict["readout"]["default_data_file"] = "asset://?checksum=e96fd6efd3f98a9a3bfaba32975b476e" # WIBEth
-conf_dict["detector"]["clock_speed_hz"] = 62500000 # DuneWIB/WIBEth
-conf_dict["readout"]["use_fake_cards"] = True
-conf_dict["readout"]["emulated_data_times_start_with_now"] = True
-conf_dict["hsi"]["random_trigger_rate_hz"] = trigger_rate
-conf_dict["trigger"]["ttcm_input_map"] = [{'signal': 0, 'tc_type_name': 'kTiming',
-                                           'time_before': readout_window_time_before,
-                                           'time_after': readout_window_time_after}]
+conf_dict = data_classes.drunc_config()
+conf_dict.dro_map_config.n_streams = number_of_data_producers
+conf_dict.dro_map_config.n_apps = number_of_readout_apps
+conf_dict.op_env = "integtest"
+conf_dict.session = "longwindow"
+conf_dict.tpg_enabled = False
+conf_dict.n_df_apps = number_of_dataflow_apps
 
-conf_dict["dataflow"]["token_count"] = token_count
-conf_dict["dataflow"]["apps"] = [] # Remove preconfigured dataflow0 app
-for df_app in range(number_of_dataflow_apps):
-    dfapp_conf = {}
-    dfapp_conf["app_name"] = f"dataflow{df_app}"
-    dfapp_conf["max_file_size"] = 4*1024*1024*1024
-    dfapp_conf["output_paths"] = [ output_path_parameter ]
-    conf_dict["dataflow"]["apps"].append(dfapp_conf)
+conf_dict.config_substitutions.append(data_classes.config_substitution(obj_id=conf_dict.session, obj_class="Session", attribute_name="data_rate_slowdown_factor", new_value=data_rate_slowdown_factor))
+conf_dict.config_substitutions.append(data_classes.config_substitution(
+    obj_class="RandomTCMakerConf",
+    attribute_name="trigger_interval_ticks",
+    new_value=62500000/trigger_rate,
+))
+conf_dict.config_substitutions.append(data_classes.config_substitution(obj_class="LatencyBuffer", attribute_name="size", new_value=latency_buffer_size))
+
+
+conf_dict.config_substitutions.append(data_classes.config_substitution(obj_class="TimingTriggerOffsetMap", obj_id="ttcm-off-0", attribute_name="time_before", new_value=readout_window_time_before))
+conf_dict.config_substitutions.append(data_classes.config_substitution(obj_class="TimingTriggerOffsetMap", obj_id="ttcm-off-0", attribute_name="time_after", new_value=readout_window_time_after))
+conf_dict.config_substitutions.append(data_classes.config_substitution(obj_class="TCReadoutMap", attribute_name="time_before", new_value=readout_window_time_before))
+conf_dict.config_substitutions.append(data_classes.config_substitution(obj_class="TCReadoutMap", attribute_name="time_after", new_value=readout_window_time_after))
+conf_dict.config_substitutions.append(data_classes.config_substitution(obj_class="DataStoreConf", obj_id="default", attribute_name="max_file_size", new_value=4*1024*1024*1024))
 
 trsplit_conf = copy.deepcopy(conf_dict)
-for df_app in range(number_of_dataflow_apps):
-    trsplit_conf["dataflow"]["apps"][df_app]["max_trigger_record_window"] = trigger_record_max_window
+trsplit_conf.config_substitutions.append(data_classes.config_substitution(obj_class="TRBConf", attribute_name="max_time_window", new_value=trigger_record_max_window))
 
 confgen_arguments={#"No_TR_Splitting": conf_dict,
                    "With_TR_Splitting": trsplit_conf,
@@ -127,8 +126,8 @@ confgen_arguments={#"No_TR_Splitting": conf_dict,
 # The commands to run in nanorc, as a list
 if sufficient_disk_space and sufficient_resources_on_this_computer:
     nanorc_command_list="boot conf".split()
-    nanorc_command_list+="start_run --wait 15 101 wait ".split() + [str(run_duration)] + "stop_run --wait 2 wait 2".split()
-    nanorc_command_list+="start 102 wait 15 enable_triggers wait ".split() + [str(run_duration)] + "stop_run wait 2".split()
+    nanorc_command_list+="start 101 wait 15 enable-triggers wait ".split() + [str(run_duration)] + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop wait 2".split()
+    nanorc_command_list+="start 102 wait 15 enable-triggers wait ".split() + [str(run_duration)] + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop wait 2".split()
     nanorc_command_list+="scrap terminate".split()
 else:
     nanorc_command_list=["boot", "terminate"]
