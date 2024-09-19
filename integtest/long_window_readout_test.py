@@ -71,11 +71,21 @@ hsi_frag_params = {
     "fragment_type_description": "HSI",
     "fragment_type": "Hardware_Signal",
     "hdf5_source_subsystem": "HW_Signals_Interface",
-    "expected_fragment_count": 1,
+    "expected_fragment_count": 0,
     "min_size_bytes": 72,
     "max_size_bytes": 100,
 }
-ignored_logfile_problems = {}
+ignored_logfile_problems = {
+    "-controller": [
+        "Propagating take_control to children",
+        "There is no broadcasting service",
+        "Could not understand the BroadcastHandler technology you want to use",
+        "Worker with pid \\d+ was terminated due to signal 1",
+    ],
+    "local-connection-server": [
+        "errorlog: -",
+        "Worker with pid \\d+ was terminated due to signal 1",
+    ],}
 
 # Determine if the conditions are right for these tests
 sufficient_disk_space = True

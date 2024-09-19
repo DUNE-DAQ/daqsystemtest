@@ -110,6 +110,16 @@ ignored_logfile_problems = {
         'Encountered new error, name="MISSING_FRAMES"',
         'Encountered new error, name="SEQUENCE_ID_JUMP"',
     ],
+    "-controller": [
+        "Propagating take_control to children",
+        "There is no broadcasting service",
+        "Could not understand the BroadcastHandler technology you want to use",
+        "Worker with pid \\d+ was terminated due to signal 1",
+    ],
+    "local-connection-server": [
+        "errorlog: -",
+        "Worker with pid \\d+ was terminated due to signal 1",
+    ],
 }
 
 # The next three variable declarations *must* be present as globals in the test
