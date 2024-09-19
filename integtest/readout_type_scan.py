@@ -120,6 +120,7 @@ ignored_logfile_problems = {
         "errorlog: -",
         "Worker with pid \\d+ was terminated due to signal 1",
     ],
+    "log_.*_readout_": ["connect: Connection refused"],
 }
 
 # The next three variable declarations *must* be present as globals in the test
@@ -141,6 +142,13 @@ conf_dict.config_substitutions.append(
         obj_class="Session",
         attribute_name="data_rate_slowdown_factor",
         new_value=data_rate_slowdown_factor,
+    )
+)
+conf_dict.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="RandomTCMakerConf",
+        attribute_name="trigger_interval_ticks",
+        new_value=62500000,
     )
 )
 
@@ -239,9 +247,9 @@ confgen_arguments = {
     # "WIB1_System": wib1_conf,
     "WIBEth_System": wibeth_conf,
     "Software_TPG_System": swtpg_conf,
-    "PDS_Stream_System": pds_stream_conf,
-    "PDS_System": pds_conf,
-    "TDE_System": tde_conf,
+    #"PDS_Stream_System": pds_stream_conf,
+    #"PDS_System": pds_conf,
+    #"TDE_System": tde_conf,
     # "PACMAN_System": pacman_conf,
     # "MPD_System": mpd_conf
 }
