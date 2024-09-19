@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="11" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T181031"/>
+<info name="" type="" num-of-items="11" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240919T170019"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -130,6 +130,11 @@
 
 <obj class="StorageDevice" id="storage-01">
  <attr name="storage" type="u32" val="1000"/>
+</obj>
+
+<obj class="TPStreamWriterConf" id="tp-stream-writer-conf">
+ <attr name="tp_accumulation_interval" type="u64" val="62500000"/>
+ <rel name="data_store_params" class="DataStoreConf" id="default_tp_store_conf"/>
 </obj>
 
 </oks-data>

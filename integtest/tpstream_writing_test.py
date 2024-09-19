@@ -6,7 +6,7 @@ import urllib.request
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
-import integrationtest.config_file_gen as config_file_gen
+import integrationtest.data_classes as data_classes
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -135,10 +135,9 @@ ignored_logfile_problems = {
     ]
 }
 
+object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 
-object_databases = ["config/daqsystemtest/ccm.data.xml","config/daqsystemtest/connections.data.xml","config/daqsystemtest/fsm.data.xml","config/daqsystemtest/hosts.data.xml","config/daqsystemtest/moduleconfs.data.xml"]
-
-conf_dict = config_file_gen.get_default_oks_config_dict()
+conf_dict = data_classes.drunc_config()
 conf_dict.dro_map_config.n_streams = number_of_data_producers
 conf_dict.dro_map_config.n_apps = number_of_readout_apps
 conf_dict.op_env = "integtest"
@@ -146,53 +145,26 @@ conf_dict.session = "tpstream"
 conf_dict.tpg_enabled = True
 conf_dict.n_df_apps = number_of_dataflow_apps
 
-# The arguments to pass to the config generator, excluding the json
-# output directory (the test framework handles that)
-#dro_map_contents = dro_map_gen.generate_dromap_contents(
-#    number_of_data_producers, number_of_readout_apps
-#)
-
-#conf_dict = config_file_gen.get_default_config_dict()
-#conf_dict["daq_common"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
-#conf_dict["readout"]["latency_buffer_size"] = 200000
-#conf_dict["detector"]["clock_speed_hz"] = 62500000  # DuneWIB/WIBEth
-#conf_dict["readout"]["use_fake_cards"] = True  # WIBEth
-#conf_dict["hsi"]["random_trigger_rate_hz"] = pulser_trigger_rate
-#conf_dict["dataflow"]["enable_tpset_writing"] = True
-#conf_dict["dataflow"]["tpset_output_path"] = output_dir
-#conf_dict["dataflow"][
-#    "segment_config"
-#] = "INTEGTEST_CONFDIR/df-segment-1df-tpw.data.xml"
-
-#conf_dict["readout"]["generate_periodic_adc_pattern"] = True
-#conf_dict["readout"]["emulated_TP_rate_per_ch"] = 1
-#conf_dict["readout"]["enable_tpg"] = True
-#conf_dict["readout"]["tpg_threshold"] = 500
-#conf_dict["readout"]["tpg_algorithm"] = "SimpleThreshold"
-#conf_dict["readout"][
-#    "default_data_file"
-#] = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"  # WIBEth All Zeros
-#conf_dict["readout"]["tpset_min_latency_ticks"] = 9375000
-#conf_dict["trigger"]["trigger_activity_plugin"] = ["TAMakerPrescaleAlgorithm"]
-#conf_dict["trigger"]["trigger_activity_config"] = [{"prescale": 25}]
-#conf_dict["trigger"]["trigger_candidate_plugin"] = ["TCMakerPrescaleAlgorithm"]
-#conf_dict["trigger"]["trigger_candidate_config"] = [{"prescale": 100}]
-#conf_dict["trigger"]["ttcm_input_map"] = [
-#    {"signal": 1, "tc_type_name": "kTiming", "time_before": 1000, "time_after": 1000}
-#]
-
-#conf_dict["dataflow"]["token_count"] = int(
-#    math.ceil(
-#        max(10, 6 * number_of_data_producers * number_of_readout_apps)
-#        / number_of_dataflow_apps
-#    )
-#)
-#conf_dict["dataflow"]["apps"] = []  # Remove preconfigured dataflow0 app
-#for df_app in range(number_of_dataflow_apps):
-#    dfapp_conf = {}
-#    dfapp_conf["app_name"] = f"dataflow{df_app}"
-#    dfapp_conf["output_path"] = output_dir
-#    conf_dict["dataflow"]["apps"].append(dfapp_conf)
+conf_dict.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_id=conf_dict.session,
+        obj_class="Session",
+        attribute_name="data_rate_slowdown_factor",
+        new_value=data_rate_slowdown_factor,
+    )
+)
+conf_dict.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="RandomTCMakerConf",
+        attribute_name="trigger_interval_ticks",
+        new_value=62500000 / pulser_trigger_rate,
+    )
+)
+conf_dict.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="LatencyBuffer", attribute_name="size", new_value=200000
+    )
+)
 
 confgen_arguments = {"Software_TPG_System": conf_dict}
 
