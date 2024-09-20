@@ -85,7 +85,9 @@ ignored_logfile_problems = {
     "local-connection-server": [
         "errorlog: -",
         "Worker with pid \\d+ was terminated due to signal 1",
-    ],}
+    ],
+    "log_.*_longwindow_": ["connect: Connection refused"],
+}
 
 # Determine if the conditions are right for these tests
 sufficient_disk_space = True
@@ -133,20 +135,18 @@ conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_id=conf_dict.session,
         obj_class="Session",
-        attribute_name="data_rate_slowdown_factor",
-        new_value=data_rate_slowdown_factor,
+        updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
     )
 )
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="RandomTCMakerConf",
-        attribute_name="trigger_interval_ticks",
-        new_value=62500000 / trigger_rate,
+        updates={"trigger_interval_ticks": 62500000 / trigger_rate},
     )
 )
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
-        obj_class="LatencyBuffer", attribute_name="size", new_value=latency_buffer_size
+        obj_class="LatencyBuffer", updates={"size": latency_buffer_size}
     )
 )
 
@@ -155,38 +155,26 @@ conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="TimingTriggerOffsetMap",
         obj_id="ttcm-off-0",
-        attribute_name="time_before",
-        new_value=readout_window_time_before,
-    )
-)
-conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
-        obj_class="TimingTriggerOffsetMap",
-        obj_id="ttcm-off-0",
-        attribute_name="time_after",
-        new_value=readout_window_time_after,
+        updates={
+            "time_before": readout_window_time_before,
+            "time_after": readout_window_time_after,
+        },
     )
 )
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="TCReadoutMap",
-        attribute_name="time_before",
-        new_value=readout_window_time_before,
-    )
-)
-conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
-        obj_class="TCReadoutMap",
-        attribute_name="time_after",
-        new_value=readout_window_time_after,
+        updates={
+            "time_before": readout_window_time_before,
+            "time_after": readout_window_time_after,
+        },
     )
 )
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="DataStoreConf",
         obj_id="default",
-        attribute_name="max_file_size",
-        new_value=4 * 1024 * 1024 * 1024,
+        updates={"max_file_size": 4 * 1024 * 1024 * 1024},
     )
 )
 
@@ -194,8 +182,7 @@ trsplit_conf = copy.deepcopy(conf_dict)
 trsplit_conf.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="TRBConf",
-        attribute_name="max_time_window",
-        new_value=trigger_record_max_window,
+        updates={"max_time_window": trigger_record_max_window},
     )
 )
 

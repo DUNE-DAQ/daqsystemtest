@@ -93,8 +93,7 @@ conf_dict.tpg_enabled = False
 substitution = data_classes.config_substitution(
     obj_id="random-tc-generator",
     obj_class="RandomTCMakerConf",
-    attribute_name="trigger_interval_ticks",
-    new_value=62500000,
+    updates={"trigger_interval_ticks": 62500000},
 )
 conf_dict.config_substitutions.append(substitution)
 

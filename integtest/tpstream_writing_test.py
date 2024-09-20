@@ -143,6 +143,7 @@ ignored_logfile_problems = {
         "errorlog: -",
         "Worker with pid \\d+ was terminated due to signal 1",
     ],
+    "log_.*_tpstream_": ["connect: Connection refused"],
 }
 
 object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
@@ -159,20 +160,18 @@ conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_id=conf_dict.session,
         obj_class="Session",
-        attribute_name="data_rate_slowdown_factor",
-        new_value=data_rate_slowdown_factor,
+        updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
     )
 )
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="RandomTCMakerConf",
-        attribute_name="trigger_interval_ticks",
-        new_value=62500000 / pulser_trigger_rate,
+        updates={"trigger_interval_ticks": 62500000 / pulser_trigger_rate},
     )
 )
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
-        obj_class="LatencyBuffer", attribute_name="size", new_value=200000
+        obj_class="LatencyBuffer", updates={"size": 200000}
     )
 )
 
@@ -181,8 +180,12 @@ confgen_arguments = {"Software_TPG_System": conf_dict}
 # The commands to run in nanorc, as a list
 nanorc_command_list = (
     "boot conf ".split()
-    + "start 101 wait 1 enable-triggers wait ".split() + [str(run_duration)] + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop ".split()
-    + "start 102 wait 1 enable-triggers wait ".split() + [str(run_duration)] + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop ".split()
+    + "start 101 wait 1 enable-triggers wait ".split()
+    + [str(run_duration)]
+    + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop ".split()
+    + "start 102 wait 1 enable-triggers wait ".split()
+    + [str(run_duration)]
+    + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop ".split()
     + " scrap terminate".split()
 )
 

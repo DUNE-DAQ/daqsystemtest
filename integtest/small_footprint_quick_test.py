@@ -73,6 +73,7 @@ ignored_logfile_problems = {
         "errorlog: -",
         "Worker with pid \\d+ was terminated due to signal 1",
     ],
+    "log_.*_smallfootprint_": ["connect: Connection refused"],
 }
 
 # The next three variable declarations *must* be present as globals in the test
@@ -95,36 +96,27 @@ conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_id=conf_dict.session,
         obj_class="Session",
-        attribute_name="data_rate_slowdown_factor",
-        new_value=data_rate_slowdown_factor,
+        updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
-        obj_class="LatencyBuffer", attribute_name="size", new_value=50000
-    )
+    data_classes.config_substitution(obj_class="LatencyBuffer", updates={"size": 50000})
 )
 
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="FakeHSIEventGeneratorConf",
-        attribute_name="trigger_rate",
-        new_value=1.0,
+        updates={"trigger_rate": 1.0},
     )
 )
 
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="HSISignalWindow",
-        attribute_name="time_before",
-        new_value=readout_window_time_before,
-    )
-)
-conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
-        obj_class="HSISignalWindow",
-        attribute_name="time_after",
-        new_value=readout_window_time_after,
+        updates={
+            "time_before": readout_window_time_before,
+            "time_after": readout_window_time_after,
+        },
     )
 )
 

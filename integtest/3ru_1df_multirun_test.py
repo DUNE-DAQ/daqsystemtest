@@ -122,6 +122,7 @@ ignored_logfile_problems = {
         "errorlog: -",
         "Worker with pid \\d+ was terminated due to signal 1",
     ],
+    "log_.*_3ru1df_": ["connect: Connection refused"],
 }
 
 # Determine if this computer is powerful enough for these tests
@@ -154,26 +155,26 @@ conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_id=conf_dict.session,
         obj_class="Session",
-        attribute_name="data_rate_slowdown_factor",
-        new_value=data_rate_slowdown_factor,
+        updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
     )
 )
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="RandomTCMakerConf",
-        attribute_name="trigger_interval_ticks",
-        new_value=62500000 / trigger_rate,
+        updates={"trigger_interval_ticks": 62500000 / trigger_rate},
     )
 )
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
-        obj_class="LatencyBuffer", attribute_name="size", new_value=200000
+        obj_class="LatencyBuffer", updates={"size": 200000}
     )
 )
 
 swtpg_conf = copy.deepcopy(conf_dict)
 swtpg_conf.tpg_enabled = True
-swtpg_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"  # WIBEth All Zeros
+swtpg_conf.frame_file = (
+    "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"  # WIBEth All Zeros
+)
 
 confgen_arguments = {
     "WIBEth_System": conf_dict,
