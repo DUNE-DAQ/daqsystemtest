@@ -395,7 +395,7 @@
 </obj>
 
 <obj class="RequestHandler" id="def-data-request-handler">
- <attr name="handler_threads" type="u16" val="1"/>
+ <attr name="handler_threads" type="u16" val="2"/>
  <attr name="request_timeout" type="u32" val="10000"/>
  <attr name="pop_limit_pct" type="float" val="0.5"/>
  <attr name="pop_size_pct" type="float" val="0.8"/>
@@ -405,28 +405,28 @@
 
 <obj class="RequestHandler" id="def-ta-request-handler">
  <attr name="handler_threads" type="u16" val="1"/>
- <attr name="request_timeout" type="u32" val="10000"/>
+ <attr name="request_timeout" type="u32" val="0"/>
  <attr name="pop_limit_pct" type="float" val="0.5"/>
  <attr name="pop_size_pct" type="float" val="0.8"/>
- <attr name="warn_on_timeout" type="bool" val="1"/>
- <attr name="warn_on_empty_buffer" type="bool" val="1"/>
+ <attr name="warn_on_timeout" type="bool" val="0"/>
+ <attr name="warn_on_empty_buffer" type="bool" val="0"/>
 </obj>
 
 <obj class="RequestHandler" id="def-tc-request-handler">
  <attr name="handler_threads" type="u16" val="1"/>
- <attr name="request_timeout" type="u32" val="10000"/>
+ <attr name="request_timeout" type="u32" val="0"/>
  <attr name="pop_limit_pct" type="float" val="0.5"/>
  <attr name="pop_size_pct" type="float" val="0.8"/>
- <attr name="warn_on_timeout" type="bool" val="1"/>
- <attr name="warn_on_empty_buffer" type="bool" val="1"/>
+ <attr name="warn_on_timeout" type="bool" val="0"/>
+ <attr name="warn_on_empty_buffer" type="bool" val="0"/>
 </obj>
 
 <obj class="RequestHandler" id="def-tp-request-handler">
  <attr name="handler_threads" type="u16" val="1"/>
- <attr name="request_timeout" type="u32" val="10000"/>
+ <attr name="request_timeout" type="u32" val="0"/>
  <attr name="pop_limit_pct" type="float" val="0.5"/>
  <attr name="pop_size_pct" type="float" val="0.8"/>
- <attr name="warn_on_timeout" type="bool" val="1"/>
+ <attr name="warn_on_timeout" type="bool" val="0"/>
  <attr name="warn_on_empty_buffer" type="bool" val="1"/>
  <attr name="periodic_data_transmission_ms" type="u32" val="5"/>
 </obj>
