@@ -24,54 +24,7 @@ expected_number_of_data_files = 2 * number_of_dataflow_apps
 check_for_logfile_errors = True
 expected_event_count = run_duration * pulser_trigger_rate / number_of_dataflow_apps
 expected_event_count_tolerance = expected_event_count / 10
-wib1_frag_hsi_trig_params = {
-    "fragment_type_description": "WIB",
-    "fragment_type": "ProtoWIB",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": (number_of_data_producers * number_of_readout_apps),
-    "min_size_bytes": 37192,
-    "max_size_bytes": 37192,
-}
-wib1_frag_multi_trig_params = {
-    "fragment_type_description": "WIB",
-    "fragment_type": "ProtoWIB",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": (number_of_data_producers * number_of_readout_apps),
-    "min_size_bytes": 72,
-    "max_size_bytes": 54000,
-}
-wib1_tpset_params = {
-    "fragment_type_description": "TP Stream",
-    "fragment_type": "Trigger_Primitive",
-    "hdf5_source_subsystem": "Trigger",
-    "expected_fragment_count": (number_of_data_producers * number_of_readout_apps),
-    "min_size_bytes": 72,
-    "max_size_bytes": 3291080,
-}
-wib2_frag_hsi_trig_params = {
-    "fragment_type_description": "WIB",
-    "fragment_type": "WIB",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": (number_of_data_producers * number_of_readout_apps),
-    "min_size_bytes": 29808,
-    "max_size_bytes": 30280,
-}
-wib2_frag_multi_trig_params = {
-    "fragment_type_description": "WIB",
-    "fragment_type": "WIB",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": (number_of_data_producers * number_of_readout_apps),
-    "min_size_bytes": 72,
-    "max_size_bytes": 54000,
-}
-wib2_tpset_params = {
-    "fragment_type_description": "TP Stream",
-    "fragment_type": "Trigger_Primitive",
-    "hdf5_source_subsystem": "Trigger",
-    "expected_fragment_count": (number_of_data_producers * number_of_readout_apps),
-    "min_size_bytes": 72,
-    "max_size_bytes": 3291080,
-}
+
 wibeth_frag_hsi_trig_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
@@ -116,7 +69,7 @@ triggertp_frag_params = {
     "fragment_type_description": "Trigger with TPs",
     "fragment_type": "Trigger_Primitive",
     "hdf5_source_subsystem": "Trigger",
-    "expected_fragment_count": (number_of_data_producers * number_of_readout_apps),
+    "expected_fragment_count": (number_of_data_producers * number_of_readout_apps) + 1,
     "min_size_bytes": 72,
     "max_size_bytes": 16000,
 }
@@ -129,10 +82,6 @@ hsi_frag_params = {
     "max_size_bytes": 100,
 }
 ignored_logfile_problems = {
-    "rulocalhost": [
-        'Encountered new error, name="MISSING_FRAMES"',
-        'Encountered new error, name="SEQUENCE_ID_JUMP"',
-    ],
     "-controller": [
         "Propagating take_control to children",
         "There is no broadcasting service",
@@ -143,6 +92,7 @@ ignored_logfile_problems = {
         "errorlog: -",
         "Worker with pid \\d+ was terminated due to signal 1",
     ],
+    "ru-det-conn": [r"SourceID\[subsystem: Trigger id: \d+\] Request on empty buffer: Data not found"],
     "log_.*_tpstream_": ["connect: Connection refused"],
 }
 
@@ -155,6 +105,9 @@ conf_dict.op_env = "integtest"
 conf_dict.session = "tpstream"
 conf_dict.tpg_enabled = True
 conf_dict.n_df_apps = number_of_dataflow_apps
+conf_dict.frame_file = (
+    "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"  # WIBEth All Zeros
+)
 
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
@@ -174,12 +127,19 @@ conf_dict.config_substitutions.append(
         obj_class="LatencyBuffer", updates={"size": 200000}
     )
 )
+conf_dict.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="TAMakerPrescaleAlgorithm",
+        obj_id="dummy-ta-maker",
+        updates={"prescale": 25},
+    )
+)
 
 confgen_arguments = {"Software_TPG_System": conf_dict}
 
 # The commands to run in nanorc, as a list
 nanorc_command_list = (
-    "boot conf ".split()
+    "boot conf wait 5".split()
     + "start 101 wait 1 enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop ".split()
