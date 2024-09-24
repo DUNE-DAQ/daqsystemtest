@@ -70,7 +70,6 @@ ignored_logfile_problems = {
         "errorlog: -",
         "Worker with pid \\d+ was terminated due to signal",
     ],
-    "tc-maker-1": ["Request on empty buffer: Data not found"],
     "log_.*_minimal_": ["connect: Connection refused"],
 }
 
