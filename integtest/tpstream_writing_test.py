@@ -232,8 +232,8 @@ def test_data_files(run_nanorc):
 def test_tpstream_files(run_nanorc):
     tpstream_files = run_nanorc.tpset_files
     local_expected_event_count = (
-        run_duration + 2
-    )  # TPStreamWriterModule is currently configured to write at 1 Hz
+        run_duration + 6
+    )  # TPStreamWriterModule is currently configured to write at 1 Hz, addl TimeSlices expected because of wait times in drunc command list
     local_event_count_tolerance = local_expected_event_count / 10
     # fragment_check_list=[wib1_tpset_params] # ProtoWIB
     # fragment_check_list=[wib2_tpset_params] # DuneWIB
