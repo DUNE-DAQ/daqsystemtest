@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="25" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="maroda" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20240918T094920"/>
+<info name="" type="" num-of-items="28" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="plasorak" last-modified-on="np04-srv-019.cern.ch" last-modification-time="20240925T170922"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -83,7 +83,7 @@
  <attr name="commandline_parameters" type="string">
   <data val="Process PID $$;"/>
   <data val="trap &apos;pkill -INT -P $$&apos; EXIT;"/>
-  <data val="gunicorn -b 0.0.0.0:5000 --workers=1 --worker-class=gthread --threads=2 --timeout 5000000000 --log-level=debug connection-service.connection-flask:app"/>
+  <data val="gunicorn -b 0.0.0.0:${CONNECTION_PORT} --workers=1 --worker-class=gthread --threads=2 --timeout 5000000000 --log-level=debug connection-service.connection-flask:app"/>
  </attr>
  <attr name="threads" type="u16" val="1"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
@@ -133,6 +133,10 @@
  <attr name="port" type="u16" val="3333"/>
 </obj>
 
+<obj class="Variable" id="application-name">
+ <attr name="name" type="string" val="DUNEDAQ_APPLICATION_NAME"/>
+</obj>
+
 <obj class="Variable" id="ehn1-env-connectivity-port">
  <attr name="name" type="string" val="CONNECTION_PORT"/>
  <attr name="value" type="string" val="30005"/>
@@ -176,7 +180,6 @@
 
 <obj class="Variable" id="local-env-connectivity-port">
  <attr name="name" type="string" val="CONNECTION_PORT"/>
- <attr name="value" type="string" val="5000"/>
 </obj>
 
 <obj class="Variable" id="local-env-connectivity-server">
@@ -207,6 +210,14 @@
 <obj class="Variable" id="local-env-ers-warning">
  <attr name="name" type="string" val="DUNEDAQ_ERS_WARNING"/>
  <attr name="value" type="string" val="erstrace,throttle,lstdout"/>
+</obj>
+
+<obj class="Variable" id="session-env-session-name-0">
+ <attr name="name" type="string" val="DUNEDAQ_SESSION"/>
+</obj>
+
+<obj class="Variable" id="session-env-session-name-1">
+ <attr name="name" type="string" val="DUNEDAQ_PARTITION"/>
 </obj>
 
 <obj class="VariableSet" id="ehn1-variables">
