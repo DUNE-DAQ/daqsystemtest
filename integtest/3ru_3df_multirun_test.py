@@ -18,28 +18,14 @@ number_of_dataflow_apps = 3
 trigger_rate = 3.0  # Hz
 run_duration = 20  # seconds
 data_rate_slowdown_factor = 1
+ta_prescale = 100
 
 # Default values for validation parameters
 expected_number_of_data_files = 3 * number_of_dataflow_apps
 check_for_logfile_errors = True
 expected_event_count = run_duration * trigger_rate / number_of_dataflow_apps
 expected_event_count_tolerance = expected_event_count / 10
-wib2_frag_hsi_trig_params = {
-    "fragment_type_description": "WIB",
-    "fragment_type": "WIB",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": (number_of_data_producers * number_of_readout_apps),
-    "min_size_bytes": 29808,
-    "max_size_bytes": 30280,
-}
-wib2_frag_multi_trig_params = {
-    "fragment_type_description": "WIB",
-    "fragment_type": "WIB",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": (number_of_data_producers * number_of_readout_apps),
-    "min_size_bytes": 72,
-    "max_size_bytes": 54000,
-}
+
 wibeth_frag_hsi_trig_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
@@ -68,7 +54,7 @@ triggeractivity_frag_params = {
     "fragment_type_description": "Trigger Activity",
     "fragment_type": "Trigger_Activity",
     "hdf5_source_subsystem": "Trigger",
-    "expected_fragment_count": number_of_readout_apps,
+    "expected_fragment_count": 1,
     "min_size_bytes": 72,
     "max_size_bytes": 400,
 }
@@ -76,7 +62,7 @@ triggertp_frag_params = {
     "fragment_type_description": "Trigger with TPs",
     "fragment_type": "Trigger_Primitive",
     "hdf5_source_subsystem": "Trigger",
-    "expected_fragment_count": (2 * number_of_readout_apps),
+    "expected_fragment_count": (3 * number_of_readout_apps),
     "min_size_bytes": 72,
     "max_size_bytes": 16000,
 }
@@ -144,7 +130,7 @@ swtpg_conf.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="TAMakerPrescaleAlgorithm",
         obj_id="dummy-ta-maker",
-        updates={"prescale": 25},
+        updates={"prescale": ta_prescale},
     )
 )
 
@@ -203,14 +189,14 @@ def test_data_files(run_nanorc):
     fragment_check_list = [triggercandidate_frag_params, hsi_frag_params]
     if run_nanorc.confgen_config.tpg_enabled:
         local_expected_event_count += (
-            250
+            (6250 / ta_prescale)
             * number_of_data_producers
             * number_of_readout_apps
             * run_duration
             / (100 * number_of_dataflow_apps)
         )
         local_event_count_tolerance += (
-            10
+            (250 / ta_prescale)
             * number_of_data_producers
             * number_of_readout_apps
             * run_duration
