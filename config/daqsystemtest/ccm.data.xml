@@ -180,6 +180,7 @@
 
 <obj class="Variable" id="local-env-connectivity-port">
  <attr name="name" type="string" val="CONNECTION_PORT"/>
+ <attr name="value" type="string" val=""/>
 </obj>
 
 <obj class="Variable" id="local-env-connectivity-server">
