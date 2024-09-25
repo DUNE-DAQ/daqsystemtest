@@ -92,7 +92,6 @@ ignored_logfile_problems = {
         "errorlog: -",
         "Worker with pid \\d+ was terminated due to signal 1",
     ],
-    "ru-det-conn": [r"SourceID\[subsystem: Trigger id: \d+\] Request on empty buffer: Data not found"],
     "log_.*_tpstream_": ["connect: Connection refused"],
 }
 

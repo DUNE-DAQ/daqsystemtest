@@ -107,11 +107,6 @@ hsi_frag_params = {
     "max_size_bytes": 100,
 }
 ignored_logfile_problems = {
-    "trigger": ["zipped_tpset_q: Unable to push within timeout period"],
-    "rulocalhost": [
-        'Encountered new error, name="MISSING_FRAMES"',
-        'Encountered new error, name="SEQUENCE_ID_JUMP"',
-    ],
     "-controller": [
         "Propagating take_control to children",
         "There is no broadcasting service",

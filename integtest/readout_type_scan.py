@@ -104,12 +104,6 @@ triggertp_frag_params = {
     "max_size_bytes": 16000,
 }
 ignored_logfile_problems = {
-    "trigger": ["zipped_tpset_q: Unable to push within timeout period"],
-    "rulocalhost": [
-        "Configuration Error: Binary file contains more data than expected",
-        'Encountered new error, name="MISSING_FRAMES"',
-        'Encountered new error, name="SEQUENCE_ID_JUMP"',
-    ],
     "-controller": [
         "Propagating take_control to children",
         "There is no broadcasting service",
