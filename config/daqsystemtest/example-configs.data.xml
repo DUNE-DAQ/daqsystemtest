@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ASCII"?>
+<?xml version="1.0" encoding="us-ascii"?>
 
 <!-- oks-data version 2.2 -->
 
@@ -69,10 +69,10 @@
  <file path="schema/confmodel/dunedaq.schema.xml"/>
  <file path="config/daqsystemtest/ccm.data.xml"/>
  <file path="config/daqsystemtest/hosts.data.xml"/>
- <file path="config/oks_configs/ru-segment.data.xml"/>
- <file path="config/oks_configs/df-segment.data.xml"/>
- <file path="config/oks_configs/hsi-segment.data.xml"/>
- <file path="config/oks_configs/trigger-segment.data.xml"/>
+ <file path="config/daqsystemtest/ru-segment.data.xml"/>
+ <file path="config/daqsystemtest/df-segment.data.xml"/>
+ <file path="config/daqsystemtest/hsi-segment.data.xml"/>
+ <file path="config/daqsystemtest/trigger-segment.data.xml"/>
 </include>
 
 <comments>

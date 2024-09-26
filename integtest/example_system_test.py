@@ -70,7 +70,7 @@ common_config_obj = data_classes.drunc_config()
 common_config_obj.attempt_cleanup = True
 common_config_obj.op_env = "test"
 common_config_obj.config_db = (
-    os.path.dirname(__file__) + "/../config/oks_configs/example-configs.data.xml"
+    os.path.dirname(__file__) + "/../config/daqsystemtest/example-configs.data.xml"
 )
 
 onebyone_local_conf = copy.deepcopy(common_config_obj)
