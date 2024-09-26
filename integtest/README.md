@@ -6,7 +6,7 @@
 Here is a sample command for invoking a test (feel free to keep or drop the options in brackets, as you prefer):
 
 ```
-pytest -s minimal_system_quick_test.py [--nanorc-option partition-number 2] [--nanorc-option timeout 300]
+pytest -s minimal_system_quick_test.py [--nanorc-option log-level debug]  # still useful even with drunc
 ```
 
 For reference, here are the ideas behind the tests that currently exist in this repository:

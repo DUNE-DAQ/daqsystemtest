@@ -1,7 +1,0 @@
-{
-    "boot": {
-        "ers_impl": "cern",
-        "opmon_impl": "cern",
-        "start_connectivity_service": false
-    }
-}
