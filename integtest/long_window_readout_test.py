@@ -130,18 +130,13 @@ conf_dict.op_env = "integtest"
 conf_dict.session = "longwindow"
 conf_dict.tpg_enabled = False
 conf_dict.n_df_apps = number_of_dataflow_apps
+conf_dict.hsi_enabled = True  # FakeHSI must be enabled to set trigger window width!
 
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_id=conf_dict.session,
         obj_class="Session",
         updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
-    )
-)
-conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
-        obj_class="RandomTCMakerConf",
-        updates={"trigger_interval_ticks": 62500000 / trigger_rate},
     )
 )
 conf_dict.config_substitutions.append(
@@ -153,17 +148,13 @@ conf_dict.config_substitutions.append(
 
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
-        obj_class="TimingTriggerOffsetMap",
-        obj_id="ttcm-off-0",
-        updates={
-            "time_before": readout_window_time_before,
-            "time_after": readout_window_time_after,
-        },
+        obj_class="FakeHSIEventGeneratorConf",
+        updates={"trigger_rate": trigger_rate},
     )
 )
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
-        obj_class="TCReadoutMap",
+        obj_class="HSISignalWindow",
         updates={
             "time_before": readout_window_time_before,
             "time_after": readout_window_time_after,
