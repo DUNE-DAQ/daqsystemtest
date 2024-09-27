@@ -71,7 +71,7 @@ hsi_frag_params = {
     "fragment_type_description": "HSI",
     "fragment_type": "Hardware_Signal",
     "hdf5_source_subsystem": "HW_Signals_Interface",
-    "expected_fragment_count": 0,
+    "expected_fragment_count": 1,
     "min_size_bytes": 72,
     "max_size_bytes": 100,
 }
@@ -130,7 +130,7 @@ conf_dict.op_env = "integtest"
 conf_dict.session = "longwindow"
 conf_dict.tpg_enabled = False
 conf_dict.n_df_apps = number_of_dataflow_apps
-conf_dict.hsi_enabled = True  # FakeHSI must be enabled to set trigger window width!
+conf_dict.fake_hsi_enabled = True  # FakeHSI must be enabled to set trigger window width!
 
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(

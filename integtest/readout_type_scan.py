@@ -164,7 +164,7 @@ tde_conf.dro_map_config.det_id = 11
 tde_conf.frame_file = "asset://?checksum=759e5351436bead208cf4963932d6327"
 
 pds_stream_conf = copy.deepcopy(conf_dict)
-pds_stream_conf.hsi_enabled = (
+pds_stream_conf.fake_hsi_enabled = (
     True  # FakeHSI must be enabled to set trigger window width!
 )
 pds_stream_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
@@ -178,7 +178,7 @@ pds_stream_conf.config_substitutions.append(
 )
 
 pds_conf = copy.deepcopy(conf_dict)
-pds_conf.hsi_enabled = True  # FakeHSI must be enabled to set trigger window width!
+pds_conf.fake_hsi_enabled = True  # FakeHSI must be enabled to set trigger window width!
 pds_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 pds_conf.frame_file = "asset://?label=DAPHNE&subsystem=readout"
 
