@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="28" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="plasorak" last-modified-on="np04-srv-019.cern.ch" last-modification-time="20240925T170922"/>
+<info name="" type="" num-of-items="25" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="glehmann" last-modified-on="np04-srv-024.cern.ch" last-modification-time="20240923T065642"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
