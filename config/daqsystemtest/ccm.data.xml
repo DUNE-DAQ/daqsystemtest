@@ -133,11 +133,6 @@
  <attr name="port" type="u16" val="3333"/>
 </obj>
 
-<obj class="Variable" id="application-name">
- <attr name="name" type="string" val="DUNEDAQ_APPLICATION_NAME"/>
- <attr name="value" type="string" val=""/>
-</obj>
-
 <obj class="Variable" id="ehn1-env-connectivity-port">
  <attr name="name" type="string" val="CONNECTION_PORT"/>
  <attr name="value" type="string" val="30005"/>
@@ -181,7 +176,7 @@
 
 <obj class="Variable" id="local-env-connectivity-port">
  <attr name="name" type="string" val="CONNECTION_PORT"/>
- <attr name="value" type="string" val=""/>
+ <attr name="value" type="string" val="5000"/>
 </obj>
 
 <obj class="Variable" id="local-env-connectivity-server">
@@ -212,16 +207,6 @@
 <obj class="Variable" id="local-env-ers-warning">
  <attr name="name" type="string" val="DUNEDAQ_ERS_WARNING"/>
  <attr name="value" type="string" val="erstrace,throttle,lstdout"/>
-</obj>
-
-<obj class="Variable" id="session-env-session-name-0">
- <attr name="name" type="string" val="DUNEDAQ_SESSION"/>
- <attr name="value" type="string" val=""/>
-</obj>
-
-<obj class="Variable" id="session-env-session-name-1">
- <attr name="name" type="string" val="DUNEDAQ_PARTITION"/>
- <attr name="value" type="string" val=""/>
 </obj>
 
 <obj class="VariableSet" id="ehn1-variables">
