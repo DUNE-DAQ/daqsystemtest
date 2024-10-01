@@ -88,13 +88,30 @@ conf_dict.dro_map_config.n_streams = number_of_data_producers
 conf_dict.op_env = "integtest"
 conf_dict.session = "minimal"
 conf_dict.tpg_enabled = False
+conf_dict.fake_hsi_enabled = True
 
-substitution = data_classes.config_substitution(
-    obj_id="random-tc-generator",
-    obj_class="RandomTCMakerConf",
-    updates={"trigger_interval_ticks": 62500000},
+conf_dict.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_id=conf_dict.session,
+        obj_class="Session",
+        updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
+    )
 )
-conf_dict.config_substitutions.append(substitution)
+
+conf_dict.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="LatencyBuffer",
+        updates={"size": 50000}
+    )
+)
+
+conf_dict.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="FakeHSIEventGeneratorConf",
+        updates={"trigger_rate": 1.0},
+    )
+)
+
 
 # conf_dict["daq_common"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
 # conf_dict["readout"]["use_fake_cards"] = True
