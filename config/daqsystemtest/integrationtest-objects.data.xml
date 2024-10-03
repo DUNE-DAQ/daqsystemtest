@@ -128,7 +128,7 @@
 </obj>
 
 <obj class="RequestHandler" id="hsi-requesthandler-generic">
- <attr name="handler_threads" type="u16" val="0"/>
+ <attr name="handler_threads" type="u16" val="1"/>
  <attr name="request_timeout" type="u32" val="0"/>
  <attr name="pop_limit_pct" type="float" val="0.8"/>
  <attr name="pop_size_pct" type="float" val="0.1"/>

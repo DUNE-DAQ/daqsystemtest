@@ -105,10 +105,7 @@
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <rel name="environment">
-  <ref class="Variable" id="ehn1-local-1x1-config-partition-name"/>
-  <ref class="Variable" id="ehn1-local-1x1-config-session-name"/>
   <ref class="VariableSet" id="ehn1-variables"/>
-  <ref class="Variable" id="daqapp-cli-configuration"/>
  </rel>
  <rel name="disabled">
   <ref class="DFApplication" id="df-02"/>
@@ -126,10 +123,7 @@
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <rel name="environment">
-  <ref class="Variable" id="ehn1-local-2x3-config-partition-name"/>
-  <ref class="Variable" id="ehn1-local-2x3-config-session-name"/>
   <ref class="VariableSet" id="ehn1-variables"/>
-  <ref class="Variable" id="daqapp-cli-configuration"/>
  </rel>
  <rel name="segment" class="Segment" id="root-segment"/>
  <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
@@ -142,8 +136,6 @@
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <rel name="environment">
-  <ref class="Variable" id="local-1x1-config-partition-name"/>
-  <ref class="Variable" id="local-1x1-config-session-name"/>
   <ref class="Variable" id="local-env-ers-verb"/>
   <ref class="Variable" id="local-env-ers-info"/>
   <ref class="Variable" id="local-env-ers-warning"/>
@@ -151,7 +143,6 @@
   <ref class="Variable" id="local-env-ers-fatal"/>
   <ref class="Variable" id="local-env-connectivity-server"/>
   <ref class="Variable" id="local-env-connectivity-port"/>
-  <ref class="Variable" id="daqapp-cli-configuration"/>
  </rel>
  <rel name="disabled">
   <ref class="DFApplication" id="df-02"/>
@@ -172,8 +163,6 @@
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <rel name="environment">
-  <ref class="Variable" id="local-2x3-config-partition-name"/>
-  <ref class="Variable" id="local-2x3-config-session-name"/>
   <ref class="Variable" id="local-env-ers-verb"/>
   <ref class="Variable" id="local-env-ers-info"/>
   <ref class="Variable" id="local-env-ers-warning"/>
@@ -181,7 +170,6 @@
   <ref class="Variable" id="local-env-ers-fatal"/>
   <ref class="Variable" id="local-env-connectivity-server"/>
   <ref class="Variable" id="local-env-connectivity-port"/>
-  <ref class="Variable" id="daqapp-cli-configuration"/>
  </rel>
  <rel name="segment" class="Segment" id="root-segment"/>
  <rel name="infrastructure_applications">
@@ -191,49 +179,5 @@
  <rel name="opmon_uri" class="OpMonURI" id="local-opmon-uri"/>
 </obj>
 
-<obj class="Variable" id="daqapp-cli-configuration">
- <attr name="name" type="string" val="DAQAPP_CLI_CONFIG_SVC"/>
- <attr name="value" type="string" val="oksconflibs:config/oks_configs/example-configs.data.xml"/>
-</obj>
-
-<obj class="Variable" id="ehn1-local-1x1-config-partition-name">
- <attr name="name" type="string" val="DUNEDAQ_PARTITION"/>
- <attr name="value" type="string" val="ehn1-local-1x1-config"/>
-</obj>
-
-<obj class="Variable" id="ehn1-local-1x1-config-session-name">
- <attr name="name" type="string" val="DUNEDAQ_SESSION"/>
- <attr name="value" type="string" val="ehn1-local-1x1-config"/>
-</obj>
-
-<obj class="Variable" id="ehn1-local-2x3-config-partition-name">
- <attr name="name" type="string" val="DUNEDAQ_PARTITION"/>
- <attr name="value" type="string" val="ehn1-local-2x3-config"/>
-</obj>
-
-<obj class="Variable" id="ehn1-local-2x3-config-session-name">
- <attr name="name" type="string" val="DUNEDAQ_SESSION"/>
- <attr name="value" type="string" val="ehn1-local-2x3-config"/>
-</obj>
-
-<obj class="Variable" id="local-1x1-config-partition-name">
- <attr name="name" type="string" val="DUNEDAQ_PARTITION"/>
- <attr name="value" type="string" val="local-1x1-config"/>
-</obj>
-
-<obj class="Variable" id="local-1x1-config-session-name">
- <attr name="name" type="string" val="DUNEDAQ_SESSION"/>
- <attr name="value" type="string" val="local-1x1-config"/>
-</obj>
-
-<obj class="Variable" id="local-2x3-config-partition-name">
- <attr name="name" type="string" val="DUNEDAQ_PARTITION"/>
- <attr name="value" type="string" val="local-2x3-config"/>
-</obj>
-
-<obj class="Variable" id="local-2x3-config-session-name">
- <attr name="name" type="string" val="DUNEDAQ_SESSION"/>
- <attr name="value" type="string" val="local-2x3-config"/>
-</obj>
 
 </oks-data>
