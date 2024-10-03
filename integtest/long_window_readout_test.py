@@ -4,7 +4,6 @@ import re
 import copy
 import shutil
 import psutil
-import urllib.request
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
@@ -33,24 +32,7 @@ minimum_free_disk_space_gb = 24  # 50% more than what we need
 # Default values for validation parameters
 expected_number_of_data_files = 4 * number_of_dataflow_apps
 check_for_logfile_errors = True
-expected_event_count = 202
-expected_event_count_tolerance = 9
-wib1_frag_hsi_trig_params = {
-    "fragment_type_description": "WIB",
-    "fragment_type": "ProtoWIB",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": (number_of_data_producers * number_of_readout_apps),
-    "min_size_bytes": 3712072,
-    "max_size_bytes": 3712536,
-}
-wib2_frag_params = {
-    "fragment_type_description": "WIB2",
-    "fragment_type": "WIB",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": number_of_data_producers * number_of_readout_apps,
-    "min_size_bytes": 29808,
-    "max_size_bytes": 30280,
-}
+
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
@@ -269,12 +251,20 @@ def test_data_files(run_nanorc):
             f"The raw data output path ({actual_output_path}) does not have enough space to run this test."
         )
 
-    local_expected_event_count = expected_event_count
-    local_event_count_tolerance = expected_event_count_tolerance
+    current_test = os.environ.get("PYTEST_CURRENT_TEST")
+
+    local_expected_event_count = run_duration * trigger_rate / expected_number_of_data_files
+    local_wibeth_frag_params = copy.deepcopy(wibeth_frag_params)
+
+    if current_test == "With_TR_Splitting":
+        local_expected_event_count = local_expected_event_count * (readout_window_time_before + readout_window_time_after) / trigger_record_max_window
+    else:
+        local_wibeth_frag_params["min_size_bytes"] = 1764072
+        local_wibeth_frag_params["max_size_bytes"] = 1771272
+
+    local_event_count_tolerance = local_expected_event_count // 10
     fragment_check_list = [triggercandidate_frag_params, hsi_frag_params]
-    # fragment_check_list.append(wib1_frag_hsi_trig_params) # ProtoWIB
-    # fragment_check_list.append(wib2_frag_params) # DuneWIB
-    fragment_check_list.append(wibeth_frag_params)  # WIBEth
+    fragment_check_list.append(local_wibeth_frag_params)  # WIBEth
 
     all_ok = True
     # Run some tests on the output data file
