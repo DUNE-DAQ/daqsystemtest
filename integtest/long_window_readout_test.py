@@ -256,11 +256,11 @@ def test_data_files(run_nanorc):
     local_expected_event_count = run_duration * trigger_rate / expected_number_of_data_files
     local_wibeth_frag_params = copy.deepcopy(wibeth_frag_params)
 
-    if current_test == "With_TR_Splitting":
+    if "With_TR_Splitting" in current_test:
         local_expected_event_count = local_expected_event_count * (readout_window_time_before + readout_window_time_after) / trigger_record_max_window
     else:
-        local_wibeth_frag_params["min_size_bytes"] = 1764072
-        local_wibeth_frag_params["max_size_bytes"] = 1771272
+        local_wibeth_frag_params["min_size_bytes"] = 352800000
+        local_wibeth_frag_params["max_size_bytes"] = 357782472
 
     local_event_count_tolerance = local_expected_event_count // 10
     fragment_check_list = [triggercandidate_frag_params, hsi_frag_params]
