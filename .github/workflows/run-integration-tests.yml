@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
     inputs:
       branch-name:
-        description: 'branch use when running tests.'
+        description: 'branch to use when running tests.'
         default: develop
 
 jobs:
@@ -35,19 +35,64 @@ jobs:
           echo "nightly_tag=NFD_DEV_${date_tag}_A9"  >>  "$GITHUB_OUTPUT"
           cat "$GITHUB_OUTPUT"
 
+  get_modified_files:
+    name: Get modified files
+    runs-on: ubuntu-latest
+    outputs:
+      files: ''
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - name: Make file list
+      run: |
+        git diff --name-only > modified_files.txt
+        echo "::set-output name=files::$(cat modified_files.txt)"
+
   run_integration_tests:
     name: run_tests
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: daq
+    needs: [make_nightly_tag, get_modified_files]
+    timeout-minutes: 30
     strategy:
+      fail-fast: false
       matrix:
-        test_suite: [
+        test_name: [
           "minimal_system_quick", 
           "3ru_1df_multirun", 
           "example_system", 
           "long_window_readout", 
           "small_footprint_quick", 
-          "tpstream_writing"]
+          "tpstream_writing",
+        ]
     defaults:
       run:
         shell: bash
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Get list of modified files
+      id: get_modified_files
+      run: |
+        git diff --name-only ${{ github.event.before }} ${{ github.sha }} > modified_files.txt
+        echo "::set-output name=files::$(cat modified_files.txt)"
+
+    - name: setup release and run tests
+      env:
+        NIGHTLY_TAG: ${{needs.make_nightly_tag.outputs.tag}}
+      if: contains(steps.get_modified_files.outputs.files, matrix.test_name)
+      run: |
+        echo "Modified files: ${{ needs.get_modified_files.outputs.files }}"
+        echo "daqsystemtest path? $(ls $GITHUB_WORKSPACE/daqsystemtest)"
+        DET=fd
+        mkdir -p $GITHUB_WORKSPACE/daqsystemtest_integration_tests_$NIGHTLY_TAG
+        cd $GITHUB_WORKSPACE/daqsystemtest_integration_tests_$NIGHTLY_TAG
+        source /cvmfs/dunedaq.opensciencegrid.org/setup_dunedaq.sh
+        setup_dbt latest_v5
+        [[ -e /cvmfs/dunedaq-development.opensciencegrid.org/nightly/$NIGHTLY_TAG/daq_app_rte.sh ]]
+        dbt-setup-release -n $NIGHTLY_TAG
+        if 
+        pytest -v -s --junit-xml=${{ matrix.test_name }}_test_results.xml \
+                $GITHUB_WORKSPACE/daqsystemtest/integtest/${{ matrix.test_name }}_test.py
