@@ -143,6 +143,12 @@ conf_dict.config_substitutions.append(
         updates={"trigger_interval_ticks": 62500000},
     )
 )
+conf_dict.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="FakeHSIEventGeneratorConf",
+        updates={"trigger_rate": 1.0},
+    )
+)
 
 swtpg_conf = copy.deepcopy(conf_dict)
 swtpg_conf.tpg_enabled = True
@@ -158,37 +164,27 @@ tde_conf.dro_map_config.det_id = 11
 tde_conf.frame_file = "asset://?checksum=759e5351436bead208cf4963932d6327"
 
 pds_stream_conf = copy.deepcopy(conf_dict)
+pds_stream_conf.fake_hsi_enabled = (
+    True  # FakeHSI must be enabled to set trigger window width!
+)
 pds_stream_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 pds_stream_conf.frame_file = "asset://?label=DAPHNEStream&subsystem=readout"
 
 pds_stream_conf.config_substitutions.append(
     data_classes.config_substitution(
-        obj_class="TimingTriggerOffsetMap",
-        obj_id="ttcm-off-0",
-        updates={"time_before": 62000, "time_after": 500},
-    )
-)
-pds_stream_conf.config_substitutions.append(
-    data_classes.config_substitution(
-        obj_class="TCReadoutMap",
+        obj_class="HSISignalWindow",
         updates={"time_before": 62000, "time_after": 500},
     )
 )
 
 pds_conf = copy.deepcopy(conf_dict)
+pds_conf.fake_hsi_enabled = True  # FakeHSI must be enabled to set trigger window width!
 pds_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 pds_conf.frame_file = "asset://?label=DAPHNE&subsystem=readout"
 
 pds_conf.config_substitutions.append(
     data_classes.config_substitution(
-        obj_class="TimingTriggerOffsetMap",
-        obj_id="ttcm-off-0",
-        updates={"time_before": 62000, "time_after": 500},
-    )
-)
-pds_conf.config_substitutions.append(
-    data_classes.config_substitution(
-        obj_class="TCReadoutMap",
+        obj_class="HSISignalWindow",
         updates={"time_before": 62000, "time_after": 500},
     )
 )
