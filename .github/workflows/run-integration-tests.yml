@@ -1,0 +1,102 @@
+name: Run Integration Tests
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  push:
+    branches: 
+      - develop
+    paths-ignore:
+      - 'docs/**'
+      - '.github/**'
+  pull_request:
+    branches: 
+      - develop
+
+  workflow_dispatch:
+    inputs:
+      branch-name:
+        description: 'branch to use when running tests.'
+        default: develop
+
+jobs:
+  make_nightly_tag:
+    name: create nightly tag
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.create_nightly_tag.outputs.nightly_tag }} 
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - id: create_nightly_tag
+        run: |
+          date_tag=$(date +%y%m%d)
+          echo "nightly_tag=NFD_DEV_${date_tag}_A9"  >>  "$GITHUB_OUTPUT"
+          cat "$GITHUB_OUTPUT"
+
+  get_modified_files:
+    name: Get modified files
+    runs-on: ubuntu-latest
+    outputs:
+      files: ''
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - name: Make file list
+      run: |
+        git diff --name-only > modified_files.txt
+        echo "::set-output name=files::$(cat modified_files.txt)"
+
+  run_integration_tests:
+    name: run_tests
+    runs-on: ubuntu-latest
+    needs: [make_nightly_tag, get_modified_files]
+    timeout-minutes: 30
+    container:
+      image: ghcr.io/dune-daq/nightly-release-alma9:development_v5
+    strategy:
+      fail-fast: false
+      matrix:
+        test_name: [
+          "minimal_system_quick", 
+          "3ru_1df_multirun", 
+          "example_system", 
+          "long_window_readout", 
+          "small_footprint_quick", 
+          "tpstream_writing",
+        ]
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.inputs.branch-name }}
+
+    - name: Get list of modified files
+      id: get_modified_files
+      run: |
+        git diff --name-only ${{ github.event.before }} ${{ github.sha }} > modified_files.txt
+        echo "::set-output name=files::$(cat modified_files.txt)"
+
+    - name: setup release and run tests
+      env:
+        NIGHTLY_TAG: ${{needs.make_nightly_tag.outputs.tag}}
+      if: contains(steps.get_modified_files.outputs.files, matrix.test_name) || contains(steps.get_modified_files.outputs.files, 'configs/')
+      run: |
+        echo "Modified files: ${{ needs.get_modified_files.outputs.files }}"
+        echo "daqsystemtest path? $(ls $GITHUB_WORKSPACE/daqsystemtest)"
+        DET=fd
+        mkdir -p $GITHUB_WORKSPACE/daqsystemtest_integration_tests_$NIGHTLY_TAG
+        cd $GITHUB_WORKSPACE/daqsystemtest_integration_tests_$NIGHTLY_TAG
+        source /cvmfs/dunedaq.opensciencegrid.org/setup_dunedaq.sh
+        setup_dbt latest_v5
+        [[ -e /cvmfs/dunedaq-development.opensciencegrid.org/nightly/$NIGHTLY_TAG/daq_app_rte.sh ]]
+        dbt-setup-release -n $NIGHTLY_TAG
+        if 
+        pytest -v -s --junit-xml=${{ matrix.test_name }}_test_results.xml \
+                $GITHUB_WORKSPACE/daqsystemtest/integtest/${{ matrix.test_name }}_test.py
