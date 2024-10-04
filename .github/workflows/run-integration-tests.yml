@@ -51,7 +51,7 @@ jobs:
     - name: Get list of modified files
       id: get_modified_files
       run: |
-        cd $GITHUB_WORKSPACE/${{ github.repository }}
+        cd $GITHUB_WORKSPACE/daqsystemtest
         git diff --name-only ${{ github.event.before }} ${{ github.sha }} > modified_files.txt
         echo "::set-output name=files::$(cat modified_files.txt)"
 
