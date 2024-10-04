@@ -72,6 +72,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.inputs.branch-name }}
 
     - name: Get list of modified files
       id: get_modified_files
