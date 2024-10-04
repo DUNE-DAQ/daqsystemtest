@@ -98,3 +98,39 @@ jobs:
         if 
         pytest -v -s --junit-xml=${{ matrix.test_name }}_test_results.xml \
                 $GITHUB_WORKSPACE/daqsystemtest/integtest/${{ matrix.test_name }}_test.py
+
+  parse_results:
+    runs-on: daq
+    if: always()
+    needs: [make_nightly_tag, run_integration_tests]
+    steps:
+    - name: Surface failing tests
+      #uses: pmeier/pytest-results-action@8104ed7b3d3ba4bb0d550e406fc26aa756630fcc
+      uses: andrewmogan/pytest-results-action@1158583ebac3346e36d76969902bc1fa7b925270
+      env:
+        NIGHTLY_TAG: ${{ needs.make_nightly_tag.outputs.tag}}
+      with:
+        path: ${{ github.workspace }}/daqsystemtest_integration_tests_${{ env.NIGHTLY_TAG }}/*_test_results.xml
+        summary: true
+        display-options: fEX
+        fail-on-empty: true
+
+  cleanup_xml_files:
+    runs-on: daq
+    if: always()
+    needs: [make_nightly_tag, parse_results]
+    steps:
+      - name: Remove xml files
+        env:
+          NIGHTLY_TAG: ${{ needs.make_nightly_tag.outputs.tag }}
+        run: |
+          rm -rf ${{ github.workspace }}/daqsystemtest_integration_tests_${{ env.NIGHTLY_TAG }}
+
+  cleanup_stale_gunicorn_processes:
+    runs-on: daq
+    if: always()
+    needs: run_integration_tests
+    steps:
+      - name: Run cleanup script
+        run: |
+          /home/nfs/dunedaq/kill_stale_gunicorn_processes.sh
