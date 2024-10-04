@@ -44,9 +44,15 @@ jobs:
       run:
         shell: bash
     steps:
-    - name: Make file list
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.inputs.branch-name }}
+    - name: Get list of modified files
+      id: get_modified_files
       run: |
-        git diff --name-only > modified_files.txt
+        cd $GITHUB_WORKSPACE/${{ github.repository }}
+        git diff --name-only ${{ github.event.before }} ${{ github.sha }} > modified_files.txt
         echo "::set-output name=files::$(cat modified_files.txt)"
 
   run_integration_tests:
@@ -72,21 +78,10 @@ jobs:
         shell: bash
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.inputs.branch-name }}
-
-    - name: Get list of modified files
-      id: get_modified_files
-      run: |
-        git diff --name-only ${{ github.event.before }} ${{ github.sha }} > modified_files.txt
-        echo "::set-output name=files::$(cat modified_files.txt)"
-
     - name: setup release and run tests
       env:
         NIGHTLY_TAG: ${{needs.make_nightly_tag.outputs.tag}}
-      if: contains(steps.get_modified_files.outputs.files, matrix.test_name) || contains(steps.get_modified_files.outputs.files, 'configs/')
+      if: contains(needs.get_modified_files.outputs.files, matrix.test_name) || contains(needs.get_modified_files.outputs.files, 'configs/')
       run: |
         echo "Modified files: ${{ needs.get_modified_files.outputs.files }}"
         echo "daqsystemtest path? $(ls $GITHUB_WORKSPACE/daqsystemtest)"
