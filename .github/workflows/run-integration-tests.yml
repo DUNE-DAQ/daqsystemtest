@@ -49,12 +49,13 @@ jobs:
       with:
         ref: ${{ github.event.inputs.branch-name }}
         path: daqsystemtest
-    - name: Get list of modified files
-      id: get_modified_files
-      run: |
-        cd $GITHUB_WORKSPACE/daqsystemtest
-        git diff --name-only ${{ github.event.before }} ${{ github.sha }} > modified_files.txt
-        echo "files=$(cat modified_files.txt)" >> $GITHUB_OUTPUT
+    # TODO: Handle refs for PR and push to get modified file list
+    #- name: Get list of modified files
+    #  id: get_modified_files
+    #  run: |
+    #    cd $GITHUB_WORKSPACE/daqsystemtest
+    #    git diff --name-only ${{ github.event.before }} ${{ github.sha }} > modified_files.txt
+    #    echo "files=$(cat modified_files.txt)" >> $GITHUB_OUTPUT
 
   run_integration_tests:
     name: run_tests
@@ -82,7 +83,6 @@ jobs:
     - name: setup release and run tests
       env:
         NIGHTLY_TAG: ${{needs.make_nightly_tag.outputs.tag}}
-      if: contains(needs.get_modified_files.outputs.files, matrix.test_name) || contains(needs.get_modified_files.outputs.files, 'config/')
       run: |
         echo "Modified files: ${{ needs.get_modified_files.outputs.files }}"
         echo "daqsystemtest path? $(ls $GITHUB_WORKSPACE/daqsystemtest)"
