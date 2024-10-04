@@ -84,7 +84,7 @@ jobs:
       env:
         NIGHTLY_TAG: ${{needs.make_nightly_tag.outputs.tag}}
       run: |
-        echo "Modified files: ${{ needs.get_modified_files.outputs.files }}"
+        #echo "Modified files: ${{ needs.get_modified_files.outputs.files }}"
         echo "daqsystemtest path? $(ls $GITHUB_WORKSPACE/daqsystemtest)"
         DET=fd
         mkdir -p $GITHUB_WORKSPACE/daqsystemtest_integration_tests_$NIGHTLY_TAG
