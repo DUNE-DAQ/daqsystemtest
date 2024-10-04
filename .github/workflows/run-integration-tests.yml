@@ -54,7 +54,7 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/daqsystemtest
         git diff --name-only ${{ github.event.before }} ${{ github.sha }} > modified_files.txt
-        echo "::set-output name=files::$(cat modified_files.txt)"
+        echo "files=$(cat modified_files.txt)" >> $GITHUB_OUTPUT
 
   run_integration_tests:
     name: run_tests
