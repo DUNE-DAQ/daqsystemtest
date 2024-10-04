@@ -1,0 +1,53 @@
+name: build-develop
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  push:
+    branches: 
+      - develop
+    paths-ignore:
+      - 'docs/**'
+      - '.github/**'
+  pull_request:
+    branches: 
+      - develop
+
+  workflow_dispatch:
+    inputs:
+      branch-name:
+        description: 'branch use when running tests.'
+        default: develop
+
+jobs:
+  make_nightly_tag:
+    name: create nightly tag
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.create_nightly_tag.outputs.nightly_tag }} 
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - id: create_nightly_tag
+        run: |
+          date_tag=$(date +%y%m%d)
+          echo "nightly_tag=NFD_DEV_${date_tag}_A9"  >>  "$GITHUB_OUTPUT"
+          cat "$GITHUB_OUTPUT"
+
+  run_integration_tests:
+    name: run_tests
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test_suite: [
+          "minimal_system_quick", 
+          "3ru_1df_multirun", 
+          "example_system", 
+          "long_window_readout", 
+          "small_footprint_quick", 
+          "tpstream_writing"]
+    defaults:
+      run:
+        shell: bash
