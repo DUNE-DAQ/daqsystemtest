@@ -48,6 +48,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         ref: ${{ github.event.inputs.branch-name }}
+        path: daqsystemtest
     - name: Get list of modified files
       id: get_modified_files
       run: |
