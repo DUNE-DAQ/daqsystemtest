@@ -82,7 +82,7 @@ jobs:
     - name: setup release and run tests
       env:
         NIGHTLY_TAG: ${{needs.make_nightly_tag.outputs.tag}}
-      if: contains(needs.get_modified_files.outputs.files, matrix.test_name) || contains(needs.get_modified_files.outputs.files, 'configs/')
+      if: contains(needs.get_modified_files.outputs.files, matrix.test_name) || contains(needs.get_modified_files.outputs.files, 'config/')
       run: |
         echo "Modified files: ${{ needs.get_modified_files.outputs.files }}"
         echo "daqsystemtest path? $(ls $GITHUB_WORKSPACE/daqsystemtest)"
