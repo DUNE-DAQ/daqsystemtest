@@ -80,8 +80,7 @@ jobs:
       # Determine modified files depending on whether the triggering event was a PR or push
       run: |
         echo "TEST_DIR=${GITHUB_WORKSPACE}/integtest" >> $GITHUB_ENV
-        echo "Test dir: $TEST_DIR"
-        cd $TEST_DIR
+        cd $GITHUB_WORKSPACE/integtest
         echo "Am in $(pwd)"
         if [[ "${{ github.event_name }}" == "pull_request" ]]; then
           git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > modified_files.txt
