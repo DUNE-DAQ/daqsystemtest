@@ -100,12 +100,13 @@ jobs:
         setup_dbt latest_v5
         #[[ -e /cvmfs/dunedaq-development.opensciencegrid.org/nightly/$NIGHTLY_TAG/daq_app_rte.sh ]]
         dbt-setup-release -n $NIGHTLY_TAG
-        if grep -q "${{ matrix.test_name }}" $GITHUB_WORKSPACE/daqsystemtest/modified_files.txt \
-        || grep -q "run_all_tests" $GITHUB_WORKSPACE/daqsystemtest/modified_files.txt; then
+        if grep -q "${{ matrix.test_name }}" $GITHUB_WORKSPACE/modified_files.txt \
+        || grep -q "run_all_tests" $GITHUB_WORKSPACE/modified_files.txt; then
           echo "Running tests for ${{ matrix.test_name }}"
           pytest -v -s --junit-xml=${{ matrix.test_name }}_test_results.xml \
             $GITHUB_WORKSPACE/daqsystemtest/integtest/${{ matrix.test_name }}_test.py
         else
           echo "Skipping tests for ${{ matrix.test_name }} as no relevant files were modified."
+          exit 1
         fi
 
