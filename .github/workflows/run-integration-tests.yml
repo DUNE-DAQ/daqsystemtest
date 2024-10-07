@@ -42,7 +42,8 @@ jobs:
     needs: [make_nightly_tag]
     timeout-minutes: 30
     container:
-      image: ghcr.io/dune-daq/nightly-release-alma9:development_v5
+      image: ghcr.io/dune-daq/nightly-release-alma9@sha256:8161077a3ff38de5d70edc766248d86bf030f8ff3e94a25b6631bd7e924174d4
+      #image: ghcr.io/dune-daq/nightly-release-alma9:development_v5
     strategy:
       fail-fast: false
       matrix:
