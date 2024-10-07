@@ -103,6 +103,10 @@
  </rel>
 </obj>
 
+<obj class="LatencyMonitoringConf" id="enable-latency-monitoring">
+ <attr name="enable_latency_monitoring" type="bool" val="1"/>
+</obj>
+
 <obj class="CustomTCMakerConf" id="cstm-tc-generator">
  <attr name="timestamp_method" type="enum" val="kTimeSync"/>
  <attr name="template_for" type="class" val="CustomTCMaker"/>
@@ -115,6 +119,7 @@
   <data val="62500000"/>
  </attr>
  <attr name="clock_frequency_hz" type="u32" val="62500000"/>
+ <rel name="latency_monitoring_conf" class="LatencyMonitoringConf" id="enable-latency-monitoring"/>
 </obj>
 
 <obj class="DFOConf" id="dfoconf-01">
@@ -344,6 +349,7 @@
  <rel name="signals">
   <ref class="HSISignalWindow" id="def-hsi-signal-window"/>
  </rel>
+ <rel name="latency_monitoring_conf" class="LatencyMonitoringConf" id="enable-latency-monitoring"/>
 </obj>
 
 <obj class="HSISignalWindow" id="def-hsi-signal-window">
@@ -367,6 +373,7 @@
  <attr name="td_out_of_timeout" type="bool" val="1"/>
  <attr name="buffer_timeout" type="u32" val="1"/>
  <attr name="td_readout_limit" type="u32" val="1"/>
+ <rel name="latency_monitoring_conf" class="LatencyMonitoringConf" id="enable-latency-monitoring"/>
 </obj>
 
 <obj class="NICStatsConf" id="def-nic-stats">
@@ -382,6 +389,7 @@
  <attr name="trigger_interval_ticks" type="u32" val="125000000"/>
  <attr name="clock_frequency_hz" type="u32" val="62500000"/>
  <attr name="time_distribution" type="enum" val="kUniform"/>
+ <rel name="latency_monitoring_conf" class="LatencyMonitoringConf" id="enable-latency-monitoring"/>
 </obj>
 
 <obj class="RawDataProcessor" id="def-wib-processor">
@@ -445,6 +453,7 @@
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="proc-"/>
  <attr name="print_ta_info" type="bool" val="0"/>
+ <rel name="latency_monitoring_conf" class="LatencyMonitoringConf" id="enable-latency-monitoring"/>
  <rel name="algorithms">
   <ref class="TCMakerPrescaleAlgorithm" id="tc-pass-through-algo"/>
  </rel>
@@ -481,6 +490,7 @@
  <attr name="use_bitwords" type="bool" val="0"/>
  <attr name="use_roi_readout" type="bool" val="0"/>
  <attr name="use_readout_map" type="bool" val="0"/>
+ <rel name="latency_monitoring_conf" class="LatencyMonitoringConf" id="enable-latency-monitoring"/>
  <rel name="tc_readout_map">
   <ref class="TCReadoutMap" id="def-tc-map"/>
   <ref class="TCReadoutMap" id="def-hsi-tc-map"/>
@@ -510,6 +520,7 @@
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="proc-"/>
  <attr name="print_tp_info" type="bool" val="0"/>
+ <rel name="latency_monitoring_conf" class="LatencyMonitoringConf" id="enable-latency-monitoring"/>
  <rel name="algorithms">
   <ref class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker"/>
  </rel>

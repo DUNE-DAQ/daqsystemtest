@@ -79,7 +79,6 @@
  <comment creation-time="20240208T095451" created-by="eflumerf" created-on="ironvirt9.mshome.net" author="eflumerf" text="reformat"/>
 </comments>
 
-
 <obj class="MLTApplication" id="mlt">
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>

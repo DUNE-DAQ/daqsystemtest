@@ -82,6 +82,7 @@
  <comment creation-time="20240312T203031" created-by="eflumerf" created-on="ironvirt9.mshome.net" author="eflumerf" text="Apply source_id..."/>
  <comment creation-time="20240325T124934" created-by="glehmann" created-on="np04-srv-019.cern.ch" author="Unknown" text="adjusted to name changes in connections"/>
  <comment creation-time="20240628T062322" created-by="thea" created-on="np04-srv-031.cern.ch" author="thea" text="removing broadcasters from control apps"/>
+ <comment creation-time="20240912T142734" created-by="mrigan" created-on="np04-srv-016.cern.ch" author="mrigan" text="adding latency monitoring (trigger)"/>
 </comments>
 
 
@@ -142,6 +143,7 @@
 <obj class="HSIFrameProcessor" id="def-hsi-processor">
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="hsip"/>
+ <rel name="latency_monitoring_conf" class="LatencyMonitoringConf" id="enable-latency-monitoring"/>
 </obj>
 
 <obj class="LatencyBuffer" id="hsilatencybuffer-generic">
