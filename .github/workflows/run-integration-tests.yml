@@ -35,27 +35,6 @@ jobs:
           echo "nightly_tag=NFD_DEV_${date_tag}_A9"  >>  "$GITHUB_OUTPUT"
           cat "$GITHUB_OUTPUT"
 
-  get_modified_files:
-    name: Get modified files
-    runs-on: ubuntu-latest
-    outputs:
-      files: ''
-    defaults:
-      run:
-        shell: bash
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.inputs.branch-name }}
-        path: daqsystemtest
-    # TODO: Handle refs for PR and push to get modified file list
-    #- name: Get list of modified files
-    #  id: get_modified_files
-    #  run: |
-    #    cd $GITHUB_WORKSPACE/daqsystemtest
-    #    git diff --name-only ${{ github.event.before }} ${{ github.sha }} > modified_files.txt
-    #    echo "files=$(cat modified_files.txt)" >> $GITHUB_OUTPUT
 
   run_integration_tests:
     name: run_tests
@@ -80,19 +59,43 @@ jobs:
         shell: bash
 
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.inputs.branch-name }}
+    
+    - name: Get modified files list
+      id: get_modified_files
+      # Determine modified files depending on whether the triggering event was a PR or push
+      run: |
+        cd $GITHUB_WORKSPACE/daqsystemtest
+        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > modified_files.txt
+        elif [[ "${{ github.event_name }}" == "push" ]]; then
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} > modified_files.txt
+        else
+          echo "run_all_tests" > modified_files.txt
+        fi
     - name: setup release and run tests
       env:
         NIGHTLY_TAG: ${{needs.make_nightly_tag.outputs.tag}}
       run: |
-        #echo "Modified files: ${{ needs.get_modified_files.outputs.files }}"
+        cd $GITHUB_WORKSPACE/daqsystemtest
+        #echo "Modified files: $(cat modified_files.txt)"
         echo "daqsystemtest path? $(ls $GITHUB_WORKSPACE/daqsystemtest)"
         DET=fd
         mkdir -p $GITHUB_WORKSPACE/daqsystemtest_integration_tests_$NIGHTLY_TAG
         cd $GITHUB_WORKSPACE/daqsystemtest_integration_tests_$NIGHTLY_TAG
         source /cvmfs/dunedaq.opensciencegrid.org/setup_dunedaq.sh
         setup_dbt latest_v5
-        [[ -e /cvmfs/dunedaq-development.opensciencegrid.org/nightly/$NIGHTLY_TAG/daq_app_rte.sh ]]
+        #[[ -e /cvmfs/dunedaq-development.opensciencegrid.org/nightly/$NIGHTLY_TAG/daq_app_rte.sh ]]
         dbt-setup-release -n $NIGHTLY_TAG
-        if 
-        pytest -v -s --junit-xml=${{ matrix.test_name }}_test_results.xml \
-                $GITHUB_WORKSPACE/daqsystemtest/integtest/${{ matrix.test_name }}_test.py
+        if grep -q "${{ matrix.test_name }}" $GITHUB_WORKSPACE/daqsystemtest/modified_files.txt \
+        || grep -q "run_all_tests" $GITHUB_WORKSPACE/daqsystemtest/modified_files.txt; then
+          echo "Running tests for ${{ matrix.test_name }}"
+          pytest -v -s --junit-xml=${{ matrix.test_name }}_test_results.xml \
+            $GITHUB_WORKSPACE/daqsystemtest/integtest/${{ matrix.test_name }}_test.py
+        else
+          echo "Skipping tests for ${{ matrix.test_name }} as no relevant files were modified."
+        fi
+
