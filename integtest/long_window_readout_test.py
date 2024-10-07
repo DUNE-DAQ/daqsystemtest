@@ -32,6 +32,8 @@ minimum_free_disk_space_gb = 24  # 50% more than what we need
 # Default values for validation parameters
 expected_number_of_data_files = 4 * number_of_dataflow_apps
 check_for_logfile_errors = True
+expected_event_count = 202
+expected_event_count_tolerance = 9
 
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
@@ -159,7 +161,7 @@ trsplit_conf.config_substitutions.append(
     )
 )
 
-confgen_arguments = {  "No_TR_Splitting": conf_dict,
+confgen_arguments = {  # "No_TR_Splitting": conf_dict,
     "With_TR_Splitting": trsplit_conf,
 }
 
@@ -167,12 +169,16 @@ confgen_arguments = {  "No_TR_Splitting": conf_dict,
 if sufficient_disk_space and sufficient_resources_on_this_computer:
     nanorc_command_list = "boot conf".split()
     nanorc_command_list += (
-        "start 101 wait 15 enable-triggers wait ".split()
+        "start --trigger-rate ".split()
+        + [str(trigger_rate)]
+        + "101 wait 15 enable-triggers wait ".split()
         + [str(run_duration)]
         + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop wait 2".split()
     )
     nanorc_command_list += (
-        "start 102 wait 15 enable-triggers wait ".split()
+        "start --trigger-rate ".split()
+        + [str(trigger_rate)]
+        + "102 wait 15 enable-triggers wait ".split()
         + [str(run_duration)]
         + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop wait 2".split()
     )
@@ -251,20 +257,10 @@ def test_data_files(run_nanorc):
             f"The raw data output path ({actual_output_path}) does not have enough space to run this test."
         )
 
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-
-    local_expected_event_count = run_duration * trigger_rate / expected_number_of_data_files
-    local_wibeth_frag_params = copy.deepcopy(wibeth_frag_params)
-
-    if "With_TR_Splitting" in current_test:
-        local_expected_event_count = local_expected_event_count * (readout_window_time_before + readout_window_time_after) / trigger_record_max_window
-    else:
-        local_wibeth_frag_params["min_size_bytes"] = 352800000
-        local_wibeth_frag_params["max_size_bytes"] = 357782472
-
-    local_event_count_tolerance = local_expected_event_count // 10
+    local_expected_event_count = expected_event_count
+    local_event_count_tolerance = expected_event_count_tolerance
     fragment_check_list = [triggercandidate_frag_params, hsi_frag_params]
-    fragment_check_list.append(local_wibeth_frag_params)  # WIBEth
+    fragment_check_list.append(wibeth_frag_params)  # WIBEth
 
     all_ok = True
     # Run some tests on the output data file
