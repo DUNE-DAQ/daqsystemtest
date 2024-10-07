@@ -79,7 +79,9 @@ jobs:
       id: get_modified_files
       # Determine modified files depending on whether the triggering event was a PR or push
       run: |
-        cd $GITHUB_WORKSPACE/integtest
+        echo "TEST_DIR=${GITHUB_WORKSPACE}/integtest" >> $GITHUB_ENV
+        echo "Test dir: $TEST_DIR"
+        cd $TEST_DIR
         echo "Am in $(pwd)"
         if [[ "${{ github.event_name }}" == "pull_request" ]]; then
           git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > modified_files.txt
@@ -92,20 +94,18 @@ jobs:
       env:
         NIGHTLY_TAG: ${{needs.make_nightly_tag.outputs.tag}}
       run: |
-        cd $GITHUB_WORKSPACE/integtest
+        cd $TEST_DIR
         echo "Modified files: $(cat modified_files.txt)"
         DET=fd
-        mkdir -p $GITHUB_WORKSPACE/daqsystemtest_integration_tests_$NIGHTLY_TAG
-        cd $GITHUB_WORKSPACE/daqsystemtest_integration_tests_$NIGHTLY_TAG
         source /cvmfs/dunedaq.opensciencegrid.org/setup_dunedaq.sh
         setup_dbt latest_v5
         #[[ -e /cvmfs/dunedaq-development.opensciencegrid.org/nightly/$NIGHTLY_TAG/daq_app_rte.sh ]]
         dbt-setup-release -n $NIGHTLY_TAG
-        if grep -q "${{ matrix.test_name }}" $GITHUB_WORKSPACE/modified_files.txt \
-        || grep -q "run_all_tests" $GITHUB_WORKSPACE/modified_files.txt; then
+        if grep -q "${{ matrix.test_name }}" $TEST_DIR/modified_files.txt \
+        || grep -q "run_all_tests" $TEST_DIR/modified_files.txt; then
           echo "Running tests for ${{ matrix.test_name }}"
           pytest -v -s --junit-xml=${{ matrix.test_name }}_test_results.xml \
-            $GITHUB_WORKSPACE/daqsystemtest/integtest/${{ matrix.test_name }}_test.py
+            $TEST_DIR/${{ matrix.test_name }}_test.py
         else
           echo "Skipping tests for ${{ matrix.test_name }} as no relevant files were modified."
           exit 1
