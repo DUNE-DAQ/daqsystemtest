@@ -78,7 +78,8 @@ jobs:
       id: get_modified_files
       # Determine modified files depending on whether the triggering event was a PR or push
       run: |
-        cd $GITHUB_WORKSPACE/daqsystemtest
+        cd $GITHUB_WORKSPACE/integtest
+        echo "Am in $(pwd)"
         if [[ "${{ github.event_name }}" == "pull_request" ]]; then
           git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > modified_files.txt
         elif [[ "${{ github.event_name }}" == "push" ]]; then
@@ -90,9 +91,8 @@ jobs:
       env:
         NIGHTLY_TAG: ${{needs.make_nightly_tag.outputs.tag}}
       run: |
-        cd $GITHUB_WORKSPACE/daqsystemtest
-        #echo "Modified files: $(cat modified_files.txt)"
-        echo "daqsystemtest path? $(ls $GITHUB_WORKSPACE/daqsystemtest)"
+        cd $GITHUB_WORKSPACE/integtest
+        echo "Modified files: $(cat modified_files.txt)"
         DET=fd
         mkdir -p $GITHUB_WORKSPACE/daqsystemtest_integration_tests_$NIGHTLY_TAG
         cd $GITHUB_WORKSPACE/daqsystemtest_integration_tests_$NIGHTLY_TAG
