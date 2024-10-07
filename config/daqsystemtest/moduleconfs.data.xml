@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="58" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T153633"/>
+<info name="" type="" num-of-items="59" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="mrigan" last-modified-on="np04-srv-016.cern.ch" last-modification-time="20241007T112228"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -73,6 +73,10 @@
  <file path="config/daqsystemtest/connections.data.xml"/>
  <file path="config/daqsystemtest/fsm.data.xml"/>
 </include>
+
+<comments>
+ <comment creation-time="20241007T112228" created-by="mrigan" created-on="np04-srv-016.cern.ch" author="mrigan" text="fix for latency config object"/>
+</comments>
 
 
 <obj class="AVXThresholdProcessor" id="tpg-threshold-proc">
@@ -101,10 +105,6 @@
   <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
  </rel>
-</obj>
-
-<obj class="LatencyMonitoringConf" id="enable-latency-monitoring">
- <attr name="enable_latency_monitoring" type="bool" val="1"/>
 </obj>
 
 <obj class="CustomTCMakerConf" id="cstm-tc-generator">
@@ -366,6 +366,10 @@
  <attr name="intrinsic_allocator" type="bool" val="0"/>
  <attr name="alignment_size" type="u32" val="4096"/>
  <attr name="preallocation" type="bool" val="0"/>
+</obj>
+
+<obj class="LatencyMonitoringConf" id="enable-latency-monitoring">
+ <attr name="enable_latency_monitoring" type="bool" val="1"/>
 </obj>
 
 <obj class="MLTConf" id="def-mlt-conf">
