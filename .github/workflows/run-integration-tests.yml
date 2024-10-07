@@ -63,6 +63,16 @@ jobs:
       uses: actions/checkout@v4
       with:
         ref: ${{ github.event.inputs.branch-name }}
+
+    - name: Troubleshoot paths
+      run: |
+        echo "Github workspace: $GITHUB_WORKSPACE"
+        echo "ls Github workspace: $(ls $GITHUB_WORKSPACE)"
+        echo "Where is daqsystemtest?
+        $(find $GITHUB_WORKSPACE -name daqsystemtest -type d) > daqsystemtest_dirs.txt"
+        for dir in $(cat daqsystemtest_dirs.txt); do
+          echo "I'm in $dir and there's $(ls $dir)"
+        done
     
     - name: Get modified files list
       id: get_modified_files
