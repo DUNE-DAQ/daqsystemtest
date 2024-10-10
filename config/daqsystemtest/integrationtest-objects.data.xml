@@ -135,42 +135,6 @@
  <attr name="warn_on_timeout" type="bool" val="0"/>
  <attr name="warn_on_empty_buffer" type="bool" val="0"/>
 </obj>
-
-<obj class="Service" id="dfo-01_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5604"/>
-</obj>
-
-<obj class="Service" id="hsi-01_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5801"/>
-</obj>
-
-<obj class="Service" id="hsi-controller_control">
- <attr name="protocol" type="string" val="grpc"/>
- <attr name="port" type="u16" val="5800"/>
-</obj>
-
-<obj class="Service" id="hsi-to-tc-app_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5802"/>
-</obj>
-
-<obj class="Service" id="mlt_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5702"/>
-</obj>
-
-<obj class="Service" id="tc-maker-1_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5703"/>
-</obj>
-
-<obj class="Service" id="tp-stream-writer_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5605"/>
-</obj>
-
 <obj class="SourceIDConf" id="hsi-srcid-01">
  <attr name="sid" type="u32" val="1"/>
  <attr name="subsystem" type="enum" val="HW_Signals_Interface"/>

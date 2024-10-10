@@ -71,6 +71,7 @@
  <file path="config/daqsystemtest/connections.data.xml"/>
  <file path="config/daqsystemtest/moduleconfs.data.xml"/>
  <file path="config/daqsystemtest/hosts.data.xml"/>
+ <file path="config/daqsystemtest/ccm.data.xml"/>
 </include>
 
 
@@ -78,7 +79,7 @@
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="df-01_control"/>
+  <ref class="Service" id="daq_app_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="srcid-df-01"/>
@@ -104,7 +105,7 @@
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="df-02_control"/>
+  <ref class="Service" id="daq_app_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="srcid-df-02"/>
@@ -130,7 +131,7 @@
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="df-03_control"/>
+  <ref class="Service" id="daq_app_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="srcid-df-03"/>
@@ -162,7 +163,7 @@
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="dfo-01_control"/>
+  <ref class="Service" id="daq_app_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="network_rules">
@@ -177,7 +178,7 @@
  <attr name="application_name" type="string" val="drunc-controller"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="df-controller_control"/>
+  <ref class="Service" id="drunc_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="fsm" class="FSMconfiguration" id="FSMconfiguration_noAction"/>
@@ -192,36 +193,6 @@
   <ref class="DFApplication" id="df-03"/>
  </rel>
  <rel name="controller" class="RCApplication" id="df-controller"/>
-</obj>
-
-<obj class="Service" id="df-01_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5601"/>
-</obj>
-
-<obj class="Service" id="df-02_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5602"/>
-</obj>
-
-<obj class="Service" id="df-03_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5603"/>
-</obj>
-
-<obj class="Service" id="df-controller_control">
- <attr name="protocol" type="string" val="grpc"/>
- <attr name="port" type="u16" val="5600"/>
-</obj>
-
-<obj class="Service" id="dfo-01_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5604"/>
-</obj>
-
-<obj class="Service" id="tp-stream-writer_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5605"/>
 </obj>
 
 <obj class="SourceIDConf" id="srcid-df-01">
@@ -252,7 +223,7 @@
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="tp-stream-writer_control"/>
+  <ref class="Service" id="daq_app_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="srcid-tp-stream-writer"/>

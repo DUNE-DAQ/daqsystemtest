@@ -73,6 +73,7 @@
  <file path="config/daqsystemtest/connections.data.xml"/>
  <file path="config/daqsystemtest/moduleconfs.data.xml"/>
  <file path="config/daqsystemtest/hosts.data.xml"/>
+ <file path="config/daqsystemtest/ccm.data.xml"/>
 </include>
 
 <comments>
@@ -313,7 +314,7 @@
  <attr name="application_name" type="string" val="drunc-controller"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="ru-controller_control"/>
+  <ref class="Service" id="drunc_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="fsm" class="FSMconfiguration" id="FSMconfiguration_noAction"/>
@@ -328,7 +329,7 @@
  </rel>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="ru-01_control"/>
+  <ref class="Service" id="daq_app_control"/>
   <ref class="Service" id="dataRequests"/>
   <ref class="Service" id="timeSyncs"/>
   <ref class="Service" id="triggerActivities"/>
@@ -371,7 +372,7 @@
  </rel>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="ru-02_control"/>
+  <ref class="Service" id="daq_app_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="queue_rules">
@@ -422,21 +423,6 @@
   <ref class="ReadoutApplication" id="ru-02"/>
  </rel>
  <rel name="controller" class="RCApplication" id="ru-controller"/>
-</obj>
-
-<obj class="Service" id="ru-01_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5501"/>
-</obj>
-
-<obj class="Service" id="ru-02_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5502"/>
-</obj>
-
-<obj class="Service" id="ru-controller_control">
- <attr name="protocol" type="string" val="grpc"/>
- <attr name="port" type="u16" val="5500"/>
 </obj>
 
 <obj class="SourceIDConf" id="tp-srcid-1000">

@@ -117,7 +117,7 @@
  <attr name="application_name" type="string" val="drunc-controller"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="root-controller_control"/>
+  <ref class="Service" id="drunc_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="fsm" class="FSMconfiguration" id="fsmConf-test"/>
@@ -128,9 +128,14 @@
  <attr name="port" type="u16" val="5000"/>
 </obj>
 
-<obj class="Service" id="root-controller_control">
+<obj class="ControlService" id="drunc_control">
  <attr name="protocol" type="string" val="grpc"/>
- <attr name="port" type="u16" val="3333"/>
+ <attr name="port" type="u16" val="0"/>
+</obj>
+
+<obj class="ControlService" id="daq_app_control">
+ <attr name="protocol" type="string" val="rest"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="Variable" id="ehn1-env-connectivity-port">

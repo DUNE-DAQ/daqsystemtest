@@ -72,6 +72,7 @@
  <file path="config/daqsystemtest/connections.data.xml"/>
  <file path="config/daqsystemtest/moduleconfs.data.xml"/>
  <file path="config/daqsystemtest/hosts.data.xml"/>
+ <file path="config/daqsystemtest/ccm.data.xml"/>
 </include>
 
 <comments>
@@ -98,7 +99,7 @@
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="hsi-01_control"/>
+  <ref class="Service" id="daq_app_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="hsi-srcid-01"/>
@@ -128,7 +129,7 @@
  <rel name="exposes_service">
   <ref class="Service" id="dataRequests"/>
   <ref class="Service" id="HSIEvents"/>
-  <ref class="Service" id="hsi-to-tc-app_control"/>
+  <ref class="Service" id="daq_app_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="hsi-tc-srcid-1"/>
@@ -155,7 +156,7 @@
  <attr name="application_name" type="string" val="drunc-controller"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="hsi-controller_control"/>
+  <ref class="Service" id="drunc_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="fsm" class="FSMconfiguration" id="FSMconfiguration_noAction"/>
@@ -176,21 +177,6 @@
   <ref class="HSIEventToTCApplication" id="hsi-to-tc-app"/>
  </rel>
  <rel name="controller" class="RCApplication" id="hsi-controller"/>
-</obj>
-
-<obj class="Service" id="hsi-01_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5801"/>
-</obj>
-
-<obj class="Service" id="hsi-controller_control">
- <attr name="protocol" type="string" val="grpc"/>
- <attr name="port" type="u16" val="5800"/>
-</obj>
-
-<obj class="Service" id="hsi-to-tc-app_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5802"/>
 </obj>
 
 <obj class="SourceIDConf" id="hsi-srcid-01">

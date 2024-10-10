@@ -73,12 +73,12 @@
  <file path="config/daqsystemtest/moduleconfs.data.xml"/>
  <file path="config/daqsystemtest/hosts.data.xml"/>
  <file path="config/daqsystemtest/fsm.data.xml"/>
+ <file path="config/daqsystemtest/ccm.data.xml"/>
 </include>
 
 <comments>
  <comment creation-time="20240208T095451" created-by="eflumerf" created-on="ironvirt9.mshome.net" author="eflumerf" text="reformat"/>
 </comments>
-
 
 <obj class="MLTApplication" id="mlt">
  <attr name="application_name" type="string" val="daq_application"/>
@@ -87,7 +87,7 @@
   <ref class="Service" id="triggerCandidates"/>
   <ref class="Service" id="triggerInhibits"/>
   <ref class="Service" id="dataRequests"/>
-  <ref class="Service" id="mlt_control"/>
+  <ref class="Service" id="daq_app_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="tc-srcid-1"/>
@@ -114,7 +114,7 @@
  <attr name="application_name" type="string" val="drunc-controller"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="trg-controller_control"/>
+  <ref class="Service" id="drunc_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="fsm" class="FSMconfiguration" id="FSMconfiguration_noAction"/>
@@ -126,26 +126,6 @@
   <ref class="MLTApplication" id="mlt"/>
  </rel>
  <rel name="controller" class="RCApplication" id="trg-controller"/>
-</obj>
-
-<obj class="Service" id="mlt_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5702"/>
-</obj>
-
-<obj class="Service" id="tc-buffer-1_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5704"/>
-</obj>
-
-<obj class="Service" id="tc-maker-1_control">
- <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5703"/>
-</obj>
-
-<obj class="Service" id="trg-controller_control">
- <attr name="protocol" type="string" val="grpc"/>
- <attr name="port" type="u16" val="5700"/>
 </obj>
 
 <obj class="SourceIDConf" id="ta-srcid-1">
@@ -162,7 +142,7 @@
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="tc-maker-1_control"/>
+  <ref class="Service" id="daq_app_control"/>
   <ref class="Service" id="triggerActivities"/>
   <ref class="Service" id="dataRequests"/>
  </rel>
