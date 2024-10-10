@@ -130,7 +130,7 @@
 
 <obj class="Service" id="root-controller_control">
  <attr name="protocol" type="string" val="grpc"/>
- <attr name="port" type="u16" val="3333"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="Variable" id="ehn1-env-connectivity-port">

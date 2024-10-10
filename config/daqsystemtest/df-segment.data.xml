@@ -196,32 +196,32 @@
 
 <obj class="Service" id="df-01_control">
  <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5601"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="Service" id="df-02_control">
  <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5602"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="Service" id="df-03_control">
  <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5603"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="Service" id="df-controller_control">
  <attr name="protocol" type="string" val="grpc"/>
- <attr name="port" type="u16" val="5600"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="Service" id="dfo-01_control">
  <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5604"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="Service" id="tp-stream-writer_control">
  <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5605"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="SourceIDConf" id="srcid-df-01">
