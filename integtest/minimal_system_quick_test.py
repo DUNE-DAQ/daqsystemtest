@@ -96,18 +96,6 @@ substitution = data_classes.config_substitution(
 )
 conf_dict.config_substitutions.append(substitution)
 
-# conf_dict["daq_common"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
-# conf_dict["readout"]["use_fake_cards"] = True
-# conf_dict["trigger"]["ttcm_input_map"] = [{'signal': 1, 'tc_type_name': 'kTiming',
-#                                           'time_before': readout_window_time_before,
-#                                           'time_after': readout_window_time_after}]
-
-# conf_dict["readout"]["data_files"] = []
-# datafile_conf = {}
-# datafile_conf["data_file"] = "asset://?checksum=e96fd6efd3f98a9a3bfaba32975b476e" # WIBEth
-# datafile_conf["detector_id"] = 3
-# conf_dict["readout"]["data_files"].append(datafile_conf)
-
 confgen_arguments = {"MinimalSystem": conf_dict}
 # The commands to run in nanorc, as a list
 nanorc_command_list = (
