@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="us-ascii"?>
+<?xml version="1.0" encoding="ASCII"?>
 
 <!-- oks-data version 2.2 -->
 
@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="25" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="glehmann" last-modified-on="np04-srv-024.cern.ch" last-modification-time="20240923T065642"/>
+<info name="" type="" num-of-items="28" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20241011T131354"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -92,15 +92,18 @@
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
 </obj>
-    <obj class="ConnectivityService" id="local-connectivity-service-config">
-        <attr name="interval_ms" type="u32" val="2000"/>
-        <rel name="service" class="Service" id="local-connectivity-service"/>
-    </obj>
-    <obj class="ConnectivityService" id="ehn1-connectivity-service-config">
-        <attr name="interval_ms" type="u32" val="2000"/>
-        <attr name="host" type="string" val="np04-srv-017"/>
-        <rel name="service" class="Service" id="ehn1-connectivity-service"/>
-    </obj>
+
+<obj class="ConnectivityService" id="ehn1-connectivity-service-config">
+ <attr name="interval_ms" type="u32" val="2000"/>
+ <attr name="host" type="string" val="np04-srv-017"/>
+ <rel name="service" class="Service" id="ehn1-connectivity-service"/>
+</obj>
+
+<obj class="ConnectivityService" id="local-connectivity-service-config">
+ <attr name="interval_ms" type="u32" val="2000"/>
+ <attr name="host" type="string" val="localhost"/>
+ <rel name="service" class="Service" id="local-connectivity-service"/>
+</obj>
 
 <obj class="OpMonConf" id="fast-all-monitoring">
  <attr name="level" type="u32" val="4294967295"/>
@@ -132,15 +135,16 @@
  <rel name="fsm" class="FSMconfiguration" id="fsmConf-test"/>
 </obj>
 
+<obj class="Service" id="ehn1-connectivity-service">
+ <attr name="protocol" type="string" val="http"/>
+ <attr name="port" type="u16" val="30005"/>
+</obj>
+
 <obj class="Service" id="local-connectivity-service">
  <attr name="protocol" type="string" val="http"/>
  <attr name="port" type="u16" val="5000"/>
 </obj>
 
-    <obj class="Service" id="ehn1-connectivity-service">
-        <attr name="protocol" type="string" val="http"/>
-        <attr name="port" type="u16" val="30005"/>
-    </obj>
 <obj class="Service" id="root-controller_control">
  <attr name="protocol" type="string" val="grpc"/>
  <attr name="port" type="u16" val="0"/>
