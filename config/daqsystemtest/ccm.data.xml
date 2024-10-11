@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ASCII"?>
+<?xml version="1.0" encoding="us-ascii"?>
 
 <!-- oks-data version 2.2 -->
 
@@ -92,6 +92,15 @@
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
 </obj>
+    <obj class="ConnectivityService" id="local-connectivity-service-config">
+        <attr name="interval_ms" type="u32" val="2000"/>
+        <rel name="service" class="Service" id="local-connectivity-service"/>
+    </obj>
+    <obj class="ConnectivityService" id="ehn1-connectivity-service-config">
+        <attr name="interval_ms" type="u32" val="2000"/>
+        <attr name="host" type="string" val="np04-srv-017"/>
+        <rel name="service" class="Service" id="ehn1-connectivity-service"/>
+    </obj>
 
 <obj class="OpMonConf" id="fast-all-monitoring">
  <attr name="level" type="u32" val="4294967295"/>
@@ -128,6 +137,10 @@
  <attr name="port" type="u16" val="5000"/>
 </obj>
 
+    <obj class="Service" id="ehn1-connectivity-service">
+        <attr name="protocol" type="string" val="http"/>
+        <attr name="port" type="u16" val="30005"/>
+    </obj>
 <obj class="Service" id="root-controller_control">
  <attr name="protocol" type="string" val="grpc"/>
  <attr name="port" type="u16" val="0"/>
