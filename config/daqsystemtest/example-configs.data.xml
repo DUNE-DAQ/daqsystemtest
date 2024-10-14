@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="us-ascii"?>
+<?xml version="1.0" encoding="ASCII"?>
 
 <!-- oks-data version 2.2 -->
 
@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="15" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="maroda" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20240918T124332"/>
+<info name="" type="" num-of-items="6" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="eflumerf" last-modified-on="ironvirt9.IRONDOMAIN.local" last-modification-time="20241014T145531"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -87,6 +87,7 @@
  <attr name="tpg_channel_map" type="string" val="PD2HDChannelMap"/>
  <attr name="clock_speed_hz" type="u32" val="62500000"/>
  <attr name="op_env" type="string" val="test"/>
+ <attr name="offline_data_stream" type="string" val="cosmics"/>
 </obj>
 
 <obj class="Segment" id="root-segment">
@@ -100,10 +101,10 @@
 </obj>
 
 <obj class="Session" id="ehn1-local-1x1-config">
- <attr name="use_connectivity_server" type="bool" val="1"/>
- <attr name="connectivity_service_interval_ms" type="u32" val="2000"/>
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
+ <attr name="controller_log_level" type="enum" val="INFO"/>
+ <rel name="connectivity_service" class="ConnectivityService" id="ehn1-connectivity-service-config"/>
  <rel name="environment">
   <ref class="VariableSet" id="ehn1-variables"/>
  </rel>
@@ -118,10 +119,10 @@
 </obj>
 
 <obj class="Session" id="ehn1-local-2x3-config">
- <attr name="use_connectivity_server" type="bool" val="1"/>
- <attr name="connectivity_service_interval_ms" type="u32" val="2000"/>
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
+ <attr name="controller_log_level" type="enum" val="INFO"/>
+ <rel name="connectivity_service" class="ConnectivityService" id="ehn1-connectivity-service-config"/>
  <rel name="environment">
   <ref class="VariableSet" id="ehn1-variables"/>
  </rel>
@@ -131,18 +132,16 @@
 </obj>
 
 <obj class="Session" id="local-1x1-config">
- <attr name="use_connectivity_server" type="bool" val="1"/>
- <attr name="connectivity_service_interval_ms" type="u32" val="2000"/>
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
+ <attr name="controller_log_level" type="enum" val="INFO"/>
+ <rel name="connectivity_service" class="ConnectivityService" id="local-connectivity-service-config"/>
  <rel name="environment">
   <ref class="Variable" id="local-env-ers-verb"/>
   <ref class="Variable" id="local-env-ers-info"/>
   <ref class="Variable" id="local-env-ers-warning"/>
   <ref class="Variable" id="local-env-ers-error"/>
   <ref class="Variable" id="local-env-ers-fatal"/>
-  <ref class="Variable" id="local-env-connectivity-server"/>
-  <ref class="Variable" id="local-env-connectivity-port"/>
  </rel>
  <rel name="disabled">
   <ref class="DFApplication" id="df-02"/>
@@ -158,18 +157,16 @@
 </obj>
 
 <obj class="Session" id="local-2x3-config">
- <attr name="use_connectivity_server" type="bool" val="1"/>
- <attr name="connectivity_service_interval_ms" type="u32" val="2000"/>
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
+ <attr name="controller_log_level" type="enum" val="INFO"/>
+ <rel name="connectivity_service" class="ConnectivityService" id="local-connectivity-service-config"/>
  <rel name="environment">
   <ref class="Variable" id="local-env-ers-verb"/>
   <ref class="Variable" id="local-env-ers-info"/>
   <ref class="Variable" id="local-env-ers-warning"/>
   <ref class="Variable" id="local-env-ers-error"/>
   <ref class="Variable" id="local-env-ers-fatal"/>
-  <ref class="Variable" id="local-env-connectivity-server"/>
-  <ref class="Variable" id="local-env-connectivity-port"/>
  </rel>
  <rel name="segment" class="Segment" id="root-segment"/>
  <rel name="infrastructure_applications">
@@ -178,6 +175,5 @@
  <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
  <rel name="opmon_uri" class="OpMonURI" id="local-opmon-uri"/>
 </obj>
-
 
 </oks-data>

@@ -81,6 +81,7 @@ ignored_logfile_problems = {
         "There is no broadcasting service",
         "Could not understand the BroadcastHandler technology you want to use",
         "Worker with pid \\d+ was terminated due to signal 1",
+        "Connection '.*' not found on the application registry",
     ],
     "local-connection-server": [
         "errorlog: -",
