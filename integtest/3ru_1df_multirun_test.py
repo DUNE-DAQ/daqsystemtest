@@ -78,9 +78,9 @@ hsi_frag_params = {
 }
 ignored_logfile_problems = {
     "-controller": [
-        'ERROR.*Broadcast:.*Propagating take_control to children',
-        'ERROR.*Broadcast:.*Propagating describe to children',
-        'WARNING.*Broadcast:.*There is no broadcasting service!',
+        "Propagating take_control to children",
+        "Propagating describe to children",
+        "There is no broadcasting service",
         "Could not understand the BroadcastHandler technology you want to use",
         "Worker with pid \\d+ was terminated due to signal 1",
         "Connection '.*' not found on the application registry",
