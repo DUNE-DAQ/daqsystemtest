@@ -66,7 +66,7 @@
   <include>
     <file path="schema/confmodel/dunedaq.schema.xml"/>
     <file path="schema/appmodel/application.schema.xml"/>
-    <file path="config/appmodel/opmon.data.xml"/>
+    <file path="config/daqsystemtest/ccm.data.xml"/>
     <file path="config/daqsystemtest/fsm.data.xml"/>
     <file path="config/daqsystemtest/hosts.data.xml"/>
     <file path="config/daqsystemtest/ru-segment.data.xml"/>
@@ -76,35 +76,10 @@
     <!-- <file path="test/config/hsi-segment.data.xml"/> -->
   </include>
 
-  <obj class="ConnectionService" id="local-connection-server">
-    <attr name="application_name" type="string" val="echo"/>
-    <attr name="commandline_parameters" type="string">
-      <data val="Process PID $$;"/>
-      <data val="trap &apos;pkill -INT -P $$&apos; EXIT;"/>
-      <data val="gunicorn -b 0.0.0.0:5000 --workers=1 --worker-class=gthread --threads=2 --timeout 5000000000 --log-level=debug connection-service.connection-flask:app"/>
-    </attr>
-    <attr name="threads" type="u16" val="1"/>
-    <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
-    <rel name="exposes_service">
-      <ref class="Service" id="local-connectivity-service"/>
-    </rel>
-    <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
-  </obj>
-
   <obj class="DetectorConfig" id="dummy-detector">
     <attr name="tpg_channel_map" type="string" val="PD2HDChannelMap"/>
     <attr name="clock_speed_hz" type="u32" val="62500000"/>
     <attr name="op_env" type="string" val="test"/>
-  </obj>
-
-  <obj class="RCApplication" id="root-controller">
-    <attr name="application_name" type="string" val="drunc-controller"/>
-    <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
-    <rel name="exposes_service">
-      <ref class="Service" id="root-controller_control"/>
-    </rel>
-    <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
-    <rel name="fsm" class="FSMconfiguration" id="fsmConf-test"/>
   </obj>
 
   <obj class="Segment" id="root-segment">
@@ -118,15 +93,10 @@
     <rel name="controller" class="RCApplication" id="root-controller"/>
   </obj>
 
-  <obj class="Service" id="local-connectivity-service">
-    <attr name="protocol" type="string" val="http"/>
-    <attr name="port" type="u16" val="5000"/>
-  </obj>
-
-  <obj class="Service" id="root-controller_control">
-    <attr name="protocol" type="string" val="grpc"/>
-    <attr name="port" type="u16" val="3333"/>
-  </obj>
+ <obj class="Variable" id="ers-debug">
+  <attr name="name" type="string" val="DUNEDAQ_ERS_DEBUG_LEVEL"/>
+  <attr name="value" type="string" val="14"/>
+ </obj>
 
   <obj class="Session" id="test-session">
     <attr name="use_connectivity_server" type="bool" val="1"/>
@@ -134,16 +104,21 @@
     <attr name="data_request_timeout_ms" type="u32" val="1000"/>
     <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
     <rel name="environment">
-      <ref class="Variable" id="session-env-session-name-0"/>
-      <ref class="Variable" id="session-env-session-name-1"/>
-      <ref class="Variable" id="session-env-ers-verb"/>
-      <ref class="Variable" id="session-env-ers-info"/>
-      <ref class="Variable" id="session-env-ers-warning"/>
-      <ref class="Variable" id="session-env-ers-error"/>
-      <ref class="Variable" id="session-env-ers-fatal"/>
-      <ref class="Variable" id="session-env-connectivity-server"/>
-      <ref class="Variable" id="session-env-connectivity-port"/>
-      <ref class="Variable" id="daqapp-cli-configuration"/>
+      <ref class="Variable" id="local-env-ers-verb"/>
+      <ref class="Variable" id="local-env-ers-info"/>
+      <ref class="Variable" id="local-env-ers-warning"/>
+      <ref class="Variable" id="local-env-ers-error"/>
+      <ref class="Variable" id="local-env-ers-fatal"/>
+      <ref class="Variable" id="local-env-connectivity-server"/>
+      <ref class="Variable" id="local-env-connectivity-port"/>
+      <ref class="Variable" id="ers-debug"/>
+    </rel>
+    <rel name="disabled">
+      <ref class="DFApplication" id="df-02"/>
+      <ref class="DFApplication" id="df-03"/>
+      <ref class="ReadoutApplication" id="ru-02"/>
+      <ref class="TPStreamWriterApplication" id="tp-stream-writer"/>
+      <ref class="TriggerApplication" id="tc-maker-1"/>
     </rel>
     <rel name="segment" class="Segment" id="root-segment"/>
     <rel name="infrastructure_applications">
@@ -152,56 +127,5 @@
     <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
     <rel name="opmon_uri" class="OpMonURI" id="local-opmon-uri"/>
   </obj>
-
-  <obj class="Variable" id="daqapp-cli-configuration">
-    <attr name="name" type="string" val="DAQAPP_CLI_CONFIG_SVC"/>
-    <attr name="value" type="string" val="oksconflibs:test/config/test-session.data.xml"/>
-  </obj>
-
-  <obj class="Variable" id="session-env-connectivity-port">
-    <attr name="name" type="string" val="CONNECTION_PORT"/>
-    <attr name="value" type="string" val="5000"/>
-  </obj>
-
-  <obj class="Variable" id="session-env-connectivity-server">
-    <attr name="name" type="string" val="CONNECTION_SERVER"/>
-    <attr name="value" type="string" val="localhost"/>
-  </obj>
-
-  <obj class="Variable" id="session-env-ers-error">
-    <attr name="name" type="string" val="DUNEDAQ_ERS_ERROR"/>
-    <attr name="value" type="string" val="erstrace,throttle,lstdout"/>
-  </obj>
-
-  <obj class="Variable" id="session-env-ers-fatal">
-    <attr name="name" type="string" val="DUNEDAQ_ERS_FATAL"/>
-    <attr name="value" type="string" val="erstrace,lstdout"/>
-  </obj>
-
-  <obj class="Variable" id="session-env-ers-info">
-    <attr name="name" type="string" val="DUNEDAQ_ERS_INFO"/>
-    <attr name="value" type="string" val="erstrace,throttle,lstdout"/>
-  </obj>
-
-  <obj class="Variable" id="session-env-ers-verb">
-    <attr name="name" type="string" val="DUNEDAQ_ERS_VERBOSITY_LEVEL"/>
-    <attr name="value" type="string" val="1"/>
-  </obj>
-
-  <obj class="Variable" id="session-env-ers-warning">
-    <attr name="name" type="string" val="DUNEDAQ_ERS_WARNING"/>
-    <attr name="value" type="string" val="erstrace,throttle,lstdout"/>
-  </obj>
-
-  <obj class="Variable" id="session-env-session-name-0">
-    <attr name="name" type="string" val="DUNEDAQ_PARTITION"/>
-    <attr name="value" type="string" val="test-session"/>
-  </obj>
-
-  <obj class="Variable" id="session-env-session-name-1">
-    <attr name="name" type="string" val="DUNEDAQ_SESSION"/>
-    <attr name="value" type="string" val="test-session"/>
-  </obj>
-
 
 </oks-data>

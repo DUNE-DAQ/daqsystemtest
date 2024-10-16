@@ -69,7 +69,6 @@
  <file path="schema/confmodel/dunedaq.schema.xml"/>
  <file path="schema/appmodel/application.schema.xml"/>
  <file path="schema/appmodel/trigger.schema.xml"/>
- <file path="config/appmodel/opmon.data.xml"/>
  <file path="config/daqsystemtest/connections.data.xml"/>
  <file path="config/daqsystemtest/moduleconfs.data.xml"/>
  <file path="config/daqsystemtest/hosts.data.xml"/>
@@ -120,8 +119,8 @@
 
 <obj class="HSIReadoutConf" id="dtshsi">
     <attr name="readout_period" type="u64" val="1000"></attr>
-    <attr name="hsi_device_name" type="string" val="BOREAS_FMC"></attr>
-    <attr name="connections_file" type="string" val="/home/jr19588/NFD_DEV_240923_A9/firmware/dune-timing-firmware/boreas_connections.xml"></attr>
+    <attr name="hsi_device_name" type="string" val="BOREAS"></attr>
+    <attr name="connections_file" type="string" val="connections.xml"></attr>
 </obj>
 
 <obj class="HSIEventToTCApplication" id="hsi-to-tc-app">
@@ -165,10 +164,10 @@
 
 <obj class="RequestHandler" id="hsi-requesthandler-generic">
  <attr name="handler_threads" type="u16" val="4"/>
- <attr name="request_timeout" type="u32" val="1000"/>
+ <attr name="request_timeout" type="u32" val="0"/>
  <attr name="pop_limit_pct" type="float" val="0.8"/>
  <attr name="pop_size_pct" type="float" val="0.1"/>
- <attr name="warn_on_timeout" type="bool" val="1"/>
+ <attr name="warn_on_timeout" type="bool" val="0"/>
  <attr name="warn_on_empty_buffer" type="bool" val="0"/>
 </obj>
 
