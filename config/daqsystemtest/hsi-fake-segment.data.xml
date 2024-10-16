@@ -85,23 +85,23 @@
 </comments>
 
 
-<obj class="DataHandlerConf" id="def-hsi-handler">
+<obj class="DataHandlerConf" id="hsi-fake-handler">
  <attr name="template_for" type="class" val="HSIDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="HSIFrame"/>
  <attr name="generate_timesync" type="bool" val="0"/>
- <rel name="request_handler" class="RequestHandler" id="hsi-requesthandler-generic"/>
- <rel name="latency_buffer" class="LatencyBuffer" id="hsilatencybuffer-generic"/>
- <rel name="data_processor" class="HSIFrameProcessor" id="def-hsi-processor"/>
+ <rel name="request_handler" class="RequestHandler" id="hsi-fake-requesthandler"/>
+ <rel name="latency_buffer" class="LatencyBuffer" id="hsi-fake-latencybuffer"/>
+ <rel name="data_processor" class="HSIFrameProcessor" id="hsi-fake-processor"/>
 </obj>
 
-<obj class="FakeHSIApplication" id="hsi-01">
+<obj class="FakeHSIApplication" id="hsi-fake-01">
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="hsi-01_control"/>
+  <ref class="Service" id="hsi-fake-01_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
- <rel name="source_id" class="SourceIDConf" id="hsi-srcid-01"/>
+ <rel name="source_id" class="SourceIDConf" id="hsi-fake-srcid-01"/>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="hsi-dlh-data-requests-queue-rule"/>
  </rel>
@@ -110,7 +110,7 @@
   <ref class="NetworkConnectionRule" id="data-req-hsi-net-rule"/>
   <ref class="NetworkConnectionRule" id="ts-hsi-net-rule"/>
  </rel>
- <rel name="link_handler" class="DataHandlerConf" id="def-hsi-handler"/>
+ <rel name="link_handler" class="DataHandlerConf" id="hsi-fake-handler"/>
  <rel name="generator" class="FakeHSIEventGeneratorConf" id="fakehsi"/>
 </obj>
 
@@ -122,16 +122,16 @@
  <attr name="enabled_signals" type="u32" val="1"/>
 </obj>
 
-<obj class="HSIEventToTCApplication" id="hsi-to-tc-app">
+<obj class="HSIEventToTCApplication" id="hsi-fake-to-tc-app">
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
   <ref class="Service" id="dataRequests"/>
   <ref class="Service" id="HSIEvents"/>
-  <ref class="Service" id="hsi-to-tc-app_control"/>
+  <ref class="Service" id="hsi-fake-to-tc-app_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
- <rel name="source_id" class="SourceIDConf" id="hsi-tc-srcid-1"/>
+ <rel name="source_id" class="SourceIDConf" id="hsi-fake-tc-srcid-1"/>
  <rel name="network_rules">
   <ref class="NetworkConnectionRule" id="hsi-rule"/>
   <ref class="NetworkConnectionRule" id="tc-net-rule"/>
@@ -139,29 +139,29 @@
  <rel name="hsevent_to_tc_conf" class="HSI2TCTranslatorConf" id="hsi-to-tc-conf"/>
 </obj>
 
-<obj class="HSIFrameProcessor" id="def-hsi-processor">
+<obj class="HSIFrameProcessor" id="hsi-fake-processor">
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="hsip"/>
 </obj>
 
-<obj class="LatencyBuffer" id="hsilatencybuffer-generic">
+<obj class="LatencyBuffer" id="hsi-fake-latencybuffer">
  <attr name="size" type="u32" val="100000"/>
  <attr name="numa_aware" type="bool" val="0"/>
  <attr name="intrinsic_allocator" type="bool" val="0"/>
  <attr name="preallocation" type="bool" val="0"/>
 </obj>
 
-<obj class="RCApplication" id="hsi-controller">
+<obj class="RCApplication" id="hsi-fake-controller">
  <attr name="application_name" type="string" val="drunc-controller"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="hsi-controller_control"/>
+  <ref class="Service" id="hsi-fake-controller_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="fsm" class="FSMconfiguration" id="FSMconfiguration_noAction"/>
 </obj>
 
-<obj class="RequestHandler" id="hsi-requesthandler-generic">
+<obj class="RequestHandler" id="hsi-fake-requesthandler">
  <attr name="handler_threads" type="u16" val="4"/>
  <attr name="request_timeout" type="u32" val="0"/>
  <attr name="pop_limit_pct" type="float" val="0.8"/>
@@ -170,35 +170,35 @@
  <attr name="warn_on_empty_buffer" type="bool" val="0"/>
 </obj>
 
-<obj class="Segment" id="hsi-segment">
+<obj class="Segment" id="hsi-fake-segment">
  <rel name="applications">
-  <ref class="FakeHSIApplication" id="hsi-01"/>
-  <ref class="HSIEventToTCApplication" id="hsi-to-tc-app"/>
+  <ref class="FakeHSIApplication" id="hsi-fake-01"/>
+  <ref class="HSIEventToTCApplication" id="hsi-fake-to-tc-app"/>
  </rel>
- <rel name="controller" class="RCApplication" id="hsi-controller"/>
+ <rel name="controller" class="RCApplication" id="hsi-fake-controller"/>
 </obj>
 
-<obj class="Service" id="hsi-01_control">
+<obj class="Service" id="hsi-fake-01_control">
  <attr name="protocol" type="string" val="rest"/>
  <attr name="port" type="u16" val="5801"/>
 </obj>
 
-<obj class="Service" id="hsi-controller_control">
+<obj class="Service" id="hsi-fake-controller_control">
  <attr name="protocol" type="string" val="grpc"/>
  <attr name="port" type="u16" val="5800"/>
 </obj>
 
-<obj class="Service" id="hsi-to-tc-app_control">
+<obj class="Service" id="hsi-fake-to-tc-app_control">
  <attr name="protocol" type="string" val="rest"/>
  <attr name="port" type="u16" val="5802"/>
 </obj>
 
-<obj class="SourceIDConf" id="hsi-srcid-01">
+<obj class="SourceIDConf" id="hsi-fake-srcid-01">
  <attr name="sid" type="u32" val="1"/>
  <attr name="subsystem" type="enum" val="HW_Signals_Interface"/>
 </obj>
 
-<obj class="SourceIDConf" id="hsi-tc-srcid-1">
+<obj class="SourceIDConf" id="hsi-fake-tc-srcid-1">
  <attr name="sid" type="u32" val="2"/>
  <attr name="subsystem" type="enum" val="Trigger"/>
 </obj>

@@ -73,7 +73,7 @@
     <file path="config/daqsystemtest/df-segment.data.xml"/>
     <file path="config/daqsystemtest/trigger-segment.data.xml"/>
     <file path="config/daqsystemtest/hsi-dts-segment.data.xml"/>
-    <!-- <file path="test/config/hsi-segment.data.xml"/> -->
+    <file path="config/daqsystemtest/hsi-fake-segment.data.xml"/>
   </include>
 
   <obj class="DetectorConfig" id="dummy-detector">
@@ -87,8 +87,8 @@
       <ref class="Segment" id="ru-segment"/>
       <ref class="Segment" id="df-segment"/>
       <ref class="Segment" id="trg-segment"/>
-      <!-- <ref class="Segment" id="hsi-segment"/> -->
       <ref class="Segment" id="hsi-dts-segment"/>
+      <ref class="Segment" id="hsi-fake-segment"/>
     </rel>
     <rel name="controller" class="RCApplication" id="root-controller"/>
   </obj>
@@ -98,7 +98,7 @@
   <attr name="value" type="string" val="14"/>
  </obj>
 
-  <obj class="Session" id="test-session">
+  <obj class="Session" id="test-hsi-session">
     <attr name="use_connectivity_server" type="bool" val="1"/>
     <attr name="connectivity_service_interval_ms" type="u32" val="2000"/>
     <attr name="data_request_timeout_ms" type="u32" val="1000"/>
@@ -111,7 +111,7 @@
       <ref class="Variable" id="local-env-ers-fatal"/>
       <ref class="Variable" id="local-env-connectivity-server"/>
       <ref class="Variable" id="local-env-connectivity-port"/>
-      <ref class="Variable" id="ers-debug"/>
+      <!-- <ref class="Variable" id="ers-debug"/> -->
     </rel>
     <rel name="disabled">
       <ref class="DFApplication" id="df-02"/>
@@ -119,6 +119,8 @@
       <ref class="ReadoutApplication" id="ru-02"/>
       <ref class="TPStreamWriterApplication" id="tp-stream-writer"/>
       <ref class="TriggerApplication" id="tc-maker-1"/>
+      <!-- <ref class="FakeHSIApplication" id="hsi-fake-01"> -->
+      <!-- <ref class="DTSHSIApplication" id="hsi-dts-01">  -->
     </rel>
     <rel name="segment" class="Segment" id="root-segment"/>
     <rel name="infrastructure_applications">
