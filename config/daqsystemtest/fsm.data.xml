@@ -386,7 +386,6 @@
  </attr>
  <attr name="mandatory" type="string">
   <data val="user-provided-run-number"/>
-  <data val="file-run-registry"/>
  </attr>
 </obj>
 
