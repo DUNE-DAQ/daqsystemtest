@@ -120,7 +120,7 @@ conf_dict.config_substitutions.append(
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="RandomTCMakerConf",
-        updates={"trigger_interval_ticks": 62500000 / pulser_trigger_rate},
+        updates={"trigger_rate_hz": pulser_trigger_rate},
     )
 )
 conf_dict.config_substitutions.append(
