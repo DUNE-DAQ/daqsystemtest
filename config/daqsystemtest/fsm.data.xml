@@ -118,6 +118,10 @@
  <attr name="name" type="string" val="db-run-registry"/>
 </obj>
 
+<obj class="FSMaction" id="trigger-rate-specifier">
+ <attr name="name" type="string" val="trigger-rate-specifier"/>
+</obj>
+
 <obj class="FSMaction" id="elisa-logbook">
  <attr name="name" type="string" val="elisa-logbook"/>
 </obj>
@@ -172,6 +176,7 @@
   <ref class="FSMtransition" id="stop_trigger_sources"/>
   <ref class="FSMtransition" id="stop"/>
   <ref class="FSMtransition" id="scrap"/>
+  <ref class="FSMtransition" id="change_rate"/>
  </rel>
  <rel name="command_sequences">
   <ref class="FSMsequence" id="shutdown"/>
@@ -201,6 +206,7 @@
   <ref class="FSMtransition" id="stop_trigger_sources"/>
   <ref class="FSMtransition" id="stop"/>
   <ref class="FSMtransition" id="scrap"/>
+  <ref class="FSMtransition" id="change_rate"/>
  </rel>
  <rel name="command_sequences">
   <ref class="FSMsequence" id="shutdown"/>
@@ -208,6 +214,7 @@
   <ref class="FSMsequence" id="stop_run"/>
  </rel>
  <rel name="pre_transitions">
+  <ref class="FSMxTransition" id="pre_change_rate"/>
   <ref class="FSMxTransition" id="pre_start_prod"/>
   <ref class="FSMxTransition" id="pre_conf"/>
  </rel>
@@ -218,6 +225,7 @@
  </rel>
  <rel name="actions">
   <ref class="FSMaction" id="usvc-provided-run-number"/>
+  <ref class="FSMaction" id="trigger-rate-specifier"/>
   <ref class="FSMaction" id="file-logbook"/>
   <ref class="FSMaction" id="elisa-logbook"/>
   <ref class="FSMaction" id="db-run-registry"/>
@@ -246,6 +254,7 @@
   <ref class="FSMtransition" id="stop_trigger_sources"/>
   <ref class="FSMtransition" id="stop"/>
   <ref class="FSMtransition" id="scrap"/>
+  <ref class="FSMtransition" id="change_rate"/>
  </rel>
  <rel name="command_sequences">
   <ref class="FSMsequence" id="shutdown"/>
@@ -253,6 +262,7 @@
   <ref class="FSMsequence" id="stop_run"/>
  </rel>
  <rel name="pre_transitions">
+  <ref class="FSMxTransition" id="pre_change_rate"/>
   <ref class="FSMxTransition" id="pre_start_test"/>
   <ref class="FSMxTransition" id="pre_conf"/>
  </rel>
@@ -263,6 +273,7 @@
  </rel>
  <rel name="actions">
   <ref class="FSMaction" id="user-provided-run-number"/>
+  <ref class="FSMaction" id="trigger-rate-specifier"/>
   <ref class="FSMaction" id="file-logbook"/>
   <ref class="FSMaction" id="file-run-registry"/>
   <ref class="FSMaction" id="thread-pinning"/>
@@ -329,6 +340,11 @@
 <obj class="FSMtransition" id="stop">
  <attr name="source" type="string" val="trigger_sources_stopped"/>
  <attr name="dest" type="string" val="configured"/>
+</obj>
+
+<obj class="FSMtransition" id="change_rate">
+ <attr name="source" type="string" val="ready|running"/>
+ <attr name="dest" type="string" val=""/>
 </obj>
 
 <obj class="FSMtransition" id="stop_trigger_sources">
@@ -405,6 +421,16 @@
  <attr name="mandatory" type="string">
   <data val="usvc-provided-run-number"/>
   <data val="db-run-registry"/>
+ </attr>
+</obj>
+
+<obj class="FSMxTransition" id="pre_change_rate">
+ <attr name="transition" type="string" val="change_rate"/>
+ <attr name="order" type="string">
+  <data val="trigger-rate-specifier"/>
+ </attr>
+ <attr name="mandatory" type="string">
+  <data val="trigger-rate-specifier"/>
  </attr>
 </obj>
 
