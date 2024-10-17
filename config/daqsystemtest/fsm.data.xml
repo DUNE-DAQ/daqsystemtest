@@ -216,11 +216,9 @@
  <rel name="pre_transitions">
   <ref class="FSMxTransition" id="pre_change_rate"/>
   <ref class="FSMxTransition" id="pre_start_prod"/>
-  <ref class="FSMxTransition" id="pre_conf"/>
  </rel>
  <rel name="post_transitions">
   <ref class="FSMxTransition" id="post_start_prod"/>
-  <ref class="FSMxTransition" id="post_conf"/>
   <ref class="FSMxTransition" id="post_drain_dataflow_prod"/>
  </rel>
  <rel name="actions">
@@ -229,7 +227,6 @@
   <ref class="FSMaction" id="file-logbook"/>
   <ref class="FSMaction" id="elisa-logbook"/>
   <ref class="FSMaction" id="db-run-registry"/>
-  <ref class="FSMaction" id="thread-pinning"/>
  </rel>
 </obj>
 
@@ -264,11 +261,9 @@
  <rel name="pre_transitions">
   <ref class="FSMxTransition" id="pre_change_rate"/>
   <ref class="FSMxTransition" id="pre_start_test"/>
-  <ref class="FSMxTransition" id="pre_conf"/>
  </rel>
  <rel name="post_transitions">
   <ref class="FSMxTransition" id="post_start_test"/>
-  <ref class="FSMxTransition" id="post_conf"/>
   <ref class="FSMxTransition" id="post_drain_dataflow_test"/>
  </rel>
  <rel name="actions">
@@ -276,7 +271,6 @@
   <ref class="FSMaction" id="trigger-rate-specifier"/>
   <ref class="FSMaction" id="file-logbook"/>
   <ref class="FSMaction" id="file-run-registry"/>
-  <ref class="FSMaction" id="thread-pinning"/>
  </rel>
 </obj>
 
@@ -352,16 +346,6 @@
  <attr name="dest" type="string" val="trigger_sources_stopped"/>
 </obj>
 
-<obj class="FSMxTransition" id="post_conf">
- <attr name="transition" type="string" val="conf"/>
- <attr name="order" type="string">
-  <data val="thread-pinning"/>
- </attr>
- <attr name="mandatory" type="string">
-  <data val="thread-pinning"/>
- </attr>
-</obj>
-
 <obj class="FSMxTransition" id="post_drain_dataflow_prod">
  <attr name="transition" type="string" val="drain_dataflow"/>
  <attr name="order" type="string">
@@ -382,11 +366,9 @@
  <attr name="transition" type="string" val="start"/>
  <attr name="order" type="string">
   <data val="file-logbook"/>
-  <data val="thread-pinning"/>
   <data val="elisa-logbook"/>
  </attr>
  <attr name="mandatory" type="string">
-  <data val="thread-pinning"/>
   <data val="elisa-logbook"/>
  </attr>
 </obj>
@@ -395,22 +377,10 @@
  <attr name="transition" type="string" val="start"/>
  <attr name="order" type="string">
   <data val="file-logbook"/>
-  <data val="thread-pinning"/>
- </attr>
- <attr name="mandatory" type="string">
-  <data val="thread-pinning"/>
  </attr>
 </obj>
 
-<obj class="FSMxTransition" id="pre_conf">
- <attr name="transition" type="string" val="conf"/>
- <attr name="order" type="string">
-  <data val="thread-pinning"/>
- </attr>
- <attr name="mandatory" type="string">
-  <data val="thread-pinning"/>
- </attr>
-</obj>
+
 
 <obj class="FSMxTransition" id="pre_start_prod">
  <attr name="transition" type="string" val="start"/>
@@ -442,7 +412,6 @@
  </attr>
  <attr name="mandatory" type="string">
   <data val="user-provided-run-number"/>
-  <data val="file-run-registry"/>
  </attr>
 </obj>
 
