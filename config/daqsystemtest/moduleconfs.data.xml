@@ -508,8 +508,8 @@
 
 <obj class="TCReadoutMap" id="def-random-readout">
  <attr name="candidate_type" type="u32" val="4"/>
- <attr name="time_before" type="u32" val="3000"/>
- <attr name="time_after" type="u32" val="1000"/>
+ <attr name="time_before" type="u32" val="1000"/>
+ <attr name="time_after" type="u32" val="1001"/>
 </obj>
 
 <obj class="TPDataProcessor" id="tp-processor">
