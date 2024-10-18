@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="58" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T153633"/>
+<info name="" type="" num-of-items="62" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.IRONDOMAIN.local" last-modification-time="20241018T200358"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -105,6 +105,7 @@
 
 <obj class="CustomTCMakerConf" id="cstm-tc-generator">
  <attr name="timestamp_method" type="enum" val="kTimeSync"/>
+ <attr name="latency_monitoring" type="bool" val="1"/>
  <attr name="template_for" type="class" val="CustomTCMaker"/>
  <attr name="trigger_types" type="u32">
   <data val="3"/>
@@ -169,6 +170,24 @@
  <rel name="data_processor" class="RawDataProcessor" id="def-wib-processor"/>
 </obj>
 
+<obj class="DataHandlerConf" id="def-pds-link-handler">
+ <attr name="template_for" type="class" val="FDDataHandlerModule"/>
+ <attr name="input_data_type" type="string" val="PDSFrame"/>
+ <attr name="generate_timesync" type="bool" val="1"/>
+ <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
+ <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
+ <rel name="data_processor" class="RawDataProcessor" id="def-wib-processor"/>
+</obj>
+
+<obj class="DataHandlerConf" id="def-pds-stream-link-handler">
+ <attr name="template_for" type="class" val="FDDataHandlerModule"/>
+ <attr name="input_data_type" type="string" val="PDSStreamFrame"/>
+ <attr name="generate_timesync" type="bool" val="1"/>
+ <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
+ <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
+ <rel name="data_processor" class="RawDataProcessor" id="def-wib-processor"/>
+</obj>
+
 <obj class="DataHandlerConf" id="def-ta-handler">
  <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="TriggerActivity"/>
@@ -185,6 +204,15 @@
  <rel name="request_handler" class="RequestHandler" id="def-tc-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="TCDataProcessor" id="def-tc-processor"/>
+</obj>
+
+<obj class="DataHandlerConf" id="def-tde-link-handler">
+ <attr name="template_for" type="class" val="FDDataHandlerModule"/>
+ <attr name="input_data_type" type="string" val="TDEEthFrame"/>
+ <attr name="generate_timesync" type="bool" val="1"/>
+ <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
+ <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
+ <rel name="data_processor" class="RawDataProcessor" id="def-wib-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-tp-handler">
@@ -341,6 +369,7 @@
  <attr name="template_for" type="class" val="DataReaderModule"/>
  <attr name="emulation_mode" type="bool" val="0"/>
  <attr name="prescale" type="u32" val="1"/>
+ <attr name="latency_monitoring" type="bool" val="1"/>
  <rel name="signals">
   <ref class="HSISignalWindow" id="def-hsi-signal-window"/>
  </rel>
@@ -367,6 +396,7 @@
  <attr name="td_out_of_timeout" type="bool" val="1"/>
  <attr name="buffer_timeout" type="u32" val="1"/>
  <attr name="td_readout_limit" type="u32" val="1"/>
+ <attr name="latency_monitoring" type="bool" val="1"/>
 </obj>
 
 <obj class="NICStatsConf" id="def-nic-stats">
@@ -378,6 +408,7 @@
 
 <obj class="RandomTCMakerConf" id="random-tc-generator">
  <attr name="timestamp_method" type="enum" val="kTimeSync"/>
+ <attr name="latency_monitoring" type="bool" val="1"/>
  <attr name="template_for" type="class" val="RandomTCMakerModule"/>
  <attr name="trigger_rate_hz" type="float" val="1"/>
  <attr name="time_distribution" type="enum" val="kUniform"/>
@@ -387,6 +418,7 @@
 <obj class="RawDataProcessor" id="def-wib-processor">
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="postproc-"/>
+ <attr name="latency_monitoring" type="bool" val="1"/>
  <attr name="channel_map" type="string" val="PD2HDChannelMap"/>
  <rel name="processing_steps">
   <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
@@ -433,7 +465,7 @@
 
 <obj class="StreamEmulationParameters" id="stream-emu">
  <attr name="data_file_name" type="string" val="/cvmfs/dunedaq.opensciencegrid.org/assets/files/d/d/1/wibeth_output_all_zeros.bin"/>
- <attr name="input_file_size_limit" type="u32" val="1000000"/>
+ <attr name="input_file_size_limit" type="u32" val="5777280"/>
  <attr name="set_t0" type="bool" val="1"/>
  <attr name="random_population_size" type="u32" val="100000"/>
  <attr name="frame_error_rate_hz" type="float" val="0"/>
@@ -444,6 +476,7 @@
 <obj class="TADataProcessor" id="def-ta-processor">
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="proc-"/>
+ <attr name="latency_monitoring" type="bool" val="1"/>
  <attr name="print_ta_info" type="bool" val="0"/>
  <rel name="algorithms">
   <ref class="TCMakerPrescaleAlgorithm" id="tc-pass-through-algo"/>
@@ -473,8 +506,10 @@
 <obj class="TCDataProcessor" id="def-tc-processor">
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="mlt_"/>
+ <attr name="latency_monitoring" type="bool" val="1"/>
  <attr name="hsi_trigger_type_passthrough" type="bool" val="0"/>
  <attr name="merge_overlapping_tcs" type="bool" val="1"/>
+ <attr name="ignore_overlapping_tcs" type="bool" val="0"/>
  <attr name="td_out_of_timeout" type="bool" val="1"/>
  <attr name="buffer_timeout" type="u32" val="1"/>
  <attr name="td_readout_limit" type="u32" val="1"/>
@@ -501,20 +536,21 @@
  <attr name="time_after" type="u32" val="1001"/>
 </obj>
 
-<obj class="TCReadoutMap" id="def-tc-map">
- <attr name="time_before" type="u32" val="3000"/>
- <attr name="time_after" type="u32" val="1001"/>
-</obj>
-
 <obj class="TCReadoutMap" id="def-random-readout">
  <attr name="candidate_type" type="u32" val="4"/>
  <attr name="time_before" type="u32" val="1000"/>
  <attr name="time_after" type="u32" val="1001"/>
 </obj>
 
+<obj class="TCReadoutMap" id="def-tc-map">
+ <attr name="time_before" type="u32" val="3000"/>
+ <attr name="time_after" type="u32" val="1001"/>
+</obj>
+
 <obj class="TPDataProcessor" id="tp-processor">
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="proc-"/>
+ <attr name="latency_monitoring" type="bool" val="1"/>
  <attr name="print_tp_info" type="bool" val="0"/>
  <rel name="algorithms">
   <ref class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker"/>

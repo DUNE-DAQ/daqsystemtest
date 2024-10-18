@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="56" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T153633"/>
+<info name="" type="" num-of-items="64" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="eflumerf" last-modified-on="ironvirt9.IRONDOMAIN.local" last-modification-time="20241018T200355"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -210,6 +210,11 @@
  <rel name="descriptor" class="NetworkConnectionDescriptor" id="tpset-publisher"/>
 </obj>
 
+<obj class="NetworkConnectionRule" id="ts-fdp-net-rule">
+ <attr name="endpoint_class" type="class" val="FakeDataProdModule"/>
+ <rel name="descriptor" class="NetworkConnectionDescriptor" id="timesync-publisher"/>
+</obj>
+
 <obj class="NetworkConnectionRule" id="ts-hsi-net-rule">
  <attr name="endpoint_class" type="class" val="HSIDataHandlerModule"/>
  <rel name="descriptor" class="NetworkConnectionDescriptor" id="timesync-publisher"/>
@@ -230,9 +235,24 @@
  <rel name="descriptor" class="QueueDescriptor" id="data-req-queue-desc"/>
 </obj>
 
+<obj class="QueueConnectionRule" id="fpdm-data-requests-queue-rule">
+ <attr name="destination_class" type="class" val="FakeDataProdModule"/>
+ <rel name="descriptor" class="QueueDescriptor" id="data-req-queue-desc"/>
+</obj>
+
 <obj class="QueueConnectionRule" id="hsi-dlh-data-requests-queue-rule">
  <attr name="destination_class" type="class" val="HSIDataHandlerModule"/>
  <rel name="descriptor" class="QueueDescriptor" id="hsi-raw-input"/>
+</obj>
+
+<obj class="QueueConnectionRule" id="pds-raw-data-rule">
+ <attr name="destination_class" type="class" val="FDDataHandlerModule"/>
+ <rel name="descriptor" class="QueueDescriptor" id="pds-raw-input"/>
+</obj>
+
+<obj class="QueueConnectionRule" id="pds-stream-raw-data-rule">
+ <attr name="destination_class" type="class" val="FDDataHandlerModule"/>
+ <rel name="descriptor" class="QueueDescriptor" id="pds-stream-raw-input"/>
 </obj>
 
 <obj class="QueueConnectionRule" id="ta-queue-rule">
@@ -248,6 +268,11 @@
 <obj class="QueueConnectionRule" id="td-queue-rule">
  <attr name="destination_class" type="class" val="MLTModule"/>
  <rel name="descriptor" class="QueueDescriptor" id="td-input"/>
+</obj>
+
+<obj class="QueueConnectionRule" id="tde-raw-data-rule">
+ <attr name="destination_class" type="class" val="FDDataHandlerModule"/>
+ <rel name="descriptor" class="QueueDescriptor" id="tde-raw-input"/>
 </obj>
 
 <obj class="QueueConnectionRule" id="tp-queue-rule">
@@ -291,6 +316,20 @@
  <attr name="data_type" type="string" val="HSIFrame"/>
 </obj>
 
+<obj class="QueueDescriptor" id="pds-raw-input">
+ <attr name="uid_base" type="string" val="raw_input_"/>
+ <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
+ <attr name="capacity" type="u32" val="10000"/>
+ <attr name="data_type" type="string" val="PDSFrame"/>
+</obj>
+
+<obj class="QueueDescriptor" id="pds-stream-raw-input">
+ <attr name="uid_base" type="string" val="raw_input_"/>
+ <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
+ <attr name="capacity" type="u32" val="10000"/>
+ <attr name="data_type" type="string" val="PDSStreamFrame"/>
+</obj>
+
 <obj class="QueueDescriptor" id="ta-input">
  <attr name="uid_base" type="string" val="ta_input_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
@@ -310,6 +349,13 @@
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
  <attr name="capacity" type="u32" val="1000"/>
  <attr name="data_type" type="string" val="TriggerDecision"/>
+</obj>
+
+<obj class="QueueDescriptor" id="tde-raw-input">
+ <attr name="uid_base" type="string" val="raw_input_"/>
+ <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
+ <attr name="capacity" type="u32" val="10000"/>
+ <attr name="data_type" type="string" val="TDEEthFrame"/>
 </obj>
 
 <obj class="QueueDescriptor" id="tp-input">

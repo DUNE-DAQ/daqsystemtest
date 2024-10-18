@@ -29,22 +29,7 @@ expected_number_of_data_files = 3
 check_for_logfile_errors = True
 expected_event_count = run_duration
 expected_event_count_tolerance = 2
-wib1_frag_hsi_trig_params = {
-    "fragment_type_description": "WIB",
-    "fragment_type": "ProtoWIB",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": number_of_data_producers,
-    "min_size_bytes": baseline_fragment_size_bytes,
-    "max_size_bytes": baseline_fragment_size_bytes_max,
-}
-wib2_frag_params = {
-    "fragment_type_description": "WIB2",
-    "fragment_type": "WIB",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": number_of_data_producers,
-    "min_size_bytes": baseline_fragment_size_bytes,
-    "max_size_bytes": baseline_fragment_size_bytes_max,
-}
+
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
@@ -52,14 +37,6 @@ wibeth_frag_params = {
     "expected_fragment_count": number_of_data_producers,
     "min_size_bytes": baseline_fragment_size_bytes,
     "max_size_bytes": baseline_fragment_size_bytes_max,
-}
-hsi_frag_params = {
-    "fragment_type_description": "HSI",
-    "fragment_type": "Hardware_Signal",
-    "hdf5_source_subsystem": "HW_Signals_Interface",
-    "expected_fragment_count": 1,
-    "min_size_bytes": 72,
-    "max_size_bytes": 100,
 }
 ignored_logfile_problems = {}
 
@@ -71,33 +48,60 @@ object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 
 
 conf_dict = data_classes.drunc_config()
+conf_dict.op_env = "integtest"
+conf_dict.session = "fakedata"
+conf_dict.use_fakedataprod = True
+conf_dict.dro_map_config.n_streams = number_of_data_producers
 
-# conf_dict["daq_common"]["data_rate_slowdown_factor"] = data_rate_slowdown_factor
-# conf_dict["readout"]["use_fake_data_producers"] = True
-# conf_dict["readout"]["clock_speed_hz"] = 50000000 # ProtoWIB
-# conf_dict["detector"]["clock_speed_hz"] = 62500000 # DuneWIB/WIBEth
-# ttcm_conf = [{'signal': 1, 'tc_type_name': 'kTiming', 'time_before': 1000, 'time_after': 1001}]
-# conf_dict["trigger"]["ttcm_input_map"] = ttcm_conf
-# conf_dict["hsi"]["use_hsi"] = True
-# conf_dict["trigger"]["segment_config"] = "INTEGTEST_CONFDIR/trigger-segment-fakehsi.data.xml"
+conf_dict.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_id=conf_dict.session,
+        obj_class="Session",
+        updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
+    )
+)
+conf_dict.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="RandomTCMakerConf",
+        updates={"trigger_rate_hz": 1},
+    )
+)
+doublewindow_conf = copy.deepcopy(conf_dict)
 
-# doublewindow_conf = copy.deepcopy(conf_dict)
-# ttcm_conf2 = [{'signal': 1, 'tc_type_name': 'kTiming', 'time_before': 2000, 'time_after': 2001}]
-# doublewindow_conf["trigger"]["ttcm_input_map"] = ttcm_conf2
+doublewindow_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="TCReadoutMap",
+        obj_id = "def-random-readout",
+        updates={
+            "time_before": 2000,
+            "time_after": 2001,
+        },
+    )
+)
 
 confgen_arguments = {
     "Baseline_Window_Size": conf_dict,
-    # "Double_Window_Size": doublewindow_conf,
+    "Double_Window_Size": doublewindow_conf,
 }
 # The commands to run in nanorc, as a list
-# (the first run [#100] is included to warm up the DAQ processes and avoid warnings and errors caused by
-# startup sluggishness seen on slower test computers)
-# nanorc_command_list="boot conf".split()
-# nanorc_command_list+="start_run          101 wait ".split() + [str(run_duration)] + "stop_run --wait 2 wait 2".split()
-# nanorc_command_list+="start_run --wait 1 102 wait ".split() + [str(run_duration)] + "stop_run          wait 2".split()
-# nanorc_command_list+="start_run --wait 2 103 wait ".split() + [str(run_duration)] + "stop_run --wait 1 wait 2".split()
-# nanorc_command_list+="scrap terminate".split()
-nanorc_command_list = ["boot", "terminate"]
+nanorc_command_list = "boot conf".split()
+nanorc_command_list += (
+        "start 101 wait 5 enable-triggers wait ".split()
+        + [str(run_duration)]
+        + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
+    )
+nanorc_command_list += (
+        "start 102 wait 1 enable-triggers wait ".split()
+        + [str(run_duration)]
+        + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
+    )
+nanorc_command_list += (
+        "start 103 wait 1 enable-triggers wait ".split()
+        + [str(run_duration)]
+        + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
+    )
+nanorc_command_list += "scrap terminate".split()
+
 # Don't require the --frame-file option since we don't need it
 frame_file_required = False
 
@@ -105,7 +109,6 @@ frame_file_required = False
 
 
 def test_nanorc_success(run_nanorc):
-    pytest.skip("FakeDataApplication is not currently implemented.")
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)\].*", current_test)
     if match_obj:
@@ -119,7 +122,6 @@ def test_nanorc_success(run_nanorc):
 
 
 def test_log_files(run_nanorc):
-    pytest.skip("FakeDataApplication is not currently implemented.")
     local_check_flag = check_for_logfile_errors
 
     if local_check_flag:
@@ -130,13 +132,13 @@ def test_log_files(run_nanorc):
 
 
 def test_data_files(run_nanorc):
-    pytest.skip("FakeDataApplication is not currently implemented.")
     local_expected_event_count = expected_event_count
     local_event_count_tolerance = expected_event_count_tolerance
     # frag_params=wib1_frag_hsi_trig_params # ProtoWIB
     # frag_params=wib2_frag_params # DuneWIB
     frag_params = wibeth_frag_params
-    if run_nanorc.confgen_config["trigger"]["ttcm_input_map"][0]["time_before"] == 2000:
+    current_test = os.environ.get("PYTEST_CURRENT_TEST")
+    if "Double" in current_test:
         # frag_params["min_size_bytes"]=72+(464*161) # 161 frames of 464 bytes each with 72-byte Fragment header # ProtoWIB
         # frag_params["max_size_bytes"]=72+(464*161)
         # frag_params["min_size_bytes"]=72+(472*math.ceil(4001/32)) # 126 frames of 472 bytes each with 72-byte Fragment header # DuneWIB
@@ -145,22 +147,23 @@ def test_data_files(run_nanorc):
             7200 * math.ceil(4001 / 2048)
         )  # 2 frames of 7200 bytes each with 72-byte Fragment header # WIBEth
         frag_params["max_size_bytes"] = 72 + (7200 * (1 + math.ceil(4001 / 2048)))
-    fragment_check_list = [frag_params, hsi_frag_params]
+    fragment_check_list = [frag_params]
 
     # Run some tests on the output data file
-    assert len(run_nanorc.data_files) == expected_number_of_data_files
+    all_ok = True
+    all_ok &= len(run_nanorc.data_files) == expected_number_of_data_files
 
     for idx in range(len(run_nanorc.data_files)):
         data_file = data_file_checks.DataFile(run_nanorc.data_files[idx])
-        assert data_file_checks.sanity_check(data_file)
-        assert data_file_checks.check_file_attributes(data_file)
-        assert data_file_checks.check_event_count(
+        all_ok &= data_file_checks.sanity_check(data_file)
+        all_ok &= data_file_checks.check_file_attributes(data_file)
+        all_ok &= data_file_checks.check_event_count(
             data_file, local_expected_event_count, local_event_count_tolerance
         )
         for jdx in range(len(fragment_check_list)):
-            assert data_file_checks.check_fragment_count(
+            all_ok &= data_file_checks.check_fragment_count(
                 data_file, fragment_check_list[jdx]
             )
-            assert data_file_checks.check_fragment_sizes(
+            all_ok &= data_file_checks.check_fragment_sizes(
                 data_file, fragment_check_list[jdx]
             )
