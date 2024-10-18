@@ -51,14 +51,7 @@ triggercandidate_frag_params = {
     "min_size_bytes": 72,
     "max_size_bytes": 216,
 }
-hsi_frag_params = {
-    "fragment_type_description": "HSI",
-    "fragment_type": "Hardware_Signal",
-    "hdf5_source_subsystem": "HW_Signals_Interface",
-    "expected_fragment_count": 1,
-    "min_size_bytes": 72,
-    "max_size_bytes": 100,
-}
+
 ignored_logfile_problems = {
     "-controller": [
         "Worker with pid \\d+ was terminated due to signal 1",
@@ -112,7 +105,7 @@ conf_dict.op_env = "integtest"
 conf_dict.session = "longwindow"
 conf_dict.tpg_enabled = False
 conf_dict.n_df_apps = number_of_dataflow_apps
-conf_dict.fake_hsi_enabled = True  # FakeHSI must be enabled to set trigger window width!
+conf_dict.fake_hsi_enabled = False
 
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
@@ -130,8 +123,8 @@ conf_dict.config_substitutions.append(
 
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
-        obj_class="FakeHSIEventGeneratorConf",
-        updates={"trigger_rate": trigger_rate},
+        obj_class="RandomTCMakerConf",
+        updates={"trigger_rate_hz": trigger_rate},
     )
 )
 conf_dict.config_substitutions.append(
@@ -258,7 +251,7 @@ def test_data_files(run_nanorc):
 
     local_expected_event_count = expected_event_count
     local_event_count_tolerance = expected_event_count_tolerance
-    fragment_check_list = [triggercandidate_frag_params, hsi_frag_params]
+    fragment_check_list = [triggercandidate_frag_params]
     fragment_check_list.append(wibeth_frag_params)  # WIBEth
 
     all_ok = True
