@@ -17,36 +17,14 @@ frame_file_required = False
 number_of_data_producers = 2
 run_duration = 20  # seconds
 data_rate_slowdown_factor = 10
+ta_prescale = 100
 
 # Default values for validation parameters
 expected_number_of_data_files = 1
 check_for_logfile_errors = True
 expected_event_count = run_duration
 expected_event_count_tolerance = 2
-wib1_frag_hsi_trig_params = {
-    "fragment_type_description": "WIB",
-    "fragment_type": "ProtoWIB",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": number_of_data_producers,
-    "min_size_bytes": 37192,
-    "max_size_bytes": 37656,
-}
-wib1_frag_multi_trig_params = {
-    "fragment_type_description": "WIB",
-    "fragment_type": "ProtoWIB",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": number_of_data_producers,
-    "min_size_bytes": 72,
-    "max_size_bytes": 54000,
-}
-wib2_frag_params = {
-    "fragment_type_description": "WIB2",
-    "fragment_type": "WIB",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": number_of_data_producers,
-    "min_size_bytes": 29808,
-    "max_size_bytes": 30280,
-}
+
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
@@ -95,11 +73,19 @@ triggercandidate_frag_params = {
     "min_size_bytes": 120,
     "max_size_bytes": 150,
 }
+triggeractivity_frag_params = {
+    "fragment_type_description": "Trigger Activity",
+    "fragment_type": "Trigger_Activity",
+    "hdf5_source_subsystem": "Trigger",
+    "expected_fragment_count": 1,
+    "min_size_bytes": 72,
+    "max_size_bytes": 400,
+}
 triggertp_frag_params = {
     "fragment_type_description": "Trigger with TPs",
     "fragment_type": "Trigger_Primitive",
     "hdf5_source_subsystem": "Trigger",
-    "expected_fragment_count": number_of_data_producers,
+    "expected_fragment_count": (3 * 1), # number_of_readout_apps
     "min_size_bytes": 72,
     "max_size_bytes": 16000,
 }
@@ -112,6 +98,7 @@ ignored_logfile_problems = {
         "errorlog: -",
         "Worker with pid \\d+ was terminated due to signal 1",
     ],
+    "ru-det-conn-0.log": ["Configuration Error: Binary file contains more data than expected"],
     "log_.*_readout_": ["connect: Connection refused"],
 }
 
@@ -141,17 +128,18 @@ conf_dict.config_substitutions.append(
         updates={"trigger_rate_hz": 1},
     )
 )
-conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
-        obj_class="FakeHSIEventGeneratorConf",
-        updates={"trigger_rate": 1.0},
-    )
-)
 
 swtpg_conf = copy.deepcopy(conf_dict)
 swtpg_conf.tpg_enabled = True
 swtpg_conf.frame_file = (
     "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"  # WIBEth All Zeros
+)
+swtpg_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="TAMakerPrescaleAlgorithm",
+        obj_id="dummy-ta-maker",
+        updates={"prescale": ta_prescale},
+    )
 )
 
 wibeth_conf = copy.deepcopy(conf_dict)
@@ -162,32 +150,35 @@ tde_conf.dro_map_config.det_id = 11
 tde_conf.frame_file = "asset://?checksum=759e5351436bead208cf4963932d6327"
 
 pds_stream_conf = copy.deepcopy(conf_dict)
-pds_stream_conf.fake_hsi_enabled = (
-    True  # FakeHSI must be enabled to set trigger window width!
-)
 pds_stream_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 pds_stream_conf.frame_file = "asset://?label=DAPHNEStream&subsystem=readout"
 
 pds_stream_conf.config_substitutions.append(
     data_classes.config_substitution(
-        obj_class="HSISignalWindow",
-        updates={"time_before": 62000, "time_after": 500},
+        obj_class="TCReadoutMap",
+        obj_id = "def-random-readout",
+        updates={
+            "time_before": 62000,
+            "time_after": 500,
+        },
     )
 )
 
 pds_conf = copy.deepcopy(conf_dict)
-pds_conf.fake_hsi_enabled = True  # FakeHSI must be enabled to set trigger window width!
 pds_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 pds_conf.frame_file = "asset://?label=DAPHNE&subsystem=readout"
-
 pds_conf.config_substitutions.append(
     data_classes.config_substitution(
-        obj_class="HSISignalWindow",
-        updates={"time_before": 62000, "time_after": 500},
+        obj_class="TCReadoutMap",
+        obj_id = "def-random-readout",
+        updates={
+            "time_before": 62000,
+            "time_after": 500,
+        },
     )
 )
 # pacman_conf = copy.deepcopy(conf_dict)
-# pds_stream_conf.dro_map_config.det_id  = 32  # det_id = 32 for NDLAr_TPC
+# pacman_conf.dro_map_config.det_id  = 32  # det_id = 32 for NDLAr_TPC
 # pacman_conf.frame_file == "asset://?label=PACMAN&subsystem=readout"
 
 # mpd_conf = copy.deepcopy(conf_dict)
@@ -199,9 +190,9 @@ confgen_arguments = {
     # "WIB1_System": wib1_conf,
     "WIBEth_System": wibeth_conf,
     "Software_TPG_System": swtpg_conf,
-    # "PDS_Stream_System": pds_stream_conf,
-    # "PDS_System": pds_conf,
-    # "TDE_System": tde_conf,
+    "PDS_Stream_System": pds_stream_conf,
+    "PDS_System": pds_conf,
+    "TDE_System": tde_conf,
     # "PACMAN_System": pacman_conf,
     # "MPD_System": mpd_conf
 }
@@ -244,13 +235,20 @@ def test_data_files(run_nanorc):
     local_event_count_tolerance = expected_event_count_tolerance
     fragment_check_list = []
     if run_nanorc.confgen_config.tpg_enabled:
-        local_expected_event_count += int(
-            158 * number_of_data_producers * run_duration / 100
+        local_expected_event_count += (
+            (6250 / ta_prescale)
+            * number_of_data_producers
+            * run_duration
+            / 100
         )
-        local_event_count_tolerance += int(
-            10 * number_of_data_producers * run_duration / 100
+        local_event_count_tolerance += (
+            (250 / ta_prescale)
+            * number_of_data_producers
+            * run_duration
+            / 100
         )
         fragment_check_list.append(wibeth_frag_multi_trig_params)
+        fragment_check_list.append(triggeractivity_frag_params)
         fragment_check_list.append(triggertp_frag_params)
     else:
         fragment_check_list.append(triggercandidate_frag_params)
@@ -259,29 +257,28 @@ def test_data_files(run_nanorc):
             fragment_check_list.append(pds_stream_frag_params)
         elif "PDS" in current_test:
             fragment_check_list.append(pds_frag_params)
-        elif "WIB2" in current_test:
-            fragment_check_list.append(wib2_frag_params)
         elif "WIBEth" in current_test:
             fragment_check_list.append(wibeth_frag_params)
         elif "TDE" in current_test:
             fragment_check_list.append(tde_frag_params)
-        else:
-            fragment_check_list.append(wib1_frag_hsi_trig_params)
 
     # Run some tests on the output data file
-    assert len(run_nanorc.data_files) == expected_number_of_data_files
+    all_ok = True
+    all_ok &= len(run_nanorc.data_files) == expected_number_of_data_files
 
     for idx in range(len(run_nanorc.data_files)):
         data_file = data_file_checks.DataFile(run_nanorc.data_files[idx])
-        assert data_file_checks.sanity_check(data_file)
-        assert data_file_checks.check_file_attributes(data_file)
-        assert data_file_checks.check_event_count(
+        all_ok &= data_file_checks.sanity_check(data_file)
+        all_ok &= data_file_checks.check_file_attributes(data_file)
+        all_ok &= data_file_checks.check_event_count(
             data_file, local_expected_event_count, local_event_count_tolerance
         )
         for jdx in range(len(fragment_check_list)):
-            assert data_file_checks.check_fragment_count(
+            all_ok &= data_file_checks.check_fragment_count(
                 data_file, fragment_check_list[jdx]
             )
-            assert data_file_checks.check_fragment_sizes(
+            all_ok &= data_file_checks.check_fragment_sizes(
                 data_file, fragment_check_list[jdx]
             )
+
+    assert all_ok
