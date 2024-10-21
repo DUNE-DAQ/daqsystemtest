@@ -479,8 +479,6 @@
  <attr name="buffer_timeout" type="u32" val="1"/>
  <attr name="td_readout_limit" type="u32" val="1"/>
  <attr name="use_bitwords" type="bool" val="0"/>
- <attr name="use_roi_readout" type="bool" val="0"/>
- <attr name="use_readout_map" type="bool" val="0"/>
  <rel name="tc_readout_map">
   <ref class="TCReadoutMap" id="def-tc-map"/>
   <ref class="TCReadoutMap" id="def-hsi-tc-map"/>
