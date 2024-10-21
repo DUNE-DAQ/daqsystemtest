@@ -99,18 +99,16 @@
  </obj>
 
   <obj class="Session" id="test-hsi-session">
-    <attr name="use_connectivity_server" type="bool" val="1"/>
-    <attr name="connectivity_service_interval_ms" type="u32" val="2000"/>
     <attr name="data_request_timeout_ms" type="u32" val="1000"/>
     <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
+    <attr name="controller_log_level" type="enum" val="INFO"/>
+    <rel name="connectivity_service" class="ConnectivityService" id="local-connectivity-service-config"/>
     <rel name="environment">
       <ref class="Variable" id="local-env-ers-verb"/>
       <ref class="Variable" id="local-env-ers-info"/>
       <ref class="Variable" id="local-env-ers-warning"/>
       <ref class="Variable" id="local-env-ers-error"/>
       <ref class="Variable" id="local-env-ers-fatal"/>
-      <ref class="Variable" id="local-env-connectivity-server"/>
-      <ref class="Variable" id="local-env-connectivity-port"/>
       <!-- <ref class="Variable" id="ers-debug"/> -->
     </rel>
     <rel name="disabled">

@@ -210,22 +210,22 @@
 
 <obj class="Service" id="hsi-dts-01_control">
  <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5851"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="Service" id="hsi-dts-controller_control">
  <attr name="protocol" type="string" val="grpc"/>
- <attr name="port" type="u16" val="5850"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="Service" id="hsi-dts-to-tc-app_control">
  <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5852"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="Service" id="dts-hsi-ctrl_control">
  <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5853"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="SourceIDConf" id="hsi-dts-srcid-01">
