@@ -21,7 +21,6 @@ baseline_fragment_size_bytes = 72 + (
 baseline_fragment_size_bytes_max = 72 + (
     7200 * (1 + math.ceil(2001 / 2048))
 )  # 1 frame of 7200 bytes with 72-byte Fragment header # WIBEth
-data_rate_slowdown_factor = 10
 number_of_data_producers = 2
 
 # Default values for validation parameters
@@ -38,7 +37,17 @@ wibeth_frag_params = {
     "min_size_bytes": baseline_fragment_size_bytes,
     "max_size_bytes": baseline_fragment_size_bytes_max,
 }
-ignored_logfile_problems = {}
+ignored_logfile_problems = {
+    "-controller": [
+        "Worker with pid \\d+ was terminated due to signal",
+        "Connection '.*' not found on the application registry",
+    ],
+    "local-connection-server": [
+        "errorlog: -",
+        "Worker with pid \\d+ was terminated due to signal",
+    ],
+    "log_.*_minimal_": ["connect: Connection refused"],
+}
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
@@ -55,17 +64,20 @@ conf_dict.dro_map_config.n_streams = number_of_data_producers
 
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
-        obj_id=conf_dict.session,
-        obj_class="Session",
-        updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
-    )
-)
-conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
-        obj_class="RandomTCMakerConf",
+     obj_id="random-tc-generator",
+     obj_class="RandomTCMakerConf",
         updates={"trigger_rate_hz": 1},
     )
 )
+
+conf_dict.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_id="dummy-detector",
+        obj_class="DetectorConfig",
+        updates={"clock_speed_hz": 1000000000},
+    )
+)
+
 doublewindow_conf = copy.deepcopy(conf_dict)
 
 doublewindow_conf.config_substitutions.append(
@@ -167,3 +179,5 @@ def test_data_files(run_nanorc):
             all_ok &= data_file_checks.check_fragment_sizes(
                 data_file, fragment_check_list[jdx]
             )
+
+    assert all_ok
