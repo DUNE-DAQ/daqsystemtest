@@ -494,7 +494,7 @@
 </obj>
 
 <obj class="TCReadoutMap" id="def-hsi-tc-map">
- <attr name="candidate_type" type="u32" val="1"/>
+ <attr name="tc_type_name" type="string" val="kTiming"/>
  <attr name="time_before" type="u32" val="3000"/>
  <attr name="time_after" type="u32" val="1001"/>
 </obj>
@@ -505,7 +505,7 @@
 </obj>
 
 <obj class="TCReadoutMap" id="def-random-readout">
- <attr name="candidate_type" type="u32" val="4"/>
+ <attr name="tc_type_name" type="string" val="kRandom"/>
  <attr name="time_before" type="u32" val="1000"/>
  <attr name="time_after" type="u32" val="1001"/>
 </obj>
@@ -522,23 +522,6 @@
 <obj class="TRBConf" id="trb-01">
  <attr name="queues_timeout" type="u32" val="100"/>
  <attr name="trigger_record_timeout_ms" type="u32" val="2858"/>
-</obj>
-
-<obj class="TimingTriggerOffsetMap" id="ttcm-off-0">
- <attr name="time_before" type="u32" val="1000"/>
- <attr name="time_after" type="u32" val="1000"/>
-</obj>
-
-<obj class="TimingTriggerOffsetMap" id="ttcm-off-1">
- <attr name="signal_type" type="u32" val="1"/>
- <attr name="time_before" type="u32" val="1000"/>
- <attr name="time_after" type="u32" val="1000"/>
-</obj>
-
-<obj class="TimingTriggerOffsetMap" id="ttcm-off-2">
- <attr name="signal_type" type="u32" val="2"/>
- <attr name="time_before" type="u32" val="1000"/>
- <attr name="time_after" type="u32" val="1000"/>
 </obj>
 
 </oks-data>
