@@ -115,9 +115,9 @@
       <ref class="DFApplication" id="df-02"/>
       <ref class="DFApplication" id="df-03"/>
       <ref class="ReadoutApplication" id="ru-02"/>
-      <ref class="TPStreamWriterApplication" id="tp-stream-writer"/>
-      <ref class="TriggerApplication" id="tc-maker-1"/>
-      <ref class="FakeHSIApplication" id="hsi-fake-01">
+      <!-- <ref class="TPStreamWriterApplication" id="tp-stream-writer"/> -->
+      <!-- <ref class="TriggerApplication" id="tc-maker-1"/> -->
+      <!-- <ref class="FakeHSIApplication" id="hsi-fake-01"> -->
       <!-- <ref class="DTSHSIApplication" id="hsi-dts-01">  -->
     </rel>
     <rel name="segment" class="Segment" id="root-segment"/>
