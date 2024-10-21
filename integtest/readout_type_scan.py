@@ -42,8 +42,8 @@ wibeth_frag_multi_trig_params = {
     "max_size_bytes": 14472,
 }
 tde_frag_params = {
-    "fragment_type_description": "TDE",
-    "fragment_type": "TDE_AMC",
+    "fragment_type_description": "TDEEth",
+    "fragment_type": "TDEEth",
     "hdf5_source_subsystem": "Detector_Readout",
     "expected_fragment_count": number_of_data_producers,
     "min_size_bytes": 575048,
@@ -98,7 +98,6 @@ ignored_logfile_problems = {
         "errorlog: -",
         "Worker with pid \\d+ was terminated due to signal 1",
     ],
-    "ru-det-conn-0.log": ["Configuration Error: Binary file contains more data than expected"],
     "log_.*_readout_": ["connect: Connection refused"],
 }
 
