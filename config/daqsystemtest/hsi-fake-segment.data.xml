@@ -180,17 +180,17 @@
 
 <obj class="Service" id="hsi-fake-01_control">
  <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5801"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="Service" id="hsi-fake-controller_control">
  <attr name="protocol" type="string" val="grpc"/>
- <attr name="port" type="u16" val="5800"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="Service" id="hsi-fake-to-tc-app_control">
  <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5802"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="SourceIDConf" id="hsi-fake-srcid-01">

@@ -64,10 +64,8 @@ ignored_logfile_problems = {
         "Searching for connections matching uid_regex<errored_frames_q> and data_type Unknown"
     ],
     "-controller": [
-        "Propagating take_control to children",
-        "There is no broadcasting service",
-        "Could not understand the BroadcastHandler technology you want to use",
         "Worker with pid \\d+ was terminated due to signal 1",
+        "Connection '.*' not found on the application registry",
     ],
     "local-connection-server": [
         "errorlog: -",

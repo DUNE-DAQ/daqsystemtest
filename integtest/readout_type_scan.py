@@ -105,10 +105,8 @@ triggertp_frag_params = {
 }
 ignored_logfile_problems = {
     "-controller": [
-        "Propagating take_control to children",
-        "There is no broadcasting service",
-        "Could not understand the BroadcastHandler technology you want to use",
         "Worker with pid \\d+ was terminated due to signal 1",
+        "Connection '.*' not found on the application registry",
     ],
     "local-connection-server": [
         "errorlog: -",
@@ -140,7 +138,13 @@ conf_dict.config_substitutions.append(
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="RandomTCMakerConf",
-        updates={"trigger_interval_ticks": 62500000},
+        updates={"trigger_rate_hz": 1},
+    )
+)
+conf_dict.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="FakeHSIEventGeneratorConf",
+        updates={"trigger_rate": 1.0},
     )
 )
 
@@ -158,37 +162,27 @@ tde_conf.dro_map_config.det_id = 11
 tde_conf.frame_file = "asset://?checksum=759e5351436bead208cf4963932d6327"
 
 pds_stream_conf = copy.deepcopy(conf_dict)
+pds_stream_conf.fake_hsi_enabled = (
+    True  # FakeHSI must be enabled to set trigger window width!
+)
 pds_stream_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 pds_stream_conf.frame_file = "asset://?label=DAPHNEStream&subsystem=readout"
 
 pds_stream_conf.config_substitutions.append(
     data_classes.config_substitution(
-        obj_class="TimingTriggerOffsetMap",
-        obj_id="ttcm-off-0",
-        updates={"time_before": 62000, "time_after": 500},
-    )
-)
-pds_stream_conf.config_substitutions.append(
-    data_classes.config_substitution(
-        obj_class="TCReadoutMap",
+        obj_class="HSISignalWindow",
         updates={"time_before": 62000, "time_after": 500},
     )
 )
 
 pds_conf = copy.deepcopy(conf_dict)
+pds_conf.fake_hsi_enabled = True  # FakeHSI must be enabled to set trigger window width!
 pds_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 pds_conf.frame_file = "asset://?label=DAPHNE&subsystem=readout"
 
 pds_conf.config_substitutions.append(
     data_classes.config_substitution(
-        obj_class="TimingTriggerOffsetMap",
-        obj_id="ttcm-off-0",
-        updates={"time_before": 62000, "time_after": 500},
-    )
-)
-pds_conf.config_substitutions.append(
-    data_classes.config_substitution(
-        obj_class="TCReadoutMap",
+        obj_class="HSISignalWindow",
         updates={"time_before": 62000, "time_after": 500},
     )
 )

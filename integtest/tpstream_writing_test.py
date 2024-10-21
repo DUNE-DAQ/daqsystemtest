@@ -83,10 +83,8 @@ hsi_frag_params = {
 }
 ignored_logfile_problems = {
     "-controller": [
-        "Propagating take_control to children",
-        "There is no broadcasting service",
-        "Could not understand the BroadcastHandler technology you want to use",
         "Worker with pid \\d+ was terminated due to signal 1",
+        "Connection '.*' not found on the application registry",
     ],
     "local-connection-server": [
         "errorlog: -",
@@ -118,7 +116,7 @@ conf_dict.config_substitutions.append(
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="RandomTCMakerConf",
-        updates={"trigger_interval_ticks": 62500000 / pulser_trigger_rate},
+        updates={"trigger_rate_hz": pulser_trigger_rate},
     )
 )
 conf_dict.config_substitutions.append(
@@ -231,7 +229,7 @@ def test_data_files(run_nanorc):
 def test_tpstream_files(run_nanorc):
     tpstream_files = run_nanorc.tpset_files
     local_expected_event_count = (
-        run_duration + 6
+        run_duration + 8
     )  # TPStreamWriterModule is currently configured to write at 1 Hz, addl TimeSlices expected because of wait times in drunc command list
     local_event_count_tolerance = local_expected_event_count / 10
     # fragment_check_list=[wib1_tpset_params] # ProtoWIB

@@ -426,17 +426,17 @@
 
 <obj class="Service" id="ru-01_control">
  <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5501"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="Service" id="ru-02_control">
  <attr name="protocol" type="string" val="rest"/>
- <attr name="port" type="u16" val="5502"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="Service" id="ru-controller_control">
  <attr name="protocol" type="string" val="grpc"/>
- <attr name="port" type="u16" val="5500"/>
+ <attr name="port" type="u16" val="0"/>
 </obj>
 
 <obj class="SourceIDConf" id="tp-srcid-1000">

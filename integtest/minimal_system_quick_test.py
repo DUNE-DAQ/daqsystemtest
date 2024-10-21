@@ -61,10 +61,8 @@ hsi_frag_params = {
 }
 ignored_logfile_problems = {
     "-controller": [
-        'ERROR    "Broadcast": Propagating take_control to children',
-        'WARNING  "Broadcast": There is no broadcasting service!',
         "Worker with pid \\d+ was terminated due to signal",
-        'WARNING  "BroadcastHandler": Could not understand the BroadcastHandler technology you want to use',
+        "Connection '.*' not found on the application registry",
     ],
     "local-connection-server": [
         "errorlog: -",
@@ -92,7 +90,7 @@ conf_dict.tpg_enabled = False
 substitution = data_classes.config_substitution(
     obj_id="random-tc-generator",
     obj_class="RandomTCMakerConf",
-    updates={"trigger_interval_ticks": 62500000},
+    updates={"trigger_rate_hz": 1},
 )
 conf_dict.config_substitutions.append(substitution)
 
