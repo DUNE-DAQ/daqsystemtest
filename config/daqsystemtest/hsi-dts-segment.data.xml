@@ -72,6 +72,7 @@
  <file path="config/daqsystemtest/connections.data.xml"/>
  <file path="config/daqsystemtest/moduleconfs.data.xml"/>
  <file path="config/daqsystemtest/hosts.data.xml"/>
+ <file path="schema/hsilibs/hsi.schema.xml"/>
 </include>
 
 <comments>
@@ -171,10 +172,38 @@
  <attr name="warn_on_empty_buffer" type="bool" val="0"/>
 </obj>
 
+<obj class="HSIControllerConf" id="dts-hsic-conf">
+ <attr name="uhal_log_level" type="enum" val="notice"/>
+ <attr name="connections_file" type="string" val="connections.xml"/>
+ <attr name="device" type="string" val="BOREAS"/>
+ <attr name="hardware_state_recovery_enabled" type="bool" val="1"/>
+ <attr name="timing_session_name" type="string" val=""/>
+ <!-- <attr name="clock_source" type="u32" val="255" /> -->
+ <attr name="control_hardware_io" type="bool" val="0"/>
+ <attr name="data_source" type="u32" val="1"/>
+</obj>
+
+<obj class="HSIController" id="dts-hsic">
+    <rel name="configuration" class="HSIControllerConf" id="dts-hsic-conf"/>
+</obj>
+
+<obj class="DaqApplication" id="dts-hsi-ctrl">
+ <attr name="application_name" type="string" val="daq_application"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="dts-hsi-ctrl_control"/>
+ </rel>
+ <rel name="modules">
+  <ref class="HSIController" id="dts-hsic"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+</obj>
+
 <obj class="Segment" id="hsi-dts-segment">
  <rel name="applications">
   <ref class="DTSHSIApplication" id="hsi-dts-01"/>
   <ref class="HSIEventToTCApplication" id="hsi-dts-to-tc-app"/>
+  <ref class="DaqApplication" id="dts-hsi-ctrl"/>
  </rel>
  <rel name="controller" class="RCApplication" id="hsi-dts-controller"/>
 </obj>
@@ -192,6 +221,11 @@
 <obj class="Service" id="hsi-dts-to-tc-app_control">
  <attr name="protocol" type="string" val="rest"/>
  <attr name="port" type="u16" val="5852"/>
+</obj>
+
+<obj class="Service" id="dts-hsi-ctrl_control">
+ <attr name="protocol" type="string" val="rest"/>
+ <attr name="port" type="u16" val="5853"/>
 </obj>
 
 <obj class="SourceIDConf" id="hsi-dts-srcid-01">

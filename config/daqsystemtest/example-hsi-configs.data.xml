@@ -95,7 +95,7 @@
 
  <obj class="Variable" id="ers-debug">
   <attr name="name" type="string" val="DUNEDAQ_ERS_DEBUG_LEVEL"/>
-  <attr name="value" type="string" val="14"/>
+  <attr name="value" type="string" val="3"/>
  </obj>
 
   <obj class="Session" id="test-hsi-session">
@@ -119,7 +119,7 @@
       <ref class="ReadoutApplication" id="ru-02"/>
       <ref class="TPStreamWriterApplication" id="tp-stream-writer"/>
       <ref class="TriggerApplication" id="tc-maker-1"/>
-      <!-- <ref class="FakeHSIApplication" id="hsi-fake-01"> -->
+      <ref class="FakeHSIApplication" id="hsi-fake-01">
       <!-- <ref class="DTSHSIApplication" id="hsi-dts-01">  -->
     </rel>
     <rel name="segment" class="Segment" id="root-segment"/>
