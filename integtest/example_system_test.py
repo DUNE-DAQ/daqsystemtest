@@ -13,7 +13,8 @@ run_duration = 20  # seconds
 
 # Default values for validation parameters
 check_for_logfile_errors = True
-expected_event_count = run_duration * 10
+expected_event_count = run_duration * (1 + 3) # 1 from RTCM, 3 from FakeHSI
+ta_prescale = 1000
 expected_event_count_tolerance = expected_event_count / 10
 hostname = os.uname().nodename
 
@@ -23,7 +24,7 @@ wibeth_frag_params = {
     "hdf5_source_subsystem": "Detector_Readout",
     "expected_fragment_count": 0,
     "min_size_bytes": 7272,
-    "max_size_bytes": 14472,
+    "max_size_bytes": 21672,
 }
 triggercandidate_frag_params = {
     "fragment_type_description": "Trigger Candidate",
@@ -45,7 +46,7 @@ hsi_frag_params = {
     "fragment_type_description": "HSI",
     "fragment_type": "Hardware_Signal",
     "hdf5_source_subsystem": "HW_Signals_Interface",
-    "expected_fragment_count": 0,
+    "expected_fragment_count": 1,
     "min_size_bytes": 72,
     "max_size_bytes": 100,
 }
@@ -83,12 +84,18 @@ onebyone_ehn1_conf.session = "ehn1-local-1x1-config"
 twobythree_ehn1_conf = copy.deepcopy(common_config_obj)
 twobythree_ehn1_conf.session = "ehn1-local-2x3-config"
 
-confgen_arguments = {
-    "Local 1x1 Conf": onebyone_local_conf,
-    "Local 2x3 Conf": twobythree_local_conf,
-    "EHN1 1x1 Conf": onebyone_ehn1_conf,
-    "EHN1 2x3 Conf": twobythree_ehn1_conf,
-}
+if "cern.ch" in hostname:
+    confgen_arguments = {
+        "Local 1x1 Conf": onebyone_local_conf,
+        "Local 2x3 Conf": twobythree_local_conf,
+        "EHN1 1x1 Conf": onebyone_ehn1_conf,
+        "EHN1 2x3 Conf": twobythree_ehn1_conf,
+    }
+else:
+    confgen_arguments = {
+        "Local 1x1 Conf": onebyone_local_conf,
+        "Local 2x3 Conf": twobythree_local_conf,
+    }
 
 
 # The commands to run in nanorc, as a list
@@ -167,21 +174,26 @@ def test_data_files(run_nanorc):
 
     local_expected_fragment_count = current_params["expected_fragment_count"]
     wibeth_frag_params["expected_fragment_count"] = local_expected_fragment_count
-    triggertp_frag_params["expected_fragment_count"] = local_expected_fragment_count
+    triggertp_frag_params["expected_fragment_count"] = 3 * local_expected_fragment_count / 4
     local_expected_event_count = expected_event_count
     local_event_count_tolerance = expected_event_count_tolerance
     fragment_check_list = [triggercandidate_frag_params, hsi_frag_params]
-    if run_nanorc.confgen_config.tpg_enabled:
-        local_expected_event_count += int(
-            158 * local_expected_fragment_count * run_duration / 100
+    
+    local_expected_event_count += (
+            (6250 / ta_prescale)
+            * current_params["expected_fragment_count"]
+            * run_duration
+            / 100
         )
-        local_event_count_tolerance += int(
-            10 * local_expected_fragment_count * run_duration / 100
+    local_event_count_tolerance += (
+            (250 / ta_prescale)
+            * current_params["expected_fragment_count"]
+            * run_duration
+            / 100
         )
-        fragment_check_list.append(wibeth_frag_params)
-        fragment_check_list.append(triggertp_frag_params)
-    else:
-        fragment_check_list.append(wibeth_frag_params)
+
+    fragment_check_list.append(wibeth_frag_params)
+    fragment_check_list.append(triggertp_frag_params)
 
     for idx in range(len(run_nanorc.data_files)):
         data_file = data_file_checks.DataFile(run_nanorc.data_files[idx])
