@@ -74,7 +74,7 @@ conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_id="dummy-detector",
         obj_class="DetectorConfig",
-        updates={"clock_speed_hz": 1000000000},
+        updates={"clock_speed_hz": 1000000000}, # FakeDataProd uses nanoseconds as its timestamps
     )
 )
 
