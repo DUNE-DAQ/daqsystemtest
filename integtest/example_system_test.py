@@ -1,3 +1,4 @@
+from locale import locale_encoding_alias
 import pytest
 import os
 import copy
@@ -13,9 +14,9 @@ run_duration = 20  # seconds
 
 # Default values for validation parameters
 check_for_logfile_errors = True
-expected_event_count = run_duration * (1 + 3) # 1 from RTCM, 3 from FakeHSI
+expected_event_count = run_duration * (1.0 + 3.0) # 1 from RTCM, 3 from FakeHSI
 ta_prescale = 1000
-expected_event_count_tolerance = expected_event_count / 10
+expected_event_count_tolerance = expected_event_count / 10.0
 hostname = os.uname().nodename
 
 wibeth_frag_params = {
@@ -164,15 +165,19 @@ def test_data_files(run_nanorc):
         "EHN1 1x1 Conf": {"expected_fragment_count": 4, "expected_file_count": 1},
         "EHN1 2x3 Conf": {"expected_fragment_count": 8, "expected_file_count": 3},
     }
-    current_params = None
+    
+    expected_file_count = 0
+    expected_fragment_count = 0
     for key in datafile_params.keys():
         if key in current_test:
-            current_params = datafile_params[key]
+            expected_file_count = datafile_params[key]["expected_file_count"]
+            expected_fragment_count = datafile_params[key]["expected_fragment_count"]
+    assert expected_file_count != 0,f"Unable to locate test parameters for {current_test}"
 
     # Run some tests on the output data file
-    assert len(run_nanorc.data_files) == current_params["expected_file_count"]
+    assert len(run_nanorc.data_files) == expected_file_count
 
-    local_expected_fragment_count = current_params["expected_fragment_count"]
+    local_expected_fragment_count = expected_fragment_count
     wibeth_frag_params["expected_fragment_count"] = local_expected_fragment_count
     triggertp_frag_params["expected_fragment_count"] = 3 * local_expected_fragment_count / 4
     local_expected_event_count = expected_event_count
@@ -180,32 +185,39 @@ def test_data_files(run_nanorc):
     fragment_check_list = [triggercandidate_frag_params, hsi_frag_params]
     
     local_expected_event_count += (
-            (6250 / ta_prescale)
-            * current_params["expected_fragment_count"]
+            (6250.0 / ta_prescale)
+            * expected_fragment_count
             * run_duration
-            / 100
+            / 100.0
         )
     local_event_count_tolerance += (
-            (250 / ta_prescale)
-            * current_params["expected_fragment_count"]
+            (250.0 / ta_prescale)
+            * expected_fragment_count
             * run_duration
-            / 100
+            / 100.0
         )
+
+    local_expected_event_count = local_expected_event_count / expected_file_count
+    local_event_count_tolerance = local_event_count_tolerance / expected_file_count
 
     fragment_check_list.append(wibeth_frag_params)
     fragment_check_list.append(triggertp_frag_params)
 
+    all_ok = True
+
     for idx in range(len(run_nanorc.data_files)):
         data_file = data_file_checks.DataFile(run_nanorc.data_files[idx])
-        assert data_file_checks.sanity_check(data_file)
-        assert data_file_checks.check_file_attributes(data_file)
-        assert data_file_checks.check_event_count(
-            data_file, expected_event_count, expected_event_count_tolerance
+        all_ok &= data_file_checks.sanity_check(data_file)
+        all_ok &= data_file_checks.check_file_attributes(data_file)
+        all_ok &= data_file_checks.check_event_count(
+            data_file, local_expected_event_count, local_event_count_tolerance
         )
         for jdx in range(len(fragment_check_list)):
-            assert data_file_checks.check_fragment_count(
+            all_ok &= data_file_checks.check_fragment_count(
                 data_file, fragment_check_list[jdx]
             )
-            assert data_file_checks.check_fragment_sizes(
+            all_ok &= data_file_checks.check_fragment_sizes(
                 data_file, fragment_check_list[jdx]
             )
+
+    assert all_ok
