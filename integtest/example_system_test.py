@@ -1,4 +1,3 @@
-from locale import locale_encoding_alias
 import pytest
 import os
 import copy
