@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="6" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="eflumerf" last-modified-on="ironvirt9.IRONDOMAIN.local" last-modification-time="20241014T145531"/>
+<info name="" type="" num-of-items="6" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="eflumerf" last-modified-on="ironvirt9.IRONDOMAIN.local" last-modification-time="20241022T175827"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -71,7 +71,7 @@
  <file path="config/daqsystemtest/hosts.data.xml"/>
  <file path="config/daqsystemtest/ru-segment.data.xml"/>
  <file path="config/daqsystemtest/df-segment.data.xml"/>
- <file path="config/daqsystemtest/hsi-segment.data.xml"/>
+ <file path="config/daqsystemtest/hsi-fake-segment.data.xml"/>
  <file path="config/daqsystemtest/trigger-segment.data.xml"/>
 </include>
 
@@ -95,7 +95,7 @@
   <ref class="Segment" id="ru-segment"/>
   <ref class="Segment" id="df-segment"/>
   <ref class="Segment" id="trg-segment"/>
-  <ref class="Segment" id="hsi-segment"/>
+  <ref class="Segment" id="hsi-fake-segment"/>
  </rel>
  <rel name="controller" class="RCApplication" id="root-controller"/>
 </obj>
