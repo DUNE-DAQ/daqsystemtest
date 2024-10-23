@@ -39,7 +39,7 @@ wibeth_frag_multi_trig_params = {
     "fragment_type": "WIBEth",
     "hdf5_source_subsystem": "Detector_Readout",
     "expected_fragment_count": (number_of_data_producers * number_of_readout_apps),
-    "min_size_bytes": 72,
+    "min_size_bytes": 7272,
     "max_size_bytes": 14472,
 }
 triggercandidate_frag_params = {

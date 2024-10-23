@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="14" oks-format="data" oks-version="862f2957270" created-by="asztuc" created-on="np04-srv-019.cern.ch" creation-time="20231212T171111" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T153645"/>
+<info name="" type="" num-of-items="14" oks-format="data" oks-version="862f2957270" created-by="asztuc" created-on="np04-srv-019.cern.ch" creation-time="20231212T171111" last-modified-by="maroda" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20240916T092524"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -72,6 +72,7 @@
  <file path="config/daqsystemtest/connections.data.xml"/>
  <file path="config/daqsystemtest/moduleconfs.data.xml"/>
  <file path="config/daqsystemtest/hosts.data.xml"/>
+ <file path="schema/hsilibs/hsi.schema.xml"/>
 </include>
 
 <comments>
@@ -82,26 +83,29 @@
  <comment creation-time="20240312T203031" created-by="eflumerf" created-on="ironvirt9.mshome.net" author="eflumerf" text="Apply source_id..."/>
  <comment creation-time="20240325T124934" created-by="glehmann" created-on="np04-srv-019.cern.ch" author="Unknown" text="adjusted to name changes in connections"/>
  <comment creation-time="20240628T062322" created-by="thea" created-on="np04-srv-031.cern.ch" author="thea" text="removing broadcasters from control apps"/>
+ <comment creation-time="20240912T143615" created-by="maroda" created-on="np04-srv-015.cern.ch" author="maroda" text="add opmon objects"/>
+ <comment creation-time="20240916T091035" created-by="maroda" created-on="np04-srv-015.cern.ch" author="maroda" text="change monitoring object"/>
+ <comment creation-time="20240916T092524" created-by="maroda" created-on="np04-srv-015.cern.ch" author="maroda" text="Correct locations for OpMonConf objects"/>
 </comments>
 
 
-<obj class="DataHandlerConf" id="def-hsi-handler">
+<obj class="DataHandlerConf" id="hsi-dts-handler">
  <attr name="template_for" type="class" val="HSIDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="HSIFrame"/>
  <attr name="generate_timesync" type="bool" val="0"/>
- <rel name="request_handler" class="RequestHandler" id="hsi-requesthandler-generic"/>
- <rel name="latency_buffer" class="LatencyBuffer" id="hsilatencybuffer-generic"/>
- <rel name="data_processor" class="HSIFrameProcessor" id="def-hsi-processor"/>
+ <rel name="request_handler" class="RequestHandler" id="hsi-dts-requesthandler"/>
+ <rel name="latency_buffer" class="LatencyBuffer" id="hsi-dts-latencybuffer"/>
+ <rel name="data_processor" class="HSIFrameProcessor" id="hsi-dts-processor"/>
 </obj>
 
-<obj class="FakeHSIApplication" id="hsi-01">
+<obj class="DTSHSIApplication" id="hsi-dts-01">
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="hsi-01_control"/>
+  <ref class="Service" id="hsi-dts-01_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
- <rel name="source_id" class="SourceIDConf" id="hsi-srcid-01"/>
+ <rel name="source_id" class="SourceIDConf" id="hsi-dts-srcid-01"/>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="hsi-dlh-data-requests-queue-rule"/>
  </rel>
@@ -110,28 +114,26 @@
   <ref class="NetworkConnectionRule" id="data-req-hsi-net-rule"/>
   <ref class="NetworkConnectionRule" id="ts-hsi-net-rule"/>
  </rel>
- <rel name="link_handler" class="DataHandlerConf" id="def-hsi-handler"/>
- <rel name="generator" class="FakeHSIEventGeneratorConf" id="fakehsi"/>
+ <rel name="link_handler" class="DataHandlerConf" id="hsi-dts-handler"/>
+ <rel name="generator" class="HSIReadoutConf" id="dtshsi"/>
 </obj>
 
-<obj class="FakeHSIEventGeneratorConf" id="fakehsi">
- <attr name="clock_frequency" type="u64" val="62500000"/>
- <attr name="trigger_rate" type="double" val="3"/>
- <attr name="hsi_device_id" type="u32" val="1"/>
- <attr name="mean_signal_multiplicity" type="u32" val="1"/>
- <attr name="enabled_signals" type="u32" val="1"/>
+<obj class="HSIReadoutConf" id="dtshsi">
+    <attr name="readout_period" type="u64" val="1000"></attr>
+    <attr name="hsi_device_name" type="string" val="BOREAS"></attr>
+    <attr name="connections_file" type="string" val="connections.xml"></attr>
 </obj>
 
-<obj class="HSIEventToTCApplication" id="hsi-to-tc-app">
+<obj class="HSIEventToTCApplication" id="hsi-dts-to-tc-app">
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
   <ref class="Service" id="dataRequests"/>
   <ref class="Service" id="HSIEvents"/>
-  <ref class="Service" id="hsi-to-tc-app_control"/>
+  <ref class="Service" id="hsi-dts-to-tc-app_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
- <rel name="source_id" class="SourceIDConf" id="hsi-tc-srcid-1"/>
+ <rel name="source_id" class="SourceIDConf" id="hsi-dts-tc-srcid-1"/>
  <rel name="network_rules">
   <ref class="NetworkConnectionRule" id="hsi-rule"/>
   <ref class="NetworkConnectionRule" id="tc-net-rule"/>
@@ -139,29 +141,29 @@
  <rel name="hsevent_to_tc_conf" class="HSI2TCTranslatorConf" id="hsi-to-tc-conf"/>
 </obj>
 
-<obj class="HSIFrameProcessor" id="def-hsi-processor">
+<obj class="HSIFrameProcessor" id="hsi-dts-processor">
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="hsip"/>
 </obj>
 
-<obj class="LatencyBuffer" id="hsilatencybuffer-generic">
+<obj class="LatencyBuffer" id="hsi-dts-latencybuffer">
  <attr name="size" type="u32" val="100000"/>
  <attr name="numa_aware" type="bool" val="0"/>
  <attr name="intrinsic_allocator" type="bool" val="0"/>
  <attr name="preallocation" type="bool" val="0"/>
 </obj>
 
-<obj class="RCApplication" id="hsi-controller">
+<obj class="RCApplication" id="hsi-dts-controller">
  <attr name="application_name" type="string" val="drunc-controller"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="hsi-controller_control"/>
+  <ref class="Service" id="hsi-dts-controller_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="fsm" class="FSMconfiguration" id="FSMconfiguration_noAction"/>
 </obj>
 
-<obj class="RequestHandler" id="hsi-requesthandler-generic">
+<obj class="RequestHandler" id="hsi-dts-requesthandler">
  <attr name="handler_threads" type="u16" val="4"/>
  <attr name="request_timeout" type="u32" val="0"/>
  <attr name="pop_limit_pct" type="float" val="0.8"/>
@@ -170,36 +172,69 @@
  <attr name="warn_on_empty_buffer" type="bool" val="0"/>
 </obj>
 
-<obj class="Segment" id="hsi-segment">
- <rel name="applications">
-  <ref class="FakeHSIApplication" id="hsi-01"/>
-  <ref class="HSIEventToTCApplication" id="hsi-to-tc-app"/>
- </rel>
- <rel name="controller" class="RCApplication" id="hsi-controller"/>
+<obj class="HSIControllerConf" id="dts-hsic-conf">
+ <attr name="uhal_log_level" type="enum" val="notice"/>
+ <attr name="connections_file" type="string" val="connections.xml"/>
+ <attr name="device" type="string" val="BOREAS"/>
+ <attr name="hardware_state_recovery_enabled" type="bool" val="1"/>
+ <attr name="timing_session_name" type="string" val=""/>
+ <!-- <attr name="clock_source" type="u32" val="255" /> -->
+ <attr name="control_hardware_io" type="bool" val="0"/>
+ <attr name="data_source" type="u32" val="1"/>
 </obj>
 
-<obj class="Service" id="hsi-01_control">
+<obj class="HSIController" id="dts-hsic">
+    <rel name="configuration" class="HSIControllerConf" id="dts-hsic-conf"/>
+</obj>
+
+<obj class="DaqApplication" id="dts-hsi-ctrl">
+ <attr name="application_name" type="string" val="daq_application"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="dts-hsi-ctrl_control"/>
+ </rel>
+ <rel name="modules">
+  <ref class="HSIController" id="dts-hsic"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+</obj>
+
+<obj class="Segment" id="hsi-dts-segment">
+ <rel name="applications">
+  <ref class="DTSHSIApplication" id="hsi-dts-01"/>
+  <ref class="HSIEventToTCApplication" id="hsi-dts-to-tc-app"/>
+  <ref class="DaqApplication" id="dts-hsi-ctrl"/>
+ </rel>
+ <rel name="controller" class="RCApplication" id="hsi-dts-controller"/>
+</obj>
+
+<obj class="Service" id="hsi-dts-01_control">
  <attr name="protocol" type="string" val="rest"/>
  <attr name="port" type="u16" val="0"/>
 </obj>
 
-<obj class="Service" id="hsi-controller_control">
+<obj class="Service" id="hsi-dts-controller_control">
  <attr name="protocol" type="string" val="grpc"/>
  <attr name="port" type="u16" val="0"/>
 </obj>
 
-<obj class="Service" id="hsi-to-tc-app_control">
+<obj class="Service" id="hsi-dts-to-tc-app_control">
  <attr name="protocol" type="string" val="rest"/>
  <attr name="port" type="u16" val="0"/>
 </obj>
 
-<obj class="SourceIDConf" id="hsi-srcid-01">
- <attr name="sid" type="u32" val="1"/>
+<obj class="Service" id="dts-hsi-ctrl_control">
+ <attr name="protocol" type="string" val="rest"/>
+ <attr name="port" type="u16" val="0"/>
+</obj>
+
+<obj class="SourceIDConf" id="hsi-dts-srcid-01">
+ <attr name="sid" type="u32" val="2"/>
  <attr name="subsystem" type="enum" val="HW_Signals_Interface"/>
 </obj>
 
-<obj class="SourceIDConf" id="hsi-tc-srcid-1">
- <attr name="sid" type="u32" val="2"/>
+<obj class="SourceIDConf" id="hsi-dts-tc-srcid-1">
+ <attr name="sid" type="u32" val="3"/>
  <attr name="subsystem" type="enum" val="Trigger"/>
 </obj>
 
