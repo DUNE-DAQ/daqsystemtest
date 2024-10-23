@@ -372,11 +372,19 @@
  <attr name="latency_monitoring" type="bool" val="1"/>
  <rel name="signals">
   <ref class="HSISignalWindow" id="def-hsi-signal-window"/>
+  <ref class="HSISignalWindow" id="def-hsi-dts-signal-window"/>
  </rel>
 </obj>
 
 <obj class="HSISignalWindow" id="def-hsi-signal-window">
  <attr name="signal_type" type="u32" val="1"/>
+ <attr name="tc_type_name" type="string" val="kTiming"/>
+ <attr name="time_before" type="u32" val="10000"/>
+ <attr name="time_after" type="u32" val="20000"/>
+</obj>
+
+<obj class="HSISignalWindow" id="def-hsi-dts-signal-window">
+ <attr name="signal_type" type="u32" val="128"/>
  <attr name="tc_type_name" type="string" val="kTiming"/>
  <attr name="time_before" type="u32" val="10000"/>
  <attr name="time_after" type="u32" val="20000"/>

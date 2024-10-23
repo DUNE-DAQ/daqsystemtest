@@ -110,7 +110,7 @@ conf_dict.config_substitutions.append(
 
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
-        obj_class="HSISignalWindow",
+        obj_class="TCReadoutMap",
         updates={
             "time_before": readout_window_time_before,
             "time_after": readout_window_time_after,
