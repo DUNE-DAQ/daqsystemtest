@@ -174,7 +174,7 @@ def test_data_files(run_nanorc):
     assert expected_file_count != 0,f"Unable to locate test parameters for {current_test}"
 
     # Run some tests on the output data file
-    assert len(run_nanorc.data_files) == expected_file_count, f"Unexpected file count: Actual: {len(run_nanorc.data_files)}, Expected: {current_params["expected_file_count"]}"
+    assert len(run_nanorc.data_files) == expected_file_count, f"Unexpected file count: Actual: {len(run_nanorc.data_files)}, Expected: {expected_file_count}"
 
     local_expected_fragment_count = expected_fragment_count
     wibeth_frag_params["expected_fragment_count"] = local_expected_fragment_count
