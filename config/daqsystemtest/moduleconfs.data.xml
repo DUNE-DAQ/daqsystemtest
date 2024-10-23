@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="62" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.IRONDOMAIN.local" last-modification-time="20241018T200358"/>
+<info name="" type="" num-of-items="60" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.IRONDOMAIN.local" last-modification-time="20241023T204410"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -376,15 +376,15 @@
  </rel>
 </obj>
 
-<obj class="HSISignalWindow" id="def-hsi-signal-window">
- <attr name="signal_type" type="u32" val="1"/>
+<obj class="HSISignalWindow" id="def-hsi-dts-signal-window">
+ <attr name="signal_type" type="u32" val="128"/>
  <attr name="tc_type_name" type="string" val="kTiming"/>
  <attr name="time_before" type="u32" val="10000"/>
  <attr name="time_after" type="u32" val="20000"/>
 </obj>
 
-<obj class="HSISignalWindow" id="def-hsi-dts-signal-window">
- <attr name="signal_type" type="u32" val="128"/>
+<obj class="HSISignalWindow" id="def-hsi-signal-window">
+ <attr name="signal_type" type="u32" val="1"/>
  <attr name="tc_type_name" type="string" val="kTiming"/>
  <attr name="time_before" type="u32" val="10000"/>
  <attr name="time_after" type="u32" val="20000"/>
@@ -549,6 +549,7 @@
 </obj>
 
 <obj class="TCReadoutMap" id="def-tc-map">
+ <attr name="tc_type_name" type="string" val="kTiming"/>
  <attr name="time_before" type="u32" val="3000"/>
  <attr name="time_after" type="u32" val="1001"/>
 </obj>

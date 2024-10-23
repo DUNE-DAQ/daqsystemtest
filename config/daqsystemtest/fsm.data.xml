@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="42" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T153633"/>
+<info name="" type="" num-of-items="43" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="eflumerf" last-modified-on="ironvirt9.IRONDOMAIN.local" last-modification-time="20241023T204410"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -118,10 +118,6 @@
  <attr name="name" type="string" val="db-run-registry"/>
 </obj>
 
-<obj class="FSMaction" id="trigger-rate-specifier">
- <attr name="name" type="string" val="trigger-rate-specifier"/>
-</obj>
-
 <obj class="FSMaction" id="elisa-logbook">
  <attr name="name" type="string" val="elisa-logbook"/>
 </obj>
@@ -145,6 +141,10 @@
   <ref class="Variable" id="thread-pinning-file-post-start-prod"/>
   <ref class="Variable" id="thread-pinning-file-post-start-test"/>
  </rel>
+</obj>
+
+<obj class="FSMaction" id="trigger-rate-specifier">
+ <attr name="name" type="string" val="trigger-rate-specifier"/>
 </obj>
 
 <obj class="FSMaction" id="user-provided-run-number">
@@ -301,6 +301,10 @@
  </rel>
 </obj>
 
+<obj class="FSMtransition" id="change_rate">
+ <attr name="source" type="string" val="ready|running"/>
+</obj>
+
 <obj class="FSMtransition" id="conf">
  <attr name="source" type="string" val="initial"/>
  <attr name="dest" type="string" val="configured"/>
@@ -334,11 +338,6 @@
 <obj class="FSMtransition" id="stop">
  <attr name="source" type="string" val="trigger_sources_stopped"/>
  <attr name="dest" type="string" val="configured"/>
-</obj>
-
-<obj class="FSMtransition" id="change_rate">
- <attr name="source" type="string" val="ready|running"/>
- <attr name="dest" type="string" val=""/>
 </obj>
 
 <obj class="FSMtransition" id="stop_trigger_sources">
@@ -380,7 +379,15 @@
  </attr>
 </obj>
 
-
+<obj class="FSMxTransition" id="pre_change_rate">
+ <attr name="transition" type="string" val="change_rate"/>
+ <attr name="order" type="string">
+  <data val="trigger-rate-specifier"/>
+ </attr>
+ <attr name="mandatory" type="string">
+  <data val="trigger-rate-specifier"/>
+ </attr>
+</obj>
 
 <obj class="FSMxTransition" id="pre_start_prod">
  <attr name="transition" type="string" val="start"/>
@@ -391,16 +398,6 @@
  <attr name="mandatory" type="string">
   <data val="usvc-provided-run-number"/>
   <data val="db-run-registry"/>
- </attr>
-</obj>
-
-<obj class="FSMxTransition" id="pre_change_rate">
- <attr name="transition" type="string" val="change_rate"/>
- <attr name="order" type="string">
-  <data val="trigger-rate-specifier"/>
- </attr>
- <attr name="mandatory" type="string">
-  <data val="trigger-rate-specifier"/>
  </attr>
 </obj>
 

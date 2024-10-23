@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="46" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T153645"/>
+<info name="" type="" num-of-items="46" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="eflumerf" last-modified-on="ironvirt9.IRONDOMAIN.local" last-modification-time="20241023T204410"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -281,7 +281,9 @@
 
 <obj class="NetworkDevice" id="ru_1_readout">
  <attr name="mac_address" type="string" val="00:00:00:00:00:00"/>
- <attr name="ip_address" type="string" val="123.456.101.501"/>
+ <attr name="ip_address" type="string">
+  <data val="123.456.101.501"/>
+ </attr>
  <attr name="interface_name" type="string" val="data0"/>
  <attr name="network_name" type="enum" val="Control"/>
  <attr name="pcie_addr" type="string" val="0"/>
@@ -289,7 +291,9 @@
 
 <obj class="NetworkDevice" id="ru_2_readout">
  <attr name="mac_address" type="string" val="00:00:00:00:00:00"/>
- <attr name="ip_address" type="string" val="123.456.201.501"/>
+ <attr name="ip_address" type="string">
+  <data val="123.456.201.501"/>
+ </attr>
  <attr name="interface_name" type="string" val="data0"/>
  <attr name="network_name" type="enum" val="Control"/>
  <attr name="pcie_addr" type="string" val="0"/>
@@ -297,14 +301,18 @@
 
 <obj class="NetworkInterface" id="wib_101_hermes0">
  <attr name="mac_address" type="string" val="00:00:00:00:00:00"/>
- <attr name="ip_address" type="string" val="123.456.101.000"/>
+ <attr name="ip_address" type="string">
+  <data val="123.456.101.000"/>
+ </attr>
  <attr name="interface_name" type="string" val="hermes0"/>
  <attr name="network_name" type="enum" val="Control"/>
 </obj>
 
 <obj class="NetworkInterface" id="wib_201_hermes0">
  <attr name="mac_address" type="string" val="00:00:00:00:00:00"/>
- <attr name="ip_address" type="string" val="123.456.101.001"/>
+ <attr name="ip_address" type="string">
+  <data val="123.456.101.001"/>
+ </attr>
  <attr name="interface_name" type="string" val="hermes0"/>
  <attr name="network_name" type="enum" val="Control"/>
 </obj>
