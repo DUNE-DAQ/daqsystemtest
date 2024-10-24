@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="22" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240919T185324"/>
+<info name="" type="" num-of-items="22" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="eflumerf" last-modified-on="ironvirt9.IRONDOMAIN.local" last-modification-time="20241023T204410"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -105,10 +105,10 @@
  <attr name="tpg_channel_map" type="string" val="PD2HDChannelMap"/>
  <attr name="clock_speed_hz" type="u32" val="62500000"/>
  <attr name="op_env" type="string" val="test"/>
+ <attr name="offline_data_stream" type="string" val="cosmics"/>
 </obj>
 
 <obj class="FakeHSIEventGeneratorConf" id="fakehsi">
- <attr name="clock_frequency" type="u64" val="62500000"/>
  <attr name="trigger_rate" type="double" val="3"/>
  <attr name="hsi_device_id" type="u32" val="1"/>
  <attr name="mean_signal_multiplicity" type="u32" val="1"/>
@@ -118,6 +118,7 @@
 <obj class="HSIFrameProcessor" id="def-hsi-processor">
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="hsip"/>
+ <attr name="latency_monitoring" type="bool" val="1"/>
 </obj>
 
 <obj class="LatencyBuffer" id="hsilatencybuffer-generic">
@@ -202,6 +203,8 @@
 
 <obj class="TPStreamWriterConf" id="tp-stream-writer-conf">
  <attr name="tp_accumulation_interval" type="u64" val="62500000"/>
+ <attr name="tp_accumulation_inactivity_time_before_write_sec" type="float" val="1"/>
+ <attr name="warn_user_when_tardy_tps_are_discarded" type="bool" val="1"/>
  <rel name="data_store_params" class="DataStoreConf" id="default_tp_store_conf"/>
 </obj>
 

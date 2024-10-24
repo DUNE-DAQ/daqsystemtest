@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="20" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T153645"/>
+<info name="" type="" num-of-items="20" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.IRONDOMAIN.local" last-modification-time="20241023T204409"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -264,6 +264,8 @@
 
 <obj class="TPStreamWriterConf" id="tp-stream-writer-conf">
  <attr name="tp_accumulation_interval" type="u64" val="62500000"/>
+ <attr name="tp_accumulation_inactivity_time_before_write_sec" type="float" val="1"/>
+ <attr name="warn_user_when_tardy_tps_are_discarded" type="bool" val="1"/>
  <rel name="data_store_params" class="DataStoreConf" id="default_tp_store_conf"/>
 </obj>
 

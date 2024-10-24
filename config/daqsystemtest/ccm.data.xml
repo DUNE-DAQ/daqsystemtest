@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="us-ascii"?>
+<?xml version="1.0" encoding="ASCII"?>
 
 <!-- oks-data version 2.2 -->
 
@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="28" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20241011T131354"/>
+<info name="" type="" num-of-items="26" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="eflumerf" last-modified-on="ironvirt9.IRONDOMAIN.local" last-modification-time="20241023T204409"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
