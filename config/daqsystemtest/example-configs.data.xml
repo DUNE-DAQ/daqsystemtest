@@ -104,6 +104,7 @@
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <attr name="controller_log_level" type="enum" val="INFO"/>
+ <attr name="log_path" type="string" val="/log"/>
  <rel name="connectivity_service" class="ConnectivityService" id="ehn1-connectivity-service-config"/>
  <rel name="environment">
   <ref class="VariableSet" id="ehn1-variables"/>
@@ -122,6 +123,7 @@
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <attr name="controller_log_level" type="enum" val="INFO"/>
+ <attr name="log_path" type="string" val="/log"/>
  <rel name="connectivity_service" class="ConnectivityService" id="ehn1-connectivity-service-config"/>
  <rel name="environment">
   <ref class="VariableSet" id="ehn1-variables"/>
