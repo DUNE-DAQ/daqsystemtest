@@ -108,6 +108,15 @@
  </rel>
 </obj>
 
+<obj class="ActionPlan" id="tc-maker-start">
+ <attr name="execution_policy" type="enum" val="modules-in-series"/>
+ <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="ta-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="subscriber-step"/>
+ </rel>
+</obj>
+
 <obj class="DFOConf" id="dfoconf-01">
  <attr name="general_queue_timeout_ms" type="u32" val="100"/>
  <attr name="stop_timeout_ms" type="u32" val="100"/>
@@ -146,6 +155,18 @@
 </obj>
 
 <obj class="DaqModulesGroupByType" id="tp-handler-step">
+ <attr name="modules" type="class">
+  <data val="TriggerDataHandlerModule"/>
+ </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="subscriber-step">
+ <attr name="modules" type="class">
+  <data val="DataSubscriberModule"/>
+ </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="ta-handler-step">
  <attr name="modules" type="class">
   <data val="TriggerDataHandlerModule"/>
  </attr>
@@ -440,6 +461,7 @@
   <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
   <ref class="AVXThresholdProcessor" id="tpg-threshold-proc"/>
  </rel>
+ <rel name="tot_minima" class="TimeOverThresholdMinima" id="def-tot-minima"/>
 </obj>
 
 <obj class="RequestHandler" id="def-data-request-handler">
@@ -604,6 +626,12 @@
  <rel name="tp_streams">
   <ref class="TPStreamConf" id="def-tp-stream-1"/>
  </rel>
+</obj>
+
+<obj class="TimeOverThresholdMinima" id="def-tot-minima">
+ <attr name="tot_minimum_plane0" type="u16" val="1"/>
+ <attr name="tot_minimum_plane1" type="u16" val="1"/>
+ <attr name="tot_minimum_plane2" type="u16" val="1"/>
 </obj>
 
 </oks-data>
