@@ -67,7 +67,6 @@ ignored_logfile_problems = {
 # output directory (the test framework handles that)
 
 common_config_obj = data_classes.drunc_config()
-common_config_obj.attempt_cleanup = True
 common_config_obj.op_env = "test"
 common_config_obj.config_db = (
     os.path.dirname(__file__) + "/../config/daqsystemtest/example-configs.data.xml"
