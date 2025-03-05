@@ -126,12 +126,12 @@
  <rel name="applications">
   <ref class="TriggerApplication" id="tc-maker-1"/>
   <ref class="MLTApplication" id="mlt"/>
-  <ref class="TriggerReplayApplication" id="replay"/>
+  <ref class="TPReplayApplication" id="tpreplay"/>
  </rel>
  <rel name="controller" class="RCApplication" id="trg-controller"/>
 </obj>
 
-<obj class="SourceIDConf" id="replay-tp-srcid-100000">
+<obj class="SourceIDConf" id="tpreplay-tp-srcid-100000">
  <attr name="sid" type="u32" val="100000"/>
  <attr name="subsystem" type="enum" val="Trigger"/>
 </obj>
@@ -171,7 +171,7 @@
  <rel name="trigger_inputs_handler" class="DataHandlerConf" id="def-ta-handler"/>
 </obj>
 
-<obj class="TriggerReplayApplication" id="replay">
+<obj class="TPReplayApplication" id="tpreplay">
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
@@ -181,17 +181,17 @@
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="queue_rules">
-  <ref class="QueueConnectionRule" id="replay-tp-queue-rule"/>
+  <ref class="QueueConnectionRule" id="tpreplay-tp-queue-rule"/>
  </rel>
  <rel name="network_rules">
-  <ref class="NetworkConnectionRule" id="replay-ta-net-rule"/>
+  <ref class="NetworkConnectionRule" id="tpreplay-ta-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
  </rel>
  <rel name="tp_source_ids">
-  <ref class="SourceIDConf" id="replay-tp-srcid-100000"/>
+  <ref class="SourceIDConf" id="tpreplay-tp-srcid-100000"/>
  </rel>
- <rel name="tpmm_conf" class="TriggerPrimitiveMakerModuleConf" id="replay-tp-maker"/>
- <rel name="tp_handler" class="DataHandlerConf" id="replay-tp-handler"/>
+ <rel name="tprm_conf" class="TPReplayModuleConf" id="tpreplay-tp-maker"/>
+ <rel name="tp_handler" class="DataHandlerConf" id="tpreplay-tp-handler"/>
 </obj>
 
 </oks-data>
