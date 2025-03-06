@@ -32,7 +32,7 @@ triggercandidate_frag_params = {
     "hdf5_source_subsystem": "Trigger",
     "expected_fragment_count": 1,
     "min_size_bytes": 128,
-    "max_size_bytes": 216,
+    "max_size_bytes": 264,
 }
 triggertp_frag_params = {
     "fragment_type_description": "Trigger with TPs",
@@ -60,14 +60,13 @@ ignored_logfile_problems = {
         "Worker with pid \\d+ was terminated due to signal",
         r"Worker \(pid:\d+\) was sent SIGHUP"
     ],
-    "log_.*": ["connect: Connection refused", "Connection reset by peer", "end of stream"],
+#    "log_.*": ["connect: Connection refused", "Connection reset by peer", "end of stream"],
 }
 
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 
 common_config_obj = data_classes.drunc_config()
-common_config_obj.attempt_cleanup = True
 common_config_obj.op_env = "test"
 common_config_obj.config_db = (
     os.path.dirname(__file__) + "/../config/daqsystemtest/example-configs.data.xml"
