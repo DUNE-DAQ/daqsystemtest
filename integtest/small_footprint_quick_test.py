@@ -54,7 +54,7 @@ hsi_frag_params = {
     "fragment_type": "Hardware_Signal",
     "hdf5_source_subsystem": "HW_Signals_Interface",
     "expected_fragment_count": 1,
-    "min_size_bytes": 72,
+    "min_size_bytes": 100,
     "max_size_bytes": 100,
 }
 ignored_logfile_problems = {
