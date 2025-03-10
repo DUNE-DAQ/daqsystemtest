@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="60" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20241105T173113"/>
+<info name="" type="" num-of-items="66" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="dergonul" last-modified-on="np04-srv-031.cern.ch" last-modification-time="20250305T102725"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -73,6 +73,10 @@
  <file path="config/daqsystemtest/connections.data.xml"/>
  <file path="config/daqsystemtest/fsm.data.xml"/>
 </include>
+
+<comments>
+ <comment creation-time="20250214T120354" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added socket communication classes"/>
+</comments>
 
 
 <obj class="AVXThresholdProcessor" id="tpg-threshold-proc">
@@ -112,6 +116,50 @@
  </rel>
 </obj>
 
+<obj class="ActionPlan" id="socket-readout-start">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="socket-reader-data-source-step"/>
+ </rel>
+</obj>
+
+<obj class="ActionPlan" id="socket-readout-stop">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="socket-reader-data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+ </rel>
+</obj>
+
+<obj class="ActionPlan" id="socket-write-start">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
+ </rel>
+</obj>
+
+<obj class="ActionPlan" id="socket-write-stop">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+ </rel> 
+</obj>
+
 <obj class="DFOConf" id="dfoconf-01">
  <attr name="general_queue_timeout_ms" type="u32" val="100"/>
  <attr name="stop_timeout_ms" type="u32" val="100"/>
@@ -146,6 +194,18 @@
 <obj class="DaqModulesGroupByType" id="dlh-step">
  <attr name="modules" type="class">
   <data val="FDDataHandlerModule"/>
+ </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="socket-reader-data-source-step">
+ <attr name="modules" type="class">
+  <data val="SocketReaderModule"/>
+ </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="socket-writer-data-source-step">
+ <attr name="modules" type="class">
+  <data val="FakeSocketWriterModule"/>
  </attr>
 </obj>
 
@@ -475,6 +535,20 @@
  <attr name="periodic_data_transmission_ms" type="u32" val="5"/>
 </obj>
 
+<obj class="SocketReaderConf" id="def-socket-reader-conf">
+ <attr name="template_for" type="class" val="SocketReaderModule"/>
+ <attr name="emulation_mode" type="bool" val="0"/>
+ <attr name="socket_type" type="enum" val="TCP"/>
+ <attr name="local_ip" type="string" val="127.0.0.1"/>
+</obj>
+
+<obj class="SocketWriterConf" id="def-socket-writer-conf">
+ <attr name="template_for" type="class" val="FakeSocketWriterModule"/>
+ <attr name="emulation_mode" type="bool" val="0"/>
+ <attr name="socket_type" type="enum" val="TCP"/>
+ <attr name="remote_ip" type="string" val="127.0.0.1"/>
+</obj>
+
 <obj class="StreamEmulationParameters" id="stream-emu">
  <attr name="data_file_name" type="string" val="/cvmfs/dunedaq.opensciencegrid.org/assets/files/d/d/1/wibeth_output_all_zeros.bin"/>
  <attr name="input_file_size_limit" type="u32" val="5777280"/>
@@ -532,12 +606,12 @@
 
 <obj class="TCMakerADCSimpleWindowAlgorithm" id="tc-adcwindow-algo">
  <attr name="prescale" type="u32" val="100"/>
- <attr name="tc_type_name" type="string" val="kADCSimpleWindow">
+ <attr name="tc_type_name" type="string" val="kADCSimpleWindow"/>
 </obj>
 
 <obj class="TCMakerPrescaleAlgorithm" id="tc-pass-through-algo">
  <attr name="prescale" type="u32" val="100"/>
- <attr name="tc_type_name" type="string" val="kPrescale">
+ <attr name="tc_type_name" type="string" val="kPrescale"/>
 </obj>
 
 <obj class="TCReadoutMap" id="def-hsi-tc-map">

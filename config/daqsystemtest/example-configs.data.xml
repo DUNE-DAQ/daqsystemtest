@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="6" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="eflumerf" last-modified-on="ironvirt9.IRONDOMAIN.local" last-modification-time="20241022T175827"/>
+<info name="" type="" num-of-items="8" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20250214T120354"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -80,6 +80,7 @@
  <comment creation-time="20240909T081245" created-by="glehmann" created-on="np04-srv-024.cern.ch" author="glehmann" text=" "/>
  <comment creation-time="20240909T082108" created-by="glehmann" created-on="np04-srv-024.cern.ch" author="glehmann" text=" "/>
  <comment creation-time="20240918T124331" created-by="maroda" created-on="np04-srv-015.cern.ch" author="maroda" text="change local session opmon URI"/>
+ <comment creation-time="20250214T120354" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added new Session with SocketReaderModule"/>
 </comments>
 
 
@@ -98,6 +99,16 @@
   <ref class="Segment" id="hsi-fake-segment"/>
  </rel>
  <rel name="controller" class="RCApplication" id="root-controller"/>
+</obj>
+
+<obj class="Segment" id="socket-root-segment">
+ <rel name="segments">
+  <ref class="Segment" id="socket-ru-segment"/>
+  <ref class="Segment" id="df-segment"/>
+  <ref class="Segment" id="trg-segment"/>
+  <ref class="Segment" id="hsi-fake-segment"/>
+ </rel>
+ <rel name="controller" class="RCApplication" id="socket-root-controller"/>
 </obj>
 
 <obj class="Session" id="ehn1-local-1x1-config">
@@ -171,6 +182,30 @@
   <ref class="Variable" id="local-env-ers-fatal"/>
  </rel>
  <rel name="segment" class="Segment" id="root-segment"/>
+ <rel name="infrastructure_applications">
+  <ref class="ConnectionService" id="local-connection-server"/>
+ </rel>
+ <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
+ <rel name="opmon_uri" class="OpMonURI" id="local-opmon-uri"/>
+</obj>
+
+<obj class="Session" id="local-socket-1x1-config">
+ <attr name="data_request_timeout_ms" type="u32" val="1000"/>
+ <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
+ <attr name="controller_log_level" type="enum" val="INFO"/>
+ <rel name="connectivity_service" class="ConnectivityService" id="local-connectivity-service-config"/>
+ <rel name="environment">
+  <ref class="Variable" id="local-env-ers-verb"/>
+  <ref class="Variable" id="local-env-ers-info"/>
+  <ref class="Variable" id="local-env-ers-warning"/>
+  <ref class="Variable" id="local-env-ers-error"/>
+  <ref class="Variable" id="local-env-ers-fatal"/>
+ </rel>
+ <rel name="disabled">
+  <ref class="DFApplication" id="df-02"/>
+  <ref class="DFApplication" id="df-03"/>
+ </rel>
+ <rel name="segment" class="Segment" id="socket-root-segment"/>
  <rel name="infrastructure_applications">
   <ref class="ConnectionService" id="local-connection-server"/>
  </rel>
