@@ -55,10 +55,13 @@ triggercandidate_frag_params = {
 triggeractivity_frag_params = {
     "fragment_type_description": "Trigger Activity",
     "fragment_type": "Trigger_Activity",
-    "hdf5_source_subsystem": "Trigger",
     "expected_fragment_count": 1,
     "min_size_bytes": 72,
-    "max_size_bytes": 504,
+    "max_size_bytes": 456,
+    "debug_mask": 0x0,
+    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes": 192, "max_size_bytes": 456},
+                                "kRandom": {"min_size_bytes":  72, "max_size_bytes": 336},
+                                "default": {"min_size_bytes":  72, "max_size_bytes": 456} }
 }
 triggertp_frag_params = {
     "fragment_type_description": "Trigger with TPs",

@@ -40,12 +40,12 @@ wibeth_tpset_params = {
     "frag_counts_by_record_ordinal": {"first": {"min_count": 1, "max_count": number_of_readout_apps * 3},
                                       "default": {"min_count": number_of_readout_apps * 3, "max_count": number_of_readout_apps * 3} },
     "min_size_bytes": 72,
-    "max_size_bytes": 300000,
+    "max_size_bytes": 170000,
     "debug_mask": 0x0,
-    "frag_sizes_by_record_ordinal": {  "first": {"min_size_bytes":    128, "max_size_bytes": 275000},
-                                      "second": {"min_size_bytes":    128, "max_size_bytes": 275000},
-                                        "last": {"min_size_bytes":    128, "max_size_bytes": 275000},
-                                     "default": {"min_size_bytes": 190000, "max_size_bytes": 275000} }
+    "frag_sizes_by_record_ordinal": {  "first": {"min_size_bytes":    128, "max_size_bytes": 157000},
+                                      "second": {"min_size_bytes":    128, "max_size_bytes": 157000},
+                                        "last": {"min_size_bytes":    128, "max_size_bytes": 157000},
+                                     "default": {"min_size_bytes": 108000, "max_size_bytes": 157000} }
 }
 triggercandidate_frag_params = {
     "fragment_type_description": "Trigger Candidate",
@@ -63,11 +63,11 @@ triggeractivity_frag_params = {
     "fragment_type": "Trigger_Activity",
     "expected_fragment_count": 1,
     "min_size_bytes": 72,
-    "max_size_bytes": 504,
+    "max_size_bytes": 456,
     "debug_mask": 0x0,
-    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes": 216, "max_size_bytes": 504},
-                                "kRandom": {"min_size_bytes":  72, "max_size_bytes": 360},
-                                "default": {"min_size_bytes":  72, "max_size_bytes": 504} }
+    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes": 192, "max_size_bytes": 456},
+                                "kRandom": {"min_size_bytes":  72, "max_size_bytes": 336},
+                                "default": {"min_size_bytes":  72, "max_size_bytes": 456} }
 }
 triggerprimitive_frag_params = {
     "fragment_type_description": "Trigger Primitive",
