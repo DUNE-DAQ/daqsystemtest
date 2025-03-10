@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="60" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20241105T173113"/>
+<info name="" type="" num-of-items="64" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.IRONDOMAIN.local" last-modification-time="20250310T153618"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -112,12 +112,21 @@
  </rel>
 </obj>
 
+<obj class="DFOBrokerConf" id="dfobroker-01">
+ <attr name="send_heartbeat_interval_ms" type="u32" val="1000"/>
+ <attr name="send_heartbeat_timeout_ms" type="u32" val="1000"/>
+ <attr name="td_timeout_ms" type="u32" val="1000"/>
+ <attr name="stop_timeout_ms" type="u32" val="5000"/>
+ <rel name="initial_active_dfo" class="DFOApplication" id="dfo-01"/>
+</obj>
+
 <obj class="DFOConf" id="dfoconf-01">
  <attr name="general_queue_timeout_ms" type="u32" val="100"/>
  <attr name="stop_timeout_ms" type="u32" val="100"/>
  <attr name="td_send_retries" type="s32" val="5"/>
  <attr name="busy_threshold" type="s32" val="2"/>
  <attr name="free_threshold" type="s32" val="1"/>
+ <attr name="busy_interval_ms" type="u32" val="1000"/>
 </obj>
 
 <obj class="DPDKReaderConf" id="def-emu-nic-receiver-conf">
@@ -149,12 +158,6 @@
  </attr>
 </obj>
 
-<obj class="DaqModulesGroupByType" id="tp-handler-step">
- <attr name="modules" type="class">
-  <data val="TriggerDataHandlerModule"/>
- </attr>
-</obj>
-
 <obj class="DaqModulesGroupByType" id="subscriber-step">
  <attr name="modules" type="class">
   <data val="DataSubscriberModule"/>
@@ -162,6 +165,12 @@
 </obj>
 
 <obj class="DaqModulesGroupByType" id="ta-handler-step">
+ <attr name="modules" type="class">
+  <data val="TriggerDataHandlerModule"/>
+ </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="tp-handler-step">
  <attr name="modules" type="class">
   <data val="TriggerDataHandlerModule"/>
  </attr>
@@ -408,6 +417,7 @@
 <obj class="MLTConf" id="def-mlt-conf">
  <attr name="template_for" type="class" val="MLTModule"/>
  <attr name="latency_monitoring" type="bool" val="1"/>
+ <rel name="initial_active_dfo" class="DFOApplication" id="dfo-01"/>
 </obj>
 
 <obj class="NICStatsConf" id="def-nic-stats">
@@ -532,12 +542,12 @@
 
 <obj class="TCMakerADCSimpleWindowAlgorithm" id="tc-adcwindow-algo">
  <attr name="prescale" type="u32" val="100"/>
- <attr name="tc_type_name" type="string" val="kADCSimpleWindow">
+ <attr name="tc_type_name" type="string" val="kADCSimpleWindow"/>
 </obj>
 
 <obj class="TCMakerPrescaleAlgorithm" id="tc-pass-through-algo">
  <attr name="prescale" type="u32" val="100"/>
- <attr name="tc_type_name" type="string" val="kPrescale">
+ <attr name="tc_type_name" type="string" val="kPrescale"/>
 </obj>
 
 <obj class="TCReadoutMap" id="def-hsi-tc-map">
