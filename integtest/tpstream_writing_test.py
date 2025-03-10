@@ -42,9 +42,9 @@ wibeth_tpset_params = {
     "min_size_bytes": 72,
     "max_size_bytes": 170000,
     "debug_mask": 0x0,
-    "frag_sizes_by_record_ordinal": {  "first": {"min_size_bytes":    128, "max_size_bytes": 157000},
-                                      "second": {"min_size_bytes":    128, "max_size_bytes": 157000},
-                                        "last": {"min_size_bytes":    128, "max_size_bytes": 157000},
+    "frag_sizes_by_record_ordinal": {  "first": {"min_size_bytes":    104, "max_size_bytes": 157000},
+                                      "second": {"min_size_bytes":    104, "max_size_bytes": 157000},
+                                        "last": {"min_size_bytes":    104, "max_size_bytes": 157000},
                                      "default": {"min_size_bytes": 108000, "max_size_bytes": 157000} }
 }
 triggercandidate_frag_params = {
