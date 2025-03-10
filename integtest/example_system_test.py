@@ -49,6 +49,8 @@ hsi_frag_params = {
     "expected_fragment_count": 1,
     "min_size_bytes": 72,
     "max_size_bytes": 100,
+    "frag_sizes_by_TC_type": {"kTiming": {"min_size_bytes": 100, "max_size_bytes": 100},
+                              "default": {"min_size_bytes":  72, "max_size_bytes":  72} }
 }
 ignored_logfile_problems = {
     "-controller": [
