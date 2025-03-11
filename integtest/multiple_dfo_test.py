@@ -118,16 +118,16 @@ confgen_arguments = {"MinimalSystem": conf_dict}
 # The commands to run in nanorc, as a list
 nanorc_command_list = (
     "boot conf".split()
-    + "start --run-number 101 wait 1 enable-triggers wait ".split()
+    + "start --run-number 101 wait 1 enable-dfo enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop".split()
     + "start --run-number 102 wait 1 enable-dfo --dfo-name dfo-02 enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop".split()
-    + "start --run-number 103 wait 1 enable-triggers wait ".split()
+    + "start --run-number 103 wait 1 enable-dfo enable-triggers wait ".split()
     + [str(int(run_duration / 2))] + "enable-dfo --dfo-name dfo-03 wait".split() + [str(int(run_duration / 2))]
     + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop".split()
-    + "start --run-number 104 wait 1 enable-triggers wait ".split()
+    + "start --run-number 104 wait 1 enable-dfo enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop".split()
     + "scrap terminate".split()

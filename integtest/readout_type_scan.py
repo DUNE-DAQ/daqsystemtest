@@ -203,7 +203,7 @@ confgen_arguments = {
 
 # The commands to run in nanorc, as a list
 nanorc_command_list = (
-    "boot conf start --run-number 101 wait 2 enable-triggers wait ".split()
+    "boot conf start --run-number 101 wait 2 enable-dfo enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers wait 2 drain-dataflow stop-trigger-sources wait 2 stop scrap terminate".split()
 )

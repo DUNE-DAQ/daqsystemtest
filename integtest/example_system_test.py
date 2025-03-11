@@ -100,7 +100,7 @@ else:
 
 # The commands to run in nanorc, as a list
 nanorc_command_list = (
-    "boot wait 5 conf start --run-number 101 wait 1 enable-triggers wait ".split()
+    "boot wait 5 conf start --run-number 101 wait 1 enable-dfo enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop scrap terminate".split()
 )

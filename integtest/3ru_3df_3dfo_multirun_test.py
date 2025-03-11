@@ -143,7 +143,7 @@ confgen_arguments = {
 # The commands to run in nanorc, as a list
 nanorc_command_list = "boot conf".split()
 nanorc_command_list += (
-    "start --run-number 101 wait 5 enable-triggers wait ".split()
+    "start --run-number 101 wait 5 enable-dfo enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
 )
@@ -153,12 +153,12 @@ nanorc_command_list += (
     + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
 )
 nanorc_command_list += (
-    "start --run-number 103 wait 1 enable-triggers wait ".split()
+    "start --run-number 103 wait 1 enable-dfo enable-triggers wait ".split()
     + [str(int(run_duration / 2))] + "enable-dfo --dfo-name dfo-03 wait".split() + [str(int(run_duration / 2))]
     + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
 )
 nanorc_command_list += (
-    "start --run-number 104 wait 5 enable-triggers wait ".split()
+    "start --run-number 104 wait 5 enable-dfo enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
 )

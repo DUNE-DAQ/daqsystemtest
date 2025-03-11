@@ -107,7 +107,7 @@ conf_dict.config_substitutions.append(
 confgen_arguments = {"SmallFootprint": conf_dict}
 # The commands to run in nanorc, as a list
 nanorc_command_list = (
-    "boot conf start --run-number 101 wait 1 enable-triggers wait ".split()
+    "boot conf start --run-number 101 wait 1 enable-dfo enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers wait 2 drain-dataflow stop-trigger-sources stop wait 2 scrap terminate".split()
 )

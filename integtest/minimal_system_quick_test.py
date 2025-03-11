@@ -112,7 +112,7 @@ conf_dict.config_substitutions.append(substitution)
 confgen_arguments = {"MinimalSystem": conf_dict}
 # The commands to run in nanorc, as a list
 nanorc_command_list = (
-    "boot conf start --run-number 101 wait 1 enable-triggers wait ".split()
+    "boot conf start --run-number 101 wait 1 enable-dfo enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop scrap terminate".split()
 )
