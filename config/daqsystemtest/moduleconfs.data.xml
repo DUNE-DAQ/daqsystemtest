@@ -117,7 +117,6 @@
  <attr name="send_heartbeat_timeout_ms" type="u32" val="1000"/>
  <attr name="td_timeout_ms" type="u32" val="1000"/>
  <attr name="stop_timeout_ms" type="u32" val="5000"/>
- <rel name="initial_active_dfo" class="DFOApplication" id="dfo-01"/>
 </obj>
 
 <obj class="DFOConf" id="dfoconf-01">
@@ -417,7 +416,6 @@
 <obj class="MLTConf" id="def-mlt-conf">
  <attr name="template_for" type="class" val="MLTModule"/>
  <attr name="latency_monitoring" type="bool" val="1"/>
- <rel name="initial_active_dfo" class="DFOApplication" id="dfo-01"/>
 </obj>
 
 <obj class="NICStatsConf" id="def-nic-stats">

@@ -409,9 +409,6 @@
  <attr name="order" type="string">
   <data val="enable-dfo"/>
  </attr>
- <attr name="mandatory" type="string">
-  <data val="enable-dfo"/>
- </attr>
 </obj>
 
 <obj class="FSMxTransition" id="pre_start_prod">
