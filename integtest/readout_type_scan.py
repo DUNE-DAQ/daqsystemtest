@@ -70,32 +70,44 @@ pds_frag_params = {
     "min_size_bytes": 435912,
     "max_size_bytes": 1133256,
 }  # 20 x 21792; 52 x 21792 (+72)
+
+# sizes: 128 is for one TC with zero TAs inside it (72+56)
+#        208 is for one TC with one TA inside it (72+56+80)
+#        264 is for two TCs with one TA in one of them (72+56+80+56)
 triggercandidate_frag_params = {
     "fragment_type_description": "Trigger Candidate",
     "fragment_type": "Trigger_Candidate",
-    "hdf5_source_subsystem": "Trigger",
     "expected_fragment_count": 1,
-    "min_size_bytes": 120,
-    "max_size_bytes": 150,
+    "min_size_bytes": 128,
+    "max_size_bytes": 264,
+    "debug_mask": 0x0,
+    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes": 208, "max_size_bytes": 264},
+                                "kRandom": {"min_size_bytes": 128, "max_size_bytes": 264},
+                                "default": {"min_size_bytes": 128, "max_size_bytes": 264} }
 }
+# sizes:  72 is for an empty TA fragment
+#        184 is for one TA with one TP inside it (72+88+24)
+#        296 is for two TAs with one TP in each of them (72+88+24+88+24)
+#        408 is for three TAs with one TP in each of them (72+88+24+88+24+88+24)
 triggeractivity_frag_params = {
     "fragment_type_description": "Trigger Activity",
     "fragment_type": "Trigger_Activity",
     "expected_fragment_count": 1,
     "min_size_bytes": 72,
-    "max_size_bytes": 456,
+    "max_size_bytes": 408,
     "debug_mask": 0x0,
-    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes": 192, "max_size_bytes": 456},
-                                "kRandom": {"min_size_bytes":  72, "max_size_bytes": 336},
-                                "default": {"min_size_bytes":  72, "max_size_bytes": 456} }
+    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes": 184, "max_size_bytes": 408},
+                                "kRandom": {"min_size_bytes":  72, "max_size_bytes": 296},
+                                "default": {"min_size_bytes":  72, "max_size_bytes": 408} }
 }
-triggertp_frag_params = {
-    "fragment_type_description": "Trigger with TPs",
+# sizes:  72 is for an empty TP fragment
+#        144 is for a fragment with three TPs in it (72+24+24+24)
+triggerprimitive_frag_params = {
+    "fragment_type_description": "Trigger Primitive",
     "fragment_type": "Trigger_Primitive",
-    "hdf5_source_subsystem": "Trigger",
-    "expected_fragment_count": (3 * 1), # number_of_readout_apps
+    "expected_fragment_count": 3,
     "min_size_bytes": 72,
-    "max_size_bytes": 16000,
+    "max_size_bytes": 144,
 }
 ignored_logfile_problems = {
     "-controller": [
@@ -256,7 +268,7 @@ def test_data_files(run_nanorc):
         )
         fragment_check_list.append(wibeth_frag_multi_trig_params)
         fragment_check_list.append(triggeractivity_frag_params)
-        fragment_check_list.append(triggertp_frag_params)
+        fragment_check_list.append(triggerprimitive_frag_params)
     else:
         fragment_check_list.append(triggercandidate_frag_params)
         current_test = os.environ.get("PYTEST_CURRENT_TEST")
