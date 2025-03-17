@@ -19,22 +19,6 @@ expected_number_of_data_files = 1
 check_for_logfile_errors = True
 expected_event_count = run_duration
 expected_event_count_tolerance = 2
-wib1_frag_hsi_trig_params = {
-    "fragment_type_description": "WIB",
-    "fragment_type": "ProtoWIB",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": number_of_data_producers,
-    "min_size_bytes": 37656,
-    "max_size_bytes": 37656,
-}
-wib2_frag_params = {
-    "fragment_type_description": "WIB2",
-    "fragment_type": "WIB",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": number_of_data_producers,
-    "min_size_bytes": 29808,
-    "max_size_bytes": 30280,
-}
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
@@ -154,9 +138,8 @@ def test_data_files(run_nanorc):
     assert len(run_nanorc.data_files) == expected_number_of_data_files
 
     fragment_check_list = [triggercandidate_frag_params, hsi_frag_params]
-    # fragment_check_list.append(wib1_frag_hsi_trig_params) # ProtoWIB
-    # fragment_check_list.append(wib2_frag_params) # DuneWIB
-    fragment_check_list.append(wibeth_frag_params)  # WIBEth
+    fragment_check_list.append(wibeth_frag_params)
+    nontrig_fragment_check_list = [hsi_frag_params, wibeth_frag_params]
 
     all_ok = True
     for idx in range(len(run_nanorc.data_files)):
@@ -173,6 +156,7 @@ def test_data_files(run_nanorc):
             all_ok &= data_file_checks.check_fragment_sizes(
                 data_file, fragment_check_list[jdx]
             )
-            all_ok &= data_file_checks.check_fragment_error_flags( data_file, fragment_check_list[jdx])
+        for kdx in range(len(nontrig_fragment_check_list)):
+            all_ok &= data_file_checks.check_fragment_error_flags( data_file, nontrig_fragment_check_list[kdx])
 
     assert all_ok
