@@ -11,8 +11,6 @@ pytest_plugins = "integrationtest.integrationtest_drunc"
 number_of_data_producers = 1
 data_rate_slowdown_factor = 1  # 10 for ProtoWIB/DuneWIB
 run_duration = 20  # seconds
-readout_window_time_before = 1000
-readout_window_time_after = 1001
 
 # Default values for validation parameters
 expected_number_of_data_files = 1
@@ -40,8 +38,8 @@ wibeth_frag_params = {
     "fragment_type": "WIBEth",
     "hdf5_source_subsystem": "Detector_Readout",
     "expected_fragment_count": number_of_data_producers,
-    "min_size_bytes": 7272,
-    "max_size_bytes": 14472,
+    "min_size_bytes": 14472,
+    "max_size_bytes": 21672,
 }
 triggercandidate_frag_params = {
     "fragment_type_description": "Trigger Candidate",
@@ -56,7 +54,7 @@ hsi_frag_params = {
     "fragment_type": "Hardware_Signal",
     "hdf5_source_subsystem": "HW_Signals_Interface",
     "expected_fragment_count": 1,
-    "min_size_bytes": 72,
+    "min_size_bytes": 100,
     "max_size_bytes": 100,
 }
 ignored_logfile_problems = {
@@ -69,9 +67,7 @@ ignored_logfile_problems = {
     ],
     "connectivity-service": [
         "errorlog: -",
-        "Worker with pid \\d+ was terminated due to signal 1",
     ],
-    "log_.*_smallfootprint_": ["connect: Connection refused"],
 }
 
 # The next three variable declarations *must* be present as globals in the test
@@ -108,17 +104,7 @@ conf_dict.config_substitutions.append(
     )
 )
 
-conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
-        obj_class="TCReadoutMap",
-        updates={
-            "time_before": readout_window_time_before,
-            "time_after": readout_window_time_after,
-        },
-    )
-)
-
-confgen_arguments = {"MinimalSystem": conf_dict}
+confgen_arguments = {"SmallFootprint": conf_dict}
 # The commands to run in nanorc, as a list
 nanorc_command_list = (
     "boot conf start --run-number 101 wait 1 enable-triggers wait ".split()

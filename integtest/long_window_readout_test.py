@@ -60,9 +60,7 @@ ignored_logfile_problems = {
     ],
     "connectivity-service": [
         "errorlog: -",
-        "Worker with pid \\d+ was terminated due to signal 1",
     ],
-    "log_.*_longwindow_": ["connect: Connection refused"],
 }
 
 # Determine if the conditions are right for these tests
@@ -143,6 +141,13 @@ conf_dict.config_substitutions.append(
         obj_class="DataStoreConf",
         obj_id="default",
         updates={"max_file_size": 4 * 1024 * 1024 * 1024},
+    )
+)
+conf_dict.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="DataStoreConf",
+        obj_id="default",
+        updates={"directory_path": output_path_parameter},
     )
 )
 

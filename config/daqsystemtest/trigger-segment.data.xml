@@ -157,6 +157,9 @@
   <ref class="NetworkConnectionRule" id="tc-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
  </rel>
+ <rel name="action_plans">
+  <ref class="ActionPlan" id="tc-maker-start"/>
+ </rel>
  <rel name="data_subscriber" class="DataReaderConf" id="ta-subscriber-1"/>
  <rel name="trigger_inputs_handler" class="DataHandlerConf" id="def-ta-handler"/>
 </obj>

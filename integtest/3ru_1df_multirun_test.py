@@ -58,7 +58,7 @@ triggeractivity_frag_params = {
     "hdf5_source_subsystem": "Trigger",
     "expected_fragment_count": 1,
     "min_size_bytes": 72,
-    "max_size_bytes": 400,
+    "max_size_bytes": 504,
 }
 triggertp_frag_params = {
     "fragment_type_description": "Trigger with TPs",
@@ -83,9 +83,7 @@ ignored_logfile_problems = {
     ],
     "connectivity-service": [
         "errorlog: -",
-        "Worker with pid \\d+ was terminated due to signal 1",
     ],
-    "log_.*_3ru1df_": ["connect: Connection refused"],
 }
 
 # Determine if this computer is powerful enough for these tests
@@ -130,6 +128,12 @@ conf_dict.config_substitutions.append(
 conf_dict.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="LatencyBuffer", updates={"size": 200000}
+    )
+)
+conf_dict.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="DFOConf",
+        updates={"busy_threshold": 3, "free_threshold": 2}
     )
 )
 

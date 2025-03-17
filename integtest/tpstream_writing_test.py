@@ -52,22 +52,22 @@ triggercandidate_frag_params = {
     "fragment_type": "Trigger_Candidate",
     "expected_fragment_count": 1,
     "min_size_bytes": 128,
-    "max_size_bytes": 208,
+    "max_size_bytes": 264,
     "debug_mask": 0x0,
-    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes": 208, "max_size_bytes": 208},
-                                "kRandom": {"min_size_bytes": 128, "max_size_bytes": 128},
-                                "default": {"min_size_bytes": 128, "max_size_bytes": 208} }
+    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes": 208, "max_size_bytes": 264},
+                                "kRandom": {"min_size_bytes": 128, "max_size_bytes": 264},
+                                "default": {"min_size_bytes": 128, "max_size_bytes": 264} }
 }
 triggeractivity_frag_params = {
     "fragment_type_description": "Trigger Activity",
     "fragment_type": "Trigger_Activity",
     "expected_fragment_count": 1,
     "min_size_bytes": 72,
-    "max_size_bytes": 360,
+    "max_size_bytes": 504,
     "debug_mask": 0x0,
-    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes": 216, "max_size_bytes": 360},
-                                "kRandom": {"min_size_bytes":  72, "max_size_bytes": 216},
-                                "default": {"min_size_bytes":  72, "max_size_bytes": 360} }
+    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes": 216, "max_size_bytes": 504},
+                                "kRandom": {"min_size_bytes":  72, "max_size_bytes": 360},
+                                "default": {"min_size_bytes":  72, "max_size_bytes": 504} }
 }
 triggerprimitive_frag_params = {
     "fragment_type_description": "Trigger Primitive",
@@ -90,9 +90,7 @@ ignored_logfile_problems = {
     ],
     "connectivity-service": [
         "errorlog: -",
-        "Worker with pid \\d+ was terminated due to signal 1",
     ],
-    "log_.*_tpstream_": ["connect: Connection refused"],
 }
 
 object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
@@ -138,6 +136,20 @@ conf_dict.config_substitutions.append(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={"merge_overlapping_tcs": 0},
+    )
+)
+conf_dict.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="DataStoreConf",
+        obj_id="default",
+        updates={"directory_path": output_dir},
+    )
+)
+conf_dict.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="DataStoreConf",
+        obj_id="default_tp_store_conf",
+        updates={"directory_path": output_dir},
     )
 )
 
