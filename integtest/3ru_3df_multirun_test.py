@@ -26,15 +26,7 @@ check_for_logfile_errors = True
 expected_event_count = run_duration * trigger_rate / number_of_dataflow_apps
 expected_event_count_tolerance = expected_event_count / 10
 
-wibeth_frag_hsi_trig_params = {
-    "fragment_type_description": "WIBEth",
-    "fragment_type": "WIBEth",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": (number_of_data_producers * number_of_readout_apps),
-    "min_size_bytes": 7272,
-    "max_size_bytes": 14472,
-}
-wibeth_frag_multi_trig_params = {
+wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
     "hdf5_source_subsystem": "Detector_Readout",
@@ -182,7 +174,7 @@ def test_data_files(run_nanorc):
     local_event_count_tolerance = expected_event_count_tolerance
     low_number_of_files = expected_number_of_data_files
     high_number_of_files = expected_number_of_data_files
-    fragment_check_list = [triggercandidate_frag_params, hsi_frag_params]
+    fragment_check_list = [triggercandidate_frag_params, hsi_frag_params, wibeth_frag_params]
     if run_nanorc.confgen_config.tpg_enabled:
         local_expected_event_count += (
             (6250 / ta_prescale)
@@ -198,16 +190,13 @@ def test_data_files(run_nanorc):
             * run_duration
             / (100 * number_of_dataflow_apps)
         )
-        # fragment_check_list.append(wib2_frag_multi_trig_params) # DuneWIB
-        fragment_check_list.append(wibeth_frag_multi_trig_params)  # WIBEth
         fragment_check_list.append(triggertp_frag_params)
         fragment_check_list.append(triggeractivity_frag_params)
     else:
         low_number_of_files -= number_of_dataflow_apps
         if low_number_of_files < 1:
             low_number_of_files = 1
-        # fragment_check_list.append(wib2_frag_hsi_trig_params) # DuneWIB
-        fragment_check_list.append(wibeth_frag_hsi_trig_params)  # WIBEth
+    nontrig_fragment_check_list = [hsi_frag_params, wibeth_frag_params]
 
     # Run some tests on the output data file
     assert (
@@ -230,5 +219,6 @@ def test_data_files(run_nanorc):
             all_ok &= data_file_checks.check_fragment_sizes(
                 data_file, fragment_check_list[jdx]
             )
-            all_ok &= data_file_checks.check_fragment_error_flags( data_file, fragment_check_list[jdx])
+        for kdx in range(len(nontrig_fragment_check_list)):
+            all_ok &= data_file_checks.check_fragment_error_flags( data_file, nontrig_fragment_check_list[kdx])
     assert all_ok

@@ -28,15 +28,7 @@ expected_event_count_tolerance = math.ceil(expected_event_count / 10)
 minimum_cpu_count = 18
 minimum_free_memory_gb = 24
 
-wibeth_frag_hsi_trig_params = {
-    "fragment_type_description": "WIBEth",
-    "fragment_type": "WIBEth",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": (number_of_data_producers * number_of_readout_apps),
-    "min_size_bytes": 7272,
-    "max_size_bytes": 14472,
-}
-wibeth_frag_multi_trig_params = {
+wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
     "hdf5_source_subsystem": "Detector_Readout",
@@ -228,7 +220,7 @@ def test_data_files(run_nanorc):
 
     local_expected_event_count = expected_event_count
     local_event_count_tolerance = expected_event_count_tolerance
-    fragment_check_list = [triggercandidate_frag_params, hsi_frag_params]
+    fragment_check_list = [triggercandidate_frag_params, hsi_frag_params, wibeth_frag_params]
     if run_nanorc.confgen_config.tpg_enabled:
         local_expected_event_count += (
             (6250 / ta_prescale)
@@ -244,15 +236,8 @@ def test_data_files(run_nanorc):
             * run_duration
             / 100
         )
-        # fragment_check_list.append(wib1_frag_multi_trig_params) # ProtoWIB
-        # fragment_check_list.append(wib2_frag_multi_trig_params) # DuneWIB
-        fragment_check_list.append(wibeth_frag_multi_trig_params)  # WIBEth
         fragment_check_list.append(triggertp_frag_params)
         fragment_check_list.append(triggeractivity_frag_params)
-    else:
-        # fragment_check_list.append(wib1_frag_hsi_trig_params) # ProtoWIB
-        # fragment_check_list.append(wib2_frag_hsi_trig_params) # DuneWIB
-        fragment_check_list.append(wibeth_frag_hsi_trig_params)  # WIBEth
 
     # Run some tests on the output data file
     assert len(run_nanorc.data_files) == expected_number_of_data_files
