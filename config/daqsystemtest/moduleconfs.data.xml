@@ -538,14 +538,14 @@
 <obj class="SocketReaderConf" id="def-socket-reader-conf">
  <attr name="template_for" type="class" val="SocketReaderModule"/>
  <attr name="emulation_mode" type="bool" val="0"/>
- <attr name="socket_type" type="enum" val="TCP"/>
+ <attr name="socket_type" type="enum" val="UDP"/>
  <attr name="local_ip" type="string" val="127.0.0.1"/>
 </obj>
 
 <obj class="SocketWriterConf" id="def-socket-writer-conf">
  <attr name="template_for" type="class" val="FakeSocketWriterModule"/>
  <attr name="emulation_mode" type="bool" val="0"/>
- <attr name="socket_type" type="enum" val="TCP"/>
+ <attr name="socket_type" type="enum" val="UDP"/>
  <attr name="remote_ip" type="string" val="127.0.0.1"/>
 </obj>
 
