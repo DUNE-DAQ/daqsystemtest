@@ -155,6 +155,7 @@
   <ref class="Variable" id="local-env-ers-warning"/>
   <ref class="Variable" id="local-env-ers-error"/>
   <ref class="Variable" id="local-env-ers-fatal"/>
+  <ref class="Variable" id="local-env-ers-debug-level"/>
  </rel>
  <rel name="disabled">
   <ref class="DFApplication" id="df-02"/>
@@ -200,6 +201,7 @@
   <ref class="Variable" id="local-env-ers-warning"/>
   <ref class="Variable" id="local-env-ers-error"/>
   <ref class="Variable" id="local-env-ers-fatal"/>
+  <ref class="Variable" id="local-env-ers-debug-level"/>
  </rel>
  <rel name="disabled">
   <ref class="DFApplication" id="df-02"/>
