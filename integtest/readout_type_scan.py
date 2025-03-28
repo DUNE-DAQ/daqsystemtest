@@ -28,7 +28,6 @@ expected_event_count_tolerance = 2
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
-    "hdf5_source_subsystem": "Detector_Readout",
     "expected_fragment_count": number_of_data_producers,
     "min_size_bytes": 7272,
     "max_size_bytes": 14472,
@@ -36,7 +35,6 @@ wibeth_frag_params = {
 wibeth_frag_multi_trig_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
-    "hdf5_source_subsystem": "Detector_Readout",
     "expected_fragment_count": number_of_data_producers,
     "min_size_bytes": 7272,
     "max_size_bytes": 14472,
@@ -44,7 +42,6 @@ wibeth_frag_multi_trig_params = {
 tde_frag_params = {
     "fragment_type_description": "TDEEth",
     "fragment_type": "TDEEth",
-    "hdf5_source_subsystem": "Detector_Readout",
     "expected_fragment_count": number_of_data_producers,
     "min_size_bytes": 7272,
     "max_size_bytes": 14472,
@@ -57,7 +54,6 @@ tde_frag_params = {
 pds_stream_frag_params = {
     "fragment_type_description": "PDSStream",
     "fragment_type": "DAPHNEStream",
-    "hdf5_source_subsystem": "Detector_Readout",
     "expected_fragment_count": number_of_data_producers,
     "min_size_bytes": 72+461026-20*472,
     "max_size_bytes": 72+461026+20*472,
@@ -65,7 +61,6 @@ pds_stream_frag_params = {
 pds_frag_params = {
     "fragment_type_description": "PDS",
     "fragment_type": "DAPHNE",
-    "hdf5_source_subsystem": "Detector_Readout",
     "expected_fragment_count": number_of_data_producers,
     "min_size_bytes": 435912,
     "max_size_bytes": 1133256,

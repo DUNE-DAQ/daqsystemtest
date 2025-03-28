@@ -32,7 +32,6 @@ expected_event_count_tolerance = 2
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
-    "hdf5_source_subsystem": "Detector_Readout",
     "expected_fragment_count": number_of_data_producers,
     "min_size_bytes": baseline_fragment_size_bytes,
     "max_size_bytes": baseline_fragment_size_bytes_max,
