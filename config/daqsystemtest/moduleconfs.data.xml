@@ -461,7 +461,7 @@
   <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
   <ref class="AVXThresholdProcessor" id="tpg-threshold-proc"/>
  </rel>
- <rel name="tot_minima" class="TimeOverThresholdMinima" id="def-tot-minima"/>
+ <rel name="sot_minima" class="SamplesOverThresholdMinima" id="def-sot-minima"/>
 </obj>
 
 <obj class="RequestHandler" id="def-data-request-handler">
@@ -523,14 +523,14 @@
 
 <obj class="TAMakerADCSimpleWindowAlgorithm" id="ta-maker-adcwindow">
  <attr name="prescale" type="u32" val="10"/>
- <attr name="max_time_over_threshold" type="u32" val="10000"/>
+ <attr name="max_samples_over_threshold" type="u32" val="10000"/>
  <attr name="adc_threshold" type="u32" val="1000000"/>
  <attr name="window_length" type="u32" val="10000"/>
 </obj>
 
 <obj class="TAMakerChannelDistanceAlgorithm" id="ta-maker-channeldistance">
  <attr name="prescale" type="u32" val="100"/>
- <attr name="max_time_over_threshold" type="u32" val="10000"/>
+ <attr name="max_samples_over_threshold" type="u32" val="10000"/>
  <attr name="window_length" type="u32" val="10000"/>
  <attr name="min_tps" type="u32" val="10"/>
  <attr name="max_channel_distance" type="u32" val="5"/>
@@ -538,7 +538,7 @@
 
 <obj class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker">
  <attr name="prescale" type="u32" val="1000"/>
- <attr name="max_time_over_threshold" type="u32" val="10000"/>
+ <attr name="max_samples_over_threshold" type="u32" val="10000"/>
 </obj>
 
 <obj class="TCDataProcessor" id="def-tc-processor">
@@ -628,10 +628,10 @@
  </rel>
 </obj>
 
-<obj class="TimeOverThresholdMinima" id="def-tot-minima">
- <attr name="tot_minimum_plane0" type="u16" val="1"/>
- <attr name="tot_minimum_plane1" type="u16" val="1"/>
- <attr name="tot_minimum_plane2" type="u16" val="1"/>
+<obj class="SamplesOverThresholdMinima" id="def-sot-minima">
+ <attr name="sot_minimum_plane0" type="u16" val="1"/>
+ <attr name="sot_minimum_plane1" type="u16" val="1"/>
+ <attr name="sot_minimum_plane2" type="u16" val="1"/>
 </obj>
 
 </oks-data>
