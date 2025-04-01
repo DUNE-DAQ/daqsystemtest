@@ -31,7 +31,6 @@ minimum_free_memory_gb = 24
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
-    "hdf5_source_subsystem": "Detector_Readout",
     "expected_fragment_count": (number_of_data_producers * number_of_readout_apps),
     "min_size_bytes": 7272,
     "max_size_bytes": 14472,
@@ -77,7 +76,6 @@ triggerprimitive_frag_params = {
 hsi_frag_params = {
     "fragment_type_description": "HSI",
     "fragment_type": "Hardware_Signal",
-    "hdf5_source_subsystem": "HW_Signals_Interface",
     "expected_fragment_count": 0,
     "min_size_bytes": 72,
     "max_size_bytes": 100,

@@ -20,7 +20,6 @@ expected_event_count_tolerance = 2
 wib1_frag_hsi_trig_params = {
     "fragment_type_description": "WIB",
     "fragment_type": "ProtoWIB",
-    "hdf5_source_subsystem": "Detector_Readout",
     "expected_fragment_count": number_of_data_producers,
     "min_size_bytes": 37656,
     "max_size_bytes": 37656,
@@ -28,7 +27,6 @@ wib1_frag_hsi_trig_params = {
 wib2_frag_params = {
     "fragment_type_description": "WIB2",
     "fragment_type": "WIB",
-    "hdf5_source_subsystem": "Detector_Readout",
     "expected_fragment_count": number_of_data_producers,
     "min_size_bytes": 29808,
     "max_size_bytes": 30280,
@@ -36,7 +34,6 @@ wib2_frag_params = {
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
-    "hdf5_source_subsystem": "Detector_Readout",
     "expected_fragment_count": number_of_data_producers,
     "min_size_bytes": 14472,
     "max_size_bytes": 21672,
@@ -44,7 +41,6 @@ wibeth_frag_params = {
 triggercandidate_frag_params = {
     "fragment_type_description": "Trigger Candidate",
     "fragment_type": "Trigger_Candidate",
-    "hdf5_source_subsystem": "Trigger",
     "expected_fragment_count": 1,
     "min_size_bytes": 128,
     "max_size_bytes": 216,
@@ -52,7 +48,6 @@ triggercandidate_frag_params = {
 hsi_frag_params = {
     "fragment_type_description": "HSI",
     "fragment_type": "Hardware_Signal",
-    "hdf5_source_subsystem": "HW_Signals_Interface",
     "expected_fragment_count": 1,
     "min_size_bytes": 100,
     "max_size_bytes": 100,
