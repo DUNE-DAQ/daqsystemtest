@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="ASCII"?>
+
+<!-- oks-data version 2.2 -->
+
+
+<!DOCTYPE oks-data [
+  <!ELEMENT oks-data (info, (include)?, (comments)?, (obj)+)>
+  <!ELEMENT info EMPTY>
+  <!ATTLIST info
+      name CDATA #IMPLIED
+      type CDATA #IMPLIED
+      num-of-items CDATA #REQUIRED
+      oks-format CDATA #FIXED "data"
+      oks-version CDATA #REQUIRED
+      created-by CDATA #IMPLIED
+      created-on CDATA #IMPLIED
+      creation-time CDATA #IMPLIED
+      last-modified-by CDATA #IMPLIED
+      last-modified-on CDATA #IMPLIED
+      last-modification-time CDATA #IMPLIED
+  >
+  <!ELEMENT include (file)*>
+  <!ELEMENT file EMPTY>
+  <!ATTLIST file
+      path CDATA #REQUIRED
+  >
+  <!ELEMENT comments (comment)*>
+  <!ELEMENT comment EMPTY>
+  <!ATTLIST comment
+      creation-time CDATA #REQUIRED
+      created-by CDATA #REQUIRED
+      created-on CDATA #REQUIRED
+      author CDATA #REQUIRED
+      text CDATA #REQUIRED
+  >
+  <!ELEMENT obj (attr | rel)*>
+  <!ATTLIST obj
+      class CDATA #REQUIRED
+      id CDATA #REQUIRED
+  >
+  <!ELEMENT attr (data)*>
+  <!ATTLIST attr
+      name CDATA #REQUIRED
+      type (bool|s8|u8|s16|u16|s32|u32|s64|u64|float|double|date|time|string|uid|enum|class|-) "-"
+      val CDATA ""
+  >
+  <!ELEMENT data EMPTY>
+  <!ATTLIST data
+      val CDATA #REQUIRED
+  >
+  <!ELEMENT rel (ref)*>
+  <!ATTLIST rel
+      name CDATA #REQUIRED
+      class CDATA ""
+      id CDATA ""
+  >
+  <!ELEMENT ref EMPTY>
+  <!ATTLIST ref
+      class CDATA #REQUIRED
+      id CDATA #REQUIRED
+  >
+]>
+
+<oks-data>
+
+<info name="" type="" num-of-items="20" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.IRONDOMAIN.local" last-modification-time="20241023T204409"/>
+
+<include>
+ <file path="schema/confmodel/dunedaq.schema.xml"/>
+ <file path="schema/appmodel/application.schema.xml"/>
+ <file path="config/daqsystemtest/connections.data.xml"/>
+ <file path="config/daqsystemtest/moduleconfs.data.xml"/>
+ <file path="config/daqsystemtest/hosts.data.xml"/>
+ <file path="config/daqsystemtest/ccm.data.xml"/>
+</include>
+
+
+<obj class="SNBTransferApplication" id="snb-transfer-01">
+ <attr name="application_name" type="string" val="daq_application"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="daqapp_control"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="network_rules">
+  <ref class="NetworkConnectionRule" id="snb-transfer-notification-rule"/>
+ </rel>
+ <rel name="snbt" class="SNBTransferConf" id="snb-transfer-conf-01"/>
+</obj>
+
+<obj class="SNBBookkeeperApplication" id="snb-bookkeeper-01">
+ <attr name="application_name" type="string" val="daq_application"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="daqapp_control"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="network_rules">
+  <ref class="NetworkConnectionRule" id="snb-bookkeeper-notification-rule"/>
+ </rel>
+ <rel name="snbbk" class="SNBBookkeeperConf" id="snb-bookkeeper-conf-01"/>
+</obj>
+
+<obj class="RCApplication" id="snb-transfer-controller">
+ <attr name="application_name" type="string" val="drunc-controller"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="rccontroller_control"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="fsm" class="FSMconfiguration" id="FSMconfiguration_noAction"/>
+</obj>
+
+<obj class="Segment" id="snb-transfer-segment">
+ <rel name="applications">
+  <ref class="SNBTransferApplication" id="snb-transfer-01"/>
+  <ref class="SNBBookkeeperApplication" id="snb-bookkeeper-01"/>
+ </rel>
+ <rel name="controller" class="RCApplication" id="snb-transfer-controller"/>
+</obj>
+
+</oks-data>

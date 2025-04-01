@@ -72,6 +72,19 @@
  <file path="schema/appmodel/trigger.schema.xml"/>
 </include>
 
+<obj class="NetworkConnectionDescriptor" id="snb-client-notification">
+ <attr name="uid_base" type="string" val="snbmodules_"/>
+ <attr name="connection_type" type="enum" val="kSendRecv"/>
+ <attr name="data_type" type="string" val="notification_t"/>
+ <rel name="associated_service" class="Service" id="snbNotifications"/>
+</obj>
+
+<obj class="NetworkConnectionDescriptor" id="snb-bookkeeper-notification">
+ <attr name="uid_base" type="string" val="snbmodules_"/>
+ <attr name="connection_type" type="enum" val="kSendRecv"/>
+ <attr name="data_type" type="string" val="notification_t"/>
+ <rel name="associated_service" class="Service" id="snbNotifications"/>
+</obj>
 
 <obj class="NetworkConnectionDescriptor" id="data-req-net-input">
  <attr name="uid_base" type="string" val="data_requests_for_"/>
@@ -148,6 +161,16 @@
  <attr name="connection_type" type="enum" val="kSendRecv"/>
  <attr name="data_type" type="string" val="TriggerInhibit"/>
  <rel name="associated_service" class="Service" id="triggerInhibits"/>
+</obj>
+
+<obj class="NetworkConnectionRule" id="snb-transfer-notification-rule">
+ <attr name="endpoint_class" type="class" val="SNBFileTransfer"/>
+ <rel name="descriptor" class="NetworkConnectionDescriptor" id="snb-client-notification"/>
+</obj>
+
+<obj class="NetworkConnectionRule" id="snb-bookkeeper-notification-rule">
+ <attr name="endpoint_class" type="class" val="SNBTransferBookkeeper"/>
+ <rel name="descriptor" class="NetworkConnectionDescriptor" id="snb-bookkeeper-notification"/>
 </obj>
 
 <obj class="NetworkConnectionRule" id="data-req-hsi-net-rule">
@@ -399,6 +422,12 @@
 </obj>
 
 <obj class="Service" id="dataFragments">
+ <attr name="protocol" type="string" val="tcp"/>
+ <attr name="port" type="u16" val="0"/>
+ <attr name="eth_device_name" type="string" val="eno1"/>
+</obj>
+
+<obj class="Service" id="snbNotifications">
  <attr name="protocol" type="string" val="tcp"/>
  <attr name="port" type="u16" val="0"/>
  <attr name="eth_device_name" type="string" val="eno1"/>
