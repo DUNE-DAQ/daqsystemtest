@@ -39,7 +39,6 @@ expected_event_count_tolerance = 9
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
-    "hdf5_source_subsystem": "Detector_Readout",
     "expected_fragment_count": number_of_data_producers * number_of_readout_apps,
     "min_size_bytes": 1764072,
     "max_size_bytes": 1771272,
@@ -47,7 +46,6 @@ wibeth_frag_params = {
 triggercandidate_frag_params = {
     "fragment_type_description": "Trigger Candidate",
     "fragment_type": "Trigger_Candidate",
-    "hdf5_source_subsystem": "Trigger",
     "expected_fragment_count": 1,
     "min_size_bytes": 72,
     "max_size_bytes": 216,
@@ -60,9 +58,7 @@ ignored_logfile_problems = {
     ],
     "connectivity-service": [
         "errorlog: -",
-        "Worker with pid \\d+ was terminated due to signal 1",
     ],
-    "log_.*_longwindow_": ["connect: Connection refused"],
 }
 
 # Determine if the conditions are right for these tests

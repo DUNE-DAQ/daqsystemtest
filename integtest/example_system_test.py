@@ -21,34 +21,41 @@ hostname = os.uname().nodename
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": 0,
+    "expected_fragment_count": 0,  # determined later
     "min_size_bytes": 7272,
     "max_size_bytes": 21672,
 }
+# sizes: 128 is for one TC with zero TAs inside it (72+56)
+#        208 is for one TC with one TA inside it (72+56+80)
+#        264 is for two TCs with one TA in one of them (72+56+80+56)
 triggercandidate_frag_params = {
     "fragment_type_description": "Trigger Candidate",
     "fragment_type": "Trigger_Candidate",
-    "hdf5_source_subsystem": "Trigger",
     "expected_fragment_count": 1,
     "min_size_bytes": 128,
-    "max_size_bytes": 216,
+    "max_size_bytes": 264,
+    "debug_mask": 0x0,
+    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes": 208, "max_size_bytes": 264},
+                                "kRandom": {"min_size_bytes": 128, "max_size_bytes": 264},
+                                "default": {"min_size_bytes": 128, "max_size_bytes": 264} }
 }
-triggertp_frag_params = {
-    "fragment_type_description": "Trigger with TPs",
+# sizes:  72 is for an empty TP fragment
+#        168 is for a fragment with four TPs in it (72+24+24+24+24)
+triggerprimitive_frag_params = {
+    "fragment_type_description": "Trigger Primitive",
     "fragment_type": "Trigger_Primitive",
-    "hdf5_source_subsystem": "Trigger",
-    "expected_fragment_count": 0,
+    "expected_fragment_count": 0,  # determined later
     "min_size_bytes": 72,
-    "max_size_bytes": 16000,
+    "max_size_bytes": 168,
 }
 hsi_frag_params = {
     "fragment_type_description": "HSI",
     "fragment_type": "Hardware_Signal",
-    "hdf5_source_subsystem": "HW_Signals_Interface",
     "expected_fragment_count": 1,
     "min_size_bytes": 72,
     "max_size_bytes": 100,
+    "frag_sizes_by_TC_type": {"kTiming": {"min_size_bytes": 100, "max_size_bytes": 100},
+                              "default": {"min_size_bytes":  72, "max_size_bytes":  72} }
 }
 ignored_logfile_problems = {
     "-controller": [
@@ -58,15 +65,15 @@ ignored_logfile_problems = {
     "local-connection-server": [
         "errorlog: -",
         "Worker with pid \\d+ was terminated due to signal",
+        r"Worker \(pid:\d+\) was sent SIGHUP"
     ],
-    "log_.*": ["connect: Connection refused"],
+#    "log_.*": ["connect: Connection refused", "Connection reset by peer", "end of stream"],
 }
 
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 
 common_config_obj = data_classes.drunc_config()
-common_config_obj.attempt_cleanup = True
 common_config_obj.op_env = "test"
 common_config_obj.config_db = (
     os.path.dirname(__file__) + "/../config/daqsystemtest/example-configs.data.xml"
@@ -178,7 +185,7 @@ def test_data_files(run_nanorc):
 
     local_expected_fragment_count = expected_fragment_count
     wibeth_frag_params["expected_fragment_count"] = local_expected_fragment_count
-    triggertp_frag_params["expected_fragment_count"] = 3 * local_expected_fragment_count / 4
+    triggerprimitive_frag_params["expected_fragment_count"] = 3 * local_expected_fragment_count / 4
     local_expected_event_count = expected_event_count
     local_event_count_tolerance = expected_event_count_tolerance
     fragment_check_list = [triggercandidate_frag_params, hsi_frag_params]
@@ -200,7 +207,7 @@ def test_data_files(run_nanorc):
     local_event_count_tolerance = local_event_count_tolerance / expected_file_count
 
     fragment_check_list.append(wibeth_frag_params)
-    fragment_check_list.append(triggertp_frag_params)
+    fragment_check_list.append(triggerprimitive_frag_params)
 
     all_ok = True
 
