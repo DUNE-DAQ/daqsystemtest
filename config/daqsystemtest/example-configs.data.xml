@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="8" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20250214T120354"/>
+<info name="" type="" num-of-items="8" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20250325T160832"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -81,6 +81,7 @@
  <comment creation-time="20240909T082108" created-by="glehmann" created-on="np04-srv-024.cern.ch" author="glehmann" text=" "/>
  <comment creation-time="20240918T124331" created-by="maroda" created-on="np04-srv-015.cern.ch" author="maroda" text="change local session opmon URI"/>
  <comment creation-time="20250214T120354" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added new Session with SocketReaderModule"/>
+ <comment creation-time="20250325T160832" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Disabled TP"/>
 </comments>
 
 
@@ -206,6 +207,8 @@
  <rel name="disabled">
   <ref class="DFApplication" id="df-02"/>
   <ref class="DFApplication" id="df-03"/>
+  <ref class="TPStreamWriterApplication" id="tp-stream-writer"/>
+  <ref class="TriggerApplication" id="tc-maker-1"/>
  </rel>
  <rel name="segment" class="Segment" id="socket-root-segment"/>
  <rel name="infrastructure_applications">

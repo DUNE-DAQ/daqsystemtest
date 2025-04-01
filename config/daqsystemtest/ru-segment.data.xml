@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="51" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="dergonul" last-modified-on="np04-srv-031.cern.ch" last-modification-time="20250305T102725"/>
+<info name="" type="" num-of-items="51" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20250325T145413"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -100,6 +100,7 @@
  <comment creation-time="20240828T140226" created-by="aoranday" created-on="np04-srv-031.cern.ch" author="aoranday" text="Change AbsRS config."/>
  <comment creation-time="20240829T102857" created-by="aoranday" created-on="np04-srv-031.cern.ch" author="aoranday" text="Add AbsRS processor."/>
  <comment creation-time="20250214T120354" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added socket communication classes"/>
+ <comment creation-time="20250325T145413" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Disabled TP"/>
 </comments>
 
 
@@ -439,8 +440,8 @@
 
 <obj class="ReadoutApplication" id="socket-ru-01">
  <attr name="application_name" type="string" val="daq_application"/>
- <attr name="tp_generation_enabled" type="bool" val="1"/>
- <attr name="ta_generation_enabled" type="bool" val="1"/>
+ <attr name="tp_generation_enabled" type="bool" val="0"/>
+ <attr name="ta_generation_enabled" type="bool" val="0"/>
  <rel name="contains">
   <ref class="DetectorToDaqConnection" id="socket_conn_apa1"/>
  </rel>
@@ -523,8 +524,6 @@
 
 <obj class="SocketSenderApplication" id="ss-01">
  <attr name="application_name" type="string" val="daq_application"/>
- <attr name="tp_generation_enabled" type="bool" val="1"/>
- <attr name="ta_generation_enabled" type="bool" val="1"/> 
  <rel name="contains">
   <ref class="DetectorToDaqConnection" id="socket_conn_apa1"/>
  </rel>
@@ -553,14 +552,6 @@
   <ref class="ActionPlan" id="socket-write-start"/>
   <ref class="ActionPlan" id="socket-write-stop"/>
  </rel>
- <rel name="tp_source_ids">
-  <ref class="SourceIDConf" id="tp-srcid-1000"/>
-  <ref class="SourceIDConf" id="tp-srcid-1001"/>
-  <ref class="SourceIDConf" id="tp-srcid-1002"/>
- </rel> 
- <rel name="uses" class="RoHwConfig" id="rohw-1"/>
- <rel name="link_handler" class="DataHandlerConf" id="def-link-handler"/>
- <rel name="tp_handler" class="DataHandlerConf" id="def-tp-handler"/> 
  <rel name="data_writers">
   <ref class="SocketWriterConf" id="def-socket-writer-conf"/>
  </rel>
