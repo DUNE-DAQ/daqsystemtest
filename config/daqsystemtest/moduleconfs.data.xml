@@ -103,6 +103,15 @@
  </rel>
 </obj>
 
+<obj class="ActionPlan" id="tc-maker-start">
+ <attr name="execution_policy" type="enum" val="modules-in-series"/>
+ <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="ta-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="subscriber-step"/>
+ </rel>
+</obj>
+
 <obj class="SNBTransferConf" id="snb-transfer-conf-01">
  <attr name="client_ip" type="string" val="127.0.0.1"/>
  <attr name="work_dir" type="string" val="./"/>
@@ -158,6 +167,18 @@
 </obj>
 
 <obj class="DaqModulesGroupByType" id="tp-handler-step">
+ <attr name="modules" type="class">
+  <data val="TriggerDataHandlerModule"/>
+ </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="subscriber-step">
+ <attr name="modules" type="class">
+  <data val="DataSubscriberModule"/>
+ </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="ta-handler-step">
  <attr name="modules" type="class">
   <data val="TriggerDataHandlerModule"/>
  </attr>
@@ -431,6 +452,7 @@
   <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
   <ref class="AVXThresholdProcessor" id="tpg-threshold-proc"/>
  </rel>
+ <rel name="sot_minima" class="SamplesOverThresholdMinima" id="def-sot-minima"/>
 </obj>
 
 <obj class="RequestHandler" id="def-data-request-handler">
@@ -492,14 +514,14 @@
 
 <obj class="TAMakerADCSimpleWindowAlgorithm" id="ta-maker-adcwindow">
  <attr name="prescale" type="u32" val="10"/>
- <attr name="max_time_over_threshold" type="u32" val="10000"/>
+ <attr name="max_samples_over_threshold" type="u32" val="10000"/>
  <attr name="adc_threshold" type="u32" val="1000000"/>
  <attr name="window_length" type="u32" val="10000"/>
 </obj>
 
 <obj class="TAMakerChannelDistanceAlgorithm" id="ta-maker-channeldistance">
  <attr name="prescale" type="u32" val="100"/>
- <attr name="max_time_over_threshold" type="u32" val="10000"/>
+ <attr name="max_samples_over_threshold" type="u32" val="10000"/>
  <attr name="window_length" type="u32" val="10000"/>
  <attr name="min_tps" type="u32" val="10"/>
  <attr name="max_channel_distance" type="u32" val="5"/>
@@ -507,7 +529,7 @@
 
 <obj class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker">
  <attr name="prescale" type="u32" val="1000"/>
- <attr name="max_time_over_threshold" type="u32" val="10000"/>
+ <attr name="max_samples_over_threshold" type="u32" val="10000"/>
 </obj>
 
 <obj class="TCDataProcessor" id="def-tc-processor">
@@ -566,6 +588,12 @@
 <obj class="TRBConf" id="trb-01">
  <attr name="queues_timeout" type="u32" val="100"/>
  <attr name="trigger_record_timeout_ms" type="u32" val="2858"/>
+</obj>
+
+<obj class="SamplesOverThresholdMinima" id="def-sot-minima">
+ <attr name="sot_minimum_plane0" type="u16" val="1"/>
+ <attr name="sot_minimum_plane1" type="u16" val="1"/>
+ <attr name="sot_minimum_plane2" type="u16" val="1"/>
 </obj>
 
 </oks-data>

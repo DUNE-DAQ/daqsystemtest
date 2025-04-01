@@ -26,50 +26,54 @@ check_for_logfile_errors = True
 expected_event_count = run_duration * trigger_rate / number_of_dataflow_apps
 expected_event_count_tolerance = expected_event_count / 10
 
-wibeth_frag_hsi_trig_params = {
+wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
-    "hdf5_source_subsystem": "Detector_Readout",
     "expected_fragment_count": (number_of_data_producers * number_of_readout_apps),
     "min_size_bytes": 7272,
     "max_size_bytes": 14472,
 }
-wibeth_frag_multi_trig_params = {
-    "fragment_type_description": "WIBEth",
-    "fragment_type": "WIBEth",
-    "hdf5_source_subsystem": "Detector_Readout",
-    "expected_fragment_count": (number_of_data_producers * number_of_readout_apps),
-    "min_size_bytes": 7272,
-    "max_size_bytes": 14472,
-}
+# sizes: 128 is for one TC with zero TAs inside it (72+56)
+#        208 is for one TC with one TA inside it (72+56+80)
+#        264 is for two TCs with one TA in one of them (72+56+80+56)
 triggercandidate_frag_params = {
     "fragment_type_description": "Trigger Candidate",
     "fragment_type": "Trigger_Candidate",
-    "hdf5_source_subsystem": "Trigger",
     "expected_fragment_count": 1,
-    "min_size_bytes": 72,
-    "max_size_bytes": 280,
+    "min_size_bytes": 128,
+    "max_size_bytes": 264,
+    "debug_mask": 0x0,
+    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes": 208, "max_size_bytes": 264},
+                                "kRandom": {"min_size_bytes": 128, "max_size_bytes": 264},
+                                "default": {"min_size_bytes": 128, "max_size_bytes": 264} }
 }
+# sizes:  72 is for an empty TA fragment
+#        184 is for one TA with one TP inside it (72+88+24)
+#        296 is for two TAs with one TP in each of them (72+88+24+88+24)
+#        408 is for three TAs with one TP in each of them (72+88+24+88+24+88+24)
 triggeractivity_frag_params = {
     "fragment_type_description": "Trigger Activity",
     "fragment_type": "Trigger_Activity",
-    "hdf5_source_subsystem": "Trigger",
     "expected_fragment_count": 1,
     "min_size_bytes": 72,
-    "max_size_bytes": 400,
+    "max_size_bytes": 408,
+    "debug_mask": 0x0,
+    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes": 184, "max_size_bytes": 408},
+                                "kRandom": {"min_size_bytes":  72, "max_size_bytes": 296},
+                                "default": {"min_size_bytes":  72, "max_size_bytes": 408} }
 }
-triggertp_frag_params = {
-    "fragment_type_description": "Trigger with TPs",
+# sizes:  72 is for an empty TP fragment
+#        144 is for a fragment with three TPs in it (72+24+24+24)
+triggerprimitive_frag_params = {
+    "fragment_type_description": "Trigger Primitive",
     "fragment_type": "Trigger_Primitive",
-    "hdf5_source_subsystem": "Trigger",
-    "expected_fragment_count": (3 * number_of_readout_apps),
+    "expected_fragment_count": number_of_readout_apps * 3,
     "min_size_bytes": 72,
-    "max_size_bytes": 16000,
+    "max_size_bytes": 144,
 }
 hsi_frag_params = {
     "fragment_type_description": "HSI",
     "fragment_type": "Hardware_Signal",
-    "hdf5_source_subsystem": "HW_Signals_Interface",
     "expected_fragment_count": 0,
     "min_size_bytes": 72,
     "max_size_bytes": 100,
@@ -81,9 +85,7 @@ ignored_logfile_problems = {
     ],
     "connectivity-service": [
         "errorlog: -",
-        "Worker with pid \\d+ was terminated due to signal 1",
     ],
-    "log_.*_3ru3df_": ["connect: Connection refused"],
 }
 
 # The next three variable declarations *must* be present as globals in the test
@@ -184,7 +186,7 @@ def test_data_files(run_nanorc):
     local_event_count_tolerance = expected_event_count_tolerance
     low_number_of_files = expected_number_of_data_files
     high_number_of_files = expected_number_of_data_files
-    fragment_check_list = [triggercandidate_frag_params, hsi_frag_params]
+    fragment_check_list = [triggercandidate_frag_params, hsi_frag_params, wibeth_frag_params]
     if run_nanorc.confgen_config.tpg_enabled:
         local_expected_event_count += (
             (6250 / ta_prescale)
@@ -200,16 +202,13 @@ def test_data_files(run_nanorc):
             * run_duration
             / (100 * number_of_dataflow_apps)
         )
-        # fragment_check_list.append(wib2_frag_multi_trig_params) # DuneWIB
-        fragment_check_list.append(wibeth_frag_multi_trig_params)  # WIBEth
-        fragment_check_list.append(triggertp_frag_params)
+        fragment_check_list.append(triggerprimitive_frag_params)
         fragment_check_list.append(triggeractivity_frag_params)
     else:
         low_number_of_files -= number_of_dataflow_apps
         if low_number_of_files < 1:
             low_number_of_files = 1
-        # fragment_check_list.append(wib2_frag_hsi_trig_params) # DuneWIB
-        fragment_check_list.append(wibeth_frag_hsi_trig_params)  # WIBEth
+    nontrig_fragment_check_list = [hsi_frag_params, wibeth_frag_params]
 
     # Run some tests on the output data file
     assert (
@@ -217,17 +216,21 @@ def test_data_files(run_nanorc):
         or len(run_nanorc.data_files) == low_number_of_files
     )
 
+    all_ok = True
     for idx in range(len(run_nanorc.data_files)):
         data_file = data_file_checks.DataFile(run_nanorc.data_files[idx])
-        assert data_file_checks.sanity_check(data_file)
-        assert data_file_checks.check_file_attributes(data_file)
-        assert data_file_checks.check_event_count(
+        all_ok &= data_file_checks.sanity_check(data_file)
+        all_ok &= data_file_checks.check_file_attributes(data_file)
+        all_ok &= data_file_checks.check_event_count(
             data_file, local_expected_event_count, local_event_count_tolerance
         )
         for jdx in range(len(fragment_check_list)):
-            assert data_file_checks.check_fragment_count(
+            all_ok &= data_file_checks.check_fragment_count(
                 data_file, fragment_check_list[jdx]
             )
-            assert data_file_checks.check_fragment_sizes(
+            all_ok &= data_file_checks.check_fragment_sizes(
                 data_file, fragment_check_list[jdx]
             )
+        for kdx in range(len(nontrig_fragment_check_list)):
+            all_ok &= data_file_checks.check_fragment_error_flags( data_file, nontrig_fragment_check_list[kdx])
+    assert all_ok

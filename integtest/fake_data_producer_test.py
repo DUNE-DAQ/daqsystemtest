@@ -32,7 +32,6 @@ expected_event_count_tolerance = 2
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
-    "hdf5_source_subsystem": "Detector_Readout",
     "expected_fragment_count": number_of_data_producers,
     "min_size_bytes": baseline_fragment_size_bytes,
     "max_size_bytes": baseline_fragment_size_bytes_max,
@@ -44,9 +43,7 @@ ignored_logfile_problems = {
     ],
     "connectivity-service": [
         "errorlog: -",
-        "Worker with pid \\d+ was terminated due to signal",
     ],
-    "log_.*_minimal_": ["connect: Connection refused"],
 }
 
 # The next three variable declarations *must* be present as globals in the test

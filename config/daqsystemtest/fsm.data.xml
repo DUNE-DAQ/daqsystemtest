@@ -120,6 +120,9 @@
 
 <obj class="FSMaction" id="elisa-logbook">
  <attr name="name" type="string" val="elisa-logbook"/>
+ <rel name="parameters">
+  <ref class="Variable" id="which-elisa-logbook"/>
+ </rel>
 </obj>
 
 <obj class="FSMaction" id="file-logbook">
@@ -224,7 +227,6 @@
  <rel name="actions">
   <ref class="FSMaction" id="usvc-provided-run-number"/>
   <ref class="FSMaction" id="trigger-rate-specifier"/>
-  <ref class="FSMaction" id="file-logbook"/>
   <ref class="FSMaction" id="elisa-logbook"/>
   <ref class="FSMaction" id="db-run-registry"/>
  </rel>
@@ -349,7 +351,6 @@
  <attr name="transition" type="string" val="drain_dataflow"/>
  <attr name="order" type="string">
   <data val="db-run-registry"/>
-  <data val="file-logbook"/>
   <data val="elisa-logbook"/>
  </attr>
 </obj>
@@ -364,7 +365,6 @@
 <obj class="FSMxTransition" id="post_start_prod">
  <attr name="transition" type="string" val="start"/>
  <attr name="order" type="string">
-  <data val="file-logbook"/>
   <data val="elisa-logbook"/>
  </attr>
  <attr name="mandatory" type="string">
@@ -435,6 +435,11 @@
 <obj class="Variable" id="thread-pinning-file-pre-conf">
  <attr name="name" type="string" val="pre_conf"/>
  <attr name="value" type="string" val="/cvmfs/dunedaq.opensciencegrid.org/spack/releases/coredaq-v5.0.0-a9-1/spack-0.20.0/opt/spack/linux-almalinux9-x86_64/gcc-12.1.0/readoutlibs-v2.1.0-kkwlcckeyl7ltarpbd5bn6fn2nczjqmp/share/config/cpupins/cpupin-example.json"/>
+</obj>
+
+<obj class="Variable" id="which-elisa-logbook">
+ <attr name="name" type="string" val="elisa-hardware"/>
+ <attr name="value" type="string" val="pdsp"/>
 </obj>
 
 </oks-data>
