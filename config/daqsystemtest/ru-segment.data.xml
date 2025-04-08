@@ -457,7 +457,7 @@
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="fa-queue-rule"/>
   <ref class="QueueConnectionRule" id="tp-queue-rule"/>
-  <ref class="QueueConnectionRule" id="wib-eth-raw-data-rule"/>
+  <ref class="QueueConnectionRule" id="wib-callback-raw-data-rule"/>
   <ref class="QueueConnectionRule" id="fd-dlh-data-requests-queue-rule"/>
  </rel>
  <rel name="network_rules">
