@@ -321,6 +321,7 @@
  <attr name="max_file_size" type="u64" val="4294967296"/>
  <attr name="disable_unique_filename_suffix" type="bool" val="0"/>
  <attr name="free_space_safety_factor" type="s32" val="5"/>
+ <attr name="compression_level" type="u8" val="0"/>
  <rel name="file_layout_params" class="HDF5FileLayoutParams" id="default"/>
  <rel name="filename_params" class="FilenameParams" id="default"/>
 </obj>
@@ -332,6 +333,7 @@
  <attr name="max_file_size" type="u64" val="4294967296"/>
  <attr name="disable_unique_filename_suffix" type="bool" val="0"/>
  <attr name="free_space_safety_factor" type="s32" val="5"/>
+ <attr name="compression_level" type="u8" val="0"/>
  <rel name="file_layout_params" class="HDF5FileLayoutParams" id="tp_file_layout"/>
  <rel name="filename_params" class="FilenameParams" id="tp-file-params"/>
 </obj>
