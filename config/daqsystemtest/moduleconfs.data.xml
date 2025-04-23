@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="67" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="mrigan" last-modified-on="np04-srv-016.cern.ch" last-modification-time="20241220T113321"/>
+<info name="" type="" num-of-items="78" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="mrigan" last-modified-on="np04-srv-031.cern.ch" last-modification-time="20250423T102725"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -76,7 +76,7 @@
 </include>
 
 <comments>
- <comment creation-time="20241220T113321" created-by="mrigan" created-on="np04-srv-016.cern.ch" author="mrigan" text="testing replay filtering"/>
+ <comment creation-time="20250214T120354" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added socket communication classes"/>
 </comments>
 
 
@@ -117,6 +117,50 @@
  </rel>
 </obj>
 
+<obj class="ActionPlan" id="socket-readout-start">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="socket-reader-data-source-step"/>
+ </rel>
+</obj>
+
+<obj class="ActionPlan" id="socket-readout-stop">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="socket-reader-data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+ </rel>
+</obj>
+
+<obj class="ActionPlan" id="socket-write-start">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
+ </rel>
+</obj>
+
+<obj class="ActionPlan" id="socket-write-stop">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+ </rel> 
+</obj>
+
 <obj class="DFOConf" id="dfoconf-01">
  <attr name="general_queue_timeout_ms" type="u32" val="100"/>
  <attr name="stop_timeout_ms" type="u32" val="100"/>
@@ -151,6 +195,18 @@
 <obj class="DaqModulesGroupByType" id="dlh-step">
  <attr name="modules" type="class">
   <data val="FDDataHandlerModule"/>
+ </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="socket-reader-data-source-step">
+ <attr name="modules" type="class">
+  <data val="SocketReaderModule"/>
+ </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="socket-writer-data-source-step">
+ <attr name="modules" type="class">
+  <data val="FakeSocketWriterModule"/>
  </attr>
 </obj>
 
@@ -275,6 +331,7 @@
  <attr name="max_file_size" type="u64" val="4294967296"/>
  <attr name="disable_unique_filename_suffix" type="bool" val="0"/>
  <attr name="free_space_safety_factor" type="s32" val="5"/>
+ <attr name="compression_level" type="u8" val="0"/>
  <rel name="file_layout_params" class="HDF5FileLayoutParams" id="default"/>
  <rel name="filename_params" class="FilenameParams" id="default"/>
 </obj>
@@ -286,6 +343,7 @@
  <attr name="max_file_size" type="u64" val="4294967296"/>
  <attr name="disable_unique_filename_suffix" type="bool" val="0"/>
  <attr name="free_space_safety_factor" type="s32" val="5"/>
+ <attr name="compression_level" type="u8" val="0"/>
  <rel name="file_layout_params" class="HDF5FileLayoutParams" id="tp_file_layout"/>
  <rel name="filename_params" class="FilenameParams" id="tp-file-params"/>
 </obj>
@@ -499,6 +557,20 @@
  <attr name="warn_on_timeout" type="bool" val="0"/>
  <attr name="warn_on_empty_buffer" type="bool" val="1"/>
  <attr name="periodic_data_transmission_ms" type="u32" val="5"/>
+</obj>
+
+<obj class="SocketReaderConf" id="def-socket-reader-conf">
+ <attr name="template_for" type="class" val="SocketReaderModule"/>
+ <attr name="emulation_mode" type="bool" val="0"/>
+ <attr name="socket_type" type="enum" val="UDP"/>
+ <attr name="local_ip" type="string" val="127.0.0.1"/>
+</obj>
+
+<obj class="SocketWriterConf" id="def-socket-writer-conf">
+ <attr name="template_for" type="class" val="FakeSocketWriterModule"/>
+ <attr name="emulation_mode" type="bool" val="0"/>
+ <attr name="socket_type" type="enum" val="UDP"/>
+ <attr name="remote_ip" type="string" val="127.0.0.1"/>
 </obj>
 
 <obj class="StreamEmulationParameters" id="stream-emu">

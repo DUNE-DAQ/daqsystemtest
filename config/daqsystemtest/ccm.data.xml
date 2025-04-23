@@ -75,6 +75,7 @@
  <comment creation-time="20240208T094131" created-by="eflumerf" created-on="ironvirt9.mshome.net" author="eflumerf" text="reformat"/>
  <comment creation-time="20240909T081245" created-by="glehmann" created-on="np04-srv-024.cern.ch" author="glehmann" text=" "/>
  <comment creation-time="20240918T094920" created-by="maroda" created-on="np04-srv-015.cern.ch" author="maroda" text="add local file"/>
+ <comment creation-time="20250214T095127" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added new Session with SocketReaderModule"/>
  <comment creation-time="20250312T102000" created-by="mrigan" created-on="np04-srv-016.cern.ch" author="mrigan" text=" "/>
 </comments>
 
@@ -127,6 +128,16 @@
 </obj>
 
 <obj class="RCApplication" id="root-controller">
+ <attr name="application_name" type="string" val="drunc-controller"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="rccontroller_control"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="fsm" class="FSMconfiguration" id="fsmConf-test"/>
+</obj>
+
+<obj class="RCApplication" id="socket-root-controller">
  <attr name="application_name" type="string" val="drunc-controller"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
