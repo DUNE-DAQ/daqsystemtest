@@ -489,18 +489,6 @@
  <attr name="expected_timestamp_step" type="s32" val="1000"/>
 </obj>
 
-<obj class="PlaneNumberConf" id="def-plane-filter-1">
- <attr name="plane" type="u32" val="0"/>
-</obj>
-
-<obj class="PlaneNumberConf" id="def-plane-filter-2">
- <attr name="plane" type="u32" val="1"/>
-</obj>
-
-<obj class="PlaneNumberConf" id="def-plane-filter-3">
- <attr name="plane" type="u32" val="2"/>
-</obj>
-
 <obj class="RandomTCMakerConf" id="random-tc-generator">
  <attr name="timestamp_method" type="enum" val="kTimeSync"/>
  <attr name="latency_monitoring" type="bool" val="1"/>
@@ -692,9 +680,7 @@
  <attr name="maximum_wait_time_us" type="u32" val="1000"/>
  <attr name="total_planes" type="u32" val="1"/>
  <attr name="channel_map" type="string" val="PD2HDChannelMap"/>
- <rel name="filter_out_plane">
-  <ref class="PlaneNumberConf" id="def-plane-filter-1"/>
- </rel>
+ <attr name="filter_out_plane" type="u32" val="0"/>
  <rel name="tp_streams">
   <ref class="TPStreamConf" id="def-tp-stream-1"/>
  </rel>
