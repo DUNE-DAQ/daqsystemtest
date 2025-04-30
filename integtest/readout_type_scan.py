@@ -16,7 +16,7 @@ frame_file_required = False
 # Values that help determine the running conditions
 number_of_data_producers = 2
 run_duration = 20  # seconds
-data_rate_slowdown_factor = 10
+data_rate_slowdown_factor = 10  # is this still used anywhere?  (KAB, 28-Apr-2050)
 ta_prescale = 100
 
 # Default values for validation parameters
@@ -26,13 +26,6 @@ expected_event_count = run_duration
 expected_event_count_tolerance = 2
 
 wibeth_frag_params = {
-    "fragment_type_description": "WIBEth",
-    "fragment_type": "WIBEth",
-    "expected_fragment_count": number_of_data_producers,
-    "min_size_bytes": 7272,
-    "max_size_bytes": 14472,
-}
-wibeth_frag_multi_trig_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
     "expected_fragment_count": number_of_data_producers,
@@ -62,9 +55,12 @@ pds_frag_params = {
     "fragment_type_description": "PDS",
     "fragment_type": "DAPHNE",
     "expected_fragment_count": number_of_data_producers,
-    "min_size_bytes": 435912,
-    "max_size_bytes": 1133256,
-}  # 20 x 21792; 52 x 21792 (+72)
+    "min_size_bytes": 30000,
+    "max_size_bytes": 120000,
+    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes":  30000, "max_size_bytes":  34000},
+                                "kRandom": {"min_size_bytes": 112000, "max_size_bytes": 118000},
+                                "default": {"min_size_bytes":  30000, "max_size_bytes": 118000} }
+}
 
 # sizes: 128 is for one TC with zero TAs inside it (72+56)
 #        208 is for one TC with one TA inside it (72+56+80)
@@ -97,12 +93,19 @@ triggeractivity_frag_params = {
 }
 # sizes:  72 is for an empty TP fragment
 #        144 is for a fragment with three TPs in it (72+24+24+24)
-triggerprimitive_frag_params = {
+wibeth_triggerprimitive_frag_params = {
     "fragment_type_description": "Trigger Primitive",
     "fragment_type": "Trigger_Primitive",
-    "expected_fragment_count": 3,
+    "expected_fragment_count": (1 * 3),  # number of readout apps * 3
     "min_size_bytes": 72,
     "max_size_bytes": 144,
+}
+daphne_triggerprimitive_frag_params = {
+    "fragment_type_description": "Trigger Primitive",
+    "fragment_type": "Trigger_Primitive",
+    "expected_fragment_count": 1,  # number of readout apps
+    "min_size_bytes": 500,
+    "max_size_bytes": 10000,
 }
 ignored_logfile_problems = {
     "-controller": [
@@ -141,12 +144,12 @@ conf_dict.config_substitutions.append(
     )
 )
 
-tpg_conf = copy.deepcopy(conf_dict)
-tpg_conf.tpg_enabled = True
-tpg_conf.frame_file = (
+wib_tpg_conf = copy.deepcopy(conf_dict)
+wib_tpg_conf.tpg_enabled = True
+wib_tpg_conf.frame_file = (
     "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"  # WIBEth All Zeros
 )
-tpg_conf.config_substitutions.append(
+wib_tpg_conf.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="TAMakerPrescaleAlgorithm",
         obj_id="dummy-ta-maker",
@@ -180,7 +183,7 @@ pds_stream_conf.config_substitutions.append(
 
 pds_conf = copy.deepcopy(conf_dict)
 pds_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
-pds_conf.frame_file = "asset://?label=DAPHNE&subsystem=readout"
+pds_conf.frame_file = "asset://?checksum=c138ac602aa48faf211927b7dc7ffe9c"
 pds_conf.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="TCReadoutMap",
@@ -191,24 +194,25 @@ pds_conf.config_substitutions.append(
         },
     )
 )
-# pacman_conf = copy.deepcopy(conf_dict)
-# pacman_conf.dro_map_config.det_id  = 32  # det_id = 32 for NDLAr_TPC
-# pacman_conf.frame_file == "asset://?label=PACMAN&subsystem=readout"
 
-# mpd_conf = copy.deepcopy(conf_dict)
-# mpd_conf.dro_map_config.det_id  = 33  # det_id = 33 for NDLAr_PDS
-# mpd_conf.frame_file = "asset://?label=MPD&subsystem=readout"
+pds_tpg_conf = copy.deepcopy(pds_conf)
+pds_tpg_conf.tpg_enabled = True
+pds_tpg_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="TAMakerPrescaleAlgorithm",
+        obj_id="dummy-ta-maker",
+        updates={"prescale": 3000},
+    )
+)
 
 
 confgen_arguments = {
-    # "WIB1_System": wib1_conf,
     "WIBEth_System": wibeth_conf,
-    "TPG_System": tpg_conf,
+    "WIBEth_TPG_System": wib_tpg_conf,
     "PDS_Stream_System": pds_stream_conf,
-    # "PDS_System": pds_conf,
-    "TDEEth_System": tde_conf,
-    # "PACMAN_System": pacman_conf,
-    # "MPD_System": mpd_conf
+    "PDS_System": pds_conf,
+    "PDS_TPG_System": pds_tpg_conf,
+    "TDEEth_System": tde_conf
 }
 
 # The commands to run in nanorc, as a list
@@ -217,6 +221,7 @@ nanorc_command_list = (
     + [str(run_duration)]
     + "disable-triggers wait 2 drain-dataflow stop-trigger-sources wait 2 stop scrap terminate".split()
 )
+#    + "disable-triggers wait 5 drain-dataflow wait 2 stop-trigger-sources wait 2 stop scrap terminate".split()
 
 # The tests themselves
 
@@ -247,34 +252,46 @@ def test_log_files(run_nanorc):
 def test_data_files(run_nanorc):
     local_expected_event_count = expected_event_count
     local_event_count_tolerance = expected_event_count_tolerance
-    fragment_check_list = []
+    fragment_check_list = [triggercandidate_frag_params]
+    current_test = os.environ.get("PYTEST_CURRENT_TEST")
+    if "PDS_Stream" in current_test:
+        fragment_check_list.append(pds_stream_frag_params)
+    elif "PDS" in current_test:
+        fragment_check_list.append(pds_frag_params)
+    elif "WIBEth" in current_test:
+        fragment_check_list.append(wibeth_frag_params)
+    elif "TDEEth" in current_test:
+        fragment_check_list.append(tde_frag_params)
     if run_nanorc.confgen_config.tpg_enabled:
-        local_expected_event_count += (
-            (6250 / ta_prescale)
-            * number_of_data_producers
-            * run_duration
-            / 100
-        )
-        local_event_count_tolerance += (
-            (250 / ta_prescale)
-            * number_of_data_producers
-            * run_duration
-            / 100
-        )
-        fragment_check_list.append(wibeth_frag_multi_trig_params)
         fragment_check_list.append(triggeractivity_frag_params)
-        fragment_check_list.append(triggerprimitive_frag_params)
-    else:
-        fragment_check_list.append(triggercandidate_frag_params)
-        current_test = os.environ.get("PYTEST_CURRENT_TEST")
-        if "PDS_Stream" in current_test:
-            fragment_check_list.append(pds_stream_frag_params)
-        elif "PDS" in current_test:
-            fragment_check_list.append(pds_frag_params)
-        elif "WIBEth" in current_test:
-            fragment_check_list.append(wibeth_frag_params)
-        elif "TDEEth" in current_test:
-            fragment_check_list.append(tde_frag_params)
+        if "WIBEth" in current_test:
+            fragment_check_list.append(wibeth_triggerprimitive_frag_params)
+            local_expected_event_count += (
+                (6250 / ta_prescale)
+                * number_of_data_producers
+                * run_duration
+                / 100
+            )
+            local_event_count_tolerance += (
+                (250 / ta_prescale)
+                * number_of_data_producers
+                * run_duration
+                / 100
+            )
+        if "PDS" in current_test:
+            fragment_check_list.append(daphne_triggerprimitive_frag_params)
+            local_expected_event_count += (
+                (6250 / ta_prescale)
+                * number_of_data_producers
+                * run_duration * 3
+                / 185
+            )
+            local_event_count_tolerance += (
+                (250 / ta_prescale)
+                * number_of_data_producers
+                * run_duration * 6
+                / 250
+            )
 
     # Run some tests on the output data file
     all_ok = True
