@@ -44,15 +44,15 @@ tde_frag_params = {
 # num frames = ro_win / tick diff = 977
 # fragment size = num frames * frame size = 461026
 
-pds_stream_frag_params = {
-    "fragment_type_description": "PDSStream",
+daphne_stream_frag_params = {
+    "fragment_type_description": "DAPHNEStream",
     "fragment_type": "DAPHNEStream",
     "expected_fragment_count": number_of_data_producers,
     "min_size_bytes": 72+461026-20*472,
     "max_size_bytes": 72+461026+20*472,
 }  
-pds_frag_params = {
-    "fragment_type_description": "PDS",
+daphne_frag_params = {
+    "fragment_type_description": "DAPHNE",
     "fragment_type": "DAPHNE",
     "expected_fragment_count": number_of_data_producers,
     "min_size_bytes": 30000,
@@ -166,11 +166,11 @@ tde_conf.dro_map_config.det_id = 11
 tde_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
 #tde_conf.frame_file = "asset://?checksum=759e5351436bead208cf4963932d6327"
 
-pds_stream_conf = copy.deepcopy(conf_dict)
-pds_stream_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
-pds_stream_conf.frame_file = "asset://?label=DAPHNEStream&subsystem=readout"
+daphne_stream_conf = copy.deepcopy(conf_dict)
+daphne_stream_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
+daphne_stream_conf.frame_file = "asset://?label=DAPHNEStream&subsystem=readout"
 
-pds_stream_conf.config_substitutions.append(
+daphne_stream_conf.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="TCReadoutMap",
         obj_id = "def-random-readout",
@@ -181,10 +181,10 @@ pds_stream_conf.config_substitutions.append(
     )
 )
 
-pds_conf = copy.deepcopy(conf_dict)
-pds_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
-pds_conf.frame_file = "asset://?checksum=c138ac602aa48faf211927b7dc7ffe9c"
-pds_conf.config_substitutions.append(
+daphne_conf = copy.deepcopy(conf_dict)
+daphne_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
+daphne_conf.frame_file = "asset://?checksum=c138ac602aa48faf211927b7dc7ffe9c"
+daphne_conf.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="TCReadoutMap",
         obj_id = "def-random-readout",
@@ -195,9 +195,9 @@ pds_conf.config_substitutions.append(
     )
 )
 
-pds_tpg_conf = copy.deepcopy(pds_conf)
-pds_tpg_conf.tpg_enabled = True
-pds_tpg_conf.config_substitutions.append(
+daphne_tpg_conf = copy.deepcopy(daphne_conf)
+daphne_tpg_conf.tpg_enabled = True
+daphne_tpg_conf.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="TAMakerPrescaleAlgorithm",
         obj_id="dummy-ta-maker",
@@ -209,9 +209,9 @@ pds_tpg_conf.config_substitutions.append(
 confgen_arguments = {
     "WIBEth_System": wibeth_conf,
     "WIBEth_TPG_System": wib_tpg_conf,
-    "PDS_Stream_System": pds_stream_conf,
-    "PDS_System": pds_conf,
-    "PDS_TPG_System": pds_tpg_conf,
+    "DAPHNE_Stream_System": daphne_stream_conf,
+    "DAPHNE_System": daphne_conf,
+    "DAPHNE_TPG_System": daphne_tpg_conf,
     "TDEEth_System": tde_conf
 }
 
@@ -254,10 +254,10 @@ def test_data_files(run_nanorc):
     local_event_count_tolerance = expected_event_count_tolerance
     fragment_check_list = [triggercandidate_frag_params]
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    if "PDS_Stream" in current_test:
-        fragment_check_list.append(pds_stream_frag_params)
-    elif "PDS" in current_test:
-        fragment_check_list.append(pds_frag_params)
+    if "DAPHNE_Stream" in current_test:
+        fragment_check_list.append(daphne_stream_frag_params)
+    elif "DAPHNE" in current_test:
+        fragment_check_list.append(daphne_frag_params)
     elif "WIBEth" in current_test:
         fragment_check_list.append(wibeth_frag_params)
     elif "TDEEth" in current_test:
@@ -278,7 +278,7 @@ def test_data_files(run_nanorc):
                 * run_duration
                 / 100
             )
-        if "PDS" in current_test:
+        if "DAPHNE" in current_test:
             fragment_check_list.append(daphne_triggerprimitive_frag_params)
             local_expected_event_count += (
                 (6250 / ta_prescale)
