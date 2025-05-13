@@ -55,11 +55,11 @@ daphne_frag_params = {
     "fragment_type_description": "DAPHNE",
     "fragment_type": "DAPHNE",
     "expected_fragment_count": number_of_data_producers,
-    "min_size_bytes": 30000,
+    "min_size_bytes": 1936,
     "max_size_bytes": 120000,
-    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes":  30000, "max_size_bytes":  34000},
+    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes":   1936, "max_size_bytes":  22800},
                                 "kRandom": {"min_size_bytes": 112000, "max_size_bytes": 118000},
-                                "default": {"min_size_bytes":  30000, "max_size_bytes": 118000} }
+                                "default": {"min_size_bytes":   1936, "max_size_bytes": 118000} }
 }
 
 # sizes: 128 is for one TC with zero TAs inside it (72+56)
@@ -104,8 +104,8 @@ daphne_triggerprimitive_frag_params = {
     "fragment_type_description": "Trigger Primitive",
     "fragment_type": "Trigger_Primitive",
     "expected_fragment_count": 1,  # number of readout apps
-    "min_size_bytes": 500,
-    "max_size_bytes": 10000,
+    "min_size_bytes": 96,
+    "max_size_bytes": 4392,
 }
 ignored_logfile_problems = {
     "-controller": [
@@ -183,7 +183,7 @@ daphne_stream_conf.config_substitutions.append(
 
 daphne_conf = copy.deepcopy(conf_dict)
 daphne_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
-daphne_conf.frame_file = "asset://?checksum=c138ac602aa48faf211927b7dc7ffe9c"
+daphne_conf.frame_file = "asset://?checksum=a8990a9eb3a505d4ded62dfdfa9e2681"
 daphne_conf.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="TCReadoutMap",
@@ -201,7 +201,7 @@ daphne_tpg_conf.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="TAMakerPrescaleAlgorithm",
         obj_id="dummy-ta-maker",
-        updates={"prescale": 3000},
+        updates={"prescale": 750},
     )
 )
 
@@ -284,7 +284,7 @@ def test_data_files(run_nanorc):
                 (6250 / ta_prescale)
                 * number_of_data_producers
                 * run_duration * 3
-                / 185
+                / 200
             )
             local_event_count_tolerance += (
                 (250 / ta_prescale)
