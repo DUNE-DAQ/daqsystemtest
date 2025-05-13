@@ -57,7 +57,7 @@ daphne_frag_params = {
     "expected_fragment_count": number_of_data_producers,
     "min_size_bytes": 1936,
     "max_size_bytes": 120000,
-    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes":   1936, "max_size_bytes":  22800},
+    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes":   1936, "max_size_bytes":  32000},
                                 "kRandom": {"min_size_bytes": 112000, "max_size_bytes": 118000},
                                 "default": {"min_size_bytes":   1936, "max_size_bytes": 118000} }
 }
