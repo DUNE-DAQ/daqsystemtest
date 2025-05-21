@@ -2,6 +2,7 @@
 # 10-Oct-2023, KAB
 
 integtest_list=( "minimal_system_quick_test.py" "readout_type_scan.py" "3ru_3df_multirun_test.py" "small_footprint_quick_test.py" "fake_data_producer_test.py" "long_window_readout_test.py" "3ru_1df_multirun_test.py" "tpstream_writing_test.py" "example_system_test.py" )
+let last_test_index=${#integtest_list[@]}-1
 
 usage() {
     declare -r script_name=$(basename "$0")
@@ -12,7 +13,7 @@ Usage:
 Options:
     -h, --help : prints out usage information
     -f <zero-based index of the first test to be run, default=0>
-    -l <zero-based index of the last test to be run, default=999>
+    -l <zero-based index of the last test to be run, default=${last_test_index}>
     -n <number of times to run each individual test, default=1>
     -N <number of times to run the full set of selected tests, default=1>
     --stop-on-failure : causes the script to stop when one of the integtests reports a failure
@@ -30,9 +31,8 @@ TEMP=`getopt -o hs:f:l:n:N: --long help,stop-on-failure -- "$@"`
 eval set -- "$TEMP"
 
 let first_test_index=0
-let last_test_index=${#integtest_list[@]}-1
-let individual_run_count=1
-let overall_run_count=1
+let individual_test_requested_iterations=1
+let full_set_requested_interations=1
 let stop_on_failure=0
 
 while true; do
@@ -50,11 +50,11 @@ while true; do
             shift 2
             ;;
         -n)
-            let individual_run_count=$2
+            let individual_test_requested_iterations=$2
             shift 2
             ;;
         -N)
-            let overall_run_count=$2
+            let full_set_requested_interations=$2
             shift 2
             ;;
         --stop-on-failure)
@@ -83,18 +83,18 @@ fi
 TIMESTAMP=`date '+%Y%m%d%H%M%S'`
 mkdir -p /tmp/pytest-of-${USER}
 ITGRUNNER_LOG_FILE="/tmp/pytest-of-${USER}/daqsystemtest_integtest_bundle_${TIMESTAMP}.log"
-let total_number_of_tests=(1+${last_test_index}-${first_test_index})*${individual_run_count}*${overall_run_count}
+let total_number_of_tests=(1+${last_test_index}-${first_test_index})*${individual_test_requested_iterations}*${full_set_requested_interations}
 
 # run the tests
 let overall_test_index=0  # this is only used for user feedback
-let overall_loop_count=0
-while [[ ${overall_loop_count} -lt ${overall_run_count} ]]; do
+let full_set_loop_count=0
+while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
   let test_index=0
   for TEST_NAME in ${integtest_list[@]}; do
     if [[ ${test_index} -ge ${first_test_index} && ${test_index} -le ${last_test_index} ]]; then
 
       let individual_loop_count=0
-      while [[ ${individual_loop_count} -lt ${individual_run_count} ]]; do
+      while [[ ${individual_loop_count} -lt ${individual_test_requested_iterations} ]]; do
         let overall_test_index=${overall_test_index}+1
         echo ""
         echo -e "\U0001F535 \033[0;34mStarting test ${overall_test_index} of ${total_number_of_tests}...\033[0m \U0001F535" | tee -a ${ITGRUNNER_LOG_FILE}
@@ -126,7 +126,7 @@ while [[ ${overall_loop_count} -lt ${overall_run_count} ]]; do
     let test_index=${test_index}+1
   done
 
-  let overall_loop_count=${overall_loop_count}+1
+  let full_set_loop_count=${full_set_loop_count}+1
 done
 
 # print out summary information
