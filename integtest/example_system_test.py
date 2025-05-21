@@ -1,6 +1,7 @@
 import pytest
 import os
 import copy
+import re
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
@@ -91,7 +92,12 @@ onebyone_ehn1_conf.session = "ehn1-local-1x1-config"
 twobythree_ehn1_conf = copy.deepcopy(common_config_obj)
 twobythree_ehn1_conf.session = "ehn1-local-2x3-config"
 
-if "cern.ch" in hostname:
+
+def host_is_at_cern(hostname):
+    return re.match(r"^(np02|np04)-srv-\d{3}$", hostname) or re.match(r"^(np02|np04)-srv-\d{3}.cern.ch$", hostname)
+
+
+if host_is_at_cern(hostname):
     confgen_arguments = {
         "Local 1x1 Conf": onebyone_local_conf,
         "Local 2x3 Conf": twobythree_local_conf,
@@ -118,7 +124,7 @@ nanorc_command_list = (
 def test_nanorc_success(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
 
-    if "cern.ch" not in hostname and "EHN1" in current_test:
+    if not host_is_at_cern(hostname) and "EHN1" in current_test:
         pytest.skip(
             f"This computer ({hostname}) is not at CERN, not running EHN1 sessions"
         )
@@ -130,7 +136,7 @@ def test_nanorc_success(run_nanorc):
 def test_log_files(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
 
-    if "cern.ch" not in hostname and "EHN1" in current_test:
+    if not host_is_at_cern(hostname) and "EHN1" in current_test:
         pytest.skip(
             f"This computer ({hostname}) is not at CERN, not running EHN1 sessions"
         )
@@ -160,7 +166,7 @@ def test_log_files(run_nanorc):
 def test_data_files(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
 
-    if "cern.ch" not in hostname and "EHN1" in current_test:
+    if not host_is_at_cern(hostname) and "EHN1" in current_test:
         pytest.skip(
             f"This computer ({hostname}) is not at CERN, not running EHN1 sessions"
         )
@@ -171,7 +177,7 @@ def test_data_files(run_nanorc):
         "EHN1 1x1 Conf": {"expected_fragment_count": 4, "expected_file_count": 1},
         "EHN1 2x3 Conf": {"expected_fragment_count": 8, "expected_file_count": 3},
     }
-    
+
     expected_file_count = 0
     expected_fragment_count = 0
     for key in datafile_params.keys():
@@ -189,7 +195,7 @@ def test_data_files(run_nanorc):
     local_expected_event_count = expected_event_count
     local_event_count_tolerance = expected_event_count_tolerance
     fragment_check_list = [triggercandidate_frag_params, hsi_frag_params]
-    
+
     local_expected_event_count += (
             (6250.0 / ta_prescale)
             * expected_fragment_count
