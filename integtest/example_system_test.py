@@ -93,11 +93,11 @@ twobythree_ehn1_conf = copy.deepcopy(common_config_obj)
 twobythree_ehn1_conf.session = "ehn1-local-2x3-config"
 
 
-def host_is_at_cern(hostname):
+def host_is_at_ehn1(hostname):
     return re.match(r"^(np02|np04)-srv-\d{3}$", hostname) or re.match(r"^(np02|np04)-srv-\d{3}.cern.ch$", hostname)
 
 
-if host_is_at_cern(hostname):
+if host_is_at_ehn1(hostname):
     confgen_arguments = {
         "Local 1x1 Conf": onebyone_local_conf,
         "Local 2x3 Conf": twobythree_local_conf,
@@ -124,9 +124,9 @@ nanorc_command_list = (
 def test_nanorc_success(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
 
-    if not host_is_at_cern(hostname) and "EHN1" in current_test:
+    if not host_is_at_ehn1(hostname) and "EHN1" in current_test:
         pytest.skip(
-            f"This computer ({hostname}) is not at CERN, not running EHN1 sessions"
+            f"This computer ({hostname}) is not at EHN1, not running EHN1 sessions"
         )
 
     # Check that nanorc completed correctly
@@ -136,9 +136,9 @@ def test_nanorc_success(run_nanorc):
 def test_log_files(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
 
-    if not host_is_at_cern(hostname) and "EHN1" in current_test:
+    if not host_is_at_ehn1(hostname) and "EHN1" in current_test:
         pytest.skip(
-            f"This computer ({hostname}) is not at CERN, not running EHN1 sessions"
+            f"This computer ({hostname}) is not at EHN1, not running EHN1 sessions"
         )
 
     # Check that at least some of the expected log files are present
@@ -166,9 +166,9 @@ def test_log_files(run_nanorc):
 def test_data_files(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
 
-    if not host_is_at_cern(hostname) and "EHN1" in current_test:
+    if not host_is_at_ehn1(hostname) and "EHN1" in current_test:
         pytest.skip(
-            f"This computer ({hostname}) is not at CERN, not running EHN1 sessions"
+            f"This computer ({hostname}) is not at EHN1, not running EHN1 sessions"
         )
 
     datafile_params = {
