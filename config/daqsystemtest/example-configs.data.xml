@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="8" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20250325T160832"/>
+<info name="" type="" num-of-items="10" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="mrigan" last-modified-on="np04-srv-016.cern.ch" last-modification-time="20250522T092014"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -82,6 +82,9 @@
  <comment creation-time="20240918T124331" created-by="maroda" created-on="np04-srv-015.cern.ch" author="maroda" text="change local session opmon URI"/>
  <comment creation-time="20250214T120354" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added new Session with SocketReaderModule"/>
  <comment creation-time="20250325T160832" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Disabled TP"/>
+ <comment creation-time="20250522T090325" created-by="mrigan" created-on="np04-srv-016.cern.ch" author="mrigan" text="mod-ing replay sessions"/>
+ <comment creation-time="20250522T091047" created-by="mrigan" created-on="np04-srv-016.cern.ch" author="mrigan" text="modifying replay sessions"/>
+ <comment creation-time="20250522T092014" created-by="mrigan" created-on="np04-srv-016.cern.ch" author="mrigan" text="udpate replay"/>
 </comments>
 
 
@@ -141,6 +144,28 @@
   <ref class="VariableSet" id="ehn1-variables"/>
  </rel>
  <rel name="segment" class="Segment" id="root-segment"/>
+ <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
+ <rel name="opmon_uri" class="OpMonURI" id="cern-opmon-uri"/>
+</obj>
+
+<obj class="Session" id="ehn1-tpreplay-config">
+ <attr name="data_request_timeout_ms" type="u32" val="1000"/>
+ <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
+ <attr name="controller_log_level" type="enum" val="INFO"/>
+ <rel name="connectivity_service" class="ConnectivityService" id="local-connectivity-service-config"/>
+ <rel name="environment">
+  <ref class="VariableSet" id="ehn1-variables"/>
+  <ref class="Variable" id="local-env-ers-debug-level"/>
+ </rel>
+ <rel name="disabled">
+  <ref class="DFApplication" id="df-02"/>
+  <ref class="DFApplication" id="df-03"/>
+  <ref class="TPStreamWriterApplication" id="tp-stream-writer"/>
+ </rel>
+ <rel name="segment" class="Segment" id="tpreplay-root-segment"/>
+ <rel name="infrastructure_applications">
+  <ref class="ConnectionService" id="local-connection-server"/>
+ </rel>
  <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
  <rel name="opmon_uri" class="OpMonURI" id="cern-opmon-uri"/>
 </obj>
@@ -235,43 +260,13 @@
   <ref class="DFApplication" id="df-02"/>
   <ref class="DFApplication" id="df-03"/>
   <ref class="TPStreamWriterApplication" id="tp-stream-writer"/>
-  <ref class="ReadoutApplication" id="ru-01"/>
-  <ref class="ReadoutApplication" id="ru-02"/>
-  <ref class="FakeHSIApplication" id="hsi-fake-01"/>
-  <ref class="HSIEventToTCApplication" id="hsi-fake-to-tc-app"/>
  </rel>
- <rel name="segment" class="Segment" id="root-segment"/>
+ <rel name="segment" class="Segment" id="tpreplay-root-segment"/>
  <rel name="infrastructure_applications">
   <ref class="ConnectionService" id="local-connection-server"/>
  </rel>
  <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
  <rel name="opmon_uri" class="OpMonURI" id="local-opmon-uri"/>
-</obj>
-
-<obj class="Session" id="ehn1-tpreplay-config">
- <attr name="data_request_timeout_ms" type="u32" val="1000"/>
- <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
- <attr name="controller_log_level" type="enum" val="INFO"/>
- <rel name="connectivity_service" class="ConnectivityService" id="local-connectivity-service-config"/>
- <rel name="environment">
-  <ref class="VariableSet" id="ehn1-variables"/>
-  <ref class="Variable" id="local-env-ers-debug-level"/>
- </rel>
- <rel name="disabled">
-  <ref class="DFApplication" id="df-02"/>
-  <ref class="DFApplication" id="df-03"/>
-  <ref class="TPStreamWriterApplication" id="tp-stream-writer"/>
-  <ref class="ReadoutApplication" id="ru-01"/>
-  <ref class="ReadoutApplication" id="ru-02"/>
-  <ref class="FakeHSIApplication" id="hsi-fake-01"/>
-  <ref class="HSIEventToTCApplication" id="hsi-fake-to-tc-app"/>
- </rel>
- <rel name="segment" class="Segment" id="root-segment"/>
- <rel name="infrastructure_applications">
-  <ref class="ConnectionService" id="local-connection-server"/>
- </rel>
- <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
- <rel name="opmon_uri" class="OpMonURI" id="cern-opmon-uri"/>
 </obj>
 
 </oks-data>
