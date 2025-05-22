@@ -35,7 +35,7 @@ let first_test_index=0
 let individual_test_requested_iterations=1
 let full_set_requested_interations=1
 let stop_on_failure=0
-requested_test_names="*"
+requested_test_names=
 
 while true; do
     case "$1" in
@@ -94,7 +94,7 @@ let number_of_individual_tests=0
 let test_index=0
 for TEST_NAME in ${integtest_list[@]}; do
     if [[ ${test_index} -ge ${first_test_index} && ${test_index} -le ${last_test_index} ]]; then
-        requested_test=`echo ${TEST_NAME} | egrep -i ${requested_test_names}`
+        requested_test=`echo ${TEST_NAME} | egrep -i ${requested_test_names:-${TEST_NAME}}`
         if [[ "${requested_test}" != "" ]]; then
             let number_of_individual_tests=${number_of_individual_tests}+1
         fi
@@ -110,7 +110,7 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
   let test_index=0
   for TEST_NAME in ${integtest_list[@]}; do
     if [[ ${test_index} -ge ${first_test_index} && ${test_index} -le ${last_test_index} ]]; then
-      requested_test=`echo ${TEST_NAME} | egrep -i ${requested_test_names}`
+      requested_test=`echo ${TEST_NAME} | egrep -i ${requested_test_names:-${TEST_NAME}}`
       if [[ "${requested_test}" != "" ]]; then
 
       let individual_loop_count=0
