@@ -2,6 +2,9 @@ import pytest
 import os
 import copy
 import re
+import random
+import string
+import pathlib
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
@@ -88,9 +91,13 @@ twobythree_local_conf.session = "local-2x3-config"
 
 onebyone_ehn1_conf = copy.deepcopy(common_config_obj)
 onebyone_ehn1_conf.session = "ehn1-local-1x1-config"
+onebyone_ehn1_conf.session_name = f"ehn1-local-1x1-config-{''.join(random.choices(string.ascii_letters, k=8))}"
+onebyone_ehn1_conf.connsvc_port = None
 
 twobythree_ehn1_conf = copy.deepcopy(common_config_obj)
 twobythree_ehn1_conf.session = "ehn1-local-2x3-config"
+twobythree_ehn1_conf.session_name = f"ehn1-local-2x3-config-{''.join(random.choices(string.ascii_letters, k=8))}"
+twobythree_ehn1_conf.connsvc_port = None
 
 
 def host_is_at_ehn1(hostname):
@@ -141,19 +148,25 @@ def test_log_files(run_nanorc):
             f"This computer ({hostname}) is not at EHN1, not running EHN1 sessions"
         )
 
+    session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
+
+    if host_is_at_ehn1(hostname) and "EHN1" in current_test:
+        log_dir = pathlib.Path("/log")
+        run_nanorc.log_files += list(log_dir.glob(f"log_*_{session_name}*.txt"))
+
     # Check that at least some of the expected log files are present
     assert any(
-        f"{run_nanorc.session}_df-01" in str(logname)
+        f"{session_name}_df-01" in str(logname)
         for logname in run_nanorc.log_files
     )
     assert any(
-        f"{run_nanorc.session}_dfo" in str(logname) for logname in run_nanorc.log_files
+        f"{session_name}_dfo" in str(logname) for logname in run_nanorc.log_files
     )
     assert any(
-        f"{run_nanorc.session}_mlt" in str(logname) for logname in run_nanorc.log_files
+        f"{session_name}_mlt" in str(logname) for logname in run_nanorc.log_files
     )
     assert any(
-        f"{run_nanorc.session}_ru" in str(logname) for logname in run_nanorc.log_files
+        f"{session_name}_ru" in str(logname) for logname in run_nanorc.log_files
     )
 
     if check_for_logfile_errors:
