@@ -211,7 +211,7 @@
  </rel>
 </obj>
 
-<obj class="FakeSocketDataSender" id="socket_wib_101_link0">
+<obj class="SocketDataSender" id="socket_wib_101_link0">
  <attr name="port" type="u32" val="1234"/>
  <attr name="control_host" type="string" val="localhost"/>
  <rel name="contains">
@@ -495,7 +495,7 @@
 
 <obj class="ResourceSetAND" id="socket_apa1_sender_rset">
  <rel name="contains">
-  <ref class="FakeSocketDataSender" id="socket_wib_101_link0"/>
+  <ref class="SocketDataSender" id="socket_wib_101_link0"/>
  </rel>
 </obj>
 
