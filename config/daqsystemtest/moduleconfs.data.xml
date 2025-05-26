@@ -205,7 +205,7 @@
 
 <obj class="DaqModulesGroupByType" id="socket-writer-data-source-step">
  <attr name="modules" type="class">
-  <data val="FakeSocketWriterModule"/>
+  <data val="SocketWriterModule"/>
  </attr>
 </obj>
 
@@ -545,7 +545,7 @@
 </obj>
 
 <obj class="SocketWriterConf" id="def-socket-writer-conf">
- <attr name="template_for" type="class" val="FakeSocketWriterModule"/>
+ <attr name="template_for" type="class" val="SocketWriterModule"/>
  <attr name="emulation_mode" type="bool" val="0"/>
  <attr name="socket_type" type="enum" val="UDP"/>
  <attr name="remote_ip" type="string" val="127.0.0.1"/>
