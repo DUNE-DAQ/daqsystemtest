@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="51" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20250325T145413"/>
+<info name="" type="" num-of-items="59" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="dergonul" last-modified-on="np04-srv-031.cern.ch" last-modification-time="20250526T125136"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -101,6 +101,7 @@
  <comment creation-time="20240829T102857" created-by="aoranday" created-on="np04-srv-031.cern.ch" author="aoranday" text="Add AbsRS processor."/>
  <comment creation-time="20250214T120354" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added socket communication classes"/>
  <comment creation-time="20250325T145413" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Disabled TP"/>
+ <comment creation-time="20250526T125136" created-by="dergonul" created-on="np04-srv-031.cern.ch" author="dergonul" text="Added ss-crt-bern and ss-crt-grenoble"/>
 </comments>
 
 
@@ -209,15 +210,6 @@
   <ref class="SocketReceiver" id="socket-ru-1-rcv"/>
   <ref class="ResourceSetAND" id="socket_apa1_sender_rset"/>
  </rel>
-</obj>
-
-<obj class="SocketDataSender" id="socket_wib_101_link0">
- <attr name="port" type="u32" val="1234"/>
- <attr name="control_host" type="string" val="localhost"/>
- <rel name="contains">
-  <ref class="DetectorStream" id="stream_100"/>
- </rel>
- <rel name="uses" class="NetworkInterface" id="wib_101_hermes0"/>
 </obj>
 
 <obj class="GeoId" id="g_3_1_1_0">
@@ -356,6 +348,26 @@
  <rel name="fsm" class="FSMconfiguration" id="FSMconfiguration_noAction"/>
 </obj>
 
+<obj class="RCApplication" id="socket-ru-crt-bern-controller">
+ <attr name="application_name" type="string" val="drunc-controller"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="rccontroller_control"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="fsm" class="FSMconfiguration" id="FSMconfiguration_noAction"/>
+</obj>
+
+<obj class="RCApplication" id="socket-ru-crt-grenoble-controller">
+ <attr name="application_name" type="string" val="drunc-controller"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="rccontroller_control"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="fsm" class="FSMconfiguration" id="FSMconfiguration_noAction"/>
+</obj>
+
 <obj class="ReadoutApplication" id="ru-01">
  <attr name="application_name" type="string" val="daq_application"/>
  <attr name="tp_generation_enabled" type="bool" val="1"/>
@@ -481,6 +493,92 @@
  <rel name="data_reader" class="SocketReaderConf" id="def-socket-reader-conf"/>
 </obj>
 
+<obj class="ReadoutApplication" id="socket-ru-crt-bern-01">
+ <attr name="application_name" type="string" val="daq_application"/>
+ <attr name="tp_generation_enabled" type="bool" val="0"/>
+ <attr name="ta_generation_enabled" type="bool" val="0"/>
+ <rel name="contains">
+  <ref class="DetectorToDaqConnection" id="socket_conn_apa1"/>
+ </rel>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="daqapp_control"/>
+  <ref class="Service" id="dataRequests"/>
+  <ref class="Service" id="timeSyncs"/>
+  <ref class="Service" id="triggerActivities"/>
+  <ref class="Service" id="triggerPrimitives"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="queue_rules">
+  <ref class="QueueConnectionRule" id="fa-queue-rule"/>
+  <ref class="QueueConnectionRule" id="tp-queue-rule"/>
+  <ref class="QueueConnectionRule" id="crt-bern-callback-raw-data-rule"/>
+  <ref class="QueueConnectionRule" id="fd-dlh-data-requests-queue-rule"/>
+ </rel>
+ <rel name="network_rules">
+  <ref class="NetworkConnectionRule" id="ts-net-rule"/>
+  <ref class="NetworkConnectionRule" id="ta-net-rule"/>
+  <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
+  <ref class="NetworkConnectionRule" id="tpset-net-rule"/>
+ </rel>
+ <rel name="action_plans">
+  <ref class="ActionPlan" id="socket-readout-start"/>
+  <ref class="ActionPlan" id="socket-readout-stop"/>
+ </rel>
+ <rel name="tp_source_ids">
+  <ref class="SourceIDConf" id="tp-srcid-1000"/>
+  <ref class="SourceIDConf" id="tp-srcid-1001"/>
+  <ref class="SourceIDConf" id="tp-srcid-1002"/>
+ </rel>
+ <rel name="uses" class="RoHwConfig" id="rohw-1"/>
+ <rel name="link_handler" class="DataHandlerConf" id="def-crt-bern-link-handler"/>
+ <rel name="tp_handler" class="DataHandlerConf" id="def-tp-handler"/>
+ <rel name="data_reader" class="SocketReaderConf" id="def-socket-reader-conf"/>
+</obj>
+
+<obj class="ReadoutApplication" id="socket-ru-crt-grenoble-01">
+ <attr name="application_name" type="string" val="daq_application"/>
+ <attr name="tp_generation_enabled" type="bool" val="0"/>
+ <attr name="ta_generation_enabled" type="bool" val="0"/>
+ <rel name="contains">
+  <ref class="DetectorToDaqConnection" id="socket_conn_apa1"/>
+ </rel>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="daqapp_control"/>
+  <ref class="Service" id="dataRequests"/>
+  <ref class="Service" id="timeSyncs"/>
+  <ref class="Service" id="triggerActivities"/>
+  <ref class="Service" id="triggerPrimitives"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="queue_rules">
+  <ref class="QueueConnectionRule" id="fa-queue-rule"/>
+  <ref class="QueueConnectionRule" id="tp-queue-rule"/>
+  <ref class="QueueConnectionRule" id="crt-grenoble-callback-raw-data-rule"/>
+  <ref class="QueueConnectionRule" id="fd-dlh-data-requests-queue-rule"/>
+ </rel>
+ <rel name="network_rules">
+  <ref class="NetworkConnectionRule" id="ts-net-rule"/>
+  <ref class="NetworkConnectionRule" id="ta-net-rule"/>
+  <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
+  <ref class="NetworkConnectionRule" id="tpset-net-rule"/>
+ </rel>
+ <rel name="action_plans">
+  <ref class="ActionPlan" id="socket-readout-start"/>
+  <ref class="ActionPlan" id="socket-readout-stop"/>
+ </rel>
+ <rel name="tp_source_ids">
+  <ref class="SourceIDConf" id="tp-srcid-1000"/>
+  <ref class="SourceIDConf" id="tp-srcid-1001"/>
+  <ref class="SourceIDConf" id="tp-srcid-1002"/>
+ </rel>
+ <rel name="uses" class="RoHwConfig" id="rohw-1"/>
+ <rel name="link_handler" class="DataHandlerConf" id="def-crt-grenoble-link-handler"/>
+ <rel name="tp_handler" class="DataHandlerConf" id="def-tp-handler"/>
+ <rel name="data_reader" class="SocketReaderConf" id="def-socket-reader-conf"/>
+</obj>
+
 <obj class="ResourceSetAND" id="apa1_sender_rset">
  <rel name="contains">
   <ref class="HermesDataSender" id="wib_101_link0"/>
@@ -510,12 +608,37 @@
  <rel name="controller" class="RCApplication" id="ru-controller"/>
 </obj>
 
+<obj class="Segment" id="socket-ru-crt-bern-segment">
+ <rel name="applications">
+  <ref class="SocketSenderApplication" id="ss-crt-bern-01"/>
+  <ref class="ReadoutApplication" id="socket-ru-crt-bern-01"/>
+ </rel>
+ <rel name="controller" class="RCApplication" id="socket-ru-crt-bern-controller"/>
+</obj>
+
+<obj class="Segment" id="socket-ru-crt-grenoble-segment">
+ <rel name="applications">
+  <ref class="SocketSenderApplication" id="ss-crt-grenoble-01"/>
+  <ref class="ReadoutApplication" id="socket-ru-crt-grenoble-01"/>
+ </rel>
+ <rel name="controller" class="RCApplication" id="socket-ru-crt-grenoble-controller"/>
+</obj>
+
 <obj class="Segment" id="socket-ru-segment">
  <rel name="applications">
   <ref class="SocketSenderApplication" id="ss-01"/>
   <ref class="ReadoutApplication" id="socket-ru-01"/>
  </rel>
  <rel name="controller" class="RCApplication" id="socket-ru-controller"/>
+</obj>
+
+<obj class="SocketDataSender" id="socket_wib_101_link0">
+ <attr name="port" type="u32" val="1234"/>
+ <attr name="control_host" type="string" val="localhost"/>
+ <rel name="contains">
+  <ref class="DetectorStream" id="stream_100"/>
+ </rel>
+ <rel name="uses" class="NetworkInterface" id="wib_101_hermes0"/>
 </obj>
 
 <obj class="SocketReceiver" id="socket-ru-1-rcv">
@@ -540,6 +663,76 @@
   <ref class="QueueConnectionRule" id="fa-queue-rule"/>
   <ref class="QueueConnectionRule" id="tp-queue-rule"/>
   <ref class="QueueConnectionRule" id="wib-eth-raw-data-rule"/>
+  <ref class="QueueConnectionRule" id="fd-dlh-data-requests-queue-rule"/>
+ </rel>
+ <rel name="network_rules">
+  <ref class="NetworkConnectionRule" id="ts-net-rule"/>
+  <ref class="NetworkConnectionRule" id="ta-net-rule"/>
+  <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
+  <ref class="NetworkConnectionRule" id="tpset-net-rule"/>
+ </rel>
+ <rel name="action_plans">
+  <ref class="ActionPlan" id="socket-write-start"/>
+  <ref class="ActionPlan" id="socket-write-stop"/>
+ </rel>
+ <rel name="data_writers">
+  <ref class="SocketWriterConf" id="def-socket-writer-conf"/>
+ </rel>
+</obj>
+
+<obj class="SocketSenderApplication" id="ss-crt-bern-01">
+ <attr name="application_name" type="string" val="daq_application"/>
+ <rel name="contains">
+  <ref class="DetectorToDaqConnection" id="socket_conn_apa1"/>
+ </rel>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="daqapp_control"/>
+  <ref class="Service" id="dataRequests"/>
+  <ref class="Service" id="timeSyncs"/>
+  <ref class="Service" id="triggerActivities"/>
+  <ref class="Service" id="triggerPrimitives"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="queue_rules">
+  <ref class="QueueConnectionRule" id="fa-queue-rule"/>
+  <ref class="QueueConnectionRule" id="tp-queue-rule"/>
+  <ref class="QueueConnectionRule" id="crt-bern-raw-data-rule"/>
+  <ref class="QueueConnectionRule" id="fd-dlh-data-requests-queue-rule"/>
+ </rel>
+ <rel name="network_rules">
+  <ref class="NetworkConnectionRule" id="ts-net-rule"/>
+  <ref class="NetworkConnectionRule" id="ta-net-rule"/>
+  <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
+  <ref class="NetworkConnectionRule" id="tpset-net-rule"/>
+ </rel>
+ <rel name="action_plans">
+  <ref class="ActionPlan" id="socket-write-start"/>
+  <ref class="ActionPlan" id="socket-write-stop"/>
+ </rel>
+ <rel name="data_writers">
+  <ref class="SocketWriterConf" id="def-socket-writer-conf"/>
+ </rel>
+</obj>
+
+<obj class="SocketSenderApplication" id="ss-crt-grenoble-01">
+ <attr name="application_name" type="string" val="daq_application"/>
+ <rel name="contains">
+  <ref class="DetectorToDaqConnection" id="socket_conn_apa1"/>
+ </rel>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="daqapp_control"/>
+  <ref class="Service" id="dataRequests"/>
+  <ref class="Service" id="timeSyncs"/>
+  <ref class="Service" id="triggerActivities"/>
+  <ref class="Service" id="triggerPrimitives"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="queue_rules">
+  <ref class="QueueConnectionRule" id="fa-queue-rule"/>
+  <ref class="QueueConnectionRule" id="tp-queue-rule"/>
+  <ref class="QueueConnectionRule" id="crt-grenoble-raw-data-rule"/>
   <ref class="QueueConnectionRule" id="fd-dlh-data-requests-queue-rule"/>
  </rel>
  <rel name="network_rules">
