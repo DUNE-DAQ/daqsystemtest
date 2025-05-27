@@ -492,7 +492,7 @@
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="postproc-"/>
  <attr name="latency_monitoring" type="bool" val="1"/>
- <attr name="channel_map" type="string" val="PD2HDChannelMap"/>
+ <attr name="channel_map" type="string" val="PD2HDTPCChannelMap"/>
  <rel name="processing_steps">
   <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
   <ref class="AVXThresholdProcessor" id="tpg-threshold-proc"/>
