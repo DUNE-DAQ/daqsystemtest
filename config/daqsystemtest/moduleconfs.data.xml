@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="66" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="dergonul" last-modified-on="np04-srv-031.cern.ch" last-modification-time="20250305T102725"/>
+<info name="" type="" num-of-items="73" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20250526T144643"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -76,6 +76,7 @@
 
 <comments>
  <comment creation-time="20250214T120354" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added socket communication classes"/>
+ <comment creation-time="20250526T144643" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRT link handlers"/>
 </comments>
 
 
@@ -104,15 +105,6 @@
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
   <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
- </rel>
-</obj>
-
-<obj class="ActionPlan" id="tc-maker-start">
- <attr name="execution_policy" type="enum" val="modules-in-series"/>
- <rel name="command" class="FSMCommand" id="start"/>
- <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="ta-handler-step"/>
-  <ref class="DaqModulesGroupByType" id="subscriber-step"/>
  </rel>
 </obj>
 
@@ -157,7 +149,16 @@
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
   <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
- </rel> 
+ </rel>
+</obj>
+
+<obj class="ActionPlan" id="tc-maker-start">
+ <attr name="execution_policy" type="enum" val="modules-in-series"/>
+ <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="ta-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="subscriber-step"/>
+ </rel>
 </obj>
 
 <obj class="DFOConf" id="dfoconf-01">
@@ -209,12 +210,6 @@
  </attr>
 </obj>
 
-<obj class="DaqModulesGroupByType" id="tp-handler-step">
- <attr name="modules" type="class">
-  <data val="TriggerDataHandlerModule"/>
- </attr>
-</obj>
-
 <obj class="DaqModulesGroupByType" id="subscriber-step">
  <attr name="modules" type="class">
   <data val="DataSubscriberModule"/>
@@ -225,6 +220,30 @@
  <attr name="modules" type="class">
   <data val="TriggerDataHandlerModule"/>
  </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="tp-handler-step">
+ <attr name="modules" type="class">
+  <data val="TriggerDataHandlerModule"/>
+ </attr>
+</obj>
+
+<obj class="DataHandlerConf" id="def-crt-bern-link-handler">
+ <attr name="template_for" type="class" val="FDDataHandlerModule"/>
+ <attr name="input_data_type" type="string" val="CRTBernFrame"/>
+ <attr name="generate_timesync" type="bool" val="1"/>
+ <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
+ <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
+ <rel name="data_processor" class="RawDataProcessor" id="def-wib-processor"/>
+</obj>
+
+<obj class="DataHandlerConf" id="def-crt-grenoble-link-handler">
+ <attr name="template_for" type="class" val="FDDataHandlerModule"/>
+ <attr name="input_data_type" type="string" val="CRTGrenobleFrame"/>
+ <attr name="generate_timesync" type="bool" val="1"/>
+ <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
+ <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
+ <rel name="data_processor" class="RawDataProcessor" id="def-wib-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-link-handler">
@@ -321,7 +340,6 @@
  <attr name="max_file_size" type="u64" val="4294967296"/>
  <attr name="disable_unique_filename_suffix" type="bool" val="0"/>
  <attr name="free_space_safety_factor" type="s32" val="5"/>
- <attr name="compression_level" type="u8" val="0"/>
  <rel name="file_layout_params" class="HDF5FileLayoutParams" id="default"/>
  <rel name="filename_params" class="FilenameParams" id="default"/>
 </obj>
@@ -333,7 +351,6 @@
  <attr name="max_file_size" type="u64" val="4294967296"/>
  <attr name="disable_unique_filename_suffix" type="bool" val="0"/>
  <attr name="free_space_safety_factor" type="s32" val="5"/>
- <attr name="compression_level" type="u8" val="0"/>
  <rel name="file_layout_params" class="HDF5FileLayoutParams" id="tp_file_layout"/>
  <rel name="filename_params" class="FilenameParams" id="tp-file-params"/>
 </obj>
@@ -537,6 +554,12 @@
  <attr name="periodic_data_transmission_ms" type="u32" val="5"/>
 </obj>
 
+<obj class="SamplesOverThresholdMinima" id="def-sot-minima">
+ <attr name="sot_minimum_plane0" type="u16" val="1"/>
+ <attr name="sot_minimum_plane1" type="u16" val="1"/>
+ <attr name="sot_minimum_plane2" type="u16" val="1"/>
+</obj>
+
 <obj class="SocketReaderConf" id="def-socket-reader-conf">
  <attr name="template_for" type="class" val="SocketReaderModule"/>
  <attr name="emulation_mode" type="bool" val="0"/>
@@ -546,7 +569,6 @@
 
 <obj class="SocketWriterConf" id="def-socket-writer-conf">
  <attr name="template_for" type="class" val="SocketWriterModule"/>
- <attr name="emulation_mode" type="bool" val="0"/>
  <attr name="socket_type" type="enum" val="UDP"/>
  <attr name="remote_ip" type="string" val="127.0.0.1"/>
 </obj>
@@ -647,12 +669,6 @@
 <obj class="TRBConf" id="trb-01">
  <attr name="queues_timeout" type="u32" val="100"/>
  <attr name="trigger_record_timeout_ms" type="u32" val="2858"/>
-</obj>
-
-<obj class="SamplesOverThresholdMinima" id="def-sot-minima">
- <attr name="sot_minimum_plane0" type="u16" val="1"/>
- <attr name="sot_minimum_plane1" type="u16" val="1"/>
- <attr name="sot_minimum_plane2" type="u16" val="1"/>
 </obj>
 
 </oks-data>

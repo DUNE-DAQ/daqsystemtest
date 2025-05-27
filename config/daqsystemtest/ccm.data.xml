@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="29" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="mrigan" last-modified-on="np04-srv-016.cern.ch" last-modification-time="20250312T105152"/>
+<info name="" type="" num-of-items="31" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="dergonul" last-modified-on="np04-srv-031.cern.ch" last-modification-time="20250526T125621"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -77,6 +77,7 @@
  <comment creation-time="20240918T094920" created-by="maroda" created-on="np04-srv-015.cern.ch" author="maroda" text="add local file"/>
  <comment creation-time="20250214T095127" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added new Session with SocketReaderModule"/>
  <comment creation-time="20250312T102000" created-by="mrigan" created-on="np04-srv-016.cern.ch" author="mrigan" text=" "/>
+ <comment creation-time="20250526T125621" created-by="dergonul" created-on="np04-srv-031.cern.ch" author="dergonul" text="Added new sessions for CRTBernFrame and CRTGrenobleFrame"/>
 </comments>
 
 
@@ -128,6 +129,26 @@
 </obj>
 
 <obj class="RCApplication" id="root-controller">
+ <attr name="application_name" type="string" val="drunc-controller"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="rccontroller_control"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="fsm" class="FSMconfiguration" id="fsmConf-test"/>
+</obj>
+
+<obj class="RCApplication" id="socket-crt-bern-root-controller">
+ <attr name="application_name" type="string" val="drunc-controller"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="rccontroller_control"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="fsm" class="FSMconfiguration" id="fsmConf-test"/>
+</obj>
+
+<obj class="RCApplication" id="socket-crt-grenoble-root-controller">
  <attr name="application_name" type="string" val="drunc-controller"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
@@ -208,6 +229,11 @@
  <attr name="value" type="string" val="erstrace,throttle,lstdout,protobufstream(monkafka.cern.ch:30092)"/>
 </obj>
 
+<obj class="Variable" id="local-env-ers-debug-level">
+ <attr name="name" type="string" val="DUNEDAQ_ERS_DEBUG_LEVEL"/>
+ <attr name="value" type="string" val="-1"/>
+</obj>
+
 <obj class="Variable" id="local-env-ers-error">
  <attr name="name" type="string" val="DUNEDAQ_ERS_ERROR"/>
  <attr name="value" type="string" val="erstrace,throttle,lstdout"/>
@@ -231,11 +257,6 @@
 <obj class="Variable" id="local-env-ers-warning">
  <attr name="name" type="string" val="DUNEDAQ_ERS_WARNING"/>
  <attr name="value" type="string" val="erstrace,throttle,lstdout"/>
-</obj>
-
-<obj class="Variable" id="local-env-ers-debug-level">
- <attr name="name" type="string" val="DUNEDAQ_ERS_DEBUG_LEVEL"/>
- <attr name="value" type="string" val="-1"/>
 </obj>
 
 <obj class="VariableSet" id="ehn1-variables">
