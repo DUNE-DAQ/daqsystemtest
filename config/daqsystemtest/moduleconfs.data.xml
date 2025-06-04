@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="81" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20250530T152404"/>
+<info name="" type="" num-of-items="83" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20250530T152404"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -72,6 +72,7 @@
  <file path="schema/appmodel/fdmodules.schema.xml"/>
  <file path="config/daqsystemtest/connections.data.xml"/>
  <file path="config/daqsystemtest/fsm.data.xml"/>
+ <file path="config/daqsystemtest/ccm.data.xml"/>
 </include>
 
 <comments>
@@ -382,6 +383,15 @@
  <rel name="request_handler" class="RequestHandler" id="def-tp-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="TPDataProcessor" id="tp-processor"/>
+</obj>
+
+<obj class="DataHandlerConf" id="tpreplay-tp-handler">
+ <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
+ <attr name="input_data_type" type="string" val="TriggerPrimitiveVector"/>
+ <attr name="generate_timesync" type="bool" val="0"/>
+ <rel name="request_handler" class="RequestHandler" id="def-tp-request-handler"/>
+ <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
+ <rel name="data_processor" class="TPDataProcessor" id="tpreplay-tp-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="trg-tp-handler">
@@ -731,6 +741,16 @@
  <attr name="time_after" type="u32" val="1001"/>
 </obj>
 
+<obj class="TPDataProcessor" id="tpreplay-tp-processor">
+ <attr name="queue_sizes" type="u32" val="10000"/>
+ <attr name="thread_names_prefix" type="string" val="proc-"/>
+ <attr name="latency_monitoring" type="bool" val="0"/>
+ <attr name="print_tp_info" type="bool" val="0"/>
+ <rel name="algorithms">
+  <ref class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker"/>
+ </rel>
+</obj>
+
 <obj class="TPDataProcessor" id="tp-processor">
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="proc-"/>
@@ -741,9 +761,32 @@
  </rel>
 </obj>
 
+<obj class="TPStreamConf" id="def-tp-stream-1">
+ <attr name="filename" type="string" val=""/>
+ <attr name="index" type="u32" val="0"/>
+</obj>
+
 <obj class="TRBConf" id="trb-01">
  <attr name="queues_timeout" type="u32" val="100"/>
  <attr name="trigger_record_timeout_ms" type="u32" val="2858"/>
+</obj>
+
+<obj class="TPReplayModuleConf" id="tpreplay-tp-maker">
+ <attr name="template_for" type="class" val="TPReplayModule"/>
+ <attr name="number_of_loops" type="u32" val="1"/>
+ <attr name="maximum_wait_time_us" type="u32" val="1000"/>
+ <attr name="total_planes" type="u32" val="1"/>
+ <attr name="channel_map" type="string" val="PD2HDChannelMap"/>
+ <attr name="filter_out_plane" type="u32" val="0"/>
+ <rel name="tp_streams">
+  <ref class="TPStreamConf" id="def-tp-stream-1"/>
+ </rel>
+</obj>
+
+<obj class="SamplesOverThresholdMinima" id="def-sot-minima">
+ <attr name="sot_minimum_plane0" type="u16" val="1"/>
+ <attr name="sot_minimum_plane1" type="u16" val="1"/>
+ <attr name="sot_minimum_plane2" type="u16" val="1"/>
 </obj>
 
 </oks-data>

@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="10" oks-format="data" oks-version="862f2957270" created-by="asztuc" created-on="np04-srv-019.cern.ch" creation-time="20231212T171111" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T153645"/>
+<info name="" type="" num-of-items="12" oks-format="data" oks-version="862f2957270" created-by="asztuc" created-on="np04-srv-019.cern.ch" creation-time="20231212T171111" last-modified-by="mrigan" last-modified-on="np04-srv-016.cern.ch" last-modification-time="20250522T092014"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -74,14 +74,21 @@
  <file path="config/daqsystemtest/hosts.data.xml"/>
  <file path="config/daqsystemtest/fsm.data.xml"/>
  <file path="config/daqsystemtest/ccm.data.xml"/>
+ <file path="config/daqsystemtest/df-segment.data.xml"/>
 </include>
 
 <comments>
  <comment creation-time="20240208T095451" created-by="eflumerf" created-on="ironvirt9.mshome.net" author="eflumerf" text="reformat"/>
+ <comment creation-time="20241216T215140" created-by="mrigan" created-on="np04-srv-016.cern.ch" author="mrigan" text="trigger replay changes"/>
+ <comment creation-time="20250522T085900" created-by="mrigan" created-on="np04-srv-016.cern.ch" author="mrigan" text="tpreplay segment"/>
+ <comment creation-time="20250522T090154" created-by="mrigan" created-on="np04-srv-016.cern.ch" author="mrigan" text="tpreplay root segment"/>
+ <comment creation-time="20250522T091047" created-by="mrigan" created-on="np04-srv-016.cern.ch" author="mrigan" text="modifying replay sessions"/>
+ <comment creation-time="20250522T092014" created-by="mrigan" created-on="np04-srv-016.cern.ch" author="mrigan" text="udpate replay"/>
 </comments>
 
 
 <obj class="MLTApplication" id="mlt">
+ <attr name="tx_generation_disabled" type="bool" val="0"/>
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
@@ -111,6 +118,32 @@
  </rel>
 </obj>
 
+<obj class="RCApplication" id="tpreplay-controller">
+ <attr name="commandline_parameters" type="string">
+  <data val=""/>
+ </attr>
+ <attr name="application_name" type="string" val="drunc-controller"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="rccontroller_control"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="fsm" class="FSMconfiguration" id="FSMconfiguration_noAction"/>
+</obj>
+
+<obj class="RCApplication" id="tpreplay-root-controller">
+ <attr name="commandline_parameters" type="string">
+  <data val=""/>
+ </attr>
+ <attr name="application_name" type="string" val="drunc-controller"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="rccontroller_control"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="fsm" class="FSMconfiguration" id="fsmConf-test"/>
+</obj>
+
 <obj class="RCApplication" id="trg-controller">
  <attr name="application_name" type="string" val="drunc-controller"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
@@ -119,6 +152,22 @@
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="fsm" class="FSMconfiguration" id="FSMconfiguration_noAction"/>
+</obj>
+
+<obj class="Segment" id="tpreplay-root-segment">
+ <rel name="segments">
+  <ref class="Segment" id="df-segment"/>
+  <ref class="Segment" id="trg-segment"/>
+  <ref class="Segment" id="tpreplay-segment"/>
+ </rel>
+ <rel name="controller" class="RCApplication" id="tpreplay-root-controller"/>
+</obj>
+
+<obj class="Segment" id="tpreplay-segment">
+ <rel name="applications">
+  <ref class="TPReplayApplication" id="tpreplay"/>
+ </rel>
+ <rel name="controller" class="RCApplication" id="tpreplay-controller"/>
 </obj>
 
 <obj class="Segment" id="trg-segment">
@@ -139,8 +188,37 @@
  <attr name="subsystem" type="enum" val="Trigger"/>
 </obj>
 
+<obj class="SourceIDConf" id="tpreplay-tp-srcid-100000">
+ <attr name="sid" type="u32" val="100000"/>
+ <attr name="subsystem" type="enum" val="Trigger"/>
+</obj>
+
+<obj class="TPReplayApplication" id="tpreplay">
+ <attr name="application_name" type="string" val="daq_application"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="daqapp_control"/>
+  <ref class="Service" id="dataRequests"/>
+  <ref class="Service" id="triggerPrimitives"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="queue_rules">
+  <ref class="QueueConnectionRule" id="tpreplay-tp-queue-rule"/>
+ </rel>
+ <rel name="network_rules">
+  <ref class="NetworkConnectionRule" id="tpreplay-ta-net-rule"/>
+  <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
+ </rel>
+ <rel name="tp_source_ids">
+  <ref class="SourceIDConf" id="tpreplay-tp-srcid-100000"/>
+ </rel>
+ <rel name="tprm_conf" class="TPReplayModuleConf" id="tpreplay-tp-maker"/>
+ <rel name="tp_handler" class="DataHandlerConf" id="tpreplay-tp-handler"/>
+</obj>
+
 <obj class="TriggerApplication" id="tc-maker-1">
  <attr name="application_name" type="string" val="daq_application"/>
+ <attr name="tx_generation_disabled" type="bool" val="0"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
   <ref class="Service" id="daqapp_control"/>
