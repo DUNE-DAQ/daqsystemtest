@@ -138,7 +138,7 @@
  <rel name="fsm" class="FSMconfiguration" id="fsmConf-test"/>
 </obj>
 
-<obj class="RCApplication" id="socket-crt-bern-root-controller">
+<obj class="RCApplication" id="crt-bern-root-controller">
  <attr name="application_name" type="string" val="drunc-controller"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
@@ -148,7 +148,7 @@
  <rel name="fsm" class="FSMconfiguration" id="fsmConf-test"/>
 </obj>
 
-<obj class="RCApplication" id="socket-crt-grenoble-root-controller">
+<obj class="RCApplication" id="crt-grenoble-root-controller">
  <attr name="application_name" type="string" val="drunc-controller"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">

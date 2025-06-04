@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="73" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20250526T144643"/>
+<info name="" type="" num-of-items="81" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20250530T152404"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -77,6 +77,11 @@
 <comments>
  <comment creation-time="20250214T120354" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added socket communication classes"/>
  <comment creation-time="20250526T144643" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRT link handlers"/>
+ <comment creation-time="20250530T150821" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRTBernReaderConf"/>
+ <comment creation-time="20250530T151321" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRTGrenobleReaderConf"/>
+ <comment creation-time="20250530T151933" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRT data source steps"/>
+ <comment creation-time="20250530T152100" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRT action plans"/>
+ <comment creation-time="20250530T152404" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRT action plans"/>
 </comments>
 
 
@@ -84,6 +89,54 @@
  <attr name="plane0" type="u16" val="100"/>
  <attr name="plane1" type="u16" val="100"/>
  <attr name="plane2" type="u16" val="100"/>
+</obj>
+
+<obj class="ActionPlan" id="crt-bern-readout-start">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="crt-bern-reader-data-source-step"/>
+ </rel>
+</obj>
+
+<obj class="ActionPlan" id="crt-bern-readout-stop">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="crt-bern-reader-data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+ </rel>
+</obj>
+
+<obj class="ActionPlan" id="crt-grenoble-readout-start">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="crt-grenoble-reader-data-source-step"/>
+ </rel>
+</obj>
+
+<obj class="ActionPlan" id="crt-grenoble-readout-stop">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="crt-grenoble-reader-data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+ </rel>
 </obj>
 
 <obj class="ActionPlan" id="readout-start">
@@ -161,6 +214,16 @@
  </rel>
 </obj>
 
+<obj class="CRTBernReaderConf" id="def-crt-bern-receiver-conf">
+ <attr name="template_for" type="class" val="CRTBernReaderModule"/>
+ <attr name="emulation_mode" type="bool" val="0"/>
+</obj>
+
+<obj class="CRTGrenobleReaderConf" id="def-crt-grenoble-receiver-conf">
+ <attr name="template_for" type="class" val="CRTGrenobleReaderModule"/>
+ <attr name="emulation_mode" type="bool" val="0"/>
+</obj>
+
 <obj class="DFOConf" id="dfoconf-01">
  <attr name="general_queue_timeout_ms" type="u32" val="100"/>
  <attr name="stop_timeout_ms" type="u32" val="100"/>
@@ -183,6 +246,18 @@
 <obj class="DaqModulesGroupByType" id="aggregator-step">
  <attr name="modules" type="class">
   <data val="FragmentAggregatorModule"/>
+ </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="crt-bern-reader-data-source-step">
+ <attr name="modules" type="class">
+  <data val="CRTBernReaderModule"/>
+ </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="crt-grenoble-reader-data-source-step">
+ <attr name="modules" type="class">
+  <data val="CRTGrenobleReaderModule"/>
  </attr>
 </obj>
 
