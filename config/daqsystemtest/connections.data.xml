@@ -481,4 +481,14 @@
  <attr name="eth_device_name" type="string" val="eno1"/>
 </obj>
 
+<obj class="NetworkConnectionRule" id="tpreplay-ta-net-rule">
+ <attr name="endpoint_class" type="class" val="DataSubscriberModule"/>
+ <rel name="descriptor" class="NetworkConnectionDescriptor" id="ta-publisher"/>
+</obj>
+
+<obj class="QueueConnectionRule" id="tpreplay-tp-queue-rule">
+ <attr name="destination_class" type="class" val="TriggerDataHandlerModule"/>
+ <rel name="descriptor" class="QueueDescriptor" id="tp-input"/>
+</obj>
+
 </oks-data>
