@@ -208,4 +208,16 @@
  <rel name="data_store_params" class="DataStoreConf" id="default_tp_store_conf"/>
 </obj>
 
+<obj class="TriggerBitword" id="test-bitword">
+ <attr name="bitword" type="string">
+  <data val="kPrescale"/>
+ </attr>
+</obj>
+
+<obj class="TriggerBitword" id="test-bitword2">
+ <attr name="bitword" type="string">
+  <data val="kTiming"/>
+ </attr>
+</obj>
+
 </oks-data>
