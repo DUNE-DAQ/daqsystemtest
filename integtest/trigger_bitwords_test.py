@@ -16,7 +16,6 @@ pytest_plugins = "integrationtest.integrationtest_drunc"
 # Run setup
 run_duration = 10  # seconds
 check_for_logfile_errors = True
-expected_number_of_data_files = 1
 ignored_logfile_problems = {
     "-controller": [
         "Worker with pid \\d+ was terminated due to signal",
@@ -33,7 +32,7 @@ ignored_logfile_problems = {
 #    "log_.*": ["connect: Connection refused", "Connection reset by peer", "end of stream"],
 }
 
-# Config setup
+### Config setup
 common_config_obj = data_classes.drunc_config()
 common_config_obj.op_env = "test"
 common_config_obj.tpg_enabled = False
@@ -44,11 +43,12 @@ common_config_obj.config_db = (
 onebyone_local_conf = copy.deepcopy(common_config_obj)
 onebyone_local_conf.session = "local-1x1-config"
 
-### Get necessary dal objects
+# Get necessary dal objects
 db = conffwk.Configuration("oksconflibs:" + str(common_config_obj.config_db))
 prescale_bitword = db.get_dal(class_name="TriggerBitword", uid="test-bitword")
 timing_bitword = db.get_dal(class_name="TriggerBitword", uid="test-bitword2")
 
+# Prep to turn of tp-stream-writer 
 local_conf = db.get_dal(class_name="Session", uid="local-1x1-config")
 tpstream_writer = db.get_dal(class_name="TPStreamWriterApplication", uid="tp-stream-writer")
 # Append the TPStreamWriter to the disabled list
@@ -62,7 +62,7 @@ onebyone_local_conf.config_substitutions.append(
     )
 )
 
-### Prep configs
+# Prep configs
 no_bitword_conf = copy.deepcopy(onebyone_local_conf)
 prescale_bitword_conf = copy.deepcopy(onebyone_local_conf)
 timing_bitword_conf = copy.deepcopy(onebyone_local_conf)
@@ -144,7 +144,7 @@ coincidence_bitword_conf.config_substitutions.append(
         obj_class="TriggerBitword",
         obj_id="test-bitword",
         updates={
-          "bitword": ["kTiming", "kPrescale"]
+          "bitword": ["kTiming", "kRandom"]
         },)
 )
 coincidence_bitword = db.get_dal(class_name="TriggerBitword", uid="test-bitword")
@@ -157,7 +157,38 @@ coincidence_bitword_conf.config_substitutions.append(
             "trigger_bitwords": [coincidence_bitword]
             },)
 )
+coincidence_bitword_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_id="random-tc-generator",
+        obj_class="RandomTCMakerConf",
+        updates={"trigger_rate_hz": 40},)
+)
+coincidence_bitword_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_id="def-random-readout",
+        obj_class="TCReadoutMap",
+        updates={"time_before": 62500, "time_after": 62500},)
+)
+coincidence_bitword_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_id="fakehsi",
+        obj_class="FakeHSIEventGeneratorConf",
+        updates={"trigger_rate": 30},)
+)
+coincidence_bitword_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_id="def-tc-map",
+        obj_class="TCReadoutMap",
+        updates={"time_before": 6250, "time_after": 6250},)
+)
+coincidence_bitword_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_id="def-hsi-tc-map",
+        obj_class="TCReadoutMap",
+        updates={"time_before": 6250, "time_after": 6250},)
+)
 
+# Finally store configs in map
 confgen_arguments = { 
   "No bits": no_bitword_conf,
   "Prescale bit": prescale_bitword_conf,
@@ -168,10 +199,9 @@ confgen_arguments = {
 }
 
 ##### OVERWRITE FOR TESTING #####
-confgen_arguments = {
-  "No bits": no_bitword_conf,
-  "Prescale bit": prescale_bitword_conf
-}
+#confgen_arguments = {
+#  "No bits": no_bitword_conf
+#}
 
 # The commands to run in nanorc, as a list
 nanorc_command_list = "boot conf".split()
@@ -223,12 +253,12 @@ def test_data_files(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
 
     datafile_params = {
-        "No bits": {"expected_trigger_types": ["kTiming", "kPrescale"], "min_tr_count": 1, "max_tr_count": 100, "multi_required": 0},
-        "Prescale bit": {"expected_trigger_types": ["kPrescale"], "min_tr_count": 1, "max_tr_count": 100, "multi_required": 0},
-        "Timing bit": {"expected_trigger_types": ["kTiming"], "min_tr_count": 1, "max_tr_count": 100, "multi_required": 0},
-        "Supernova bit": {"expected_trigger_types": [], "min_tr_count": 0, "max_tr_count": 0, "multi_required": 0},
-        "Series bit": {"expected_trigger_types": ["kTiming", "kPrescale"], "min_tr_count": 1, "max_tr_count": 100, "multi_required": 0},
-        "Coincidence bit": {"expected_trigger_types": ["kTiming", "kPrescale"], "min_tr_count": 1, "max_tr_count": 100, "multi_required": 1}
+        "No bits": {"n_data_files": 1, "expected_trigger_types": ["kTiming", "kPrescale", "kRandom"], "min_tr_count": 1, "max_tr_count": 100, "multi_required": 0},
+        "Prescale bit": {"n_data_files": 1, "expected_trigger_types": ["kPrescale"], "min_tr_count": 1, "max_tr_count": 100, "multi_required": 0},
+        "Timing bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming"], "min_tr_count": 1, "max_tr_count": 100, "multi_required": 0},
+        "Supernova bit": {"n_data_files": 0, "expected_trigger_types": [], "min_tr_count": 0, "max_tr_count": 0, "multi_required": 0},
+        "Series bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming", "kPrescale"], "min_tr_count": 1, "max_tr_count": 100, "multi_required": 0},
+        "Coincidence bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming", "kRandom"], "min_tr_count": 1, "max_tr_count": 100, "multi_required": 1}
     }
 
     # Match run to checks
@@ -247,12 +277,19 @@ def test_data_files(run_nanorc):
     all_ok = True
     
     ## N of data files
-    all_ok &= len(run_nanorc.data_files) == expected_number_of_data_files
+    all_ok &= len(run_nanorc.data_files) == selected_params["n_data_files"]
 
     if all_ok:
-        print(f"\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({expected_number_of_data_files})")
+        print(f"\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({selected_params['n_data_files']})")
     else:
-        print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {expected_number_of_data_files}, found {len(run_nanorc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
+        print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {selected_params['n_data_files']}, found {len(run_nanorc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
 
-    ## Other
-        
+    ## Other test
+    if selected_params["n_data_files"] > 0:
+        data_file = data_file_checks.DataFile(run_nanorc.data_files[0])
+        all_ok &= data_file_checks.check_tr_trigger_types(data_file, selected_params)
+        if all_ok:
+            print(f"\N{WHITE HEAVY CHECK MARK} All expected TC bits were found ({selected_params['expected_trigger_types']})")
+        else:
+            print(f"\N{POLICE CARS REVOLVING LIGHT} The extracted TC bits do not correspond to the expected ones! \N{POLICE CARS REVOLVING LIGHT}")
+
