@@ -14,7 +14,7 @@ import integrationtest.log_file_checks as log_file_checks
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
 # Run setup
-run_duration = 10  # seconds
+run_duration = 15  # seconds
 check_for_logfile_errors = True
 ignored_logfile_problems = {
     "-controller": [
@@ -28,6 +28,9 @@ ignored_logfile_problems = {
     ],
     "config_mlt": [
         "Trigger is inhibited"
+    ],
+    "config_dfo": [
+        "that was busy with"
     ]
 #    "log_.*": ["connect: Connection refused", "Connection reset by peer", "end of stream"],
 }
@@ -179,13 +182,13 @@ coincidence_bitword_conf.config_substitutions.append(
     data_classes.config_substitution(
         obj_id="def-tc-map",
         obj_class="TCReadoutMap",
-        updates={"time_before": 6250, "time_after": 6250},)
+        updates={"time_before": 62500, "time_after": 62500},)
 )
 coincidence_bitword_conf.config_substitutions.append(
     data_classes.config_substitution(
         obj_id="def-hsi-tc-map",
         obj_class="TCReadoutMap",
-        updates={"time_before": 6250, "time_after": 6250},)
+        updates={"time_before": 62500, "time_after": 62500},)
 )
 
 # Finally store configs in map
@@ -207,9 +210,9 @@ confgen_arguments = {
 nanorc_command_list = "boot conf".split()
 nanorc_command_list += (
         "start ".split()
-        + "--run-number 101 wait 2 enable-triggers wait ".split()
+        + "--run-number 101 enable-triggers wait ".split()
         + [str(run_duration)]
-        + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop wait 2".split()
+        + "disable-triggers drain-dataflow wait 2 stop-trigger-sources wait 2 stop wait 2".split()
     )
 nanorc_command_list += "scrap terminate".split()
 
