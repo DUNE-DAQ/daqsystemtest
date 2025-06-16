@@ -191,6 +191,16 @@
  <rel name="geo_id" class="GeoId" id="g_3_2_1_3"/>
 </obj>
 
+<obj class="DetectorStream" id="stream_1001">
+ <attr name="source_id" type="u32" val="1001"/>
+ <rel name="geo_id" class="GeoId" id="g_13_1_1_0"/>
+</obj>
+<obj class="DetectorStream" id="stream_1002">
+ <attr name="source_id" type="u32" val="1002"/>
+ <rel name="geo_id" class="GeoId" id="g_12_1_1_0"/>
+</obj>
+
+
 <obj class="DetectorToDaqConnection" id="conn_apa1">
  <rel name="contains">
   <ref class="DPDKReceiver" id="ru-1-rcv"/>
@@ -212,7 +222,21 @@
  </rel>
 </obj>
 
-<obj class="GeoId" id="g_3_1_1_0">
+<obj class="DetectorToDaqConnection" id="socket_crt_grenoble">
+ <rel name="contains">
+  <ref class="SocketReceiver" id="socket-ru-1-rcv"/>
+  <ref class="ResourceSetAND" id="socket_crt_grenoble_rset"/>
+ </rel>
+</obj>
+
+ <obj class="DetectorToDaqConnection" id="socket_crt_bern">
+  <rel name="contains">
+   <ref class="SocketReceiver" id="socket-ru-1-rcv"/>
+   <ref class="ResourceSetAND" id="socket_crt_bern_rset"/>
+  </rel>
+ </obj>
+
+ <obj class="GeoId" id="g_3_1_1_0">
  <attr name="detector_id" type="u32" val="3"/>
  <attr name="crate_id" type="u32" val="1"/>
  <attr name="slot_id" type="u32" val="1"/>
@@ -266,7 +290,19 @@
  <attr name="stream_id" type="u32" val="3"/>
 </obj>
 
-<obj class="HermesDataSender" id="wib_101_link0">
+<obj class="GeoId" id="g_13_1_1_0">
+ <attr name="detector_id" type="u32" val="13"/>
+ <attr name="crate_id" type="u32" val="1"/>
+ <attr name="slot_id" type="u32" val="1"/>
+</obj>
+
+<obj class="GeoId" id="g_12_1_1_0">
+ <attr name="detector_id" type="u32" val="12"/>
+ <attr name="crate_id" type="u32" val="1"/>
+ <attr name="slot_id" type="u32" val="1"/>
+</obj>
+
+ <obj class="HermesDataSender" id="wib_101_link0">
  <attr name="port" type="u32" val="17476"/>
  <attr name="control_host" type="string" val="localhost"/>
  <rel name="contains">
@@ -498,7 +534,7 @@
  <attr name="tp_generation_enabled" type="bool" val="0"/>
  <attr name="ta_generation_enabled" type="bool" val="0"/>
  <rel name="contains">
-  <ref class="DetectorToDaqConnection" id="socket_conn_apa1"/>
+  <ref class="DetectorToDaqConnection" id="socket_crt_bern"/>
  </rel>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
@@ -541,7 +577,7 @@
  <attr name="tp_generation_enabled" type="bool" val="0"/>
  <attr name="ta_generation_enabled" type="bool" val="0"/>
  <rel name="contains">
-  <ref class="DetectorToDaqConnection" id="socket_conn_apa1"/>
+  <ref class="DetectorToDaqConnection" id="socket_crt_grenoble"/>
  </rel>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
@@ -597,6 +633,18 @@
  </rel>
 </obj>
 
+<obj class="ResourceSetAND" id="socket_crt_grenoble_rset">
+ <rel name="contains">
+  <ref class="SocketDataSender" id="socket_sender_crt_grenoble"/>
+ </rel>
+</obj>
+
+<obj class="ResourceSetAND" id="socket_crt_bern_rset">
+ <rel name="contains">
+  <ref class="SocketDataSender" id="socket_sender_crt_bern"/>
+ </rel>
+</obj>
+
 <obj class="RoHwConfig" id="rohw-1">
 </obj>
 
@@ -633,14 +681,32 @@
  <rel name="uses" class="NetworkInterface" id="wib_101_hermes0"/>
 </obj>
 
-<obj class="SocketReceiver" id="socket-ru-1-rcv">
+<obj class="SocketDataSender" id="socket_sender_crt_grenoble">
+ <attr name="port" type="u32" val="1234"/>
+ <attr name="control_host" type="string" val="localhost"/>
+ <rel name="contains">
+  <ref class="DetectorStream" id="stream_1001"/>
+ </rel>
+ <rel name="uses" class="NetworkInterface" id="wib_101_hermes0"/>
+</obj>
+
+<obj class="SocketDataSender" id="socket_sender_crt_bern">
+ <attr name="port" type="u32" val="1234"/>
+ <attr name="control_host" type="string" val="localhost"/>
+ <rel name="contains">
+  <ref class="DetectorStream" id="stream_1002"/>
+ </rel>
+ <rel name="uses" class="NetworkInterface" id="wib_101_hermes0"/>
+</obj>
+
+ <obj class="SocketReceiver" id="socket-ru-1-rcv">
  <rel name="uses" class="NetworkDevice" id="ru_1_readout"/>
 </obj>
 
 <obj class="CRTReaderApplication" id="crt-bern-01">
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="contains">
-  <ref class="DetectorToDaqConnection" id="socket_conn_apa1"/>
+  <ref class="DetectorToDaqConnection" id="socket_crt_bern"/>
  </rel>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
@@ -676,7 +742,7 @@
 <obj class="CRTReaderApplication" id="crt-grenoble-01">
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="contains">
-  <ref class="DetectorToDaqConnection" id="socket_conn_apa1"/>
+  <ref class="DetectorToDaqConnection" id="socket_crt_grenoble"/>
  </rel>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
