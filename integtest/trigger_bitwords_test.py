@@ -1,3 +1,26 @@
+"""
+Integration Test for Trigger Bitword Configurations
+
+This test module validates DAQ system behavior under various trigger bitword configurations.
+It uses multiple configuration variants (e.g., no bitword, prescale, timing, supernova, etc.)
+and runs a controlled run control session to verify:
+
+- Successful execution of the run using the run control
+- Correct generation of log files and absence of unexpected errors
+- Proper creation and content of output data files
+- Expected trigger types and trigger multiplicity checks
+  (Multiplicity here refers to a Trigger Decision composed of multiple different
+   Trigger Candidate types that have been merged)
+
+Detailed case descriptions:
+- No bits: A default case with no trigger bitwords configured; all TC types in the config should appear.
+- Prescale / Timing bits: A single specific bitword is enabled; only the corresponding TC type should be present.
+- Supernova bit: A bitword not expected to participate in the run; no raw data should be produced.
+- Series bit: Two independent trigger bitwords enabled; both TC types should appear in the data.
+- Coincidence bit: A composite bitword combining two TC types; this triggers merged TDs, resulting in
+  multiplicity due to the TC coincidence mechanism.
+"""
+
 import copy
 import conffwk
 import os
@@ -43,6 +66,7 @@ common_config_obj.config_db = (
     os.path.dirname(__file__) + "/../config/daqsystemtest/example-configs.data.xml"
 )
 
+# Get default 1x1 config
 onebyone_local_conf = copy.deepcopy(common_config_obj)
 onebyone_local_conf.session = "local-1x1-config"
 
@@ -201,11 +225,6 @@ confgen_arguments = {
   "Coincidence bit": coincidence_bitword_conf
 }
 
-##### OVERWRITE FOR TESTING #####
-#confgen_arguments = {
-#  "No bits": no_bitword_conf
-#}
-
 # The commands to run in nanorc, as a list
 nanorc_command_list = "boot conf".split()
 nanorc_command_list += (
@@ -216,20 +235,24 @@ nanorc_command_list += (
     )
 nanorc_command_list += "scrap terminate".split()
 
-# Tests
+### Tests
+# Run control
 def test_nanorc_success(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
 
     # Check that nanorc completed correctly
     assert run_nanorc.completed_process.returncode == 0
 
+# Log files
 def test_log_files(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     
     session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
 
     log_dir = pathlib.Path("/log")
-    run_nanorc.log_files += list(log_dir.glob(f"log_*_{session_name}*.txt"))
+    run_nanorc.log_files += [
+        f for f in log_dir.glob(f"log_*_{session_name}*.txt") if f.exists()
+    ]
 
     # Check that at least some of the expected log files are present
     assert any(
@@ -250,18 +273,19 @@ def test_log_files(run_nanorc):
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
             run_nanorc.log_files, True, True, ignored_logfile_problems
-        )
+        ), f"Errors found in log files: {run_nanorc.log_files}"
 
+# Data files
 def test_data_files(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
 
     datafile_params = {
-        "No bits": {"n_data_files": 1, "expected_trigger_types": ["kTiming", "kPrescale", "kRandom"], "min_tr_count": 1, "max_tr_count": 100, "multi_required": 0},
-        "Prescale bit": {"n_data_files": 1, "expected_trigger_types": ["kPrescale"], "min_tr_count": 1, "max_tr_count": 100, "multi_required": 0},
-        "Timing bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming"], "min_tr_count": 1, "max_tr_count": 100, "multi_required": 0},
-        "Supernova bit": {"n_data_files": 0, "expected_trigger_types": [], "min_tr_count": 0, "max_tr_count": 0, "multi_required": 0},
-        "Series bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming", "kPrescale"], "min_tr_count": 1, "max_tr_count": 100, "multi_required": 0},
-        "Coincidence bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming", "kRandom"], "min_tr_count": 1, "max_tr_count": 100, "multi_required": 1}
+        "No bits": {"n_data_files": 1, "expected_trigger_types": ["kTiming", "kPrescale", "kRandom"], "multi_required": False},
+        "Prescale bit": {"n_data_files": 1, "expected_trigger_types": ["kPrescale"], "multi_required": False},
+        "Timing bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming"], "multi_required": False},
+        "Supernova bit": {"n_data_files": 0, "expected_trigger_types": [], "multi_required": False},
+        "Series bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming", "kPrescale"], "multi_required": False},
+        "Coincidence bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming", "kRandom"], "multi_required": True}
     }
 
     # Match run to checks
@@ -276,7 +300,7 @@ def test_data_files(run_nanorc):
     else:
         print("Could not extract key from current_test.")
 
-    # Run some tests on the output data file
+    ### Run some tests on the output data file
     all_ok = True
     
     ## N of data files
@@ -290,9 +314,19 @@ def test_data_files(run_nanorc):
     ## Other test
     if selected_params["n_data_files"] > 0:
         data_file = data_file_checks.DataFile(run_nanorc.data_files[0])
-        all_ok &= data_file_checks.check_tr_trigger_types(data_file, selected_params)
+        # TR types
+        all_ok &= data_file_checks.check_tr_trigger_types(data_file, selected_params['expected_trigger_types'])
         if all_ok:
             print(f"\N{WHITE HEAVY CHECK MARK} All expected TC bits were found ({selected_params['expected_trigger_types']})")
         else:
             print(f"\N{POLICE CARS REVOLVING LIGHT} The extracted TC bits do not correspond to the expected ones! \N{POLICE CARS REVOLVING LIGHT}")
+    
+        # TR multiplicity
+        all_ok &= data_file_checks.check_tr_type_multiplicity(data_file, selected_params['multi_required'])
+        if all_ok:
+            print(f"\N{WHITE HEAVY CHECK MARK} The TR type multiplicity was found as expected ({selected_params['multi_required']})")
+        else:
+            print(f"\N{POLICE CARS REVOLVING LIGHT} The TR type multiplicity is NOT as expected ({selected_params['multi_required']})! \N{POLICE CARS REVOLVING LIGHT}")
+
+    assert all_ok, "\N{POLICE CARS REVOLVING LIGHT} One or more data file checks failed! \N{POLICE CARS REVOLVING LIGHT}"
 
