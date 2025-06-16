@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="8" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20250325T160832"/>
+<info name="" type="" num-of-items="12" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="dergonul" last-modified-on="np04-srv-031.cern.ch" last-modification-time="20250526T125621"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -82,6 +82,7 @@
  <comment creation-time="20240918T124331" created-by="maroda" created-on="np04-srv-015.cern.ch" author="maroda" text="change local session opmon URI"/>
  <comment creation-time="20250214T120354" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added new Session with SocketReaderModule"/>
  <comment creation-time="20250325T160832" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Disabled TP"/>
+ <comment creation-time="20250526T125621" created-by="dergonul" created-on="np04-srv-031.cern.ch" author="dergonul" text="Added new session for CRTBernFrame and CRTGrenobleFrame"/>
 </comments>
 
 
@@ -102,14 +103,24 @@
  <rel name="controller" class="RCApplication" id="root-controller"/>
 </obj>
 
-<obj class="Segment" id="socket-root-segment">
+<obj class="Segment" id="crt-bern-root-segment">
  <rel name="segments">
-  <ref class="Segment" id="socket-ru-segment"/>
+  <ref class="Segment" id="crt-bern-segment"/>
   <ref class="Segment" id="df-segment"/>
   <ref class="Segment" id="trg-segment"/>
   <ref class="Segment" id="hsi-fake-segment"/>
  </rel>
- <rel name="controller" class="RCApplication" id="socket-root-controller"/>
+ <rel name="controller" class="RCApplication" id="crt-bern-root-controller"/>
+</obj>
+
+<obj class="Segment" id="crt-grenoble-root-segment">
+ <rel name="segments">
+  <ref class="Segment" id="crt-grenoble-segment"/>
+  <ref class="Segment" id="df-segment"/>
+  <ref class="Segment" id="trg-segment"/>
+  <ref class="Segment" id="hsi-fake-segment"/>
+ </rel>
+ <rel name="controller" class="RCApplication" id="crt-grenoble-root-controller"/>
 </obj>
 
 <obj class="Session" id="ehn1-local-1x1-config">
@@ -191,7 +202,7 @@
  <rel name="opmon_uri" class="OpMonURI" id="local-opmon-uri"/>
 </obj>
 
-<obj class="Session" id="local-socket-1x1-config">
+<obj class="Session" id="local-crt-bern-1x1-config">
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <attr name="controller_log_level" type="enum" val="INFO"/>
@@ -210,7 +221,34 @@
   <ref class="TPStreamWriterApplication" id="tp-stream-writer"/>
   <ref class="TriggerApplication" id="tc-maker-1"/>
  </rel>
- <rel name="segment" class="Segment" id="socket-root-segment"/>
+ <rel name="segment" class="Segment" id="crt-bern-root-segment"/>
+ <rel name="infrastructure_applications">
+  <ref class="ConnectionService" id="local-connection-server"/>
+ </rel>
+ <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
+ <rel name="opmon_uri" class="OpMonURI" id="local-opmon-uri"/>
+</obj>
+
+<obj class="Session" id="local-crt-grenoble-1x1-config">
+ <attr name="data_request_timeout_ms" type="u32" val="1000"/>
+ <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
+ <attr name="controller_log_level" type="enum" val="INFO"/>
+ <rel name="connectivity_service" class="ConnectivityService" id="local-connectivity-service-config"/>
+ <rel name="environment">
+  <ref class="Variable" id="local-env-ers-verb"/>
+  <ref class="Variable" id="local-env-ers-info"/>
+  <ref class="Variable" id="local-env-ers-warning"/>
+  <ref class="Variable" id="local-env-ers-error"/>
+  <ref class="Variable" id="local-env-ers-fatal"/>
+  <ref class="Variable" id="local-env-ers-debug-level"/>
+ </rel>
+ <rel name="disabled">
+  <ref class="DFApplication" id="df-02"/>
+  <ref class="DFApplication" id="df-03"/>
+  <ref class="TPStreamWriterApplication" id="tp-stream-writer"/>
+  <ref class="TriggerApplication" id="tc-maker-1"/>
+ </rel>
+ <rel name="segment" class="Segment" id="crt-grenoble-root-segment"/>
  <rel name="infrastructure_applications">
   <ref class="ConnectionService" id="local-connection-server"/>
  </rel>
