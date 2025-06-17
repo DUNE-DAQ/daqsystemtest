@@ -783,10 +783,4 @@
  </rel>
 </obj>
 
-<obj class="SamplesOverThresholdMinima" id="def-sot-minima">
- <attr name="sot_minimum_plane0" type="u16" val="1"/>
- <attr name="sot_minimum_plane1" type="u16" val="1"/>
- <attr name="sot_minimum_plane2" type="u16" val="1"/>
-</obj>
-
 </oks-data>
