@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="51" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20250325T145413"/>
+<info name="" type="" num-of-items="49" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="gjc" last-modified-on="latitude" last-modification-time="20250604T130131"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -190,27 +190,6 @@
  <rel name="geo_id" class="GeoId" id="g_3_2_1_3"/>
 </obj>
 
-<obj class="NetworkDetectorToDaqConnection" id="conn_apa1">
- <rel name="net_receiver"  class="DPDKReceiver" id="ru-1-rcv"/>
- <rel name="net_senders">
-  <ref class="HermesDataSender" id="wib_101_link0"/>
- </rel>
-</obj>
-
-<obj class="NetworkDetectorToDaqConnection" id="conn_apa2">
- <rel name="net_receiver"  class="DPDKReceiver" id="ru-2-rcv"/>
- <rel name="net_senders">
-  <ref class="HermesDataSender" id="wib_201_link0"/>
- </rel>
-</obj>
-
-<obj class="NetworkDetectorToDaqConnection" id="socket_conn_apa1">
- <rel name="net_receiver"  class="SocketReceiver" id="socket-ru-1-rcv"/>
- <rel name="net_senders">
-  <ref class="FakeSocketDataSender" id="socket_wib_101_link0"/>
- </rel>
-</obj>
-
 <obj class="FakeSocketDataSender" id="socket_wib_101_link0">
  <attr name="port" type="u32" val="1234"/>
  <attr name="control_host" type="string" val="localhost"/>
@@ -280,6 +259,14 @@
  <rel name="streams">
   <ref class="DetectorStream" id="stream_100"/>
   <ref class="DetectorStream" id="stream_101"/>
+ </rel>
+ <rel name="uses" class="NetworkInterface" id="wib_101_hermes0"/>
+</obj>
+
+<obj class="HermesDataSender" id="wib_101_link1">
+ <attr name="port" type="u32" val="17476"/>
+ <attr name="control_host" type="string" val="localhost"/>
+ <rel name="streams">
   <ref class="DetectorStream" id="stream_102"/>
   <ref class="DetectorStream" id="stream_103"/>
  </rel>
@@ -296,6 +283,28 @@
   <ref class="DetectorStream" id="stream_107"/>
  </rel>
  <rel name="uses" class="NetworkInterface" id="wib_201_hermes0"/>
+</obj>
+
+<obj class="NetworkDetectorToDaqConnection" id="conn_apa1">
+ <rel name="net_senders">
+  <ref class="HermesDataSender" id="wib_101_link0"/>
+  <ref class="HermesDataSender" id="wib_101_link1"/>
+ </rel>
+ <rel name="net_receiver" class="DPDKReceiver" id="ru-1-rcv"/>
+</obj>
+
+<obj class="NetworkDetectorToDaqConnection" id="conn_apa2">
+ <rel name="net_senders">
+  <ref class="HermesDataSender" id="wib_201_link0"/>
+ </rel>
+ <rel name="net_receiver" class="DPDKReceiver" id="ru-2-rcv"/>
+</obj>
+
+<obj class="NetworkDetectorToDaqConnection" id="socket_conn_apa1">
+ <rel name="net_senders">
+  <ref class="FakeSocketDataSender" id="socket_wib_101_link0"/>
+ </rel>
+ <rel name="net_receiver" class="SocketReceiver" id="socket-ru-1-rcv"/>
 </obj>
 
 <obj class="NetworkDevice" id="ru_1_readout">
@@ -360,9 +369,6 @@
  <attr name="application_name" type="string" val="daq_application"/>
  <attr name="tp_generation_enabled" type="bool" val="1"/>
  <attr name="ta_generation_enabled" type="bool" val="1"/>
- <rel name="detector_connections">
-  <ref class="NetworkDetectorToDaqConnection" id="conn_apa1"/>
- </rel>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
   <ref class="Service" id="daqapp_control"/>
@@ -397,15 +403,15 @@
  <rel name="link_handler" class="DataHandlerConf" id="def-link-handler"/>
  <rel name="tp_handler" class="DataHandlerConf" id="def-tp-handler"/>
  <rel name="data_reader" class="DPDKReaderConf" id="def-emu-nic-receiver-conf"/>
+ <rel name="detector_connections">
+  <ref class="NetworkDetectorToDaqConnection" id="conn_apa1"/>
+ </rel>
 </obj>
 
 <obj class="ReadoutApplication" id="ru-02">
  <attr name="application_name" type="string" val="daq_application"/>
  <attr name="tp_generation_enabled" type="bool" val="1"/>
  <attr name="ta_generation_enabled" type="bool" val="1"/>
- <rel name="detector_connections">
-  <ref class="NetworkDetectorToDaqConnection" id="conn_apa2"/>
- </rel>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
   <ref class="Service" id="daqapp_control"/>
@@ -436,15 +442,15 @@
  <rel name="link_handler" class="DataHandlerConf" id="def-link-handler"/>
  <rel name="tp_handler" class="DataHandlerConf" id="def-tp-handler"/>
  <rel name="data_reader" class="DPDKReaderConf" id="def-emu-nic-receiver-conf"/>
+ <rel name="detector_connections">
+  <ref class="NetworkDetectorToDaqConnection" id="conn_apa2"/>
+ </rel>
 </obj>
 
 <obj class="ReadoutApplication" id="socket-ru-01">
  <attr name="application_name" type="string" val="daq_application"/>
  <attr name="tp_generation_enabled" type="bool" val="0"/>
  <attr name="ta_generation_enabled" type="bool" val="0"/>
- <rel name="detector_connections">
-  <ref class="NetworkDetectorToDaqConnection" id="socket_conn_apa1"/>
- </rel>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
   <ref class="Service" id="daqapp_control"/>
@@ -479,6 +485,9 @@
  <rel name="link_handler" class="DataHandlerConf" id="def-link-handler"/>
  <rel name="tp_handler" class="DataHandlerConf" id="def-tp-handler"/>
  <rel name="data_reader" class="SocketReaderConf" id="def-socket-reader-conf"/>
+ <rel name="detector_connections">
+  <ref class="NetworkDetectorToDaqConnection" id="socket_conn_apa1"/>
+ </rel>
 </obj>
 
 <obj class="RoHwConfig" id="rohw-1">
@@ -506,9 +515,6 @@
 
 <obj class="SocketSenderApplication" id="ss-01">
  <attr name="application_name" type="string" val="daq_application"/>
- <rel name="detector_connections">
-  <ref class="NetworkDetectorToDaqConnection" id="socket_conn_apa1"/>
- </rel>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
   <ref class="Service" id="daqapp_control"/>
@@ -536,6 +542,9 @@
  </rel>
  <rel name="data_writers">
   <ref class="SocketWriterConf" id="def-socket-writer-conf"/>
+ </rel>
+ <rel name="detector_connections">
+  <ref class="NetworkDetectorToDaqConnection" id="socket_conn_apa1"/>
  </rel>
 </obj>
 
