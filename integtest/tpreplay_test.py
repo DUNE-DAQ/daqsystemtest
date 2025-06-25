@@ -1,0 +1,189 @@
+import copy
+import conffwk
+import os
+import pathlib
+import pytest
+import random
+import re
+import string
+
+import integrationtest.data_classes as data_classes
+import integrationtest.data_file_checks as data_file_checks
+import integrationtest.log_file_checks as log_file_checks
+
+from daqconf.consolidate import copy_configuration
+from pathlib import Path
+
+pytest_plugins = "integrationtest.integrationtest_drunc"
+
+# Run setup
+run_duration = 15  # seconds
+check_for_logfile_errors = True
+ignored_logfile_problems = {
+    "-controller": [
+        "Worker with pid \\d+ was terminated due to signal",
+        "Connection '.*' not found on the application registry",
+    ],
+    "local-connection-server": [
+        "errorlog: -",
+        "Worker with pid \\d+ was terminated due to signal",
+        r"Worker \(pid:\d+\) was sent SIGHUP"
+    ],
+    "config_mlt": [
+        "Trigger is inhibited"
+    ],
+    "config_dfo": [
+        "that was busy with"
+    ]
+#    "log_.*": ["connect: Connection refused", "Connection reset by peer", "end of stream"],
+}
+
+### Config setup
+# Create temp config
+temp_path = "tmp_config"
+path = (Path(os.getcwd()) / temp_path).resolve()
+path.mkdir(parents=True, exist_ok=True)
+copy_configuration(path, [os.path.dirname(__file__) + "/../config/daqsystemtest/example-configs.data.xml"])
+local_db = conffwk.Configuration("oksconflibs:" + temp_path + "/example-configs.data.xml")
+
+common_config_obj = data_classes.drunc_config()
+common_config_obj.op_env = "test"
+common_config_obj.tpg_enabled = False
+common_config_obj.config_db = (
+        os.path.dirname(__file__) + "/" + temp_path + "/example-configs.data.xml"
+)
+
+# Get default tpreplay config
+tpreplay_local_conf = copy.deepcopy(common_config_obj)
+tpreplay_local_conf.session = "local-tpreplay-config"
+
+# Get necessary dal objects
+a_source_id_dal = local_db.get_dal(class_name="SourceIDConf", uid="tpreplay-tp-srcid-100000")
+a_tpstream_conf_dal = local_db.get_dal(class_name="TPStreamConf", uid="def-tp-stream-1")
+
+## setup TPStream files
+first_tpstream_file = copy.deepcopy(a_tpstream_conf_dal)
+second_tpstream_file = copy.deepcopy(a_tpstream_conf_dal)
+first_tpstream_file.id = "tp-stream-1"
+first_tpstream_file.filename = "/nfs/home/mrigan/data/np02vd_tp_run036721_0100_tp-stream-writer_tpw_0_20250603T134642.hdf5"
+first_tpstream_file.index = 1
+second_tpstream_file.id = "tp-stream-2"
+second_tpstream_file.filename = "/nfs/home/mrigan/data/np02vd_tp_run036721_0101_tp-stream-writer_tpw_0_20250603T134859.hdf5"
+second_tpstream_file.index = 2
+local_db.update_dal(first_tpstream_file)
+local_db.update_dal(second_tpstream_file)
+
+## setup SourceIDs
+all_sourceIDs = []
+for a_sid_counter in range(1, 8):
+    a_sid = copy.deepcopy(a_source_id_dal)
+    a_sid.id = "tpreplay-tp-srcid-10000" + str(a_sid_counter)
+    a_sid.sid = a_sid_counter
+    a_sid.subsystem = "Trigger"
+    all_sourceIDs.append(a_sid)
+
+# commit new dal objects
+for a_sid in all_sourceIDs:
+    local_db.update_dal(a_sid)
+local_db.commit()
+
+print("1")
+
+## update TP Replay Module
+tpreplay_local_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="TPReplayModuleConf",
+        obj_id="tpreplay-tp-maker",
+        updates={
+            "number_of_loops": 1,
+            "channel_map": "PD2VDBottomTPCChannelMap",
+            "total_planes": 7,
+            "tp_streams": [first_tpstream_file, second_tpstream_file]
+            },)
+)
+
+## update replay session SourceIDs
+tpreplay_local_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="TPReplayApplication",
+        obj_id="tpreplay",
+        updates={
+            "tp_source_ids": all_sourceIDs
+            },)
+)
+
+## update random TC maker
+tpreplay_local_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_id="random-tc-generator",
+        obj_class="RandomTCMakerConf",
+        updates={
+            "trigger_rate_hz": 0
+            },)
+)
+
+## update HSI
+tpreplay_local_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_id="fakehsi",
+        obj_class="FakeHSIEventGeneratorConf",
+        updates={
+            "trigger_rate": 0
+            },)
+)
+
+# Finally store configs in map
+confgen_arguments = { 
+  "np02-replay": tpreplay_local_conf
+}
+
+# The commands to run in nanorc, as a list
+nanorc_command_list = "boot conf".split()
+nanorc_command_list += (
+        "start ".split()
+        + "--run-number 101 enable-triggers wait ".split()
+        + [str(run_duration)]
+        + "disable-triggers drain-dataflow wait 2 stop-trigger-sources wait 2 stop wait 2".split()
+    )
+nanorc_command_list += "scrap terminate".split()
+
+### Tests
+# Run control
+def test_nanorc_success(run_nanorc):
+    current_test = os.environ.get("PYTEST_CURRENT_TEST")
+
+    # Check that nanorc completed correctly
+    assert run_nanorc.completed_process.returncode == 0
+
+# Log files
+def test_log_files(run_nanorc):
+    current_test = os.environ.get("PYTEST_CURRENT_TEST")
+    
+    session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
+
+    log_dir = pathlib.Path("/log")
+    run_nanorc.log_files += [
+        f for f in log_dir.glob(f"log_*_{session_name}*.txt") if f.exists()
+    ]
+
+    # Check that at least some of the expected log files are present
+    assert any(
+        f"{session_name}_df-01" in str(logname)
+        for logname in run_nanorc.log_files
+    )
+    assert any(
+        f"{session_name}_dfo" in str(logname) for logname in run_nanorc.log_files
+    )
+    assert any(
+        f"{session_name}_mlt" in str(logname) for logname in run_nanorc.log_files
+    )
+    assert any(
+        f"{session_name}_ru" in str(logname) for logname in run_nanorc.log_files
+    )
+
+    if check_for_logfile_errors:
+        # Check that there are no warnings or errors in the log files
+        assert log_file_checks.logs_are_error_free(
+            run_nanorc.log_files, True, True, ignored_logfile_problems
+        ), f"Errors found in log files: {run_nanorc.log_files}"
+
