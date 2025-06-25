@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="84" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="ramarine" last-modified-on="np04-srv-017.cern.ch" last-modification-time="20250623T201605"/>
+<info name="" type="" num-of-items="82" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="ramarine" last-modified-on="np04-srv-017.cern.ch" last-modification-time="20250625T100027"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -83,6 +83,8 @@
  <comment creation-time="20250530T152100" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRT action plans"/>
  <comment creation-time="20250530T152404" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRT action plans"/>
  <comment creation-time="20250623T201605" created-by="ramarine" created-on="np04-srv-017.cern.ch" author="ramarine" text="PDSlinked"/>
+ <comment creation-time="20250625T095129" created-by="ramarine" created-on="np04-srv-017.cern.ch" author="ramarine" text="deleted latency buffer"/>
+ <comment creation-time="20250625T100027" created-by="ramarine" created-on="np04-srv-017.cern.ch" author="ramarine" text="def-pds-tp-handler deleted"/>
 </comments>
 
 
@@ -337,7 +339,7 @@
  <attr name="generate_timesync" type="bool" val="1"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="PDSRawDataProcessor" id="PDSRawDataProc"/>
+ <rel name="data_processor" class="PDSRawDataProcessor" id="def-pds-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-pds-stream-link-handler">
@@ -347,15 +349,6 @@
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
-</obj>
-
-<obj class="DataHandlerConf" id="def-pds-tp-handler">
- <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
- <attr name="input_data_type" type="string" val="TriggerPrimitiveVector"/>
- <attr name="generate_timesync" type="bool" val="0"/>
- <rel name="request_handler" class="RequestHandler" id="def-tp-request-handler"/>
- <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="PDSRawDataProcessor" id="PDSRawDataProc"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-ta-handler">
@@ -569,14 +562,6 @@
  <attr name="preallocation" type="bool" val="0"/>
 </obj>
 
-<obj class="LatencyBuffer" id="tp-latency-buf-numa0">
- <attr name="size" type="u32" val="12000000"/>
- <attr name="numa_aware" type="bool" val="0"/>
- <attr name="intrinsic_allocator" type="bool" val="0"/>
- <attr name="alignment_size" type="u32" val="4096"/>
- <attr name="preallocation" type="bool" val="0"/>
-</obj>
-
 <obj class="MLTConf" id="def-mlt-conf">
  <attr name="template_for" type="class" val="MLTModule"/>
  <attr name="latency_monitoring" type="bool" val="1"/>
@@ -589,12 +574,11 @@
  <attr name="expected_timestamp_step" type="s32" val="1000"/>
 </obj>
 
-<obj class="PDSRawDataProcessor" id="PDSRawDataProc">
+<obj class="PDSRawDataProcessor" id="def-pds-processor">
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="postproc-"/>
  <attr name="latency_monitoring" type="bool" val="1"/>
  <attr name="channel_map" type="string" val="DefaultPDSChannelMap"/>
- <attr name="rawdataprocessor_id" type="u32" val="234"/>
 </obj>
 
 <obj class="RandomTCMakerConf" id="random-tc-generator">
