@@ -578,7 +578,7 @@
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="postproc-"/>
  <attr name="latency_monitoring" type="bool" val="1"/>
- <attr name="channel_map" type="string" val="DefaultPDSChannelMap"/>
+ <attr name="channel_map" type="string" val="SimplePDSChannelMap"/>
 </obj>
 
 <obj class="RandomTCMakerConf" id="random-tc-generator">
