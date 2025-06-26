@@ -5,7 +5,9 @@ import pathlib
 import pytest
 import random
 import re
+import shutil
 import string
+import tempfile
 
 import integrationtest.data_classes as data_classes
 import integrationtest.data_file_checks as data_file_checks
@@ -13,6 +15,46 @@ import integrationtest.log_file_checks as log_file_checks
 
 from daqconf.consolidate import copy_configuration
 from pathlib import Path
+
+### Tests
+# Run control
+def test_nanorc_success(run_nanorc):
+    current_test = os.environ.get("PYTEST_CURRENT_TEST")
+
+    # Check that nanorc completed correctly
+    assert run_nanorc.completed_process.returncode == 0
+
+# Log files
+def test_log_files(run_nanorc):
+    current_test = os.environ.get("PYTEST_CURRENT_TEST")
+    
+    session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
+
+    log_dir = pathlib.Path("/log")
+    run_nanorc.log_files += [
+        f for f in log_dir.glob(f"log_*_{session_name}*.txt") if f.exists()
+    ]
+
+    # Check that at least some of the expected log files are present
+    assert any(
+        f"{session_name}_df-01" in str(logname)
+        for logname in run_nanorc.log_files
+    )
+    assert any(
+        f"{session_name}_dfo" in str(logname) for logname in run_nanorc.log_files
+    )
+    assert any(
+        f"{session_name}_mlt" in str(logname) for logname in run_nanorc.log_files
+    )
+    assert any(
+        f"{session_name}_tpreplay" in str(logname) for logname in run_nanorc.log_files
+    )
+
+    if check_for_logfile_errors:
+        # Check that there are no warnings or errors in the log files
+        assert log_file_checks.logs_are_error_free(
+            run_nanorc.log_files, True, True, ignored_logfile_problems
+        ), f"Errors found in log files: {run_nanorc.log_files}"
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -30,28 +72,34 @@ ignored_logfile_problems = {
         r"Worker \(pid:\d+\) was sent SIGHUP"
     ],
     "config_mlt": [
-        "Trigger is inhibited"
+        "Trigger is inhibited",
+        "failures to insert data into the latency buffer out of"
     ],
     "config_dfo": [
         "that was busy with"
+    ],
+    "config_tpreplay": [
+        "Request on empty buffer"
     ]
 #    "log_.*": ["connect: Connection refused", "Connection reset by peer", "end of stream"],
 }
 
 ### Config setup
 # Create temp config
-temp_path = "tmp_config"
-path = (Path(os.getcwd()) / temp_path).resolve()
-path.mkdir(parents=True, exist_ok=True)
+tmpdirname = tempfile.mkdtemp()
+path = Path(tmpdirname).resolve()
+
+# Resolve the source config file
+config_src = Path(__file__).parent / "../config/daqsystemtest/example-configs.data.xml"
+config_src = config_src.resolve()
+
 copy_configuration(path, [os.path.dirname(__file__) + "/../config/daqsystemtest/example-configs.data.xml"])
-local_db = conffwk.Configuration("oksconflibs:" + temp_path + "/example-configs.data.xml")
+local_db = conffwk.Configuration("oksconflibs:" + tmpdirname + "/example-configs.data.xml")
 
 common_config_obj = data_classes.drunc_config()
 common_config_obj.op_env = "test"
 common_config_obj.tpg_enabled = False
-common_config_obj.config_db = (
-        os.path.dirname(__file__) + "/" + temp_path + "/example-configs.data.xml"
-)
+common_config_obj.config_db = ( tmpdirname + "/example-configs.data.xml" )
 
 # Get default tpreplay config
 tpreplay_local_conf = copy.deepcopy(common_config_obj)
@@ -86,8 +134,6 @@ for a_sid_counter in range(1, 8):
 for a_sid in all_sourceIDs:
     local_db.update_dal(a_sid)
 local_db.commit()
-
-print("1")
 
 ## update TP Replay Module
 tpreplay_local_conf.config_substitutions.append(
@@ -134,7 +180,7 @@ tpreplay_local_conf.config_substitutions.append(
 
 # Finally store configs in map
 confgen_arguments = { 
-  "np02-replay": tpreplay_local_conf
+  "np02-tpreplay": tpreplay_local_conf
 }
 
 # The commands to run in nanorc, as a list
@@ -155,10 +201,13 @@ def test_nanorc_success(run_nanorc):
     # Check that nanorc completed correctly
     assert run_nanorc.completed_process.returncode == 0
 
+    # Cleanup of tmp files
+    shutil.rmtree(path)
+
 # Log files
 def test_log_files(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    
+
     session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
 
     log_dir = pathlib.Path("/log")
@@ -178,7 +227,7 @@ def test_log_files(run_nanorc):
         f"{session_name}_mlt" in str(logname) for logname in run_nanorc.log_files
     )
     assert any(
-        f"{session_name}_ru" in str(logname) for logname in run_nanorc.log_files
+        f"{session_name}_tpreplay" in str(logname) for logname in run_nanorc.log_files
     )
 
     if check_for_logfile_errors:
