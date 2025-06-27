@@ -123,7 +123,7 @@ local_db.update_dal(second_tpstream_file)
 
 ## setup SourceIDs
 all_sourceIDs = []
-for a_sid_counter in range(1, 8):
+for a_sid_counter in range(1, 3):
     a_sid = copy.deepcopy(a_source_id_dal)
     a_sid.id = "tpreplay-tp-srcid-10000" + str(a_sid_counter)
     a_sid.sid = a_sid_counter
@@ -143,8 +143,9 @@ tpreplay_local_conf.config_substitutions.append(
         updates={
             "number_of_loops": 1,
             "channel_map": "PD2VDBottomTPCChannelMap",
-            "total_planes": 7,
-            "tp_streams": [first_tpstream_file, second_tpstream_file]
+            "total_planes": 2,
+            "tp_streams": [first_tpstream_file, second_tpstream_file],
+            "filter_out_plane": [0, 1]
             },)
 )
 
@@ -178,9 +179,42 @@ tpreplay_local_conf.config_substitutions.append(
             },)
 )
 
+# prep NP04 conf
+tpreplay_np04_conf = copy.deepcopy(tpreplay_local_conf)
+# update
+tpreplay_np04_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="TPReplayModuleConf",
+        obj_id="tpreplay-tp-maker",
+        updates={
+            "number_of_loops": 1,
+            "channel_map": "PD2HDTPCChannelMap",
+            "total_planes": 2,
+            "tp_streams": [first_tpstream_file, second_tpstream_file],
+            "filter_out_plane": [0, 1]
+            },)
+)
+tpreplay_np04_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="TPStreamConf",
+        obj_id="tp-stream-1",
+        updates={
+            "filename": "/nfs/home/mrigan/data/np04hd_tp_run035722_0000_tp-stream-writer_tpw_0_20250403T131152.hdf5"
+            },)
+)
+tpreplay_np04_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="TPStreamConf",
+        obj_id="tp-stream-2",
+        updates={
+            "filename": "/nfs/home/mrigan/data/np04hd_tp_run035723_0000_tp-stream-writer_tpw_0_20250403T143941.hdf5"
+            },)
+)
+
 # Finally store configs in map
 confgen_arguments = { 
-  "np02-tpreplay": tpreplay_local_conf
+  "np02-tpreplay": tpreplay_local_conf,
+  "np04-tpreplay": tpreplay_np04_conf
 }
 
 # The commands to run in nanorc, as a list
@@ -202,7 +236,8 @@ def test_nanorc_success(run_nanorc):
     assert run_nanorc.completed_process.returncode == 0
 
     # Cleanup of tmp files
-    shutil.rmtree(path)
+    ### TODO if this is the last test then cleanup
+    #shutil.rmtree(path)
 
 # Log files
 def test_log_files(run_nanorc):
