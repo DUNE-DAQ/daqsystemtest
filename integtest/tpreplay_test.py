@@ -79,7 +79,8 @@ ignored_logfile_problems = {
         "that was busy with"
     ],
     "config_tpreplay": [
-        "Request on empty buffer"
+        "Request on empty buffer",
+        "Postprocessing has too much backlog"
     ]
 #    "log_.*": ["connect: Connection refused", "Connection reset by peer", "end of stream"],
 }
@@ -123,7 +124,7 @@ local_db.update_dal(second_tpstream_file)
 
 ## setup SourceIDs
 all_sourceIDs = []
-for a_sid_counter in range(1, 3):
+for a_sid_counter in range(1, 4):
     a_sid = copy.deepcopy(a_source_id_dal)
     a_sid.id = "tpreplay-tp-srcid-10000" + str(a_sid_counter)
     a_sid.sid = a_sid_counter
@@ -155,7 +156,7 @@ tpreplay_local_conf.config_substitutions.append(
         obj_class="TPReplayApplication",
         obj_id="tpreplay",
         updates={
-            "tp_source_ids": all_sourceIDs
+            "tp_source_ids": all_sourceIDs[:2]
             },)
 )
 
@@ -184,12 +185,20 @@ tpreplay_np04_conf = copy.deepcopy(tpreplay_local_conf)
 # update
 tpreplay_np04_conf.config_substitutions.append(
     data_classes.config_substitution(
+        obj_class="TPReplayApplication",
+        obj_id="tpreplay",
+        updates={
+            "tp_source_ids": all_sourceIDs
+            },)
+)
+tpreplay_np04_conf.config_substitutions.append(
+    data_classes.config_substitution(
         obj_class="TPReplayModuleConf",
         obj_id="tpreplay-tp-maker",
         updates={
             "number_of_loops": 1,
             "channel_map": "PD2HDTPCChannelMap",
-            "total_planes": 2,
+            "total_planes": 3,
             "tp_streams": [first_tpstream_file, second_tpstream_file],
             "filter_out_plane": [0, 1]
             },)
