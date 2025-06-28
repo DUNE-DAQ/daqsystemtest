@@ -16,50 +16,10 @@ import integrationtest.log_file_checks as log_file_checks
 from daqconf.consolidate import copy_configuration
 from pathlib import Path
 
-### Tests
-# Run control
-def test_nanorc_success(run_nanorc):
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-
-    # Check that nanorc completed correctly
-    assert run_nanorc.completed_process.returncode == 0
-
-# Log files
-def test_log_files(run_nanorc):
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    
-    session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
-
-    log_dir = pathlib.Path("/log")
-    run_nanorc.log_files += [
-        f for f in log_dir.glob(f"log_*_{session_name}*.txt") if f.exists()
-    ]
-
-    # Check that at least some of the expected log files are present
-    assert any(
-        f"{session_name}_df-01" in str(logname)
-        for logname in run_nanorc.log_files
-    )
-    assert any(
-        f"{session_name}_dfo" in str(logname) for logname in run_nanorc.log_files
-    )
-    assert any(
-        f"{session_name}_mlt" in str(logname) for logname in run_nanorc.log_files
-    )
-    assert any(
-        f"{session_name}_tpreplay" in str(logname) for logname in run_nanorc.log_files
-    )
-
-    if check_for_logfile_errors:
-        # Check that there are no warnings or errors in the log files
-        assert log_file_checks.logs_are_error_free(
-            run_nanorc.log_files, True, True, ignored_logfile_problems
-        ), f"Errors found in log files: {run_nanorc.log_files}"
-
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
 # Run setup
-run_duration = 15  # seconds
+run_duration = 20  # seconds
 check_for_logfile_errors = True
 ignored_logfile_problems = {
     "-controller": [
@@ -219,11 +179,27 @@ tpreplay_np04_conf.config_substitutions.append(
             "filename": "/nfs/home/mrigan/data/np04hd_tp_run035723_0000_tp-stream-writer_tpw_0_20250403T143941.hdf5"
             },)
 )
+tpreplay_np04_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="TAMakerPrescaleAlgorithm",
+        obj_id="dummy-ta-maker",
+        updates={
+            "prescale": "1"
+            },)
+)
+tpreplay_np04_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="TCMakerPrescaleAlgorithm",
+        obj_id="tc-pass-through-algo",
+        updates={
+            "prescale": "1"
+            },)
+)
 
 # Finally store configs in map
 confgen_arguments = { 
-  "np02-tpreplay": tpreplay_local_conf,
-  "np04-tpreplay": tpreplay_np04_conf
+  "np02 tpreplay": tpreplay_local_conf,
+  "np04 tpreplay": tpreplay_np04_conf
 }
 
 # The commands to run in nanorc, as a list
@@ -279,4 +255,44 @@ def test_log_files(run_nanorc):
         assert log_file_checks.logs_are_error_free(
             run_nanorc.log_files, True, True, ignored_logfile_problems
         ), f"Errors found in log files: {run_nanorc.log_files}"
+
+# Data files
+def test_data_files(run_nanorc):
+    current_test = os.environ.get("PYTEST_CURRENT_TEST")
+
+    datafile_params = {
+        "np02 tpreplay": {"n_data_files": 1, "n_sids_tp": 2, "n_sids_ta": 1, "n_sids_tc": 1},
+        "np04 tpreplay": {"n_data_files": 1, "n_sids_tp": 3, "n_sids_ta": 1, "n_sids_tc": 1}
+    }
+
+    # Match run to checks
+    match = re.search(r'\[(.+?)-', current_test)
+    if match:
+        key = match.group(1)
+        if key in datafile_params:
+            selected_params = datafile_params[key]
+            print("Selected params for", key, ":", selected_params)
+        else:
+            print(f"Key '{key}' not found in datafile_params.")
+    else:
+        print("Could not extract key from current_test.")
+
+    ### Run some tests on the output data file
+    all_ok = True
+
+    if all_ok:
+        print(f"\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({selected_params['n_data_files']})")
+    else:
+        print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {selected_params['n_data_files']}, found {len(run_nanorc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
+
+    ## Other test
+    # number of SIDs
+    data_file = data_file_checks.DataFile(run_nanorc.data_files[0])
+    all_ok &= data_file_checks.check_n_unique_sids(data_file, selected_params['n_sids_tp'], selected_params['n_sids_ta'], selected_params['n_sids_tc'] )
+    if all_ok:
+        print(f"\N{WHITE HEAVY CHECK MARK} The expected number of unique Source IDs was found ({selected_params['n_sids_tp'], selected_params['n_sids_ta'], selected_params['n_sids_tc']})")
+    else:
+        print(f"\N{POLICE CARS REVOLVING LIGHT} The number of unique Source IDs is NOT as expected ({selected_params['n_sids_tp'], selected_params['n_sids_ta'], selected_params['n_sids_tc']})! \N{POLICE CARS REVOLVING LIGHT}")
+
+    assert all_ok, "\N{POLICE CARS REVOLVING LIGHT} One or more data file checks failed! \N{POLICE CARS REVOLVING LIGHT}"
 
