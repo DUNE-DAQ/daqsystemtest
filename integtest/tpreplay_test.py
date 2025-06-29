@@ -1,3 +1,27 @@
+"""
+Integration test configuration and test suite for TPReplay in the DAQ system.
+
+This script sets up temporary configurations for two environments:
+    - np02 tpreplay
+    - np04 tpreplay
+
+It does the following:
+1. Creates a temporary configuration DB file (via OKS) for each session.
+2. Populates the config DB with TPStream and SourceID objects.
+3. Customizes runtime configuration through deep config substitutions.
+4. Runs a pre-defined nanorc command sequence (boot → start → stop → terminate).
+5. Validates:
+    - Nanorc command success
+    - Presence and correctness of log files
+    - Data file contents (number of SIDs, file count)
+
+Tests are structured using `pytest` and use fixtures provided via 
+`integrationtest.integrationtest_drunc`.
+
+Temporary config directories are cleaned up using `atexit` once the test completes.
+"""
+
+import atexit
 import copy
 import conffwk
 import os
@@ -15,6 +39,11 @@ import integrationtest.log_file_checks as log_file_checks
 
 from daqconf.consolidate import copy_configuration
 from pathlib import Path
+
+# Register cleanup for tmpdirname
+def _cleanup_tmpdir():
+    if os.path.exists(tmpdirname):
+        shutil.rmtree(tmpdirname)
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -212,6 +241,8 @@ nanorc_command_list += (
     )
 nanorc_command_list += "scrap terminate".split()
 
+atexit.register(_cleanup_tmpdir)
+
 ### Tests
 # Run control
 def test_nanorc_success(run_nanorc):
@@ -219,10 +250,6 @@ def test_nanorc_success(run_nanorc):
 
     # Check that nanorc completed correctly
     assert run_nanorc.completed_process.returncode == 0
-
-    # Cleanup of tmp files
-    ### TODO if this is the last test then cleanup
-    #shutil.rmtree(path)
 
 # Log files
 def test_log_files(run_nanorc):
