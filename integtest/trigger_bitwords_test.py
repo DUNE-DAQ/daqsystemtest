@@ -225,12 +225,12 @@ coincidence_bitword_conf.config_substitutions.append(
 
 # Finally store configs in map
 confgen_arguments = { 
-  "No bits": no_bitword_conf,
-  "Prescale bit": prescale_bitword_conf,
-  "Timing bit": timing_bitword_conf,
-  "Supernova bit": supernova_bitword_conf,
-  "Series bit": series_bitword_conf,
-  "Coincidence bit": coincidence_bitword_conf
+  "no-bit": no_bitword_conf,
+  "prescale-bit": prescale_bitword_conf,
+  "timing-bit": timing_bitword_conf,
+  "supernova-bit": supernova_bitword_conf,
+  "series-bit": series_bitword_conf,
+  "coincidence-bit": coincidence_bitword_conf
 }
 
 # The commands to run in nanorc, as a list
@@ -288,16 +288,16 @@ def test_data_files(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
 
     datafile_params = {
-        "No bits": {"n_data_files": 1, "expected_trigger_types": ["kTiming", "kPrescale", "kRandom"], "multi_required": False},
-        "Prescale bit": {"n_data_files": 1, "expected_trigger_types": ["kPrescale"], "multi_required": False},
-        "Timing bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming"], "multi_required": False},
-        "Supernova bit": {"n_data_files": 0, "expected_trigger_types": [], "multi_required": False},
-        "Series bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming", "kPrescale"], "multi_required": False},
-        "Coincidence bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming", "kRandom"], "multi_required": True}
+        "no-bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming", "kPrescale", "kRandom"], "multi_required": False},
+        "prescale-bit": {"n_data_files": 1, "expected_trigger_types": ["kPrescale"], "multi_required": False},
+        "timing-bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming"], "multi_required": False},
+        "supernova-bit": {"n_data_files": 0, "expected_trigger_types": [], "multi_required": False},
+        "series-bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming", "kPrescale"], "multi_required": False},
+        "coincidence-bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming", "kRandom"], "multi_required": True}
     }
 
     # Match run to checks
-    match = re.search(r'\[(.+?)-', current_test)
+    match = re.search(r'\[(.+?)-run', current_test)
     if match:
         key = match.group(1)
         if key in datafile_params:
