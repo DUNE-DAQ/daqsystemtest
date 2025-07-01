@@ -90,6 +90,16 @@ onebyone_local_conf.config_substitutions.append(
         updates={"disabled": []},
     )
 )
+# Disable TC merging
+onebyone_local_conf.config_substitutions.append(
+    data_classes.config_substitution(
+        obj_class="TCDataProcessor",
+        obj_id="def-tc-processor",
+        updates={
+            "merge_overlapping_tcs": False
+            "buffer_timeout": 100},
+    )
+)
 
 # Prep configs
 no_bitword_conf = copy.deepcopy(onebyone_local_conf)
@@ -120,7 +130,6 @@ prescale_bitword_conf.config_substitutions.append(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
-            "buffer_timeout": 100,
             "trigger_bitwords": [prescale_bitword]
             },)
 )
@@ -131,7 +140,6 @@ timing_bitword_conf.config_substitutions.append(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
-            "buffer_timeout": 100,
             "trigger_bitwords": [timing_bitword]
             },)
 )
@@ -151,7 +159,6 @@ supernova_bitword_conf.config_substitutions.append(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
-            "buffer_timeout": 100,
             "trigger_bitwords": [supernova_bitword]
             },)
 )
@@ -162,7 +169,6 @@ series_bitword_conf.config_substitutions.append(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
-            "buffer_timeout": 100,
             "trigger_bitwords": [prescale_bitword, timing_bitword]
             },)
 )
@@ -182,8 +188,8 @@ coincidence_bitword_conf.config_substitutions.append(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
-            "buffer_timeout": 100,
-            "trigger_bitwords": [coincidence_bitword]
+            "trigger_bitwords": [coincidence_bitword],
+            "merge_overlapping_tcs": True
             },)
 )
 coincidence_bitword_conf.config_substitutions.append(
