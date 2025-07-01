@@ -1,5 +1,10 @@
 """
 Integration Test for Trigger Bitword Configurations
+
+Reminder: 
+Trigger bitwords are used to control which triggers are allowed to be promoted to trigger decisions.
+The bitwords functionality is independent of whatever sources are producing the triggers (TCs).
+
 This test module validates DAQ system behavior under various trigger bitword configurations.
 It uses multiple configuration variants (e.g., no bitword, prescale, timing, supernova, etc.)
 and runs a controlled run control session to verify:
