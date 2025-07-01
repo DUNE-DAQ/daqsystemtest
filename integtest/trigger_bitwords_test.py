@@ -96,7 +96,7 @@ onebyone_local_conf.config_substitutions.append(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
-            "merge_overlapping_tcs": False
+            "merge_overlapping_tcs": False,
             "buffer_timeout": 100},
     )
 )
