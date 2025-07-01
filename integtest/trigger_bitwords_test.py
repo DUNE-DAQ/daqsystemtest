@@ -42,13 +42,8 @@ pytest_plugins = "integrationtest.integrationtest_drunc"
 run_duration = 15  # seconds
 check_for_logfile_errors = True
 ignored_logfile_problems = {
-    "-controller": [
-        "Worker with pid \\d+ was terminated due to signal",
-        "Connection '.*' not found on the application registry",
-    ],
     "local-connection-server": [
         "errorlog: -",
-        "Worker with pid \\d+ was terminated due to signal",
         r"Worker \(pid:\d+\) was sent SIGHUP"
     ],
     "config_mlt": [
@@ -57,7 +52,6 @@ ignored_logfile_problems = {
     "config_dfo": [
         "that was busy with"
     ]
-#    "log_.*": ["connect: Connection refused", "Connection reset by peer", "end of stream"],
 }
 
 ### Config setup
@@ -77,7 +71,7 @@ db = conffwk.Configuration("oksconflibs:" + str(common_config_obj.config_db))
 prescale_bitword = db.get_dal(class_name="TriggerBitword", uid="test-bitword")
 timing_bitword = db.get_dal(class_name="TriggerBitword", uid="test-bitword2")
 
-# Prep to turn of tp-stream-writer 
+# Prep to turn off tp-stream-writer
 local_conf = db.get_dal(class_name="Session", uid="local-1x1-config")
 tpstream_writer = db.get_dal(class_name="TPStreamWriterApplication", uid="tp-stream-writer")
 # Append the TPStreamWriter to the disabled list
@@ -163,7 +157,7 @@ supernova_bitword_conf.config_substitutions.append(
             },)
 )
 
-# Seriers
+# Series
 series_bitword_conf.config_substitutions.append(
     data_classes.config_substitution(
         obj_class="TCDataProcessor",
@@ -247,6 +241,13 @@ nanorc_command_list += "scrap terminate".split()
 # Run control
 def test_nanorc_success(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
+    match_obj = re.search(r".*\[(.+)-run_nanorc0\].*", current_test)
+    if match_obj:
+        current_test = match_obj.group(1)
+    banner_line = re.sub(".", "=", current_test)
+    print(banner_line)
+    print(current_test)
+    print(banner_line)
 
     # Check that nanorc completed correctly
     assert run_nanorc.completed_process.returncode == 0
