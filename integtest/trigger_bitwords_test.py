@@ -288,6 +288,9 @@ def test_log_files(run_nanorc):
 def test_data_files(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
 
+    # sanity checks
+    data_file_checks.trigger_sanity_checks()
+
     datafile_params = {
         "no-bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming", "kPrescale", "kRandom"], "multi_required": False},
         "prescale-bit": {"n_data_files": 1, "expected_trigger_types": ["kPrescale"], "multi_required": False},
