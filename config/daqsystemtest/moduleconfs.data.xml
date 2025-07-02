@@ -98,9 +98,6 @@
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
  <rel name="command" class="FSMCommand" id="start"/>
  <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
-  <ref class="DaqModulesGroupByType" id="dlh-step"/>
   <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="crt-bern-reader-data-source-step"/>
  </rel>
@@ -112,9 +109,6 @@
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="crt-bern-reader-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
-  <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
-  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
  </rel>
 </obj>
 
@@ -122,9 +116,6 @@
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
  <rel name="command" class="FSMCommand" id="start"/>
  <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
-  <ref class="DaqModulesGroupByType" id="dlh-step"/>
   <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="crt-grenoble-reader-data-source-step"/>
  </rel>
@@ -136,9 +127,6 @@
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="crt-grenoble-reader-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
-  <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
-  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
  </rel>
 </obj>
 
