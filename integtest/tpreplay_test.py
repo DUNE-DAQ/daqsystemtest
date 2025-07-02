@@ -2,8 +2,8 @@
 Integration test configuration and test suite for TPReplay in the DAQ system.
 
 This script sets up temporary configurations for two environments:
-    - np02 tpreplay
-    - np04 tpreplay
+    - np02-tpreplay
+    - np04-tpreplay
 
 It does the following:
 1. Creates a temporary configuration DB file (via OKS) for each session.
@@ -103,10 +103,10 @@ a_tpstream_conf_dal = local_db.get_dal(class_name="TPStreamConf", uid="def-tp-st
 first_tpstream_file = copy.deepcopy(a_tpstream_conf_dal)
 second_tpstream_file = copy.deepcopy(a_tpstream_conf_dal)
 first_tpstream_file.id = "tp-stream-1"
-first_tpstream_file.filename = "/nfs/home/mrigan/data/np02vd_tp_run036721_0100_tp-stream-writer_tpw_0_20250603T134642.hdf5"
+first_tpstream_file.filename = "/nfs/home/mrigan/data/np02vd_tp_run037001_0000_tp-stream-writer_tpw_0_20250702T094514.hdf5"
 first_tpstream_file.index = 1
 second_tpstream_file.id = "tp-stream-2"
-second_tpstream_file.filename = "/nfs/home/mrigan/data/np02vd_tp_run036721_0101_tp-stream-writer_tpw_0_20250603T134859.hdf5"
+second_tpstream_file.filename = "/nfs/home/mrigan/data/np02vd_tp_run037002_0000_tp-stream-writer_tpw_0_20250702T094747.hdf5"
 second_tpstream_file.index = 2
 local_db.update_dal(first_tpstream_file)
 local_db.update_dal(second_tpstream_file)
@@ -227,8 +227,8 @@ tpreplay_np04_conf.config_substitutions.append(
 
 # Finally store configs in map
 confgen_arguments = { 
-  "np02 tpreplay": tpreplay_local_conf,
-  "np04 tpreplay": tpreplay_np04_conf
+  "np02-tpreplay": tpreplay_local_conf,
+  "np04-tpreplay": tpreplay_np04_conf
 }
 
 # The commands to run in nanorc, as a list
@@ -288,12 +288,12 @@ def test_data_files(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
 
     datafile_params = {
-        "np02 tpreplay": {"n_data_files": 1, "n_sids_tp": 2, "n_sids_ta": 1, "n_sids_tc": 1},
-        "np04 tpreplay": {"n_data_files": 1, "n_sids_tp": 3, "n_sids_ta": 1, "n_sids_tc": 1}
+        "np02-tpreplay": {"n_data_files": 1, "n_sids_tp": 2, "n_sids_ta": 1, "n_sids_tc": 1},
+        "np04-tpreplay": {"n_data_files": 1, "n_sids_tp": 3, "n_sids_ta": 1, "n_sids_tc": 1}
     }
 
     # Match run to checks
-    match = re.search(r'\[(.+?)-', current_test)
+    match = re.search(r'\[(.+?)-run', current_test)
     if match:
         key = match.group(1)
         if key in datafile_params:
