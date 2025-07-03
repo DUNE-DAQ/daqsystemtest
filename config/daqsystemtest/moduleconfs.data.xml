@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="81" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20250530T152404"/>
+<info name="" type="" num-of-items="87" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="mrigan" last-modified-on="np04-srv-016.cern.ch" last-modification-time="20250630T102725"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -781,6 +781,18 @@
  <rel name="tp_streams">
   <ref class="TPStreamConf" id="def-tp-stream-1"/>
  </rel>
+</obj>
+
+<obj class="TriggerBitword" id="test-bitword">
+ <attr name="bitword" type="string">
+  <data val="kPrescale"/>
+ </attr>
+</obj>
+
+<obj class="TriggerBitword" id="test-bitword2">
+ <attr name="bitword" type="string">
+  <data val="kTiming"/>
+ </attr>
 </obj>
 
 </oks-data>
