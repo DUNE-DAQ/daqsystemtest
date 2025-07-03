@@ -27,7 +27,7 @@ wibeth_frag_params = {
     "fragment_type": "WIBEth",
     "expected_fragment_count": 0,  # determined later
     "min_size_bytes": 7272,
-    "max_size_bytes": 21672,
+    "max_size_bytes": 28872,
 }
 # sizes: 128 is for one TC with zero TAs inside it (72+56)
 #        208 is for one TC with one TA inside it (72+56+80)
@@ -52,6 +52,8 @@ triggerprimitive_frag_params = {
     "min_size_bytes": 72,
     "max_size_bytes": 168,
 }
+# 03-Jul-2025, KAB: changing the default max size from 72 to 100 to handle cases in which there
+# was a Random or Prescale trigger along with a coincidental HSI event within the readout window.
 hsi_frag_params = {
     "fragment_type_description": "HSI",
     "fragment_type": "Hardware_Signal",
@@ -59,7 +61,7 @@ hsi_frag_params = {
     "min_size_bytes": 72,
     "max_size_bytes": 100,
     "frag_sizes_by_TC_type": {"kTiming": {"min_size_bytes": 100, "max_size_bytes": 100},
-                              "default": {"min_size_bytes":  72, "max_size_bytes":  72} }
+                              "default": {"min_size_bytes":  72, "max_size_bytes": 100} }
 }
 ignored_logfile_problems = {
     "local-connection-server": [
