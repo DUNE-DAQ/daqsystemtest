@@ -51,13 +51,8 @@ pytest_plugins = "integrationtest.integrationtest_drunc"
 run_duration = 20  # seconds
 check_for_logfile_errors = True
 ignored_logfile_problems = {
-    "-controller": [
-        "Worker with pid \\d+ was terminated due to signal",
-        "Connection '.*' not found on the application registry",
-    ],
     "local-connection-server": [
         "errorlog: -",
-        "Worker with pid \\d+ was terminated due to signal",
         r"Worker \(pid:\d+\) was sent SIGHUP"
     ],
     "config_mlt": [
@@ -71,7 +66,6 @@ ignored_logfile_problems = {
         "Request on empty buffer",
         "Postprocessing has too much backlog"
     ]
-#    "log_.*": ["connect: Connection refused", "Connection reset by peer", "end of stream"],
 }
 
 ### Config setup
@@ -103,10 +97,10 @@ a_tpstream_conf_dal = local_db.get_dal(class_name="TPStreamConf", uid="def-tp-st
 first_tpstream_file = copy.deepcopy(a_tpstream_conf_dal)
 second_tpstream_file = copy.deepcopy(a_tpstream_conf_dal)
 first_tpstream_file.id = "tp-stream-1"
-first_tpstream_file.filename = "/nfs/home/mrigan/data/np02vd_tp_run037001_0000_tp-stream-writer_tpw_0_20250702T094514.hdf5"
+first_tpstream_file.filename = "/cvmfs/dunedaq.opensciencegrid.org/assets/files/7/8/4/np02vd_tp_run037001_0000_tp-stream-writer_tpw_0_20250702T094514.hdf5"
 first_tpstream_file.index = 1
 second_tpstream_file.id = "tp-stream-2"
-second_tpstream_file.filename = "/nfs/home/mrigan/data/np02vd_tp_run037002_0000_tp-stream-writer_tpw_0_20250702T094747.hdf5"
+second_tpstream_file.filename = "/cvmfs/dunedaq.opensciencegrid.org/assets/files/8/1/3/np02vd_tp_run037002_0000_tp-stream-writer_tpw_0_20250702T094747.hdf5"
 second_tpstream_file.index = 2
 local_db.update_dal(first_tpstream_file)
 local_db.update_dal(second_tpstream_file)
@@ -197,7 +191,7 @@ tpreplay_np04_conf.config_substitutions.append(
         obj_class="TPStreamConf",
         obj_id="tp-stream-1",
         updates={
-            "filename": "/nfs/home/mrigan/data/np04hd_tp_run035722_0000_tp-stream-writer_tpw_0_20250403T131152.hdf5"
+            "filename": "/cvmfs/dunedaq.opensciencegrid.org/assets/files/c/c/d/np04hd_tp_run035722_0000_tp-stream-writer_tpw_0_20250403T131152.hdf5"
             },)
 )
 tpreplay_np04_conf.config_substitutions.append(
@@ -205,7 +199,7 @@ tpreplay_np04_conf.config_substitutions.append(
         obj_class="TPStreamConf",
         obj_id="tp-stream-2",
         updates={
-            "filename": "/nfs/home/mrigan/data/np04hd_tp_run035723_0000_tp-stream-writer_tpw_0_20250403T143941.hdf5"
+            "filename": "/cvmfs/dunedaq.opensciencegrid.org/assets/files/b/a/4/np04hd_tp_run035723_0000_tp-stream-writer_tpw_0_20250403T143941.hdf5"
             },)
 )
 tpreplay_np04_conf.config_substitutions.append(
@@ -232,7 +226,7 @@ confgen_arguments = {
 }
 
 # The commands to run in nanorc, as a list
-nanorc_command_list = "boot conf".split()
+nanorc_command_list = "boot conf wait 5".split()
 nanorc_command_list += (
         "start ".split()
         + "--run-number 101 enable-triggers wait ".split()
@@ -247,6 +241,14 @@ atexit.register(_cleanup_tmpdir)
 # Run control
 def test_nanorc_success(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
+
+    match_obj = re.search(r".*\[(.+)-run_nanorc0\].*", current_test)
+    if match_obj:
+        current_test = match_obj.group(1)
+    banner_line = re.sub(".", "=", current_test)
+    print(banner_line)
+    print(current_test)
+    print(banner_line)
 
     # Check that nanorc completed correctly
     assert run_nanorc.completed_process.returncode == 0
