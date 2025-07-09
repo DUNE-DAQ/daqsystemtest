@@ -83,6 +83,9 @@
  <comment creation-time="20250530T151933" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRT data source steps"/>
  <comment creation-time="20250530T152100" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRT action plans"/>
  <comment creation-time="20250530T152404" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRT action plans"/>
+ <comment creation-time="20250623T201605" created-by="ramarine" created-on="np04-srv-017.cern.ch" author="ramarine" text="PDSlinked"/>
+ <comment creation-time="20250625T095129" created-by="ramarine" created-on="np04-srv-017.cern.ch" author="ramarine" text="deleted latency buffer"/>
+ <comment creation-time="20250625T100027" created-by="ramarine" created-on="np04-srv-017.cern.ch" author="ramarine" text="def-pds-tp-handler deleted"/>
 </comments>
 
 
@@ -96,9 +99,6 @@
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
  <rel name="command" class="FSMCommand" id="start"/>
  <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
-  <ref class="DaqModulesGroupByType" id="dlh-step"/>
   <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="crt-bern-reader-data-source-step"/>
  </rel>
@@ -110,9 +110,6 @@
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="crt-bern-reader-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
-  <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
-  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
  </rel>
 </obj>
 
@@ -120,9 +117,6 @@
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
  <rel name="command" class="FSMCommand" id="start"/>
  <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
-  <ref class="DaqModulesGroupByType" id="dlh-step"/>
   <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="crt-grenoble-reader-data-source-step"/>
  </rel>
@@ -134,9 +128,6 @@
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="crt-grenoble-reader-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
-  <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
-  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
  </rel>
 </obj>
 
@@ -310,7 +301,7 @@
  <attr name="generate_timesync" type="bool" val="1"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="RawDataProcessor" id="def-wib-processor"/>
+ <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-crt-grenoble-link-handler">
@@ -319,7 +310,7 @@
  <attr name="generate_timesync" type="bool" val="1"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="RawDataProcessor" id="def-wib-processor"/>
+ <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-link-handler">
@@ -328,7 +319,7 @@
  <attr name="generate_timesync" type="bool" val="1"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="RawDataProcessor" id="def-wib-processor"/>
+ <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-pds-link-handler">
@@ -337,7 +328,7 @@
  <attr name="generate_timesync" type="bool" val="1"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="RawDataProcessor" id="def-wib-processor"/>
+ <rel name="data_processor" class="PDSRawDataProcessor" id="def-pds-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-pds-stream-link-handler">
@@ -346,7 +337,7 @@
  <attr name="generate_timesync" type="bool" val="1"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="RawDataProcessor" id="def-wib-processor"/>
+ <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-ta-handler">
@@ -373,7 +364,7 @@
  <attr name="generate_timesync" type="bool" val="1"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="RawDataProcessor" id="def-wib-processor"/>
+ <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-tp-handler">
@@ -581,6 +572,13 @@
  <attr name="expected_timestamp_step" type="s32" val="1000"/>
 </obj>
 
+<obj class="PDSRawDataProcessor" id="def-pds-processor">
+ <attr name="queue_sizes" type="u32" val="10000"/>
+ <attr name="thread_names_prefix" type="string" val="postproc-"/>
+ <attr name="latency_monitoring" type="bool" val="1"/>
+ <attr name="channel_map" type="string" val="SimplePDSChannelMap"/>
+</obj>
+
 <obj class="RandomTCMakerConf" id="random-tc-generator">
  <attr name="timestamp_method" type="enum" val="kTimeSync"/>
  <attr name="latency_monitoring" type="bool" val="1"/>
@@ -588,18 +586,6 @@
  <attr name="trigger_rate_hz" type="float" val="1"/>
  <attr name="time_distribution" type="enum" val="kUniform"/>
  <rel name="tc_readout" class="TCReadoutMap" id="def-random-readout"/>
-</obj>
-
-<obj class="RawDataProcessor" id="def-wib-processor">
- <attr name="queue_sizes" type="u32" val="10000"/>
- <attr name="thread_names_prefix" type="string" val="postproc-"/>
- <attr name="latency_monitoring" type="bool" val="1"/>
- <attr name="channel_map" type="string" val="PD2HDTPCChannelMap"/>
- <rel name="processing_steps">
-  <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
-  <ref class="AVXThresholdProcessor" id="tpg-threshold-proc"/>
- </rel>
- <rel name="sot_minima" class="SamplesOverThresholdMinima" id="def-sot-minima"/>
 </obj>
 
 <obj class="RequestHandler" id="def-data-request-handler">
@@ -749,6 +735,17 @@
  <rel name="algorithms">
   <ref class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker"/>
  </rel>
+
+<obj class="TPCRawDataProcessor" id="def-wib-processor">
+ <attr name="queue_sizes" type="u32" val="10000"/>
+ <attr name="thread_names_prefix" type="string" val="postproc-"/>
+ <attr name="latency_monitoring" type="bool" val="1"/>
+ <attr name="channel_map" type="string" val="PD2HDTPCChannelMap"/>
+ <rel name="processing_steps">
+  <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
+  <ref class="AVXThresholdProcessor" id="tpg-threshold-proc"/>
+ </rel>
+ <rel name="sot_minima" class="SamplesOverThresholdMinima" id="def-sot-minima"/>
 </obj>
 
 <obj class="TPDataProcessor" id="tp-processor">
