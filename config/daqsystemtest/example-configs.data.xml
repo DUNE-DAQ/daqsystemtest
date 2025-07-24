@@ -193,6 +193,7 @@
   <ref class="Variable" id="local-env-ers-error"/>
   <ref class="Variable" id="local-env-ers-fatal"/>
   <ref class="Variable" id="local-env-ers-debug-level"/>
+  <ref class="Variable" id="pddp-logbook"/>
  </rel>
  <rel name="disabled">
   <ref class="DFApplication" id="df-02"/>

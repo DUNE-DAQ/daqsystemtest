@@ -281,4 +281,17 @@
  </rel>
 </obj>
 
+<obj class="Variable" id="npvd-logbook">
+ <attr name="name" type="string" val="DUNEDAQ_ELISA_LOGBOOK_APPARATUS"/>
+ <attr name="value" type="string" val="npvd"/>
+</obj>
+<obj class="Variable" id="pdsp-logbook">
+ <attr name="name" type="string" val="DUNEDAQ_ELISA_LOGBOOK_APPARATUS"/>
+ <attr name="value" type="string" val="pdsp"/>
+</obj>
+<obj class="Variable" id="pddp-logbook">
+ <attr name="name" type="string" val="DUNEDAQ_ELISA_LOGBOOK_APPARATUS"/>
+ <attr name="value" type="string" val="pddp"/>
+</obj>
+
 </oks-data>

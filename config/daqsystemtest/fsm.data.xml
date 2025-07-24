@@ -120,9 +120,9 @@
 
 <obj class="FSMaction" id="elisa-logbook">
  <attr name="name" type="string" val="elisa-logbook"/>
- <rel name="parameters">
+ <!-- <rel name="parameters">
   <ref class="Variable" id="which-elisa-logbook"/>
- </rel>
+ </rel> -->
 </obj>
 
 <obj class="FSMaction" id="file-logbook">
@@ -265,13 +265,14 @@
   <ref class="FSMxTransition" id="pre_start_test"/>
  </rel>
  <rel name="post_transitions">
-  <ref class="FSMxTransition" id="post_start_test"/>
+  <ref class="FSMxTransition" id="post_start_prod"/>
   <ref class="FSMxTransition" id="post_drain_dataflow_test"/>
  </rel>
  <rel name="actions">
   <ref class="FSMaction" id="user-provided-run-number"/>
   <ref class="FSMaction" id="trigger-rate-specifier"/>
   <ref class="FSMaction" id="file-logbook"/>
+  <ref class="FSMaction" id="elisa-logbook"/>
   <ref class="FSMaction" id="file-run-registry"/>
  </rel>
 </obj>
@@ -437,9 +438,9 @@
  <attr name="value" type="string" val="/cvmfs/dunedaq.opensciencegrid.org/spack/releases/coredaq-v5.0.0-a9-1/spack-0.20.0/opt/spack/linux-almalinux9-x86_64/gcc-12.1.0/readoutlibs-v2.1.0-kkwlcckeyl7ltarpbd5bn6fn2nczjqmp/share/config/cpupins/cpupin-example.json"/>
 </obj>
 
-<obj class="Variable" id="which-elisa-logbook">
+<!-- <obj class="Variable" id="which-elisa-logbook">
  <attr name="name" type="string" val="elisa-hardware"/>
  <attr name="value" type="string" val="pdsp"/>
-</obj>
+</obj> -->
 
 </oks-data>
