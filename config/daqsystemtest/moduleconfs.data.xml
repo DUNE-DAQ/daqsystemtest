@@ -136,7 +136,7 @@
  <rel name="command" class="FSMCommand" id="start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
   <ref class="DaqModulesGroupByType" id="data-source-step"/>
  </rel>
@@ -148,7 +148,7 @@
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="data-source-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
  </rel>
 </obj>
@@ -158,7 +158,6 @@
  <rel name="command" class="FSMCommand" id="start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
   <ref class="DaqModulesGroupByType" id="socket-reader-data-source-step"/>
  </rel>
@@ -170,7 +169,6 @@
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="socket-reader-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
  </rel>
 </obj>
@@ -180,7 +178,6 @@
  <rel name="command" class="FSMCommand" id="start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
   <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
  </rel>
@@ -192,7 +189,6 @@
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
  </rel>
 </obj>
@@ -236,69 +232,60 @@
 </obj>
 
 <obj class="DaqModulesGroupByType" id="aggregator-step">
- <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="FragmentAggregatorModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="crt-bern-reader-data-source-step">
- <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="CRTBernReaderModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="crt-grenoble-reader-data-source-step">
- <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="CRTGrenobleReaderModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="data-source-step">
- <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="FDFakeReaderModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="dlh-step">
- <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="FDDataHandlerModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="socket-reader-data-source-step">
- <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="SocketReaderModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="socket-writer-data-source-step">
- <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="SocketWriterModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="subscriber-step">
- <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="DataSubscriberModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="ta-handler-step">
- <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="TriggerDataHandlerModule"/>
  </attr>
 </obj>
 
-<obj class="DaqModulesGroupByType" id="tp-handler-step">
+<obj class="DaqModulesGroupByType" id="optional-tp-handler-step">
  <attr name="optional" type="bool" val="1"/>
  <attr name="modules" type="class">
   <data val="TriggerDataHandlerModule"/>
