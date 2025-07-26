@@ -132,23 +132,10 @@
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
   <ref class="Service" id="daqapp_control"/>
-  <ref class="Service" id="dataRequests"/>
-  <ref class="Service" id="timeSyncs"/>
-  <ref class="Service" id="triggerActivities"/>
-  <ref class="Service" id="triggerPrimitives"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="queue_rules">
-  <ref class="QueueConnectionRule" id="fa-queue-rule"/>
-  <ref class="QueueConnectionRule" id="tp-queue-rule"/>
   <ref class="QueueConnectionRule" id="crt-bern-raw-data-rule"/>
-  <ref class="QueueConnectionRule" id="fd-dlh-data-requests-queue-rule"/>
- </rel>
- <rel name="network_rules">
-  <ref class="NetworkConnectionRule" id="ts-net-rule"/>
-  <ref class="NetworkConnectionRule" id="ta-net-rule"/>
-  <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
-  <ref class="NetworkConnectionRule" id="tpset-net-rule"/>
  </rel>
  <rel name="action_plans">
   <ref class="ActionPlan" id="crt-bern-readout-start"/>
@@ -168,23 +155,10 @@
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
   <ref class="Service" id="daqapp_control"/>
-  <ref class="Service" id="dataRequests"/>
-  <ref class="Service" id="timeSyncs"/>
-  <ref class="Service" id="triggerActivities"/>
-  <ref class="Service" id="triggerPrimitives"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="queue_rules">
-  <ref class="QueueConnectionRule" id="fa-queue-rule"/>
-  <ref class="QueueConnectionRule" id="tp-queue-rule"/>
   <ref class="QueueConnectionRule" id="crt-grenoble-raw-data-rule"/>
-  <ref class="QueueConnectionRule" id="fd-dlh-data-requests-queue-rule"/>
- </rel>
- <rel name="network_rules">
-  <ref class="NetworkConnectionRule" id="ts-net-rule"/>
-  <ref class="NetworkConnectionRule" id="ta-net-rule"/>
-  <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
-  <ref class="NetworkConnectionRule" id="tpset-net-rule"/>
  </rel>
  <rel name="action_plans">
   <ref class="ActionPlan" id="crt-grenoble-readout-start"/>
