@@ -175,28 +175,6 @@
  </rel>
 </obj>
 
-<obj class="ActionPlan" id="socket-write-start">
- <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="start"/>
- <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
-  <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
- </rel>
-</obj>
-
-<obj class="ActionPlan" id="socket-write-stop">
- <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
- <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
-  <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
-  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
- </rel>
-</obj>
-
 <obj class="ActionPlan" id="tc-maker-start">
  <attr name="execution_policy" type="enum" val="modules-in-series"/>
  <rel name="command" class="FSMCommand" id="start"/>
