@@ -351,12 +351,14 @@
  <rel name="net_receiver" class="DPDKReceiver" id="ru-2-rcv"/>
 </obj>
 
+<!--
 <obj class="NetworkDetectorToDaqConnection" id="socket_conn_apa1">
  <rel name="net_senders">
   <ref class="SocketDataSender" id="socket_wib_101_link0"/>
  </rel>
  <rel name="net_receiver" class="SocketReceiver" id="socket-ru-1-rcv"/>
 </obj>
+-->
 
 <obj class="NetworkDetectorToDaqConnection" id="socket_crt_bern">
  <rel name="net_senders">
@@ -407,6 +409,15 @@
   <data val="123.456.101.001"/>
  </attr>
  <attr name="interface_name" type="string" val="hermes0"/>
+ <attr name="network_name" type="enum" val="Control"/>
+</obj>
+
+<obj class="NetworkInterface" id="crt_101_asio0">
+ <attr name="mac_address" type="string" val="00:00:00:00:00:00"/>
+ <attr name="ip_address" type="string">
+  <data val="123.456.101.000"/>
+ </attr>
+ <attr name="interface_name" type="string" val="asio0"/>
  <attr name="network_name" type="enum" val="Control"/>
 </obj>
 
@@ -618,6 +629,7 @@
  </rel>
 </obj>
 
+<!--
 <obj class="ReadoutApplication" id="socket-ru-01">
  <attr name="application_name" type="string" val="daq_application"/>
  <attr name="tp_generation_enabled" type="bool" val="0"/>
@@ -660,6 +672,7 @@
   <ref class="NetworkDetectorToDaqConnection" id="socket_conn_apa1"/>
  </rel>
 </obj>
+-->
 
 <obj class="RoHwConfig" id="rohw-1">
 </obj>
@@ -694,7 +707,7 @@
  <rel name="streams">
   <ref class="DetectorStream" id="stream_1002"/>
  </rel>
- <rel name="uses" class="NetworkInterface" id="wib_101_hermes0"/>
+ <rel name="uses" class="NetworkInterface" id="crt_101_asio0"/>
 </obj>
 
 <obj class="SocketDataSender" id="socket_sender_crt_grenoble">
@@ -703,9 +716,10 @@
  <rel name="streams">
   <ref class="DetectorStream" id="stream_1001"/>
  </rel>
- <rel name="uses" class="NetworkInterface" id="wib_101_hermes0"/>
+ <rel name="uses" class="NetworkInterface" id="crt_101_asio0"/>
 </obj>
 
+<!--
 <obj class="SocketDataSender" id="socket_wib_101_link0">
  <attr name="port" type="u32" val="1234"/>
  <attr name="control_host" type="string" val="localhost"/>
@@ -714,6 +728,7 @@
  </rel>
  <rel name="uses" class="NetworkInterface" id="wib_101_hermes0"/>
 </obj>
+-->
 
 <obj class="SocketReceiver" id="socket-ru-1-rcv">
  <rel name="uses" class="NetworkDevice" id="ru_1_readout"/>
