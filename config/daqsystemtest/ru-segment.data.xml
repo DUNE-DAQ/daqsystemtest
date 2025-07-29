@@ -351,15 +351,6 @@
  <rel name="net_receiver" class="DPDKReceiver" id="ru-2-rcv"/>
 </obj>
 
-<!--
-<obj class="NetworkDetectorToDaqConnection" id="socket_conn_apa1">
- <rel name="net_senders">
-  <ref class="SocketDataSender" id="socket_wib_101_link0"/>
- </rel>
- <rel name="net_receiver" class="SocketReceiver" id="socket-ru-1-rcv"/>
-</obj>
--->
-
 <obj class="NetworkDetectorToDaqConnection" id="socket_crt_bern">
  <rel name="net_senders">
   <ref class="SocketDataSender" id="socket_sender_crt_bern"/>
@@ -628,51 +619,6 @@
   <ref class="NetworkDetectorToDaqConnection" id="conn_apa2"/>
  </rel>
 </obj>
-
-<!--
-<obj class="ReadoutApplication" id="socket-ru-01">
- <attr name="application_name" type="string" val="daq_application"/>
- <attr name="tp_generation_enabled" type="bool" val="0"/>
- <attr name="ta_generation_enabled" type="bool" val="0"/>
- <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
- <rel name="exposes_service">
-  <ref class="Service" id="daqapp_control"/>
-  <ref class="Service" id="dataRequests"/>
-  <ref class="Service" id="timeSyncs"/>
-  <ref class="Service" id="triggerActivities"/>
-  <ref class="Service" id="triggerPrimitives"/>
- </rel>
- <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
- <rel name="queue_rules">
-  <ref class="QueueConnectionRule" id="fa-queue-rule"/>
-  <ref class="QueueConnectionRule" id="tp-queue-rule"/>
-  <ref class="QueueConnectionRule" id="wib-callback-raw-data-rule"/>
-  <ref class="QueueConnectionRule" id="fd-dlh-data-requests-queue-rule"/>
- </rel>
- <rel name="network_rules">
-  <ref class="NetworkConnectionRule" id="ts-net-rule"/>
-  <ref class="NetworkConnectionRule" id="ta-net-rule"/>
-  <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
-  <ref class="NetworkConnectionRule" id="tpset-net-rule"/>
- </rel>
- <rel name="action_plans">
-  <ref class="ActionPlan" id="socket-readout-start"/>
-  <ref class="ActionPlan" id="socket-readout-stop"/>
- </rel>
- <rel name="tp_source_ids">
-  <ref class="SourceIDConf" id="tp-srcid-1000"/>
-  <ref class="SourceIDConf" id="tp-srcid-1001"/>
-  <ref class="SourceIDConf" id="tp-srcid-1002"/>
- </rel>
- <rel name="uses" class="RoHwConfig" id="rohw-1"/>
- <rel name="link_handler" class="DataHandlerConf" id="def-link-handler"/>
- <rel name="tp_handler" class="DataHandlerConf" id="def-tp-handler"/>
- <rel name="data_reader" class="SocketReaderConf" id="def-socket-reader-conf"/>
- <rel name="detector_connections">
-  <ref class="NetworkDetectorToDaqConnection" id="socket_conn_apa1"/>
- </rel>
-</obj>
--->
 
 <obj class="RoHwConfig" id="rohw-1">
 </obj>
