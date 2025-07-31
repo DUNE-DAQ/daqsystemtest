@@ -722,7 +722,12 @@
  <attr name="thread_names_prefix" type="string" val="postproc-"/>
  <attr name="latency_monitoring" type="bool" val="1"/>
  <attr name="channel_map" type="string" val="PD2HDTPCChannelMap"/>
+ <attr name="metric_collect_enable" type="bool" val="1" />
+ <attr name="metric_collect_opmon_rate" type="u32" val="1"/>
  <rel name="processing_steps">
+  <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
+  <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
+  <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
   <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
   <ref class="AVXThresholdProcessor" id="tpg-threshold-proc"/>
  </rel>
@@ -737,6 +742,12 @@
  <rel name="algorithms">
   <ref class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker"/>
  </rel>
+</obj>
+
+<obj class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc">
+ <attr name="accum_limit" type="u8" val="10"/>
+ <attr name="metric_collect_data_sample_rate" type="u8" val="128">
+ <attr name="metric_collect_toggle_state" type="bool" val="1">
 </obj>
 
 <obj class="TRBConf" id="trb-01">

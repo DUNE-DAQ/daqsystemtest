@@ -114,10 +114,6 @@
  <attr name="scale_factor_plane2" type="u8" val="10"/>
 </obj>
 
-<obj class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc">
- <attr name="accum_limit" type="u8" val="10"/>
-</obj>
-
 <obj class="AVXRunSumProcessor" id="tpg-rs-proc">
  <attr name="memory_factor_plane0" type="u8" val="8"/>
  <attr name="memory_factor_plane1" type="u8" val="8"/>
