@@ -40,6 +40,8 @@ ignored_logfile_problems = {
     "-controller": [
         "Worker with pid \\d+ was terminated due to signal",
         "Connection '.*' not found on the application registry",
+        "Connection '.*' not found on the connectivity service",
+        "equested termination"
     ],
     "connectivity-service": [
         "errorlog: -",
