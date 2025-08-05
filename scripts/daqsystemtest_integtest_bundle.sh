@@ -1,7 +1,7 @@
 #!/bin/bash
 # 10-Oct-2023, KAB
 
-integtest_list=( "minimal_system_quick_test.py" "readout_type_scan.py" "3ru_3df_multirun_test.py" "small_footprint_quick_test.py" "fake_data_producer_test.py" "long_window_readout_test.py" "3ru_1df_multirun_test.py" "tpstream_writing_test.py" "example_system_test.py" )
+integtest_list=( "minimal_system_quick_test.py" "readout_type_scan_test.py" "3ru_3df_multirun_test.py" "small_footprint_quick_test.py" "fake_data_producer_test.py" "long_window_readout_test.py" "3ru_1df_multirun_test.py" "tpstream_writing_test.py" "example_system_test.py" )
 let last_test_index=${#integtest_list[@]}-1
 
 usage() {

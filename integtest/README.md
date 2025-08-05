@@ -17,7 +17,7 @@ pytest -s -k TPG 3ru_3df_multirun_test.py
 
 For reference, here are the ideas behind the tests that currently exist in this repository:
 * `minimal_system_quick_test.py` - verify that a small emulator system works and successfully writes data in a short run
-* `readout_type_scan.py` - verify that we can write different types of data (WIBEth, DAPHNE, TDE, etc.)
+* `readout_type_scan_test.py` - verify that we can write different types of data (WIBEth, DAPHNE, TDE, etc.)
 * `3ru_3df_multirun_test.py` - verify that a system with multiple RUs and multiple DF Apps works as expected, including TPG
 * `small_footprint_quick_test.py` - like minimal_system_quick_test, but using even fewer computer resources
 * `fake_data_producer_test.py` - verify that the FakeDataProdModule DAQModule works as expected
