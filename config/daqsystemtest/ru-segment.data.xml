@@ -145,7 +145,7 @@
  <rel name="data_writers">
   <ref class="SocketWriterConf" id="def-socket-writer-conf"/>
  </rel>
- <rel name="data_reader" class="CRTBernReaderConf" id="def-emu-crt-bern-receiver-conf"/>
+ <rel name="data_reader" class="CRTBernReaderConf" id="def-crt-bern-receiver-conf"/>
  <rel name="detector_connections">
   <ref class="NetworkDetectorToDaqConnection" id="socket_crt_bern"/>
  </rel>
