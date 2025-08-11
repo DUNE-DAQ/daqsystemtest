@@ -665,17 +665,6 @@
  <rel name="uses" class="NetworkInterface" id="crt_101_asio0"/>
 </obj>
 
-<!--
-<obj class="SocketDataSender" id="socket_wib_101_link0">
- <attr name="port" type="u32" val="1234"/>
- <attr name="control_host" type="string" val="localhost"/>
- <rel name="streams">
-  <ref class="DetectorStream" id="stream_100"/>
- </rel>
- <rel name="uses" class="NetworkInterface" id="wib_101_hermes0"/>
-</obj>
--->
-
 <obj class="SocketReceiver" id="socket-ru-1-rcv">
  <rel name="uses" class="NetworkDevice" id="ru_1_readout"/>
 </obj>
