@@ -86,7 +86,7 @@
  <comment creation-time="20250623T201605" created-by="ramarine" created-on="np04-srv-017.cern.ch" author="ramarine" text="PDSlinked"/>
  <comment creation-time="20250625T095129" created-by="ramarine" created-on="np04-srv-017.cern.ch" author="ramarine" text="deleted latency buffer"/>
  <comment creation-time="20250625T100027" created-by="ramarine" created-on="np04-srv-017.cern.ch" author="ramarine" text="def-pds-tp-handler deleted"/>
- <comment creation-time="20250805T092423" created-by="dergonul" created-on="np04-srv-028.cern.ch" author="dergonul" text="Emu CRT Bern config"/>
+ <comment creation-time="20250805T092423" created-by="dergonul" created-on="np04-srv-028.cern.ch" author="dergonul" text="Emu CRT configs"/>
 </comments>
 
 
@@ -132,7 +132,7 @@
  </rel>
 </obj>
 
-<obj class="ActionPlan" id="emu-crt-bern-readout-start">
+<obj class="ActionPlan" id="emu-crt-readout-start">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
  <rel name="command" class="FSMCommand" id="start"/>
  <rel name="steps">
@@ -141,7 +141,7 @@
  </rel>
 </obj>
 
-<obj class="ActionPlan" id="emu-crt-bern-readout-stop">
+<obj class="ActionPlan" id="emu-crt-readout-stop">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
  <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
  <rel name="steps">
@@ -208,15 +208,15 @@
  <attr name="emulation_mode" type="bool" val="0"/>
 </obj>
 
-<obj class="CRTBernReaderConf" id="def-emu-crt-bern-receiver-conf">
- <attr name="template_for" type="class" val="FDFakeReaderModule"/>
- <attr name="emulation_mode" type="bool" val="1"/>
- <rel name="emulation_conf" class="StreamEmulationParameters" id="stream-emu"/>
-</obj>
-
 <obj class="CRTGrenobleReaderConf" id="def-crt-grenoble-receiver-conf">
  <attr name="template_for" type="class" val="CRTGrenobleReaderModule"/>
  <attr name="emulation_mode" type="bool" val="0"/>
+</obj>
+
+<obj class="CRTReaderConf" id="def-emu-crt-receiver-conf">
+ <attr name="template_for" type="class" val="FDFakeReaderModule"/>
+ <attr name="emulation_mode" type="bool" val="1"/>
+ <rel name="emulation_conf" class="StreamEmulationParameters" id="stream-emu"/>
 </obj>
 
 <obj class="DFOConf" id="dfoconf-01">
