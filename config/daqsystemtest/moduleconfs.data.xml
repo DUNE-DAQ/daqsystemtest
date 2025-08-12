@@ -306,7 +306,7 @@
  <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
+ <rel name="data_processor" class="DataProcessor" id="def-base-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-crt-grenoble-link-handler">
@@ -317,7 +317,7 @@
  <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
+ <rel name="data_processor" class="DataProcessor" id="def-base-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-link-handler">
@@ -350,7 +350,7 @@
  <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
+ <rel name="data_processor" class="DataProcessor" id="def-base-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-ta-handler">
@@ -462,6 +462,9 @@
  <attr name="max_write_retry_time_ms" type="s32" val="1000"/>
  <attr name="write_retry_time_increase_factor" type="s32" val="2"/>
  <rel name="data_store_params" class="DataStoreConf" id="default"/>
+</obj>
+
+<obj class="DataProcessor" id="def-base-processor">
 </obj>
 
 <obj class="FilenameParams" id="default">
