@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="87" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="mrigan" last-modified-on="np04-srv-016.cern.ch" last-modification-time="20250630T102725"/>
+<info name="" type="" num-of-items="88" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20250722T162027"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -136,7 +136,7 @@
  <rel name="command" class="FSMCommand" id="start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
   <ref class="DaqModulesGroupByType" id="data-source-step"/>
  </rel>
@@ -148,7 +148,7 @@
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="data-source-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
  </rel>
 </obj>
@@ -158,7 +158,6 @@
  <rel name="command" class="FSMCommand" id="start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
   <ref class="DaqModulesGroupByType" id="socket-reader-data-source-step"/>
  </rel>
@@ -170,7 +169,6 @@
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="socket-reader-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
  </rel>
 </obj>
@@ -267,7 +265,8 @@
  </attr>
 </obj>
 
-<obj class="DaqModulesGroupByType" id="tp-handler-step">
+<obj class="DaqModulesGroupByType" id="optional-tp-handler-step">
+ <attr name="optional" type="bool" val="1"/>
  <attr name="modules" type="class">
   <data val="TriggerDataHandlerModule"/>
  </attr>
@@ -279,7 +278,7 @@
  <attr name="generate_timesync" type="bool" val="1"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
+ <rel name="data_processor" class="DataProcessor" id="def-base-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-crt-grenoble-link-handler">
@@ -288,7 +287,7 @@
  <attr name="generate_timesync" type="bool" val="1"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
+ <rel name="data_processor" class="DataProcessor" id="def-base-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-link-handler">
@@ -315,7 +314,7 @@
  <attr name="generate_timesync" type="bool" val="1"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
+ <rel name="data_processor" class="DataProcessor" id="def-base-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-ta-handler">
@@ -415,6 +414,9 @@
  <attr name="max_write_retry_time_ms" type="s32" val="1000"/>
  <attr name="write_retry_time_increase_factor" type="s32" val="2"/>
  <rel name="data_store_params" class="DataStoreConf" id="default"/>
+</obj>
+
+<obj class="DataProcessor" id="def-base-processor">
 </obj>
 
 <obj class="FilenameParams" id="default">
@@ -705,15 +707,6 @@
  <attr name="time_after" type="u32" val="1001"/>
 </obj>
 
-<obj class="TPDataProcessor" id="tpreplay-tp-processor">
- <attr name="queue_sizes" type="u32" val="10000"/>
- <attr name="thread_names_prefix" type="string" val="proc-"/>
- <attr name="latency_monitoring" type="bool" val="0"/>
- <attr name="print_tp_info" type="bool" val="0"/>
- <rel name="algorithms">
-  <ref class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker"/>
- </rel>
-
 <obj class="TPCRawDataProcessor" id="def-wib-processor">
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="postproc-"/>
@@ -736,26 +729,37 @@
  </rel>
 </obj>
 
+<obj class="TPDataProcessor" id="tpreplay-tp-processor">
+ <attr name="queue_sizes" type="u32" val="10000"/>
+ <attr name="thread_names_prefix" type="string" val="proc-"/>
+ <attr name="latency_monitoring" type="bool" val="0"/>
+ <attr name="print_tp_info" type="bool" val="0"/>
+ <rel name="algorithms">
+  <ref class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker"/>
+ </rel>
+</obj>
+
+<obj class="TPReplayModuleConf" id="tpreplay-tp-maker">
+ <attr name="template_for" type="class" val="TPReplayModule"/>
+ <attr name="number_of_loops" type="s32" val="1"/>
+ <attr name="maximum_wait_time_us" type="u32" val="1000"/>
+ <attr name="channel_map" type="string" val="PD2HDTPCChannelMap"/>
+ <attr name="total_planes" type="u32" val="1"/>
+ <attr name="filter_out_plane" type="u32">
+  <data val="0"/>
+ </attr>
+ <rel name="tp_streams">
+  <ref class="TPStreamConf" id="def-tp-stream-1"/>
+ </rel>
+</obj>
+
 <obj class="TPStreamConf" id="def-tp-stream-1">
  <attr name="filename" type="string" val=""/>
- <attr name="index" type="u32" val="0"/>
 </obj>
 
 <obj class="TRBConf" id="trb-01">
  <attr name="queues_timeout" type="u32" val="100"/>
  <attr name="trigger_record_timeout_ms" type="u32" val="2858"/>
-</obj>
-
-<obj class="TPReplayModuleConf" id="tpreplay-tp-maker">
- <attr name="template_for" type="class" val="TPReplayModule"/>
- <attr name="number_of_loops" type="u32" val="1"/>
- <attr name="maximum_wait_time_us" type="u32" val="1000"/>
- <attr name="total_planes" type="u32" val="1"/>
- <attr name="channel_map" type="string" val="PD2HDTPCChannelMap"/>
- <attr name="filter_out_plane" type="u32" val="0"/>
- <rel name="tp_streams">
-  <ref class="TPStreamConf" id="def-tp-stream-1"/>
- </rel>
 </obj>
 
 <obj class="TriggerBitword" id="test-bitword">

@@ -134,13 +134,17 @@ def test_log_files(run_nanorc):
 
 def test_data_files(run_nanorc):
     # Run some tests on the output data file
-    assert len(run_nanorc.data_files) == expected_number_of_data_files
+    all_ok = len(run_nanorc.data_files) == expected_number_of_data_files
+    print("") # Clear potential dot from pytest
+    if all_ok:
+        print(f"\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({expected_number_of_data_files})")
+    else:
+        print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {expected_number_of_data_files}, found {len(run_nanorc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
 
     fragment_check_list = [triggercandidate_frag_params, hsi_frag_params]
     fragment_check_list.append(wibeth_frag_params)
     nontrig_fragment_check_list = [hsi_frag_params, wibeth_frag_params]
 
-    all_ok = True
     for idx in range(len(run_nanorc.data_files)):
         data_file = data_file_checks.DataFile(run_nanorc.data_files[idx])
         all_ok &= data_file_checks.sanity_check(data_file)
