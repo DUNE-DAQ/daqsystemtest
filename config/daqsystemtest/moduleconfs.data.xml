@@ -155,7 +155,7 @@
  <rel name="command" class="FSMCommand" id="start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
   <ref class="DaqModulesGroupByType" id="data-source-step"/>
  </rel>
@@ -167,7 +167,7 @@
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="data-source-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
  </rel>
 </obj>
@@ -177,7 +177,6 @@
  <rel name="command" class="FSMCommand" id="start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
   <ref class="DaqModulesGroupByType" id="socket-reader-data-source-step"/>
  </rel>
@@ -189,7 +188,6 @@
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="socket-reader-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
  </rel>
 </obj>
@@ -292,7 +290,8 @@
  </attr>
 </obj>
 
-<obj class="DaqModulesGroupByType" id="tp-handler-step">
+<obj class="DaqModulesGroupByType" id="optional-tp-handler-step">
+ <attr name="optional" type="bool" val="1"/>
  <attr name="modules" type="class">
   <data val="TriggerDataHandlerModule"/>
  </attr>
