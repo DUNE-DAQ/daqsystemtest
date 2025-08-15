@@ -39,6 +39,20 @@ tde_frag_params = {
     "min_size_bytes": 7272,
     "max_size_bytes": 14472,
 }
+bern_crt_frag_params = {
+    "fragment_type_description": "CRTBern",
+    "fragment_type": "CRTBern",
+    "expected_fragment_count": number_of_data_producers,
+    "min_size_bytes": 384,
+    "max_size_bytes": 488,
+}
+grenoble_crt_frag_params = {
+    "fragment_type_description": "CRTGrenoble",
+    "fragment_type": "CRTGrenoble",
+    "expected_fragment_count": number_of_data_producers,
+    "min_size_bytes": 1752,
+    "max_size_bytes": 2312,
+}
 
 # 1ms readout window = 62512 DTS ticks
 # num frames = ro_win / tick diff = 977
@@ -205,6 +219,14 @@ daphne_tpg_conf.config_substitutions.append(
     )
 )
 
+bern_crt_conf = copy.deepcopy(conf_dict)
+bern_crt_conf.dro_map_config.det_id = 12
+bern_crt_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
+
+grenoble_crt_conf = copy.deepcopy(conf_dict)
+grenoble_crt_conf.dro_map_config.det_id = 13
+grenoble_crt_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
+
 
 confgen_arguments = {
     "WIBEth_System": wibeth_conf,
@@ -212,7 +234,9 @@ confgen_arguments = {
     "DAPHNE_Stream_System": daphne_stream_conf,
     "DAPHNE_System": daphne_conf,
     "DAPHNE_TPG_System": daphne_tpg_conf,
-    "TDEEth_System": tde_conf
+    "TDEEth_System": tde_conf,
+    "BernCRT_System": bern_crt_conf,
+    "GrenobleCRT_System": grenoble_crt_conf
 }
 
 # The commands to run in nanorc, as a list
@@ -228,7 +252,7 @@ nanorc_command_list = (
 
 def test_nanorc_success(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)\].*", current_test)
+    match_obj = re.search(r".*\[(.+)-run_nanorc0\].*", current_test)
     if match_obj:
         current_test = match_obj.group(1)
     banner_line = re.sub(".", "=", current_test)
@@ -262,6 +286,10 @@ def test_data_files(run_nanorc):
         fragment_check_list.append(wibeth_frag_params)
     elif "TDEEth" in current_test:
         fragment_check_list.append(tde_frag_params)
+    elif "BernCRT" in current_test:
+        fragment_check_list.append(bern_crt_frag_params)
+    elif "GrenobleCRT" in current_test:
+        fragment_check_list.append(grenoble_crt_frag_params)
     if run_nanorc.confgen_config.tpg_enabled:
         fragment_check_list.append(triggeractivity_frag_params)
         if "WIBEth" in current_test:
