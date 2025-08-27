@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ASCII"?>
+<?xml version="1.0" encoding="us-ascii"?>
 
 <!-- oks-data version 2.2 -->
 
@@ -851,7 +851,8 @@
 </obj>
 
 <obj class="TRMonRequestorConf" id="trmr-01">
- <attr name="request_interval_ms" type="u32" val="1000"/>
+ <attr name="minimum_request_interval_ms" type="u32" val="1000"/>
+ <attr name="maximum_outstanding_requests" type="u32" val="1"/>
 </obj>
 
 <obj class="TriggerBitword" id="test-bitword">

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ASCII"?>
+<?xml version="1.0" encoding="us-ascii"?>
 
 <!-- oks-data version 2.2 -->
 
@@ -93,6 +93,10 @@
   <ref class="NetworkConnectionRule" id="data-req-hsi-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
+     <!-- Used for TRMonRequestor
+  <ref class="NetworkConnectionRule" id="trmon-req-net-rule"/>
+  <ref class="NetworkConnectionRule" id="trigger-record-net-rule"/>
+  -->
  </rel>
  <rel name="trb" class="TRBConf" id="trb-01"/>
  <rel name="data_writers">
@@ -119,6 +123,10 @@
   <ref class="NetworkConnectionRule" id="data-req-hsi-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
+  <!-- Used for TRMonRequestor
+  <ref class="NetworkConnectionRule" id="trmon-req-net-rule"/>
+  <ref class="NetworkConnectionRule" id="trigger-record-net-rule"/>
+  -->
  </rel>
  <rel name="trb" class="TRBConf" id="trb-01"/>
  <rel name="data_writers">
@@ -145,6 +153,10 @@
   <ref class="NetworkConnectionRule" id="data-req-hsi-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
+     <!-- Used for TRMonRequestor
+  <ref class="NetworkConnectionRule" id="trmon-req-net-rule"/>
+  <ref class="NetworkConnectionRule" id="trigger-record-net-rule"/>
+  -->
  </rel>
  <rel name="trb" class="TRBConf" id="trb-01"/>
  <rel name="data_writers">
