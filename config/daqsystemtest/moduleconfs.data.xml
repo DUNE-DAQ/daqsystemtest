@@ -96,43 +96,7 @@
  <attr name="plane2" type="u16" val="100"/>
 </obj>
 
-<obj class="ActionPlan" id="crt-bern-readout-start">
- <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="start"/>
- <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
-  <ref class="DaqModulesGroupByType" id="crt-bern-reader-data-source-step"/>
- </rel>
-</obj>
-
-<obj class="ActionPlan" id="crt-bern-readout-stop">
- <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
- <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="crt-bern-reader-data-source-step"/>
-  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
- </rel>
-</obj>
-
-<obj class="ActionPlan" id="crt-grenoble-readout-start">
- <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="start"/>
- <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
-  <ref class="DaqModulesGroupByType" id="crt-grenoble-reader-data-source-step"/>
- </rel>
-</obj>
-
-<obj class="ActionPlan" id="crt-grenoble-readout-stop">
- <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
- <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="crt-grenoble-reader-data-source-step"/>
-  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
- </rel>
-</obj>
-
-<obj class="ActionPlan" id="emu-crt-readout-start">
+<obj class="ActionPlan" id="crt-readout-start">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
  <rel name="command" class="FSMCommand" id="start"/>
  <rel name="steps">
@@ -141,7 +105,7 @@
  </rel>
 </obj>
 
-<obj class="ActionPlan" id="emu-crt-readout-stop">
+<obj class="ActionPlan" id="crt-readout-stop">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
  <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
  <rel name="steps">
@@ -214,7 +178,7 @@
 <obj class="CRTReaderConf" id="def-emu-crt-receiver-conf">
  <attr name="template_for" type="class" val="FDFakeReaderModule"/>
  <attr name="emulation_mode" type="bool" val="1"/>
- <rel name="emulation_conf" class="StreamEmulationParameters" id="stream-emu"/>
+ <rel name="emulation_conf" class="StreamEmulationParameters" id="crt-stream-emu"/>
 </obj>
 
 <obj class="DFOConf" id="dfoconf-01">
@@ -678,6 +642,16 @@
  <attr name="random_population_size" type="u32" val="100000"/>
  <attr name="frame_error_rate_hz" type="float" val="0"/>
  <attr name="generate_periodic_adc_pattern" type="bool" val="1"/>
+ <attr name="TP_rate_per_channel" type="float" val="1"/>
+</obj>
+
+<obj class="StreamEmulationParameters" id="crt-stream-emu">
+ <attr name="data_file_name" type="string" val="/cvmfs/dunedaq.opensciencegrid.org/assets/files/d/d/1/wibeth_output_all_zeros.bin"/>
+ <attr name="input_file_size_limit" type="u32" val="5777280"/>
+ <attr name="set_t0" type="bool" val="1"/>
+ <attr name="random_population_size" type="u32" val="100000"/>
+ <attr name="frame_error_rate_hz" type="float" val="0"/>
+ <attr name="generate_periodic_adc_pattern" type="bool" val="0"/>
  <attr name="TP_rate_per_channel" type="float" val="1"/>
 </obj>
 

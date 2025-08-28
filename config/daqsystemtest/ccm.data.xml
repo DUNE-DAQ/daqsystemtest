@@ -129,46 +129,6 @@
  <attr name="type" type="enum" val="file"/>
 </obj>
 
-<obj class="RCApplication" id="crt-bern-root-controller">
- <attr name="application_name" type="string" val="drunc-controller"/>
- <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
- <rel name="exposes_service">
-  <ref class="Service" id="rccontroller_control"/>
- </rel>
- <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
- <rel name="fsm" class="FSMconfiguration" id="fsmConf-test"/>
-</obj>
-
-<obj class="RCApplication" id="crt-grenoble-root-controller">
- <attr name="application_name" type="string" val="drunc-controller"/>
- <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
- <rel name="exposes_service">
-  <ref class="Service" id="rccontroller_control"/>
- </rel>
- <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
- <rel name="fsm" class="FSMconfiguration" id="fsmConf-test"/>
-</obj>
-
-<obj class="RCApplication" id="emu-crt-bern-root-controller">
- <attr name="application_name" type="string" val="drunc-controller"/>
- <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
- <rel name="exposes_service">
-  <ref class="Service" id="rccontroller_control"/>
- </rel>
- <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
- <rel name="fsm" class="FSMconfiguration" id="fsmConf-test"/>
-</obj>
-
-<obj class="RCApplication" id="emu-crt-grenoble-root-controller">
- <attr name="application_name" type="string" val="drunc-controller"/>
- <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
- <rel name="exposes_service">
-  <ref class="Service" id="rccontroller_control"/>
- </rel>
- <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
- <rel name="fsm" class="FSMconfiguration" id="fsmConf-test"/>
-</obj>
-
 <obj class="RCApplication" id="root-controller">
  <attr name="application_name" type="string" val="drunc-controller"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
