@@ -109,27 +109,27 @@ conf_dict.n_df_apps = number_of_dataflow_apps
 conf_dict.fake_hsi_enabled = False
 
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id=conf_dict.session,
         obj_class="Session",
         updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="LatencyBuffer", updates={"size": latency_buffer_size}
     )
 )
 
 
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="RandomTCMakerConf",
         updates={"trigger_rate_hz": trigger_rate},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TCReadoutMap",
         obj_id = "def-random-readout",
         updates={
@@ -139,14 +139,14 @@ conf_dict.config_substitutions.append(
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="DataStoreConf",
         obj_id="default",
         updates={"max_file_size": 4 * 1024 * 1024 * 1024},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="DataStoreConf",
         obj_id="default",
         updates={"directory_path": output_path_parameter},
@@ -155,7 +155,7 @@ conf_dict.config_substitutions.append(
 
 trsplit_conf = copy.deepcopy(conf_dict)
 trsplit_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TRBConf",
         updates={
             "max_time_window": trigger_record_max_window,
@@ -165,7 +165,7 @@ trsplit_conf.config_substitutions.append(
 )
 
 trsplit_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="QueueDescriptor",
         obj_id="trigger-records",
         updates={"capacity": tr_queue_size},

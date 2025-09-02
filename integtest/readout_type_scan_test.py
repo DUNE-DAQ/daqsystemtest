@@ -145,14 +145,14 @@ conf_dict.tpg_enabled = False
 conf_dict.frame_file = "asset://?label=ProtoWIB&subsystem=readout"  # ProtoWIB
 
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id=conf_dict.session,
         obj_class="Session",
         updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="RandomTCMakerConf",
         updates={"trigger_rate_hz": 1},
     )
@@ -164,7 +164,7 @@ wib_tpg_conf.frame_file = (
     "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"  # WIBEth All Zeros
 )
 wib_tpg_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TAMakerPrescaleAlgorithm",
         obj_id="dummy-ta-maker",
         updates={"prescale": ta_prescale},
@@ -185,7 +185,7 @@ daphne_stream_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 daphne_stream_conf.frame_file = "asset://?label=DAPHNEStream&subsystem=readout"
 
 daphne_stream_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TCReadoutMap",
         obj_id = "def-random-readout",
         updates={
@@ -199,7 +199,7 @@ daphne_conf = copy.deepcopy(conf_dict)
 daphne_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 daphne_conf.frame_file = "asset://?checksum=a8990a9eb3a505d4ded62dfdfa9e2681"
 daphne_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TCReadoutMap",
         obj_id = "def-random-readout",
         updates={
@@ -212,7 +212,7 @@ daphne_conf.config_substitutions.append(
 daphne_tpg_conf = copy.deepcopy(daphne_conf)
 daphne_tpg_conf.tpg_enabled = True
 daphne_tpg_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TAMakerPrescaleAlgorithm",
         obj_id="dummy-ta-maker",
         updates={"prescale": 750},

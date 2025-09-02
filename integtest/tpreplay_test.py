@@ -121,7 +121,7 @@ local_db.commit()
 
 ## update TP Replay Module
 tpreplay_local_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TPReplayModuleConf",
         obj_id="tpreplay-tp-maker",
         updates={
@@ -135,7 +135,7 @@ tpreplay_local_conf.config_substitutions.append(
 
 ## update replay session SourceIDs
 tpreplay_local_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TPReplayApplication",
         obj_id="tpreplay",
         updates={
@@ -145,7 +145,7 @@ tpreplay_local_conf.config_substitutions.append(
 
 ## update random TC maker
 tpreplay_local_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id="random-tc-generator",
         obj_class="RandomTCMakerConf",
         updates={
@@ -155,7 +155,7 @@ tpreplay_local_conf.config_substitutions.append(
 
 ## update HSI
 tpreplay_local_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id="fakehsi",
         obj_class="FakeHSIEventGeneratorConf",
         updates={
@@ -167,7 +167,7 @@ tpreplay_local_conf.config_substitutions.append(
 tpreplay_np04_conf = copy.deepcopy(tpreplay_local_conf)
 # update
 tpreplay_np04_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TPReplayApplication",
         obj_id="tpreplay",
         updates={
@@ -175,7 +175,7 @@ tpreplay_np04_conf.config_substitutions.append(
             },)
 )
 tpreplay_np04_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TPReplayModuleConf",
         obj_id="tpreplay-tp-maker",
         updates={
@@ -187,7 +187,7 @@ tpreplay_np04_conf.config_substitutions.append(
             },)
 )
 tpreplay_np04_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TPStreamConf",
         obj_id="tp-stream-1",
         updates={
@@ -195,7 +195,7 @@ tpreplay_np04_conf.config_substitutions.append(
             },)
 )
 tpreplay_np04_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TPStreamConf",
         obj_id="tp-stream-2",
         updates={
@@ -203,7 +203,7 @@ tpreplay_np04_conf.config_substitutions.append(
             },)
 )
 tpreplay_np04_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TAMakerPrescaleAlgorithm",
         obj_id="dummy-ta-maker",
         updates={
@@ -211,7 +211,7 @@ tpreplay_np04_conf.config_substitutions.append(
             },)
 )
 tpreplay_np04_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TCMakerPrescaleAlgorithm",
         obj_id="tc-pass-through-algo",
         updates={
