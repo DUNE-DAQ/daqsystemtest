@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="14" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="dergonul" last-modified-on="np04-srv-028.cern.ch" last-modification-time="20250805T092423"/>
+<info name="" type="" num-of-items="10" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="biery" last-modified-on="daq.fnal.gov" last-modification-time="20250903T173857"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -97,16 +97,6 @@
  <attr name="offline_data_stream" type="string" val="cosmics"/>
 </obj>
 
-<obj class="Segment" id="socket-root-segment">
- <rel name="segments">
-  <ref class="Segment" id="socket-ru-segment"/>
-  <ref class="Segment" id="df-segment"/>
-  <ref class="Segment" id="trg-segment"/>
-  <ref class="Segment" id="hsi-fake-segment"/>
- </rel>
- <rel name="controller" class="RCApplication" id="socket-root-controller"/>
-</obj>
-
 <obj class="Segment" id="root-segment">
  <rel name="segments">
   <ref class="Segment" id="ru-segment"/>
@@ -115,6 +105,16 @@
   <ref class="Segment" id="hsi-fake-segment"/>
  </rel>
  <rel name="controller" class="RCApplication" id="root-controller"/>
+</obj>
+
+<obj class="Segment" id="socket-root-segment">
+ <rel name="segments">
+  <ref class="Segment" id="socket-ru-segment"/>
+  <ref class="Segment" id="df-segment"/>
+  <ref class="Segment" id="trg-segment"/>
+  <ref class="Segment" id="hsi-fake-segment"/>
+ </rel>
+ <rel name="controller" class="RCApplication" id="socket-root-controller"/>
 </obj>
 
 <obj class="Session" id="ehn1-local-1x1-config">
