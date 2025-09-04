@@ -78,7 +78,7 @@ tpstream_writer = db.get_dal(class_name="TPStreamWriterApplication", uid="tp-str
 local_conf.disabled.append(tpstream_writer)
 disabled_list = [db.get_dal(class_name=obj.className(), uid=obj.id) for obj in local_conf.disabled]
 onebyone_local_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="Session",
         obj_id="local-1x1-config",
         updates={"disabled": []},
@@ -86,7 +86,7 @@ onebyone_local_conf.config_substitutions.append(
 )
 # Disable TC merging
 onebyone_local_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
@@ -120,7 +120,7 @@ for conf in configs:
 ### Bitwords configs
 # Prescale
 prescale_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
@@ -130,7 +130,7 @@ prescale_bitword_conf.config_substitutions.append(
 
 # Timing
 timing_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
@@ -140,7 +140,7 @@ timing_bitword_conf.config_substitutions.append(
 
 # Supernova
 supernova_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TriggerBitword",
         obj_id="test-bitword",
         updates={
@@ -149,7 +149,7 @@ supernova_bitword_conf.config_substitutions.append(
 )
 supernova_bitword = db.get_dal(class_name="TriggerBitword", uid="test-bitword")
 supernova_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
@@ -159,7 +159,7 @@ supernova_bitword_conf.config_substitutions.append(
 
 # Series
 series_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
@@ -169,7 +169,7 @@ series_bitword_conf.config_substitutions.append(
 
 # Coincidence
 coincidence_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TriggerBitword",
         obj_id="test-bitword",
         updates={
@@ -178,7 +178,7 @@ coincidence_bitword_conf.config_substitutions.append(
 )
 coincidence_bitword = db.get_dal(class_name="TriggerBitword", uid="test-bitword")
 coincidence_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
@@ -187,31 +187,31 @@ coincidence_bitword_conf.config_substitutions.append(
             },)
 )
 coincidence_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id="random-tc-generator",
         obj_class="RandomTCMakerConf",
         updates={"trigger_rate_hz": 40},)
 )
 coincidence_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id="def-random-readout",
         obj_class="TCReadoutMap",
         updates={"time_before": 62500, "time_after": 62500},)
 )
 coincidence_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id="fakehsi",
         obj_class="FakeHSIEventGeneratorConf",
         updates={"trigger_rate": 30},)
 )
 coincidence_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id="def-tc-map",
         obj_class="TCReadoutMap",
         updates={"time_before": 62500, "time_after": 62500},)
 )
 coincidence_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id="def-hsi-tc-map",
         obj_class="TCReadoutMap",
         updates={"time_before": 62500, "time_after": 62500},)

@@ -116,46 +116,46 @@ conf_dict.frame_file = (
 )
 
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id=conf_dict.session,
         obj_class="Session",
         updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="RandomTCMakerConf",
         updates={"trigger_rate_hz": pulser_trigger_rate},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="LatencyBuffer", updates={"size": 200000}
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TAMakerPrescaleAlgorithm",
         obj_id="dummy-ta-maker",
         updates={"prescale": 25},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={"merge_overlapping_tcs": 0},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="DataStoreConf",
         obj_id="default",
         updates={"directory_path": output_dir},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="DataStoreConf",
         obj_id="default_tp_store_conf",
         updates={"directory_path": output_dir},

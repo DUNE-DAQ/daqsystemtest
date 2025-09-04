@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="89" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="dergonul" last-modified-on="np04-srv-028.cern.ch" last-modification-time="20250805T092423"/>
+<info name="" type="" num-of-items="87" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="biery" last-modified-on="daq.fnal.gov" last-modification-time="20250903T173857"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -91,48 +91,13 @@
 
 
 <obj class="AVXThresholdProcessor" id="tpg-threshold-proc">
+ <attr name="metric_collect_time_sample_period" type="u64" val="256"/>
  <attr name="plane0" type="u16" val="100"/>
  <attr name="plane1" type="u16" val="100"/>
  <attr name="plane2" type="u16" val="100"/>
 </obj>
 
-<obj class="ActionPlan" id="crt-bern-readout-start">
- <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="start"/>
- <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
-  <ref class="DaqModulesGroupByType" id="crt-bern-reader-data-source-step"/>
- </rel>
-</obj>
-
-<obj class="ActionPlan" id="crt-bern-readout-stop">
- <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
- <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="crt-bern-reader-data-source-step"/>
-  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
- </rel>
-</obj>
-
-<obj class="ActionPlan" id="crt-grenoble-readout-start">
- <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="start"/>
- <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
-  <ref class="DaqModulesGroupByType" id="crt-grenoble-reader-data-source-step"/>
- </rel>
-</obj>
-
-<obj class="ActionPlan" id="crt-grenoble-readout-stop">
- <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
- <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="crt-grenoble-reader-data-source-step"/>
-  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
- </rel>
-</obj>
-
-<obj class="ActionPlan" id="emu-crt-readout-start">
+<obj class="ActionPlan" id="crt-readout-start">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
  <rel name="command" class="FSMCommand" id="start"/>
  <rel name="steps">
@@ -141,7 +106,7 @@
  </rel>
 </obj>
 
-<obj class="ActionPlan" id="emu-crt-readout-stop">
+<obj class="ActionPlan" id="crt-readout-stop">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
  <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
  <rel name="steps">
@@ -214,7 +179,7 @@
 <obj class="CRTReaderConf" id="def-emu-crt-receiver-conf">
  <attr name="template_for" type="class" val="FDFakeReaderModule"/>
  <attr name="emulation_mode" type="bool" val="1"/>
- <rel name="emulation_conf" class="StreamEmulationParameters" id="stream-emu"/>
+ <rel name="emulation_conf" class="StreamEmulationParameters" id="crt-stream-emu"/>
 </obj>
 
 <obj class="DFOConf" id="dfoconf-01">
@@ -237,61 +202,70 @@
 </obj>
 
 <obj class="DaqModulesGroupByType" id="aggregator-step">
+ <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="FragmentAggregatorModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="crt-bern-reader-data-source-step">
+ <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="CRTBernReaderModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="crt-grenoble-reader-data-source-step">
+ <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="CRTGrenobleReaderModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="data-source-step">
+ <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="FDFakeReaderModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="dlh-step">
+ <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="FDDataHandlerModule"/>
  </attr>
 </obj>
 
+<obj class="DaqModulesGroupByType" id="optional-tp-handler-step">
+ <attr name="optional" type="bool" val="1"/>
+ <attr name="modules" type="class">
+  <data val="TriggerDataHandlerModule"/>
+ </attr>
+</obj>
+
 <obj class="DaqModulesGroupByType" id="socket-reader-data-source-step">
+ <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="SocketReaderModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="socket-writer-data-source-step">
+ <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="SocketWriterModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="subscriber-step">
+ <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="DataSubscriberModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="ta-handler-step">
- <attr name="modules" type="class">
-  <data val="TriggerDataHandlerModule"/>
- </attr>
-</obj>
-
-<obj class="DaqModulesGroupByType" id="optional-tp-handler-step">
- <attr name="optional" type="bool" val="1"/>
+ <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="TriggerDataHandlerModule"/>
  </attr>
@@ -418,6 +392,12 @@
  <rel name="data_processor" class="TPDataProcessor" id="tp-processor"/>
 </obj>
 
+<obj class="DataProcessor" id="def-base-processor">
+ <attr name="queue_sizes" type="u32" val="10000"/>
+ <attr name="thread_names_prefix" type="string" val="postproc-"/>
+ <attr name="latency_monitoring" type="bool" val="1"/>
+</obj>
+
 <obj class="DataReaderConf" id="ta-subscriber-1">
  <attr name="template_for" type="class" val="DataSubscriberModule"/>
  <attr name="emulation_mode" type="bool" val="0"/>
@@ -461,9 +441,6 @@
  <attr name="max_write_retry_time_ms" type="s32" val="1000"/>
  <attr name="write_retry_time_increase_factor" type="s32" val="2"/>
  <rel name="data_store_params" class="DataStoreConf" id="default"/>
-</obj>
-
-<obj class="DataProcessor" id="def-base-processor">
 </obj>
 
 <obj class="FilenameParams" id="default">
@@ -671,6 +648,16 @@
  <attr name="remote_ip" type="string" val="127.0.0.1"/>
 </obj>
 
+<obj class="StreamEmulationParameters" id="crt-stream-emu">
+ <attr name="data_file_name" type="string" val="/cvmfs/dunedaq.opensciencegrid.org/assets/files/d/d/1/wibeth_output_all_zeros.bin"/>
+ <attr name="input_file_size_limit" type="u32" val="5777280"/>
+ <attr name="set_t0" type="bool" val="1"/>
+ <attr name="random_population_size" type="u32" val="100000"/>
+ <attr name="frame_error_rate_hz" type="float" val="0"/>
+ <attr name="generate_periodic_adc_pattern" type="bool" val="0"/>
+ <attr name="TP_rate_per_channel" type="float" val="1"/>
+</obj>
+
 <obj class="StreamEmulationParameters" id="stream-emu">
  <attr name="data_file_name" type="string" val="/cvmfs/dunedaq.opensciencegrid.org/assets/files/d/d/1/wibeth_output_all_zeros.bin"/>
  <attr name="input_file_size_limit" type="u32" val="5777280"/>
@@ -759,6 +746,7 @@
  <attr name="thread_names_prefix" type="string" val="postproc-"/>
  <attr name="latency_monitoring" type="bool" val="1"/>
  <attr name="channel_map" type="string" val="PD2HDTPCChannelMap"/>
+ <attr name="metric_collect_opmon_rate" type="u32" val="1"/>
  <rel name="processing_steps">
   <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
   <ref class="AVXThresholdProcessor" id="tpg-threshold-proc"/>

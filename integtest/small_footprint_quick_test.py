@@ -68,18 +68,18 @@ conf_dict.tpg_enabled = False
 conf_dict.fake_hsi_enabled = True
 
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id=conf_dict.session,
         obj_class="Session",
         updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(obj_class="LatencyBuffer", updates={"size": 50000})
+    data_classes.attribute_substitution(obj_class="LatencyBuffer", updates={"size": 50000})
 )
 
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="FakeHSIEventGeneratorConf",
         updates={"trigger_rate": 1.0},
     )
