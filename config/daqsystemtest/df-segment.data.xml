@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ASCII"?>
+<?xml version="1.0" encoding="us-ascii"?>
 
 <!-- oks-data version 2.2 -->
 
@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="20" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.IRONDOMAIN.local" last-modification-time="20241023T204409"/>
+<info name="" type="" num-of-items="15" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20250825T202841"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -93,6 +93,10 @@
   <ref class="NetworkConnectionRule" id="data-req-hsi-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
+     <!-- Used for TRMonRequestor
+  <ref class="NetworkConnectionRule" id="trmon-req-net-rule"/>
+  <ref class="NetworkConnectionRule" id="trigger-record-net-rule"/>
+  -->
  </rel>
  <rel name="trb" class="TRBConf" id="trb-01"/>
  <rel name="data_writers">
@@ -119,6 +123,10 @@
   <ref class="NetworkConnectionRule" id="data-req-hsi-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
+  <!-- Used for TRMonRequestor
+  <ref class="NetworkConnectionRule" id="trmon-req-net-rule"/>
+  <ref class="NetworkConnectionRule" id="trigger-record-net-rule"/>
+  -->
  </rel>
  <rel name="trb" class="TRBConf" id="trb-01"/>
  <rel name="data_writers">
@@ -145,6 +153,10 @@
   <ref class="NetworkConnectionRule" id="data-req-hsi-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
+     <!-- Used for TRMonRequestor
+  <ref class="NetworkConnectionRule" id="trmon-req-net-rule"/>
+  <ref class="NetworkConnectionRule" id="trigger-record-net-rule"/>
+  -->
  </rel>
  <rel name="trb" class="TRBConf" id="trb-01"/>
  <rel name="data_writers">
@@ -238,6 +250,24 @@
  <attr name="tp_accumulation_inactivity_time_before_write_sec" type="float" val="1"/>
  <attr name="warn_user_when_tardy_tps_are_discarded" type="bool" val="1"/>
  <rel name="data_store_params" class="DataStoreConf" id="default_tp_store_conf"/>
+</obj>
+
+<obj class="TRMonReqApplication" id="trmon-01">
+ <attr name="application_name" type="string" val="daq_application"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="daqapp_control"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="queue_rules">
+  <ref class="QueueConnectionRule" id="trigger-decision-token-q-rule"/>
+ </rel>
+ <rel name="network_rules">
+  <ref class="NetworkConnectionRule" id="trigger-record-net-rule"/>
+ </rel>
+ <rel name="trmonreq" class="TRMonRequestorConf" id="trmr-01"/>
+ <rel name="data_writer" class="DataWriterConf" id="tr_mon_dw-01"/>
+ <rel name="uses" class="DFHWConf" id="dfhw-01"/>
 </obj>
 
 </oks-data>
