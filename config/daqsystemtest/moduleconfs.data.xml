@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ASCII"?>
+<?xml version="1.0" encoding="us-ascii"?>
 
 <!-- oks-data version 2.2 -->
 
@@ -195,6 +195,12 @@
  <attr name="emulation_mode" type="bool" val="1"/>
  <rel name="emulation_conf" class="StreamEmulationParameters" id="stream-emu"/>
 </obj>
+
+    <obj class="SNBFileReaderConf" id="def-emu-nic-receiver-conf">
+        <attr name="template_for" type="class" val="SNBFileReaderModule"/>
+        <attr name="emulation_mode" type="bool" val="1"/>
+        <rel name="snb_conf" class="SNBFileSourceParameters" id="snb-file-source"/>
+    </obj>
 
 <obj class="DPDKReaderConf" id="def-nic-receiver-conf">
  <attr name="template_for" type="class" val="DPDKReaderModule"/>
@@ -667,6 +673,12 @@
  <attr name="generate_periodic_adc_pattern" type="bool" val="1"/>
  <attr name="TP_rate_per_channel" type="float" val="1"/>
 </obj>
+
+    <obj class="SNBFileSourceParameters" id="snb-file-source">
+        <attr name="data_file_name" type="string" val="/cvmfs/dunedaq.opensciencegrid.org/assets/files/d/d/1/wibeth_output_all_zeros.bin"/>
+        <attr name="input_buffer_size" type="u32" val="10485100"/>
+        <attr name="set_t0" type="bool" val="1"/>
+    </obj>
 
 <obj class="TADataProcessor" id="def-ta-processor">
  <attr name="queue_sizes" type="u32" val="10000"/>
