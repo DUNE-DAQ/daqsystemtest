@@ -648,7 +648,7 @@
 <obj class="TAMakerADCSimpleWindowAlgorithm" id="ta-maker-adcwindow">
  <attr name="prescale" type="u32" val="10"/>
  <attr name="max_samples_over_threshold" type="u32" val="10000"/>
- <attr name="adc_threshold" type="u32" val="1000000"/>
+ <attr name="adc_threshold" type="u32" val="8000000"/>
  <attr name="window_length" type="u32" val="10000"/>
 </obj>
 
@@ -663,6 +663,16 @@
 <obj class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker">
  <attr name="prescale" type="u32" val="1000"/>
  <attr name="max_samples_over_threshold" type="u32" val="10000"/>
+</obj>
+
+<obj class="TAMakerBSMWindowAlgorithm" id="ta-maker-bsmwindow">
+ <attr name="prescale" type="u32" val="10"/>
+ <attr name="max_samples_over_threshold" type="u32" val="10000"/>
+ <attr name="adc_threshold" type="u32" val="400000"/>
+ <attr name="window_length" type="u32" val="20000"/>
+ <attr name="num_time_bins" type="u32" val="5"/>
+ <attr name="bdt_threshold" type="u32" val="99"/>
+ <attr name="ratio_threshold" type="u32" val="65"/>
 </obj>
 
 <obj class="TCDataProcessor" id="def-tc-processor">
@@ -681,12 +691,12 @@
 </obj>
 
 <obj class="TCMakerADCSimpleWindowAlgorithm" id="tc-adcwindow-algo">
- <attr name="prescale" type="u32" val="100"/>
+ <attr name="prescale" type="u32" val="1"/>
  <attr name="tc_type_name" type="string" val="kADCSimpleWindow"/>
 </obj>
 
 <obj class="TCMakerPrescaleAlgorithm" id="tc-pass-through-algo">
- <attr name="prescale" type="u32" val="100"/>
+ <attr name="prescale" type="u32" val="1"/>
  <attr name="tc_type_name" type="string" val="kPrescale"/>
 </obj>
 
@@ -714,7 +724,7 @@
  <attr name="latency_monitoring" type="bool" val="0"/>
  <attr name="print_tp_info" type="bool" val="0"/>
  <rel name="algorithms">
-  <ref class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker"/>
+  <ref class="TAMakerBSMWindowAlgorithm" id="ta-maker-bsmwindow"/>
  </rel>
 
 <obj class="TPCRawDataProcessor" id="def-wib-processor">
@@ -735,7 +745,7 @@
  <attr name="latency_monitoring" type="bool" val="1"/>
  <attr name="print_tp_info" type="bool" val="0"/>
  <rel name="algorithms">
-  <ref class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker"/>
+  <ref class="TAMakerBSMWindowAlgorithm" id="ta-maker-bsmwindow"/>
  </rel>
 </obj>
 
