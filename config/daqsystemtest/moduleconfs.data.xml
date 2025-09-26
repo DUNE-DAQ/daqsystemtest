@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="us-ascii"?>
+<?xml version="1.0" encoding="ASCII"?>
 
 <!-- oks-data version 2.2 -->
 
@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="94" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20250825T202841"/>
+<info name="" type="" num-of-items="94" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20250926T200727"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -137,6 +137,28 @@
  </rel>
 </obj>
 
+<obj class="ActionPlan" id="snb-readout-start">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+  <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="snb-data-source-step"/>
+ </rel>
+</obj>
+
+<obj class="ActionPlan" id="snb-readout-stop">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="snb-data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+ </rel>
+</obj>
+
 <obj class="ActionPlan" id="socket-readout-start">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
  <rel name="command" class="FSMCommand" id="start"/>
@@ -196,12 +218,6 @@
  <rel name="emulation_conf" class="StreamEmulationParameters" id="stream-emu"/>
 </obj>
 
-    <obj class="SNBFileReaderConf" id="def-emu-nic-receiver-conf">
-        <attr name="template_for" type="class" val="SNBFileReaderModule"/>
-        <attr name="emulation_mode" type="bool" val="1"/>
-        <rel name="snb_conf" class="SNBFileSourceParameters" id="snb-file-source"/>
-    </obj>
-
 <obj class="DPDKReaderConf" id="def-nic-receiver-conf">
  <attr name="template_for" type="class" val="DPDKReaderModule"/>
  <attr name="emulation_mode" type="bool" val="0"/>
@@ -246,6 +262,13 @@
  <attr name="optional" type="bool" val="1"/>
  <attr name="modules" type="class">
   <data val="TriggerDataHandlerModule"/>
+ </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="snb-data-source-step">
+ <attr name="optional" type="bool" val="0"/>
+ <attr name="modules" type="class">
+  <data val="SNBFileReaderModule"/>
  </attr>
 </obj>
 
@@ -700,12 +723,6 @@
  <attr name="generate_periodic_adc_pattern" type="bool" val="1"/>
  <attr name="TP_rate_per_channel" type="float" val="1"/>
 </obj>
-
-    <obj class="SNBFileSourceParameters" id="snb-file-source">
-        <attr name="data_file_name" type="string" val="/cvmfs/dunedaq.opensciencegrid.org/assets/files/d/d/1/wibeth_output_all_zeros.bin"/>
-        <attr name="input_buffer_size" type="u32" val="10485100"/>
-        <attr name="set_t0" type="bool" val="1"/>
-    </obj>
 
 <obj class="TADataProcessor" id="def-ta-processor">
  <attr name="queue_sizes" type="u32" val="10000"/>
