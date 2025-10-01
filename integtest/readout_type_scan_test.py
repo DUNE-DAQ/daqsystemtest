@@ -177,8 +177,10 @@ wibeth_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"
 
 tde_conf = copy.deepcopy(conf_dict)
 tde_conf.dro_map_config.det_id = 11
-tde_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
-#tde_conf.frame_file = "asset://?checksum=759e5351436bead208cf4963932d6327"
+tde_conf.frame_file = "asset://?checksum=692e327ed9d4fcf1830bf73337779884"
+
+tde_tpg_conf = copy.deepcopy(tde_conf)
+tde_tpg_conf.tpg_enabled = True
 
 daphne_stream_conf = copy.deepcopy(conf_dict)
 daphne_stream_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
@@ -235,6 +237,7 @@ confgen_arguments = {
     "DAPHNE_System": daphne_conf,
     "DAPHNE_TPG_System": daphne_tpg_conf,
     "TDEEth_System": tde_conf,
+    "TDEEth_TPG_System": tde_tpg_conf,
     "BernCRT_System": bern_crt_conf,
     "GrenobleCRT_System": grenoble_crt_conf
 }
