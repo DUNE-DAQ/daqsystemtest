@@ -17,7 +17,6 @@ frame_file_required = False
 number_of_data_producers = 2
 run_duration = 20  # seconds
 data_rate_slowdown_factor = 10  # is this still used anywhere?  (KAB, 28-Apr-2050)
-ta_prescale = 100
 
 # Default values for validation parameters
 expected_number_of_data_files = 1
@@ -121,6 +120,13 @@ daphne_triggerprimitive_frag_params = {
     "min_size_bytes": 96,
     "max_size_bytes": 4392,
 }
+tdeeth_triggerprimitive_frag_params = {
+    "fragment_type_description": "Trigger Primitive",
+    "fragment_type": "Trigger_Primitive",
+    "expected_fragment_count": (1 * 3),  # number of readout apps * 3
+    "min_size_bytes": 72,
+    "max_size_bytes": 144,
+}
 ignored_logfile_problems = {
     "-controller": [
         "Worker with pid \\d+ was terminated due to signal 1",
@@ -167,7 +173,7 @@ wib_tpg_conf.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_class="TAMakerPrescaleAlgorithm",
         obj_id="dummy-ta-maker",
-        updates={"prescale": ta_prescale},
+        updates={"prescale": 100},
     )
 )
 
@@ -177,10 +183,36 @@ wibeth_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"
 
 tde_conf = copy.deepcopy(conf_dict)
 tde_conf.dro_map_config.det_id = 11
-tde_conf.frame_file = "asset://?checksum=692e327ed9d4fcf1830bf73337779884"
+tde_conf.dro_map_config.crate_id_offset = 5
+tde_conf.dro_map_config.slot_id = 3
+#tde_conf.frame_file = "asset://?checksum=692e327ed9d4fcf1830bf73337779884"
+tde_conf.frame_file = "file://np02vd_run039565_tr5266_css530_sample_tdeeth.bin"
+tde_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TPCRawDataProcessor",
+        obj_id="def-wib-processor",
+        updates={"channel_map": "PD2VDTPCChannelMap"},
+    )
+)
 
 tde_tpg_conf = copy.deepcopy(tde_conf)
 tde_tpg_conf.tpg_enabled = True
+tde_tpg_conf.config_substitutions.append(
+    data_classes.list_element_addition(
+        obj_class="TCDataProcessor",
+        obj_id="def-tc-processor",
+        rel_name="tc_readout_map",
+        additional_object_class="TCReadoutMap",
+        additional_object_id="prescale-tc-map-entry",
+    )
+)
+tde_tpg_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TAMakerPrescaleAlgorithm",
+        obj_id="dummy-ta-maker",
+        updates={"prescale": 50},
+    )
+)
 
 daphne_stream_conf = copy.deepcopy(conf_dict)
 daphne_stream_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
@@ -298,30 +330,38 @@ def test_data_files(run_nanorc):
         if "WIBEth" in current_test:
             fragment_check_list.append(wibeth_triggerprimitive_frag_params)
             local_expected_event_count += (
-                (6250 / ta_prescale)
+                0.625
                 * number_of_data_producers
                 * run_duration
-                / 100
             )
             local_event_count_tolerance += (
-                (250 / ta_prescale)
+                0.025
                 * number_of_data_producers
                 * run_duration
-                / 100
             )
         if "DAPHNE" in current_test:
             fragment_check_list.append(daphne_triggerprimitive_frag_params)
             local_expected_event_count += (
-                (6250 / ta_prescale)
+                0.3125
                 * number_of_data_producers
                 * run_duration * 3
-                / 200
             )
             local_event_count_tolerance += (
-                (250 / ta_prescale)
+                0.01
                 * number_of_data_producers
                 * run_duration * 6
-                / 250
+            )
+        if "TDEEth" in current_test:
+            fragment_check_list.append(tdeeth_triggerprimitive_frag_params)
+            local_expected_event_count += (
+                0.70
+                * number_of_data_producers
+                * run_duration
+            )
+            local_event_count_tolerance += (
+                0.025
+                * number_of_data_producers
+                * run_duration
             )
 
     # Run some tests on the output data file
