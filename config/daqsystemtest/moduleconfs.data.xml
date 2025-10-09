@@ -769,6 +769,9 @@
 </obj>
 
 <obj class="TPCRawDataProcessor" id="def-wib-processor">
+ <attr name="frame_count_limit" type="u32" val="100"/>
+ <attr name="tp_count_limit" type="u32" val="0"/>
+ <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="postproc-"/>
  <attr name="latency_monitoring" type="bool" val="1"/>
