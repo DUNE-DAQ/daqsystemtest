@@ -172,13 +172,11 @@ wib_tpg_conf.config_substitutions.append(
 )
 
 wibeth_conf = copy.deepcopy(conf_dict)
-# wibeth_conf.frame_file = "asset://?label=WIBEth&subsystem=readout"
 wibeth_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"
 
 tde_conf = copy.deepcopy(conf_dict)
 tde_conf.dro_map_config.det_id = 11
 tde_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
-#tde_conf.frame_file = "asset://?checksum=759e5351436bead208cf4963932d6327"
 
 daphne_stream_conf = copy.deepcopy(conf_dict)
 daphne_stream_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
