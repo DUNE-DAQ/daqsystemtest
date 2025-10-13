@@ -178,15 +178,13 @@ wib_tpg_conf.config_substitutions.append(
 )
 
 wibeth_conf = copy.deepcopy(conf_dict)
-# wibeth_conf.frame_file = "asset://?label=WIBEth&subsystem=readout"
 wibeth_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"
 
 tde_conf = copy.deepcopy(conf_dict)
 tde_conf.dro_map_config.det_id = 11
 tde_conf.dro_map_config.crate_id_offset = 5
 tde_conf.dro_map_config.slot_id = 3
-#tde_conf.frame_file = "asset://?checksum=692e327ed9d4fcf1830bf73337779884"
-tde_conf.frame_file = "file://np02vd_run039565_tr5266_css530_sample_tdeeth.bin"
+tde_conf.frame_file = "asset://?checksum=1793479772dfef8cb23a071a7383520b"
 tde_conf.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_class="TPCRawDataProcessor",
