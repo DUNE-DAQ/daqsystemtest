@@ -117,25 +117,25 @@ conf_dict.session = "3ru1df"
 conf_dict.tpg_enabled = False
 
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id=conf_dict.session,
         obj_class="Session",
         updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="RandomTCMakerConf",
         updates={"trigger_rate_hz": trigger_rate},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="LatencyBuffer", updates={"size": 200000}
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="DFOConf",
         updates={"busy_threshold": 3, "free_threshold": 2}
     )
@@ -147,7 +147,7 @@ swtpg_conf.frame_file = (
     "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"  # WIBEth All Zeros
 )
 swtpg_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TAMakerPrescaleAlgorithm",
         obj_id="dummy-ta-maker",
         updates={"prescale": ta_prescale},
