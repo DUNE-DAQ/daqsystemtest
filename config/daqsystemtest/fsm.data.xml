@@ -229,6 +229,7 @@
   <ref class="FSMaction" id="trigger-rate-specifier"/>
   <ref class="FSMaction" id="elisa-logbook"/>
   <ref class="FSMaction" id="db-run-registry"/>
+  <ref class="FSMaction" id="thread-pinning"/>
  </rel>
 </obj>
 
@@ -263,6 +264,7 @@
  <rel name="pre_transitions">
   <ref class="FSMxTransition" id="pre_change_rate"/>
   <ref class="FSMxTransition" id="pre_start_test"/>
+  <ref class="FSMxTransition" id="pre_conf"/>
  </rel>
  <rel name="post_transitions">
   <ref class="FSMxTransition" id="post_start_test"/>
@@ -273,6 +275,7 @@
   <ref class="FSMaction" id="trigger-rate-specifier"/>
   <ref class="FSMaction" id="file-logbook"/>
   <ref class="FSMaction" id="file-run-registry"/>
+  <ref class="FSMaction" id="thread-pinning"/>
  </rel>
 </obj>
 
@@ -411,6 +414,17 @@
   <data val="user-provided-run-number"/>
  </attr>
 </obj>
+
+<obj class="FSMxTransition" id="pre_conf">
+ <attr name="transition" type="string" val="conf"/>
+ <attr name="order" type="string">
+  <data val="thread-pinning"/>
+ </attr>
+ <attr name="mandatory" type="string">
+  <data val="thread-pinning"/>
+ </attr>
+</obj>
+
 
 <obj class="Variable" id="file-logbook-file-name">
  <attr name="name" type="string" val="file_name"/>
