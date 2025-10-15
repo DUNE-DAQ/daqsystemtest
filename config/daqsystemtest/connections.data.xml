@@ -493,73 +493,73 @@
 <obj class="Service" id="HSIEvents">
  <attr name="protocol" type="string" val="tcp"/>
  <attr name="port" type="u16" val="0"/>
- <attr name="eth_device_name" type="string" val="eno1"/>
+ <attr name="eth_device_name" type="string" val=""/>
 </obj>
 
 <obj class="Service" id="dataFragments">
  <attr name="protocol" type="string" val="tcp"/>
  <attr name="port" type="u16" val="0"/>
- <attr name="eth_device_name" type="string" val="eno1"/>
+ <attr name="eth_device_name" type="string" val=""/>
 </obj>
 
 <obj class="Service" id="dataRequests">
  <attr name="protocol" type="string" val="tcp"/>
  <attr name="port" type="u16" val="0"/>
- <attr name="eth_device_name" type="string" val="eno1"/>
+ <attr name="eth_device_name" type="string" val=""/>
 </obj>
 
 <obj class="Service" id="dfTokens">
  <attr name="protocol" type="string" val="tcp"/>
  <attr name="port" type="u16" val="0"/>
- <attr name="eth_device_name" type="string" val="eno1"/>
+ <attr name="eth_device_name" type="string" val=""/>
 </obj>
 
 <obj class="Service" id="timeSyncs">
  <attr name="protocol" type="string" val="tcp"/>
  <attr name="port" type="u16" val="0"/>
- <attr name="eth_device_name" type="string" val="eno1"/>
+ <attr name="eth_device_name" type="string" val=""/>
 </obj>
 
 <obj class="Service" id="trMonRequests">
  <attr name="protocol" type="string" val="tcp"/>
  <attr name="port" type="u16" val="0"/>
- <attr name="eth_device_name" type="string" val="eno1"/>
+ <attr name="eth_device_name" type="string" val=""/>
 </obj>
 
 <obj class="Service" id="triggerActivities">
  <attr name="protocol" type="string" val="tcp"/>
  <attr name="port" type="u16" val="0"/>
- <attr name="eth_device_name" type="string" val="eno1"/>
+ <attr name="eth_device_name" type="string" val=""/>
 </obj>
 
 <obj class="Service" id="triggerCandidates">
  <attr name="protocol" type="string" val="tcp"/>
  <attr name="port" type="u16" val="0"/>
- <attr name="eth_device_name" type="string" val="eno1"/>
+ <attr name="eth_device_name" type="string" val=""/>
 </obj>
 
 <obj class="Service" id="triggerDecisions">
  <attr name="protocol" type="string" val="tcp"/>
  <attr name="port" type="u16" val="0"/>
- <attr name="eth_device_name" type="string" val="eno1"/>
+ <attr name="eth_device_name" type="string" val=""/>
 </obj>
 
 <obj class="Service" id="triggerInhibits">
  <attr name="protocol" type="string" val="tcp"/>
  <attr name="port" type="u16" val="0"/>
- <attr name="eth_device_name" type="string" val="eno1"/>
+ <attr name="eth_device_name" type="string" val=""/>
 </obj>
 
 <obj class="Service" id="triggerPrimitives">
  <attr name="protocol" type="string" val="tcp"/>
  <attr name="port" type="u16" val="0"/>
- <attr name="eth_device_name" type="string" val="eno1"/>
+ <attr name="eth_device_name" type="string" val=""/>
 </obj>
 
 <obj class="Service" id="triggerRecords">
  <attr name="protocol" type="string" val="tcp"/>
  <attr name="port" type="u16" val="0"/>
- <attr name="eth_device_name" type="string" val="eno1"/>
+ <attr name="eth_device_name" type="string" val=""/>
 </obj>
 
 </oks-data>
