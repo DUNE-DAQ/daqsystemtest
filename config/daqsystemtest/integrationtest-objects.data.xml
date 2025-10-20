@@ -81,11 +81,6 @@
  <comment creation-time="20240909T081245" created-by="glehmann" created-on="np04-srv-024.cern.ch" author="glehmann" text=" "/>
 </comments>
 
-
-<obj class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc">
- <attr name="accum_limit" type="u8" val="10"/>
-</obj>
-
 <obj class="DFHWConf" id="dfhw-01">
  <rel name="uses">
   <ref class="StorageDevice" id="storage-01"/>
