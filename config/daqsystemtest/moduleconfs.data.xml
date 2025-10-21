@@ -851,7 +851,8 @@
 </obj>
 
 <obj class="TRBConf" id="trb-01">
- <attr name="queues_timeout" type="u32" val="100"/>
+ <attr name="tr_queue_timeout" type="u32" val="100"/>
+ <attr name="request_queue_timeout" type="u32" val="100"/>
  <attr name="trigger_record_timeout_ms" type="u32" val="2858"/>
 </obj>
 
