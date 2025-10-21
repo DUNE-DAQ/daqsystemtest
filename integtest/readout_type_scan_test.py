@@ -267,7 +267,7 @@ confgen_arguments = {
     "DAPHNE_System": daphne_conf,
     "DAPHNE_TPG_System": daphne_tpg_conf,
     "TDEEth_System": tde_conf,
-    "TDEEth_TPG_System": tde_tpg_conf,
+#    "TDEEth_TPG_System": tde_tpg_conf,
     "BernCRT_System": bern_crt_conf,
     "GrenobleCRT_System": grenoble_crt_conf
 }
