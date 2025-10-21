@@ -178,7 +178,7 @@ wib_tpg_conf.config_substitutions.append(
 )
 
 wibeth_conf = copy.deepcopy(conf_dict)
-wibeth_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"
+wibeth_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
 
 tde_conf = copy.deepcopy(conf_dict)
 tde_conf.dro_map_config.det_id = 11
@@ -229,7 +229,7 @@ daphne_stream_conf.config_substitutions.append(
 
 daphne_conf = copy.deepcopy(conf_dict)
 daphne_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
-daphne_conf.frame_file = "asset://?checksum=a8990a9eb3a505d4ded62dfdfa9e2681"
+daphne_conf.frame_file = "asset://?checksum=a8990a9eb3a505d4ded62dfdfa9e2681" # np02vd_run036012_sample_membrane_pds
 daphne_conf.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_class="TCReadoutMap",
