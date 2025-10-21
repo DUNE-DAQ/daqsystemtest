@@ -211,7 +211,6 @@ tde_tpg_conf.config_substitutions.append(
         updates={"prescale": 50},
     )
 )
->>>>>>> origin/develop
 
 daphne_stream_conf = copy.deepcopy(conf_dict)
 daphne_stream_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
