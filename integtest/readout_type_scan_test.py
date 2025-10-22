@@ -17,7 +17,6 @@ frame_file_required = False
 number_of_data_producers = 2
 run_duration = 20  # seconds
 data_rate_slowdown_factor = 10  # is this still used anywhere?  (KAB, 28-Apr-2050)
-ta_prescale = 100
 
 # Default values for validation parameters
 expected_number_of_data_files = 1
@@ -121,6 +120,13 @@ daphne_triggerprimitive_frag_params = {
     "min_size_bytes": 96,
     "max_size_bytes": 4392,
 }
+tdeeth_triggerprimitive_frag_params = {
+    "fragment_type_description": "Trigger Primitive",
+    "fragment_type": "Trigger_Primitive",
+    "expected_fragment_count": (1 * 3),  # number of readout apps * 3
+    "min_size_bytes": 72,
+    "max_size_bytes": 144,
+}
 ignored_logfile_problems = {
     "-controller": [
         "Worker with pid \\d+ was terminated due to signal 1",
@@ -167,18 +173,58 @@ wib_tpg_conf.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_class="TAMakerPrescaleAlgorithm",
         obj_id="dummy-ta-maker",
-        updates={"prescale": ta_prescale},
+        updates={"prescale": 100},
     )
 )
 
 wibeth_conf = copy.deepcopy(conf_dict)
-# wibeth_conf.frame_file = "asset://?label=WIBEth&subsystem=readout"
-wibeth_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"
+wibeth_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
 
 tde_conf = copy.deepcopy(conf_dict)
 tde_conf.dro_map_config.det_id = 11
-tde_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
-#tde_conf.frame_file = "asset://?checksum=759e5351436bead208cf4963932d6327"
+tde_conf.dro_map_config.crate_id_offset = 5
+tde_conf.dro_map_config.slot_id = 3
+tde_conf.frame_file = "asset://?checksum=1793479772dfef8cb23a071a7383520b"
+tde_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TPCRawDataProcessor",
+        obj_id="def-wib-processor",
+        updates={"channel_map": "PD2VDTPCChannelMap"},
+    )
+)
+
+tde_tpg_conf = copy.deepcopy(tde_conf)
+tde_tpg_conf.tpg_enabled = True
+tde_tpg_conf.config_substitutions.append(
+    data_classes.list_element_addition(
+        obj_class="TCDataProcessor",
+        obj_id="def-tc-processor",
+        rel_name="tc_readout_map",
+        additional_object_class="TCReadoutMap",
+        additional_object_id="prescale-tc-map-entry",
+    )
+)
+tde_tpg_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="AVXThresholdProcessor",
+        obj_id="tpg-threshold-proc",
+        updates={"plane0": 500, "plane1": 500, "plane2": 500},
+    )
+)
+tde_tpg_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TAMakerPrescaleAlgorithm",
+        obj_id="dummy-ta-maker",
+        updates={"prescale": 100},
+    )
+)
+tde_tpg_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="GeoId",
+        obj_id="geioId-1",
+        updates={"slot_id": 4, "stream_id": 0},
+    )
+)
 
 daphne_stream_conf = copy.deepcopy(conf_dict)
 daphne_stream_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
@@ -197,7 +243,7 @@ daphne_stream_conf.config_substitutions.append(
 
 daphne_conf = copy.deepcopy(conf_dict)
 daphne_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
-daphne_conf.frame_file = "asset://?checksum=a8990a9eb3a505d4ded62dfdfa9e2681"
+daphne_conf.frame_file = "asset://?checksum=a8990a9eb3a505d4ded62dfdfa9e2681" # np02vd_run036012_sample_membrane_pds
 daphne_conf.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_class="TCReadoutMap",
@@ -235,6 +281,7 @@ confgen_arguments = {
     "DAPHNE_System": daphne_conf,
     "DAPHNE_TPG_System": daphne_tpg_conf,
     "TDEEth_System": tde_conf,
+    "TDEEth_TPG_System": tde_tpg_conf,
     "BernCRT_System": bern_crt_conf,
     "GrenobleCRT_System": grenoble_crt_conf
 }
@@ -295,30 +342,38 @@ def test_data_files(run_nanorc):
         if "WIBEth" in current_test:
             fragment_check_list.append(wibeth_triggerprimitive_frag_params)
             local_expected_event_count += (
-                (6250 / ta_prescale)
+                0.625
                 * number_of_data_producers
                 * run_duration
-                / 100
             )
             local_event_count_tolerance += (
-                (250 / ta_prescale)
+                0.025
                 * number_of_data_producers
                 * run_duration
-                / 100
             )
         if "DAPHNE" in current_test:
             fragment_check_list.append(daphne_triggerprimitive_frag_params)
             local_expected_event_count += (
-                (6250 / ta_prescale)
+                0.3125
                 * number_of_data_producers
                 * run_duration * 3
-                / 200
             )
             local_event_count_tolerance += (
-                (250 / ta_prescale)
+                0.01
                 * number_of_data_producers
                 * run_duration * 6
-                / 250
+            )
+        if "TDEEth" in current_test:
+            fragment_check_list.append(tdeeth_triggerprimitive_frag_params)
+            local_expected_event_count += (
+                0.70
+                * number_of_data_producers
+                * run_duration
+            )
+            local_event_count_tolerance += (
+                0.025
+                * number_of_data_producers
+                * run_duration
             )
 
     # Run some tests on the output data file

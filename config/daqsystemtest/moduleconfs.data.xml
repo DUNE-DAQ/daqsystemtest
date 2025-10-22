@@ -820,6 +820,12 @@
  <attr name="time_after" type="u32" val="1001"/>
 </obj>
 
+<obj class="TCReadoutMap" id="prescale-tc-map-entry">
+ <attr name="tc_type_name" type="string" val="kPrescale"/>
+ <attr name="time_before" type="u32" val="2000"/>
+ <attr name="time_after" type="u32" val="5"/>
+</obj>
+
 <obj class="TPCRawDataProcessor" id="def-wib-processor">
  <attr name="frame_count_limit" type="u32" val="100"/>
  <attr name="tp_count_limit" type="u32" val="0"/>
