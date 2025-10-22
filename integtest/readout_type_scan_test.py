@@ -206,9 +206,23 @@ tde_tpg_conf.config_substitutions.append(
 )
 tde_tpg_conf.config_substitutions.append(
     data_classes.attribute_substitution(
+        obj_class="AVXThresholdProcessor",
+        obj_id="tpg-threshold-proc",
+        updates={"plane0": 500, "plane1": 500, "plane2": 500},
+    )
+)
+tde_tpg_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
         obj_class="TAMakerPrescaleAlgorithm",
         obj_id="dummy-ta-maker",
-        updates={"prescale": 50},
+        updates={"prescale": 100},
+    )
+)
+tde_tpg_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="GeoId",
+        obj_id="geioId-1",
+        updates={"slot_id": 4, "stream_id": 0},
     )
 )
 
@@ -267,7 +281,7 @@ confgen_arguments = {
     "DAPHNE_System": daphne_conf,
     "DAPHNE_TPG_System": daphne_tpg_conf,
     "TDEEth_System": tde_conf,
-#    "TDEEth_TPG_System": tde_tpg_conf,
+    "TDEEth_TPG_System": tde_tpg_conf,
     "BernCRT_System": bern_crt_conf,
     "GrenobleCRT_System": grenoble_crt_conf
 }
