@@ -105,32 +105,6 @@
  <comment creation-time="20250805T092423" created-by="dergonul" created-on="np04-srv-028.cern.ch" author="dergonul" text="Emu CRT configs"/>
 </comments>
 
-
-<obj class="AVXAbsRunSumProcessor" id="tpg-absrs-proc">
- <attr name="metric_collect_time_sample_period" type="u64" val="256"/>
- <attr name="memory_factor_plane0" type="u8" val="8"/>
- <attr name="memory_factor_plane1" type="u8" val="8"/>
- <attr name="memory_factor_plane2" type="u8" val="8"/>
- <attr name="scale_factor_plane0" type="u8" val="10"/>
- <attr name="scale_factor_plane1" type="u8" val="10"/>
- <attr name="scale_factor_plane2" type="u8" val="10"/>
-</obj>
-
-<obj class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc">
- <attr name="metric_collect_time_sample_period" type="u64" val="256"/>
- <attr name="accum_limit" type="u8" val="10"/>
-</obj>
-
-<obj class="AVXRunSumProcessor" id="tpg-rs-proc">
- <attr name="metric_collect_time_sample_period" type="u64" val="256"/>
- <attr name="memory_factor_plane0" type="u8" val="8"/>
- <attr name="memory_factor_plane1" type="u8" val="8"/>
- <attr name="memory_factor_plane2" type="u8" val="8"/>
- <attr name="scale_factor_plane0" type="u8" val="10"/>
- <attr name="scale_factor_plane1" type="u8" val="10"/>
- <attr name="scale_factor_plane2" type="u8" val="10"/>
-</obj>
-
 <obj class="CRTReaderApplication" id="crt-data-source-01">
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
