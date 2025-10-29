@@ -43,6 +43,7 @@ ignored_logfile_problems = {
     ],
     "connectivity-service": [
         "errorlog: -",
+        r"Worker \(pid:\d+\) was sent SIGHUP"
     ],
 }
 
