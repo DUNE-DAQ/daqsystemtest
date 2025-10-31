@@ -64,6 +64,9 @@ hsi_frag_params = {
                               "default": {"min_size_bytes":  72, "max_size_bytes": 100} }
 }
 ignored_logfile_problems = {
+    "-controller": [
+        r"Worker \(pid:\d+\) was sent SIGHUP"
+    ],
     "local-connection-server": [
         "errorlog: -",
         r"Worker \(pid:\d+\) was sent SIGHUP"

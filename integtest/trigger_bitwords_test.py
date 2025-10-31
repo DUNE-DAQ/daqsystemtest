@@ -51,6 +51,9 @@ ignored_logfile_problems = {
     ],
     "config_dfo": [
         "that was busy with"
+    ],
+    "-controller": [
+        r"Worker \(pid:\d+\) was sent SIGHUP"
     ]
 }
 

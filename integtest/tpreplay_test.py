@@ -65,6 +65,9 @@ ignored_logfile_problems = {
     "config_tpreplay": [
         "Request on empty buffer",
         "Postprocessing has too much backlog"
+    ],
+    "-controller": [
+        r"Worker \(pid:\d+\) was sent SIGHUP"
     ]
 }
 
