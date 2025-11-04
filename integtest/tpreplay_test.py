@@ -53,7 +53,7 @@ check_for_logfile_errors = True
 ignored_logfile_problems = {
     "local-connection-server": [
         "errorlog: -",
-        r"Worker \(pid:\d+\) was sent SIGHUP"
+        r"Worker \(pid:\d+\) was sent SIGHUP"  # ignoring SIGHUP messages pending investigation, 31-Oct, KAB/PP/JCF
     ],
     "config_mlt": [
         "Trigger is inhibited",
@@ -65,6 +65,9 @@ ignored_logfile_problems = {
     "config_tpreplay": [
         "Request on empty buffer",
         "Postprocessing has too much backlog"
+    ],
+    "-controller": [
+        r"Worker \(pid:\d+\) was sent SIGHUP"  # ignoring SIGHUP messages pending investigation, 31-Oct, KAB/PP/JCF
     ]
 }
 

@@ -104,6 +104,12 @@
  <attr name="scale_factor_plane0" type="u8" val="10"/>
  <attr name="scale_factor_plane1" type="u8" val="10"/>
  <attr name="scale_factor_plane2" type="u8" val="10"/>
+ <attr name="memory_divisor_plane0" type="u8" val="10"/>
+ <attr name="memory_divisor_plane1" type="u8" val="10"/>
+ <attr name="memory_divisor_plane2" type="u8" val="10"/>
+ <attr name="scale_divisor_plane0" type="u8" val="10"/>
+ <attr name="scale_divisor_plane1" type="u8" val="10"/>
+ <attr name="scale_divisor_plane2" type="u8" val="10"/>
 </obj>
 
 <obj class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc">
@@ -118,6 +124,12 @@
  <attr name="scale_factor_plane0" type="u8" val="10"/>
  <attr name="scale_factor_plane1" type="u8" val="10"/>
  <attr name="scale_factor_plane2" type="u8" val="10"/>
+ <attr name="memory_divisor_plane0" type="u8" val="10"/>
+ <attr name="memory_divisor_plane1" type="u8" val="10"/>
+ <attr name="memory_divisor_plane2" type="u8" val="10"/>
+ <attr name="scale_divisor_plane0" type="u8" val="10"/>
+ <attr name="scale_divisor_plane1" type="u8" val="10"/>
+ <attr name="scale_divisor_plane2" type="u8" val="10"/>
 </obj>
 
 <obj class="ActionPlan" id="crt-readout-start">
@@ -804,7 +816,7 @@
  <attr name="thread_names_prefix" type="string" val="postproc-"/>
  <attr name="latency_monitoring" type="bool" val="1"/>
  <attr name="channel_map" type="string" val="PD2HDTPCChannelMap"/>
- <attr name="metric_collect_opmon_rate" type="u32" val="1"/>
+ <attr name="metric_collect_opmon_period" type="u32" val="100000"/>
  <rel name="processing_steps">
   <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
   <ref class="AVXThresholdProcessor" id="tpg-threshold-proc"/>

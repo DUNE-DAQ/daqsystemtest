@@ -151,6 +151,26 @@ conf_dict.config_substitutions.append(
 )
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
+        obj_class="AVXFrugalPedestalSubtractProcessor",
+        obj_id="tpg-pedsub-proc",
+        updates={
+            "metric_collect_time_sample_period": 10000,
+            "metric_collect_toggle_state": True,
+            "requested_internal_states": "pedestal,accum",
+        },
+    )
+)
+conf_dict.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TPCRawDataProcessor",
+        obj_id="def-wib-processor",
+        updates={
+            "metric_collect_opmon_period": 10000,
+        },
+    )
+)
+conf_dict.config_substitutions.append(
+    data_classes.attribute_substitution(
         obj_class="DataStoreConf",
         obj_id="default",
         updates={"directory_path": output_dir},
