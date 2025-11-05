@@ -497,6 +497,10 @@
  <rel name="data_store_params" class="DataStoreConf" id="default_tr_mon_conf"/>
 </obj>
 
+    <obj class="FragmentAggregatorConf" id="frag-agg-01">
+        <attr name="fragment_send_timeout_ms" type="u32" val="1000"/>
+    </obj>
+    
 <obj class="FilenameParams" id="default">
  <attr name="file_type_prefix" type="enum" val="raw"/>
  <attr name="run_number_prefix" type="string" val="run"/>
