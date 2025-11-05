@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="us-ascii"?>
+<?xml version="1.0" encoding="ASCII"?>
 
 <!-- oks-data version 2.2 -->
 
@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="94" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20250825T202841"/>
+<info name="" type="" num-of-items="96" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20251105T144619"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -89,30 +89,25 @@
  <comment creation-time="20250805T092423" created-by="dergonul" created-on="np04-srv-028.cern.ch" author="dergonul" text="Emu CRT configs"/>
 </comments>
 
-<obj class="AVXThresholdProcessor" id="tpg-threshold-proc">
- <attr name="metric_collect_time_sample_period" type="u64" val="256"/>
- <attr name="plane0" type="u16" val="100"/>
- <attr name="plane1" type="u16" val="100"/>
- <attr name="plane2" type="u16" val="100"/>
-</obj>
 
 <obj class="AVXAbsRunSumProcessor" id="tpg-absrs-proc">
  <attr name="metric_collect_time_sample_period" type="u64" val="256"/>
  <attr name="memory_factor_plane0" type="u8" val="8"/>
  <attr name="memory_factor_plane1" type="u8" val="8"/>
  <attr name="memory_factor_plane2" type="u8" val="8"/>
- <attr name="scale_factor_plane0" type="u8" val="10"/>
- <attr name="scale_factor_plane1" type="u8" val="10"/>
- <attr name="scale_factor_plane2" type="u8" val="10"/>
  <attr name="memory_divisor_plane0" type="u8" val="10"/>
  <attr name="memory_divisor_plane1" type="u8" val="10"/>
  <attr name="memory_divisor_plane2" type="u8" val="10"/>
+ <attr name="scale_factor_plane0" type="u8" val="10"/>
+ <attr name="scale_factor_plane1" type="u8" val="10"/>
+ <attr name="scale_factor_plane2" type="u8" val="10"/>
  <attr name="scale_divisor_plane0" type="u8" val="10"/>
  <attr name="scale_divisor_plane1" type="u8" val="10"/>
  <attr name="scale_divisor_plane2" type="u8" val="10"/>
 </obj>
 
 <obj class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc">
+ <attr name="metric_collect_time_sample_period" type="u64" val="256"/>
  <attr name="accum_limit" type="u8" val="10"/>
 </obj>
 
@@ -121,15 +116,22 @@
  <attr name="memory_factor_plane0" type="u8" val="8"/>
  <attr name="memory_factor_plane1" type="u8" val="8"/>
  <attr name="memory_factor_plane2" type="u8" val="8"/>
- <attr name="scale_factor_plane0" type="u8" val="10"/>
- <attr name="scale_factor_plane1" type="u8" val="10"/>
- <attr name="scale_factor_plane2" type="u8" val="10"/>
  <attr name="memory_divisor_plane0" type="u8" val="10"/>
  <attr name="memory_divisor_plane1" type="u8" val="10"/>
  <attr name="memory_divisor_plane2" type="u8" val="10"/>
+ <attr name="scale_factor_plane0" type="u8" val="10"/>
+ <attr name="scale_factor_plane1" type="u8" val="10"/>
+ <attr name="scale_factor_plane2" type="u8" val="10"/>
  <attr name="scale_divisor_plane0" type="u8" val="10"/>
  <attr name="scale_divisor_plane1" type="u8" val="10"/>
  <attr name="scale_divisor_plane2" type="u8" val="10"/>
+</obj>
+
+<obj class="AVXThresholdProcessor" id="tpg-threshold-proc">
+ <attr name="metric_collect_time_sample_period" type="u64" val="256"/>
+ <attr name="plane0" type="u16" val="100"/>
+ <attr name="plane1" type="u16" val="100"/>
+ <attr name="plane2" type="u16" val="100"/>
 </obj>
 
 <obj class="ActionPlan" id="crt-readout-start">
@@ -497,10 +499,6 @@
  <rel name="data_store_params" class="DataStoreConf" id="default_tr_mon_conf"/>
 </obj>
 
-    <obj class="FragmentAggregatorConf" id="frag-agg-01">
-        <attr name="fragment_send_timeout_ms" type="u32" val="1000"/>
-    </obj>
-    
 <obj class="FilenameParams" id="default">
  <attr name="file_type_prefix" type="enum" val="raw"/>
  <attr name="run_number_prefix" type="string" val="run"/>
@@ -523,6 +521,10 @@
  <attr name="digits_for_run_number" type="s32" val="6"/>
  <attr name="digits_for_file_index" type="s32" val="4"/>
  <attr name="digits_for_trigger_number" type="s32" val="6"/>
+</obj>
+
+<obj class="FragmentAggregatorConf" id="frag-agg-01">
+ <attr name="fragment_send_timeout_ms" type="u32" val="1000"/>
 </obj>
 
 <obj class="HDF5FileLayoutParams" id="default">
@@ -814,12 +816,11 @@
 </obj>
 
 <obj class="TPCRawDataProcessor" id="def-wib-processor">
- <attr name="frame_count_limit" type="u32" val="100"/>
- <attr name="tp_count_limit" type="u32" val="0"/>
  <attr name="queue_sizes" type="u32" val="10000"/>
  <attr name="thread_names_prefix" type="string" val="postproc-"/>
  <attr name="latency_monitoring" type="bool" val="1"/>
  <attr name="channel_map" type="string" val="PD2HDTPCChannelMap"/>
+ <attr name="frame_count_limit" type="u32" val="100"/>
  <attr name="metric_collect_opmon_period" type="u32" val="100000"/>
  <rel name="processing_steps">
   <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
