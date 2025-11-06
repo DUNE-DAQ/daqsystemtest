@@ -25,8 +25,8 @@ trigger_rate = 0.05  # Hz
 token_count = 1
 readout_window_time_before = 100000000  # 1.616 second is the intention for b+a
 readout_window_time_after = 1000000
-trigger_record_max_window = 500000  # intention is 8 msec
-tr_queue_size = token_count * (readout_window_time_before + readout_window_time_after) / trigger_record_max_window /  number_of_dataflow_apps
+trigger_record_sequence_length = 500000  # intention is 8 msec
+tr_queue_size = token_count * (readout_window_time_before + readout_window_time_after) / trigger_record_sequence_length /  number_of_dataflow_apps
 latency_buffer_size = 600000
 data_rate_slowdown_factor = 1
 minimum_cpu_count = 24
@@ -160,7 +160,7 @@ trsplit_conf.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_class="TRBConf",
         updates={
-            "max_time_window": trigger_record_max_window,
+            "max_sequence_length_ticks": trigger_record_sequence_length,
             "trigger_record_timeout_ms": 1000 / trigger_rate
         },
     )
