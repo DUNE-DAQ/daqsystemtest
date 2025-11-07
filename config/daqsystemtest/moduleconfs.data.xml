@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="99" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20251104T211728"/>
+<info name="" type="" num-of-items="96" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20251105T144619"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -559,6 +559,10 @@
  <attr name="digits_for_trigger_number" type="s32" val="6"/>
 </obj>
 
+<obj class="FragmentAggregatorConf" id="frag-agg-01">
+ <attr name="fragment_send_timeout_ms" type="u32" val="1000"/>
+</obj>
+
 <obj class="HDF5FileLayoutParams" id="default">
  <attr name="record_name_prefix" type="string" val="TriggerRecord"/>
  <attr name="digits_for_record_number" type="s32" val="5"/>
@@ -900,7 +904,8 @@
 </obj>
 
 <obj class="TRBConf" id="trb-01">
- <attr name="queues_timeout" type="u32" val="100"/>
+ <attr name="tr_queue_timeout" type="u32" val="100"/>
+ <attr name="request_queue_timeout" type="u32" val="100"/>
  <attr name="trigger_record_timeout_ms" type="u32" val="2858"/>
  <attr name="maximum_open_trigger_records" type="u32" val="100"/>
 </obj>
