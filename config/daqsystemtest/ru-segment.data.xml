@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="52" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="biery" last-modified-on="daq.fnal.gov" last-modification-time="20250903T173857"/>
+<info name="" type="" num-of-items="49" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20251105T144619"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -105,6 +105,7 @@
  <comment creation-time="20250805T092423" created-by="dergonul" created-on="np04-srv-028.cern.ch" author="dergonul" text="Emu CRT configs"/>
 </comments>
 
+
 <obj class="CRTReaderApplication" id="crt-data-source-01">
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
@@ -112,12 +113,12 @@
   <ref class="Service" id="daqapp_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
- <rel name="queue_rules">
-  <ref class="QueueConnectionRule" id="crt-bern-raw-data-rule"/>
- </rel>
  <rel name="action_plans">
   <ref class="ActionPlan" id="crt-readout-start"/>
   <ref class="ActionPlan" id="crt-readout-stop"/>
+ </rel>
+ <rel name="queue_rules">
+  <ref class="QueueConnectionRule" id="crt-bern-raw-data-rule"/>
  </rel>
  <rel name="data_writers">
   <ref class="SocketWriterConf" id="def-socket-writer-conf"/>
@@ -388,6 +389,10 @@
   <ref class="Service" id="triggerPrimitives"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="action_plans">
+  <ref class="ActionPlan" id="readout-start"/>
+  <ref class="ActionPlan" id="readout-stop"/>
+ </rel>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="fa-queue-rule"/>
   <ref class="QueueConnectionRule" id="tp-queue-rule"/>
@@ -400,10 +405,6 @@
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
   <ref class="NetworkConnectionRule" id="tpset-net-rule"/>
  </rel>
- <rel name="action_plans">
-  <ref class="ActionPlan" id="readout-start"/>
-  <ref class="ActionPlan" id="readout-stop"/>
- </rel>
  <rel name="tp_source_ids">
   <ref class="SourceIDConf" id="tp-srcid-1000"/>
   <ref class="SourceIDConf" id="tp-srcid-1001"/>
@@ -413,6 +414,7 @@
  <rel name="link_handler" class="DataHandlerConf" id="def-link-handler"/>
  <rel name="tp_handler" class="DataHandlerConf" id="def-tp-handler"/>
  <rel name="data_reader" class="DPDKReaderConf" id="def-emu-nic-receiver-conf"/>
+ <rel name="fragment_aggregator" class="FragmentAggregatorConf" id="frag-agg-01"/>
  <rel name="detector_connections">
   <ref class="NetworkDetectorToDaqConnection" id="conn_apa1"/>
  </rel>
@@ -427,6 +429,10 @@
   <ref class="Service" id="daqapp_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="action_plans">
+  <ref class="ActionPlan" id="readout-start"/>
+  <ref class="ActionPlan" id="readout-stop"/>
+ </rel>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="fa-queue-rule"/>
   <ref class="QueueConnectionRule" id="tp-queue-rule"/>
@@ -439,10 +445,6 @@
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
   <ref class="NetworkConnectionRule" id="tpset-net-rule"/>
  </rel>
- <rel name="action_plans">
-  <ref class="ActionPlan" id="readout-start"/>
-  <ref class="ActionPlan" id="readout-stop"/>
- </rel>
  <rel name="tp_source_ids">
   <ref class="SourceIDConf" id="tp-srcid-2000"/>
   <ref class="SourceIDConf" id="tp-srcid-2001"/>
@@ -452,6 +454,7 @@
  <rel name="link_handler" class="DataHandlerConf" id="def-link-handler"/>
  <rel name="tp_handler" class="DataHandlerConf" id="def-tp-handler"/>
  <rel name="data_reader" class="DPDKReaderConf" id="def-emu-nic-receiver-conf"/>
+ <rel name="fragment_aggregator" class="FragmentAggregatorConf" id="frag-agg-01"/>
  <rel name="detector_connections">
   <ref class="NetworkDetectorToDaqConnection" id="conn_apa2"/>
  </rel>
@@ -468,6 +471,10 @@
   <ref class="Service" id="timeSyncs"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="action_plans">
+  <ref class="ActionPlan" id="socket-readout-start"/>
+  <ref class="ActionPlan" id="socket-readout-stop"/>
+ </rel>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="fa-queue-rule"/>
   <ref class="QueueConnectionRule" id="crt-bern-callback-raw-data-rule"/>
@@ -477,13 +484,10 @@
   <ref class="NetworkConnectionRule" id="ts-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
  </rel>
- <rel name="action_plans">
-  <ref class="ActionPlan" id="socket-readout-start"/>
-  <ref class="ActionPlan" id="socket-readout-stop"/>
- </rel>
  <rel name="uses" class="RoHwConfig" id="rohw-1"/>
  <rel name="link_handler" class="DataHandlerConf" id="def-crt-bern-link-handler"/>
  <rel name="data_reader" class="SocketReaderConf" id="def-socket-reader-conf"/>
+ <rel name="fragment_aggregator" class="FragmentAggregatorConf" id="frag-agg-01"/>
  <rel name="detector_connections">
   <ref class="NetworkDetectorToDaqConnection" id="socket_crt"/>
  </rel>
