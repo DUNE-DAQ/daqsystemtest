@@ -65,11 +65,9 @@ hsi_frag_params = {
 }
 ignored_logfile_problems = {
     "-controller": [
-        r"Worker \(pid:\d+\) was sent SIGHUP"  # ignoring SIGHUP messages pending investigation, 31-Oct, KAB/PP/JCF
     ],
     "local-connection-server": [
         "errorlog: -",
-        r"Worker \(pid:\d+\) was sent SIGHUP"  # ignoring SIGHUP messages pending investigation, 31-Oct, KAB/PP/JCF
     ]
 }
 
