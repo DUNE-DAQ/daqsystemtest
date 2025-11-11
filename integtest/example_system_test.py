@@ -88,14 +88,15 @@ onebyone_local_conf.session = "local-1x1-config"
 twobythree_local_conf = copy.deepcopy(common_config_obj)
 twobythree_local_conf.session = "local-2x3-config"
 
+username=os.environ.get("USER")
 onebyone_ehn1_conf = copy.deepcopy(common_config_obj)
 onebyone_ehn1_conf.session = "ehn1-local-1x1-config"
-onebyone_ehn1_conf.session_name = f"ehn1-local-1x1-config-{''.join(random.choices(string.ascii_letters, k=8))}"
+onebyone_ehn1_conf.session_name = f"ehn1-local-1x1-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
 onebyone_ehn1_conf.connsvc_port = None
 
 twobythree_ehn1_conf = copy.deepcopy(common_config_obj)
 twobythree_ehn1_conf.session = "ehn1-local-2x3-config"
-twobythree_ehn1_conf.session_name = f"ehn1-local-2x3-config-{''.join(random.choices(string.ascii_letters, k=8))}"
+twobythree_ehn1_conf.session_name = f"ehn1-local-2x3-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
 twobythree_ehn1_conf.connsvc_port = None
 
 
