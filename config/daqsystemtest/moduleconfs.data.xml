@@ -657,7 +657,10 @@
  <attr name="template_for" type="class" val="RandomTCMakerModule"/>
  <attr name="trigger_rate_hz" type="float" val="1"/>
  <attr name="time_distribution" type="enum" val="kUniform"/>
- <rel name="tc_readout" class="TCReadoutMap" id="def-random-readout"/>
+ <attr name="candidate_type_name" type="string" val="kRandom"/>
+ <attr name="candidate_offset_ts" type="s32" val="1000"/>
+ <attr name="candidate_window_before_ts" type="u32" val="1000"/>
+ <attr name="candidate_window_after_ts" type="u32" val="1001"/>
 </obj>
 
 <obj class="RequestHandler" id="def-data-request-handler">
@@ -794,12 +797,6 @@
 <obj class="TCReadoutMap" id="def-hsi-tc-map">
  <attr name="tc_type_name" type="string" val="kTiming"/>
  <attr name="time_before" type="u32" val="3000"/>
- <attr name="time_after" type="u32" val="1001"/>
-</obj>
-
-<obj class="TCReadoutMap" id="def-random-readout">
- <attr name="tc_type_name" type="string" val="kRandom"/>
- <attr name="time_before" type="u32" val="1000"/>
  <attr name="time_after" type="u32" val="1001"/>
 </obj>
 
