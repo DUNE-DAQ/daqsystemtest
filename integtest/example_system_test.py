@@ -84,21 +84,52 @@ common_config_obj.config_db = (
 
 onebyone_local_conf = copy.deepcopy(common_config_obj)
 onebyone_local_conf.session = "local-1x1-config"
+onebyone_local_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TCDataProcessor",
+        obj_id="def-tc-processor",
+        updates={
+            "merge_overlapping_tcs": False
+        },)
+)
 
 twobythree_local_conf = copy.deepcopy(common_config_obj)
 twobythree_local_conf.session = "local-2x3-config"
+twobythree_local_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TCDataProcessor",
+        obj_id="def-tc-processor",
+        updates={
+            "merge_overlapping_tcs": False
+        },)
+)
 
 username=os.environ.get("USER")
 onebyone_ehn1_conf = copy.deepcopy(common_config_obj)
 onebyone_ehn1_conf.session = "ehn1-local-1x1-config"
 onebyone_ehn1_conf.session_name = f"ehn1-local-1x1-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
 onebyone_ehn1_conf.connsvc_port = None
+onebyone_ehn1_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TCDataProcessor",
+        obj_id="def-tc-processor",
+        updates={
+            "merge_overlapping_tcs": False
+        },)
+)
 
 twobythree_ehn1_conf = copy.deepcopy(common_config_obj)
 twobythree_ehn1_conf.session = "ehn1-local-2x3-config"
 twobythree_ehn1_conf.session_name = f"ehn1-local-2x3-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
 twobythree_ehn1_conf.connsvc_port = None
-
+twobythree_ehn1_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TCDataProcessor",
+        obj_id="def-tc-processor",
+        updates={
+            "merge_overlapping_tcs": False
+        },)
+)
 
 def host_is_at_ehn1(hostname):
     return re.match(r"^(np02|np04)-srv-\d{3}$", hostname) or re.match(r"^(np02|np04)-srv-\d{3}.cern.ch$", hostname)
@@ -120,7 +151,7 @@ else:
 
 # The commands to run in nanorc, as a list
 nanorc_command_list = (
-    "boot wait 5 conf start --run-number 101 wait 1 enable-triggers wait ".split()
+    "boot wait 2 conf start --run-number 101 wait 1 enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop scrap terminate".split()
 )
