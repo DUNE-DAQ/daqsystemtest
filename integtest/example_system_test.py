@@ -86,9 +86,9 @@ onebyone_local_conf = copy.deepcopy(common_config_obj)
 onebyone_local_conf.session = "local-1x1-config"
 onebyone_local_conf.config_substitutions.append(
     data_classes.attribute_substitution(
-        obj_class="TCDataProcessor",
-        obj_id="def-tc-processor",
-        updates={
+        obj_class="TCDataProcessor",     # 12-Nov-2025, KAB: turned off the merging of
+        obj_id="def-tc-processor",       # overlapping TCs so that we get more consistent
+        updates={                        # numbers of TriggerRecords in the output files.
             "merge_overlapping_tcs": False
         },)
 )
@@ -97,9 +97,9 @@ twobythree_local_conf = copy.deepcopy(common_config_obj)
 twobythree_local_conf.session = "local-2x3-config"
 twobythree_local_conf.config_substitutions.append(
     data_classes.attribute_substitution(
-        obj_class="TCDataProcessor",
-        obj_id="def-tc-processor",
-        updates={
+        obj_class="TCDataProcessor",     # 12-Nov-2025, KAB: turned off the merging of
+        obj_id="def-tc-processor",       # overlapping TCs so that we get more consistent
+        updates={                        # numbers of TriggerRecords in the output files.
             "merge_overlapping_tcs": False
         },)
 )
@@ -111,9 +111,9 @@ onebyone_ehn1_conf.session_name = f"ehn1-local-1x1-config-{username}-{''.join(ra
 onebyone_ehn1_conf.connsvc_port = None
 onebyone_ehn1_conf.config_substitutions.append(
     data_classes.attribute_substitution(
-        obj_class="TCDataProcessor",
-        obj_id="def-tc-processor",
-        updates={
+        obj_class="TCDataProcessor",     # 12-Nov-2025, KAB: turned off the merging of
+        obj_id="def-tc-processor",       # overlapping TCs so that we get more consistent
+        updates={                        # numbers of TriggerRecords in the output files.
             "merge_overlapping_tcs": False
         },)
 )
@@ -124,9 +124,9 @@ twobythree_ehn1_conf.session_name = f"ehn1-local-2x3-config-{username}-{''.join(
 twobythree_ehn1_conf.connsvc_port = None
 twobythree_ehn1_conf.config_substitutions.append(
     data_classes.attribute_substitution(
-        obj_class="TCDataProcessor",
-        obj_id="def-tc-processor",
-        updates={
+        obj_class="TCDataProcessor",     # 12-Nov-2025, KAB: turned off the merging of
+        obj_id="def-tc-processor",       # overlapping TCs so that we get more consistent
+        updates={                        # numbers of TriggerRecords in the output files.
             "merge_overlapping_tcs": False
         },)
 )
