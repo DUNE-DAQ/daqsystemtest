@@ -174,6 +174,28 @@
  </rel>
 </obj>
 
+<obj class="ActionPlan" id="snb-readout-start">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+  <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="snb-dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="snb-data-source-step"/>
+ </rel>
+</obj>
+
+<obj class="ActionPlan" id="snb-readout-stop">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="snb-data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="snb-dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+ </rel>
+</obj>
+
 <obj class="ActionPlan" id="socket-readout-start">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
  <rel name="command" class="FSMCommand" id="start"/>
@@ -277,6 +299,20 @@
  <attr name="optional" type="bool" val="1"/>
  <attr name="modules" type="class">
   <data val="TriggerDataHandlerModule"/>
+ </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="snb-data-source-step">
+ <attr name="optional" type="bool" val="0"/>
+ <attr name="modules" type="class">
+  <data val="SNBFileReaderModule"/>
+ </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="snb-dlh-step">
+ <attr name="optional" type="bool" val="0"/>
+ <attr name="modules" type="class">
+  <data val="SNBDataHandlerModule"/>
  </attr>
 </obj>
 
@@ -871,6 +907,7 @@
  <attr name="tr_queue_timeout" type="u32" val="100"/>
  <attr name="request_queue_timeout" type="u32" val="100"/>
  <attr name="trigger_record_timeout_ms" type="u32" val="2858"/>
+ <attr name="maximum_open_trigger_records" type="u32" val="100"/>
 </obj>
 
 <obj class="TRMonRequestorConf" id="trmr-01">
