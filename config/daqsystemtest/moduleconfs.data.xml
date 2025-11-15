@@ -658,7 +658,7 @@
  <attr name="trigger_rate_hz" type="float" val="1"/>
  <attr name="time_distribution" type="enum" val="kUniform"/>
  <attr name="candidate_type_name" type="string" val="kRandom"/>
- <attr name="candidate_backshift_ts" type="s32" val="1000"/>
+ <attr name="candidate_backshift_ts" type="s64" val="1000"/>
  <attr name="candidate_window_before_ts" type="u32" val="1000"/>
  <attr name="candidate_window_after_ts" type="u32" val="1001"/>
 </obj>
