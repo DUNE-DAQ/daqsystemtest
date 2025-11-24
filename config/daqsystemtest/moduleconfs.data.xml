@@ -800,6 +800,12 @@
  <attr name="time_after" type="u32" val="1001"/>
 </obj>
 
+<obj class="TCReadoutMap" id="def-random-readout">
+ <attr name="tc_type_name" type="string" val="kRandom"/>
+ <attr name="time_before" type="u32" val="1000"/>
+ <attr name="time_after" type="u32" val="1001"/>
+</obj>
+
 <obj class="TCReadoutMap" id="def-tc-map">
  <attr name="tc_type_name" type="string" val="kTiming"/>
  <attr name="time_before" type="u32" val="3000"/>
