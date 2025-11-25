@@ -781,6 +781,7 @@
  <rel name="tc_readout_map">
   <ref class="TCReadoutMap" id="def-tc-map"/>
   <ref class="TCReadoutMap" id="def-hsi-tc-map"/>
+  <ref class="TCReadoutMap" id="def-random-readout"/>
  </rel>
 </obj>
 
