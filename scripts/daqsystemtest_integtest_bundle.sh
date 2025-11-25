@@ -28,6 +28,10 @@ Options:
     echo ""
 }
 
+logtee() {
+    tee -a >(sed -u 's/\x1b\[[0-9;]*m//g' >> "$1")
+}
+
 TEMP=`getopt -o hs:f:l:k:n:N: --long help,stop-on-failure -- "$@"`
 eval set -- "$TEMP"
 
@@ -73,10 +77,6 @@ while true; do
             ;;
     esac
 done
-
-logtee() {
-    tee >(sed -u 's/\x1b\[[0-9;]*m//g' >> "$1")
-}
 
 # check if the numad daemon is running
 numad_grep_output=`ps -ef | grep numad | grep -v grep`
