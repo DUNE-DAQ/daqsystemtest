@@ -130,11 +130,12 @@ conf_dict.config_substitutions.append(
 )
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
-        obj_class="TCReadoutMap",
-        obj_id = "def-random-readout",
+        obj_class="RandomTCMakerConf",
+        obj_id = "random-tc-generator",
         updates={
-            "time_before": readout_window_time_before,
-            "time_after": readout_window_time_after,
+            "candidate_backshift_ts": 0,
+            "candidate_window_before_ts": readout_window_time_before,
+            "candidate_window_after_ts": readout_window_time_after,
         },
     )
 )
