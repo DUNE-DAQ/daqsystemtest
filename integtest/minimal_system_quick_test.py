@@ -4,6 +4,7 @@ import urllib.request
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+import integrationtest.opmon_metric_checks as opmon_metric_checks
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -149,4 +150,17 @@ def test_data_files(run_nanorc):
         for kdx in range(len(nontrig_fragment_check_list)):
             all_ok &= data_file_checks.check_fragment_error_flags( data_file, nontrig_fragment_check_list[kdx])
 
+    assert all_ok
+
+
+def test_metric_files(run_nanorc):
+    print("") # Clear potential dot from pytest
+
+    session_name = run_nanorc.session_name if run_nanorc.session_name else run_nanorc.session
+    metric_data = opmon_metric_checks.collate_opmon_data_from_files(run_nanorc.opmon_files)
+
+    metric_key_list = [session_name, "df-01", "df-01-trb", "dfmodules.TRBInfo", "generated_trigger_records"]
+    all_ok = True
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, 1, 5)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, 17, 23)
     assert all_ok

@@ -7,6 +7,7 @@ import urllib.request
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+import integrationtest.opmon_metric_checks as opmon_metric_checks
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -293,4 +294,36 @@ def test_tpstream_files(run_nanorc):
             all_ok &= data_file_checks.check_fragment_sizes(
                 data_file, fragment_check_list[jdx]
             )
+    assert all_ok
+
+
+def test_metric_files(run_nanorc):
+    print("") # Clear potential dot from pytest
+
+    session_name = run_nanorc.session_name if run_nanorc.session_name else run_nanorc.session
+    metric_data = opmon_metric_checks.collate_opmon_data_from_files(run_nanorc.opmon_files)
+
+    all_ok = True
+
+    # *** Check that the pedestal subtraction processor metrics are being produced as expected.
+    # DLH-0, 'accum' metrics
+    metric_key_list = [session_name, "ru-det-conn-0", "DLH-0", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "accum"]
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, 1)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, 1)
+
+    # DLH-0, 'pedestal' metrics
+    metric_key_list = [session_name, "ru-det-conn-0", "DLH-0", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "pedestal"]
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, 1)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, 0, 0)
+
+    # DLH-1, 'accum' metrics
+    metric_key_list = [session_name, "ru-det-conn-0", "DLH-1", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "accum"]
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, 1)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, 1)
+
+    # DLH-1, 'pedestal' metrics
+    metric_key_list = [session_name, "ru-det-conn-0", "DLH-1", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "pedestal"]
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, 1)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, 0, 0)
+
     assert all_ok
