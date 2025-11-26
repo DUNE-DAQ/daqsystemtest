@@ -125,9 +125,9 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                 while [[ ${individual_loop_count} -lt ${individual_test_requested_iterations} ]]; do
                     let overall_test_index=${overall_test_index}+1
                     echo ""
-                    echo -e "\U0001F535 \033[0;34mStarting test ${overall_test_index} of ${total_number_of_tests}...\033[0m \U0001F535" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+                    echo -e "\U0001F535 \033[0;34mStarting test ${overall_test_index} of ${total_number_of_tests}...\033[0m \U0001F535" | CaptureOutput ${ITGRUNNER_LOG_FILE}
 
-                    echo -e "\u2B95 \033[0;1mRunning ${TEST_NAME}\033[0m \u2B05" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+                    echo -e "\u2B95 \033[0;1mRunning ${TEST_NAME}\033[0m \u2B05" | CaptureOutput ${ITGRUNNER_LOG_FILE}
                     if [[ -e "./${TEST_NAME}" ]]; then
                         pytest -s ./${TEST_NAME} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
                     elif [[ -e "${DBT_AREA_ROOT}/sourcecode/daqsystemtest/integtest/${TEST_NAME}" ]]; then
