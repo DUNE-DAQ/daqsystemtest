@@ -169,7 +169,7 @@ echo "Log file is: ${ITGRUNNER_LOG_FILE}"                 | CaptureOutput ${ITGR
 echo ""                                                   | CaptureOutput ${ITGRUNNER_LOG_FILE}
 summary_string="`egrep $'=====|\u2B95' ${ITGRUNNER_LOG_FILE} | egrep ' in |Running'`"
 colorized_summary_string="`echo \"${summary_string}\" | sed 's/passed/passed \\\\U2705/' | sed 's/failed/failed \\\\U274c/' | sed 's/skipped/skipped \\\\U1f7e1/'`"
-echo -e "${colorized_summary_string}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+echo -e "${colorized_summary_string}" | CaptureOutput ${ITGRUNNER_LOG_FILE}
 
 # check again if the numad daemon is running
 numad_grep_output=`ps -ef | grep numad | grep -v grep`
