@@ -191,7 +191,7 @@ coincidence_bitword_conf.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_id="random-tc-generator",
         obj_class="RandomTCMakerConf",
-        updates={"trigger_rate_hz": 40},)
+        updates={"trigger_rate_hz": 40, "candidate_backshift_ts": 0, "candidate_window_before_ts": 62500, "candidate_window_after_ts": 62500},)
 )
 coincidence_bitword_conf.config_substitutions.append(
     data_classes.attribute_substitution(

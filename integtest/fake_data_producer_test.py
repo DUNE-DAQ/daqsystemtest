@@ -79,11 +79,12 @@ doublewindow_conf = copy.deepcopy(conf_dict)
 
 doublewindow_conf.config_substitutions.append(
     data_classes.attribute_substitution(
-        obj_class="TCReadoutMap",
-        obj_id = "def-random-readout",
+        obj_class="RandomTCMakerConf",
+        obj_id = "random-tc-generator",
         updates={
-            "time_before": 2000,
-            "time_after": 2001,
+            "candidate_backshift_ts": 0,
+            "candidate_window_before_ts": 2000,
+            "candidate_window_after_ts": 2001,
         },
     )
 )
