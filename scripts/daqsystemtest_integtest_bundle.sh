@@ -28,7 +28,7 @@ Options:
     echo ""
 }
 
-logtee() {
+NoANSITee() {
     tee -a >(sed -u 's/\x1b\[[0-9;]*m//g' >> "$1")
 }
 
@@ -120,19 +120,19 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                 while [[ ${individual_loop_count} -lt ${individual_test_requested_iterations} ]]; do
                     let overall_test_index=${overall_test_index}+1
                     echo ""
-                    echo -e "\U0001F535 \033[0;34mStarting test ${overall_test_index} of ${total_number_of_tests}...\033[0m \U0001F535" | logtee ${ITGRUNNER_LOG_FILE}
+                    echo -e "\U0001F535 \033[0;34mStarting test ${overall_test_index} of ${total_number_of_tests}...\033[0m \U0001F535" | NoANSITee ${ITGRUNNER_LOG_FILE}
 
-                    echo -e "\u2B95 \033[0;1mRunning ${TEST_NAME}\033[0m \u2B05" | logtee ${ITGRUNNER_LOG_FILE}
+                    echo -e "\u2B95 \033[0;1mRunning ${TEST_NAME}\033[0m \u2B05" | NoANSITee ${ITGRUNNER_LOG_FILE}
                     if [[ -e "./${TEST_NAME}" ]]; then
-                        pytest -s ./${TEST_NAME} | logtee ${ITGRUNNER_LOG_FILE}
+                        pytest -s ./${TEST_NAME} | NoANSITee ${ITGRUNNER_LOG_FILE}
                     elif [[ -e "${DBT_AREA_ROOT}/sourcecode/daqsystemtest/integtest/${TEST_NAME}" ]]; then
                         if [[ -w "${DBT_AREA_ROOT}" ]]; then
-                            pytest -s ${DBT_AREA_ROOT}/sourcecode/daqsystemtest/integtest/${TEST_NAME} | logtee ${ITGRUNNER_LOG_FILE}
+                            pytest -s ${DBT_AREA_ROOT}/sourcecode/daqsystemtest/integtest/${TEST_NAME} | NoANSITee ${ITGRUNNER_LOG_FILE}
                         else
-                            pytest -s -p no:cacheprovider ${DBT_AREA_ROOT}/sourcecode/daqsystemtest/integtest/${TEST_NAME} | logtee ${ITGRUNNER_LOG_FILE}
+                            pytest -s -p no:cacheprovider ${DBT_AREA_ROOT}/sourcecode/daqsystemtest/integtest/${TEST_NAME} | NoANSITee ${ITGRUNNER_LOG_FILE}
                         fi
                     else
-                        pytest -s -p no:cacheprovider ${DAQSYSTEMTEST_SHARE}/integtest/${TEST_NAME} | logtee ${ITGRUNNER_LOG_FILE}
+                        pytest -s -p no:cacheprovider ${DAQSYSTEMTEST_SHARE}/integtest/${TEST_NAME} | NoANSITee ${ITGRUNNER_LOG_FILE}
                     fi
                     let pytest_return_code=${PIPESTATUS[0]}
 
@@ -153,29 +153,29 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
 done
 
 # print out summary information
-echo ""                                                   | logtee ${ITGRUNNER_LOG_FILE}
-echo ""                                                   | logtee ${ITGRUNNER_LOG_FILE}
-echo "+++++++++++++++++++++++++++++++++++++++++++++++++"  | logtee ${ITGRUNNER_LOG_FILE}
-echo "++++++++++++++++++++ SUMMARY ++++++++++++++++++++"  | logtee ${ITGRUNNER_LOG_FILE}
-echo "+++++++++++++++++++++++++++++++++++++++++++++++++"  | logtee ${ITGRUNNER_LOG_FILE}
-echo ""                                                   | logtee ${ITGRUNNER_LOG_FILE}
-date                                                      | logtee ${ITGRUNNER_LOG_FILE}
-echo "Log file is: ${ITGRUNNER_LOG_FILE}"                 | logtee ${ITGRUNNER_LOG_FILE}
-echo ""                                                   | logtee ${ITGRUNNER_LOG_FILE}
+echo ""                                                   | NoANSITee ${ITGRUNNER_LOG_FILE}
+echo ""                                                   | NoANSITee ${ITGRUNNER_LOG_FILE}
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++"  | NoANSITee ${ITGRUNNER_LOG_FILE}
+echo "++++++++++++++++++++ SUMMARY ++++++++++++++++++++"  | NoANSITee ${ITGRUNNER_LOG_FILE}
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++"  | NoANSITee ${ITGRUNNER_LOG_FILE}
+echo ""                                                   | NoANSITee ${ITGRUNNER_LOG_FILE}
+date                                                      | NoANSITee ${ITGRUNNER_LOG_FILE}
+echo "Log file is: ${ITGRUNNER_LOG_FILE}"                 | NoANSITee ${ITGRUNNER_LOG_FILE}
+echo ""                                                   | NoANSITee ${ITGRUNNER_LOG_FILE}
 summary_string="`egrep $'=====|\u2B95' ${ITGRUNNER_LOG_FILE} | egrep ' in |Running'`"
 colorized_summary_string="`echo \"${summary_string}\" | sed 's/passed/passed \\\\U2705/' | sed 's/failed/failed \\\\U274c/' | sed 's/skipped/skipped \\\\U1f7e1/'`"
-echo -e "${colorized_summary_string}" | logtee ${ITGRUNNER_LOG_FILE}
+echo -e "${colorized_summary_string}" | NoANSITee ${ITGRUNNER_LOG_FILE}
 
 # check again if the numad daemon is running
 numad_grep_output=`ps -ef | grep numad | grep -v grep`
 if [[ "${numad_grep_output}" != "" ]]; then
-    echo ""                                                                                 | logtee ${ITGRUNNER_LOG_FILE}
-    echo "********************************************************************************" | logtee ${ITGRUNNER_LOG_FILE}
-    echo "*** WARNING: 'numad' appears to be running on this computer!"                     | logtee ${ITGRUNNER_LOG_FILE}
-    echo "*** 'ps' output:  ${numad_grep_output}"                                           | logtee ${ITGRUNNER_LOG_FILE}
-    echo "*** This daemon can adversely affect the running of these tests, especially ones" | logtee ${ITGRUNNER_LOG_FILE}
-    echo "*** that are resource intensive in the Readout Apps. This is because numad moves" | logtee ${ITGRUNNER_LOG_FILE}
-    echo "*** processes (threads?) to different cores/numa nodes periodically, and that"    | logtee ${ITGRUNNER_LOG_FILE}
-    echo "*** context switch can disrupt the stable running of the DAQ processes."          | logtee ${ITGRUNNER_LOG_FILE}
-    echo "********************************************************************************" | logtee ${ITGRUNNER_LOG_FILE}
+    echo ""                                                                                 | NoANSITee ${ITGRUNNER_LOG_FILE}
+    echo "********************************************************************************" | NoANSITee ${ITGRUNNER_LOG_FILE}
+    echo "*** WARNING: 'numad' appears to be running on this computer!"                     | NoANSITee ${ITGRUNNER_LOG_FILE}
+    echo "*** 'ps' output:  ${numad_grep_output}"                                           | NoANSITee ${ITGRUNNER_LOG_FILE}
+    echo "*** This daemon can adversely affect the running of these tests, especially ones" | NoANSITee ${ITGRUNNER_LOG_FILE}
+    echo "*** that are resource intensive in the Readout Apps. This is because numad moves" | NoANSITee ${ITGRUNNER_LOG_FILE}
+    echo "*** processes (threads?) to different cores/numa nodes periodically, and that"    | NoANSITee ${ITGRUNNER_LOG_FILE}
+    echo "*** context switch can disrupt the stable running of the DAQ processes."          | NoANSITee ${ITGRUNNER_LOG_FILE}
+    echo "********************************************************************************" | NoANSITee ${ITGRUNNER_LOG_FILE}
 fi
