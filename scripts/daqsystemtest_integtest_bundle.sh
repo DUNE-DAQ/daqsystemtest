@@ -158,15 +158,15 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
 done
 
 # print out summary information
-echo ""                                                   | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-echo ""                                                   | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-echo "+++++++++++++++++++++++++++++++++++++++++++++++++"  | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-echo "++++++++++++++++++++ SUMMARY ++++++++++++++++++++"  | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-echo "+++++++++++++++++++++++++++++++++++++++++++++++++"  | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-echo ""                                                   | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-date                                                      | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-echo "Log file is: ${ITGRUNNER_LOG_FILE}"                 | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-echo ""                                                   | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+echo ""                                                   | CaptureOutput ${ITGRUNNER_LOG_FILE}
+echo ""                                                   | CaptureOutput ${ITGRUNNER_LOG_FILE}
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++"  | CaptureOutput ${ITGRUNNER_LOG_FILE}
+echo "++++++++++++++++++++ SUMMARY ++++++++++++++++++++"  | CaptureOutput ${ITGRUNNER_LOG_FILE}
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++"  | CaptureOutput ${ITGRUNNER_LOG_FILE}
+echo ""                                                   | CaptureOutput ${ITGRUNNER_LOG_FILE}
+date                                                      | CaptureOutput ${ITGRUNNER_LOG_FILE}
+echo "Log file is: ${ITGRUNNER_LOG_FILE}"                 | CaptureOutput ${ITGRUNNER_LOG_FILE}
+echo ""                                                   | CaptureOutput ${ITGRUNNER_LOG_FILE}
 summary_string="`egrep $'=====|\u2B95' ${ITGRUNNER_LOG_FILE} | egrep ' in |Running'`"
 colorized_summary_string="`echo \"${summary_string}\" | sed 's/passed/passed \\\\U2705/' | sed 's/failed/failed \\\\U274c/' | sed 's/skipped/skipped \\\\U1f7e1/'`"
 echo -e "${colorized_summary_string}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
@@ -174,13 +174,13 @@ echo -e "${colorized_summary_string}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE
 # check again if the numad daemon is running
 numad_grep_output=`ps -ef | grep numad | grep -v grep`
 if [[ "${numad_grep_output}" != "" ]]; then
-    echo ""                                                                                 | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-    echo "********************************************************************************" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-    echo "*** WARNING: 'numad' appears to be running on this computer!"                     | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-    echo "*** 'ps' output:  ${numad_grep_output}"                                           | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-    echo "*** This daemon can adversely affect the running of these tests, especially ones" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-    echo "*** that are resource intensive in the Readout Apps. This is because numad moves" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-    echo "*** processes (threads?) to different cores/numa nodes periodically, and that"    | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-    echo "*** context switch can disrupt the stable running of the DAQ processes."          | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-    echo "********************************************************************************" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+    echo ""                                                                                 | CaptureOutput ${ITGRUNNER_LOG_FILE}
+    echo "********************************************************************************" | CaptureOutput ${ITGRUNNER_LOG_FILE}
+    echo "*** WARNING: 'numad' appears to be running on this computer!"                     | CaptureOutput ${ITGRUNNER_LOG_FILE}
+    echo "*** 'ps' output:  ${numad_grep_output}"                                           | CaptureOutput ${ITGRUNNER_LOG_FILE}
+    echo "*** This daemon can adversely affect the running of these tests, especially ones" | CaptureOutput ${ITGRUNNER_LOG_FILE}
+    echo "*** that are resource intensive in the Readout Apps. This is because numad moves" | CaptureOutput ${ITGRUNNER_LOG_FILE}
+    echo "*** processes (threads?) to different cores/numa nodes periodically, and that"    | CaptureOutput ${ITGRUNNER_LOG_FILE}
+    echo "*** context switch can disrupt the stable running of the DAQ processes."          | CaptureOutput ${ITGRUNNER_LOG_FILE}
+    echo "********************************************************************************" | CaptureOutput ${ITGRUNNER_LOG_FILE}
 fi
