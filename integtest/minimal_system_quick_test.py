@@ -153,6 +153,7 @@ def test_data_files(run_nanorc):
     assert all_ok
 
 
+# 26-Nov-2025, KAB: added some sample opmon metric checks, for demonstration purposes
 def test_metric_files(run_nanorc):
     print("") # Clear potential dot from pytest
 
@@ -161,6 +162,10 @@ def test_metric_files(run_nanorc):
 
     metric_key_list = [session_name, "df-01", "df-01-trb", "dfmodules.TRBInfo", "generated_trigger_records"]
     all_ok = True
+    # a 20-second run will likely result in 3 metric samples (at 10-second intervals), so a range
+    # of 1..5 should always succeed
     all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, 1, 5)
+    # the number of triggers expected in this test is ~20, so a test that checks for the reported
+    # number of generated trigger records between 17 and 23 shoudl always succeed
     all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, 17, 23)
     assert all_ok

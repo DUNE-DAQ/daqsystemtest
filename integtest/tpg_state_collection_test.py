@@ -297,6 +297,8 @@ def test_tpstream_files(run_nanorc):
     assert all_ok
 
 
+# 26-Nov-2025, KAB: added checking of opmon metrics to verify that the ones that are
+# specifically enabled in this test work as expected.
 def test_metric_files(run_nanorc):
     print("") # Clear potential dot from pytest
 
