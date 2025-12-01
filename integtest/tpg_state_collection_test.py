@@ -310,22 +310,22 @@ def test_metric_files(run_nanorc):
     # *** Check that the pedestal subtraction processor metrics are being produced as expected.
     # DLH-0, 'accum' metrics
     metric_key_list = [session_name, "ru-det-conn-0", "DLH-0", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "accum"]
-    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, 1)
-    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, 1)
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=1)
 
     # DLH-0, 'pedestal' metrics
     metric_key_list = [session_name, "ru-det-conn-0", "DLH-0", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "pedestal"]
-    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, 1)
-    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, 0, 0)
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=0, max_value_sum=0)
 
     # DLH-1, 'accum' metrics
     metric_key_list = [session_name, "ru-det-conn-0", "DLH-1", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "accum"]
-    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, 1)
-    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, 1)
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=1)
 
     # DLH-1, 'pedestal' metrics
     metric_key_list = [session_name, "ru-det-conn-0", "DLH-1", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "pedestal"]
-    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, 1)
-    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, 0, 0)
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=0, max_value_sum=0)
 
     assert all_ok

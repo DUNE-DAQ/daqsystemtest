@@ -164,8 +164,8 @@ def test_metric_files(run_nanorc):
     all_ok = True
     # a 20-second run will likely result in 3 metric samples (at 10-second intervals), so a range
     # of 1..5 should always succeed
-    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, 1, 5)
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1, max_count=5)
     # the number of triggers expected in this test is ~20, so a test that checks for the reported
     # number of generated trigger records between 17 and 23 shoudl always succeed
-    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, 17, 23)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=17, max_value_sum=23)
     assert all_ok
