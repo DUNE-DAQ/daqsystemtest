@@ -158,7 +158,9 @@ echo ""                                                   | tee -a ${ITGRUNNER_L
 date                                                      | tee -a ${ITGRUNNER_LOG_FILE}
 echo "Log file is: ${ITGRUNNER_LOG_FILE}"                 | tee -a ${ITGRUNNER_LOG_FILE}
 echo ""                                                   | tee -a ${ITGRUNNER_LOG_FILE}
-egrep $'=====|\u2B95' ${ITGRUNNER_LOG_FILE} | egrep ' in |Running' | tee -a ${ITGRUNNER_LOG_FILE}
+summary_string="`egrep $'=====|\u2B95' ${ITGRUNNER_LOG_FILE} | egrep ' in |Running'`"
+colorized_summary_string="`echo \"${summary_string}\" | sed 's/passed/passed \\\\U2705/' | sed 's/failed/failed \\\\U274c/' | sed 's/skipped/skipped \\\\U1f7e1/'`"
+echo -e "${colorized_summary_string}" | tee -a ${ITGRUNNER_LOG_FILE}
 
 # check again if the numad daemon is running
 numad_grep_output=`ps -ef | grep numad | grep -v grep`
