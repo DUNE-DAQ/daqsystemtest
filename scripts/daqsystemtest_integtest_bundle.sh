@@ -45,6 +45,7 @@ let individual_test_requested_iterations=1
 let full_set_requested_interations=1
 let stop_on_failure=0
 requested_test_names=
+PYTEST_COMMAND="pytest -s"  # our core pytest command, with print statements being displayed on the console
 
 while true; do
     case "$1" in
@@ -74,6 +75,7 @@ while true; do
             ;;
         --stop-on-failure)
             let stop_on_failure=1
+            PYTEST_COMMAND="${PYTEST_COMMAND} -x"  # add the -x option to our pytest command to have it exit on first error
             shift
             ;;
         --)
@@ -129,15 +131,15 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
 
                     echo -e "\u2B95 \033[0;1mRunning ${TEST_NAME}\033[0m \u2B05" | CaptureOutput ${ITGRUNNER_LOG_FILE}
                     if [[ -e "./${TEST_NAME}" ]]; then
-                        pytest -s ./${TEST_NAME} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+                        ${PYTEST_COMMAND} ./${TEST_NAME} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
                     elif [[ -e "${DBT_AREA_ROOT}/sourcecode/daqsystemtest/integtest/${TEST_NAME}" ]]; then
                         if [[ -w "${DBT_AREA_ROOT}" ]]; then
-                            pytest -s ${DBT_AREA_ROOT}/sourcecode/daqsystemtest/integtest/${TEST_NAME} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+                            ${PYTEST_COMMAND} ${DBT_AREA_ROOT}/sourcecode/daqsystemtest/integtest/${TEST_NAME} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
                         else
-                            pytest -s -p no:cacheprovider ${DBT_AREA_ROOT}/sourcecode/daqsystemtest/integtest/${TEST_NAME} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+                            ${PYTEST_COMMAND} -p no:cacheprovider ${DBT_AREA_ROOT}/sourcecode/daqsystemtest/integtest/${TEST_NAME} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
                         fi
                     else
-                        pytest -s -p no:cacheprovider ${DAQSYSTEMTEST_SHARE}/integtest/${TEST_NAME} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+                        ${PYTEST_COMMAND} -p no:cacheprovider ${DAQSYSTEMTEST_SHARE}/integtest/${TEST_NAME} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
                     fi
                     let pytest_return_code=${PIPESTATUS[0]}
 
