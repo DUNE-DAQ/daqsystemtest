@@ -18,6 +18,7 @@ Options:
     -n <number of times to run each individual test, default=1>
     -N <number of times to run the full set of selected tests, default=1>
     --stop-on-failure : causes the script to stop when one of the integtests reports a failure
+    --concise-output : suppresses run control and DAQApp messages in order to focus on test results
 """
     let counter=0
     echo "List of available tests:"
@@ -37,7 +38,7 @@ CaptureOutput() {
     tee -a $1
 }
 
-TEMP=`getopt -o hs:f:l:k:n:N: --long help,stop-on-failure -- "$@"`
+TEMP=`getopt -o hs:f:l:k:n:N: --long help,stop-on-failure,concise-output -- "$@"`
 eval set -- "$TEMP"
 
 let first_test_index=0
@@ -45,7 +46,7 @@ let individual_test_requested_iterations=1
 let full_set_requested_interations=1
 let stop_on_failure=0
 requested_test_names=
-PYTEST_COMMAND="pytest -s"  # our core pytest command, with print statements being displayed on the console
+PYTEST_COMMAND="pytest -s --tb=short"  # our core pytest command, with DAQ printout included and short pytest traceback
 
 while true; do
     case "$1" in
@@ -76,6 +77,10 @@ while true; do
         --stop-on-failure)
             let stop_on_failure=1
             PYTEST_COMMAND="${PYTEST_COMMAND} -x"  # add the -x option to our pytest command to have it exit on first error
+            shift
+            ;;
+        --concise-output)
+            PYTEST_COMMAND="`echo ${PYTEST_COMMAND} | sed 's/ -s//'`"  # remove the -s option to turn off messages from DAQ processes
             shift
             ;;
         --)
