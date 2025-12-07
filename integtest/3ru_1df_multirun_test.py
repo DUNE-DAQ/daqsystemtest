@@ -9,6 +9,7 @@ import urllib.request
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+import integrationtest.resource_validation as resource_validation
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -25,8 +26,6 @@ expected_number_of_data_files = 3
 check_for_logfile_errors = True
 expected_event_count = trigger_rate * run_duration
 expected_event_count_tolerance = math.ceil(expected_event_count / 10)
-minimum_cpu_count = 18
-minimum_free_memory_gb = 24
 
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
@@ -91,17 +90,14 @@ ignored_logfile_problems = {
 }
 
 # Determine if this computer is powerful enough for these tests
-sufficient_resources_on_this_computer = True
-cpu_count = os.cpu_count()
-hostname = os.uname().nodename
-mem_obj = psutil.virtual_memory()
-free_mem = round((mem_obj.available / (1024 * 1024 * 1024)), 2)
-total_mem = round((mem_obj.total / (1024 * 1024 * 1024)), 2)
-print(
-    f"DEBUG: CPU count is {cpu_count}, free and total memory are {free_mem} GB and {total_mem} GB."
-)
-if cpu_count < minimum_cpu_count or free_mem < minimum_free_memory_gb:
-    sufficient_resources_on_this_computer = False
+resval = resource_validation.ResourceValidator()
+resval.require_cpu_count(924)  # two for each data source plus 6 more for everything else
+resval.require_free_memory_gb(30)  # double what what we observe being used ('free -h')
+resval.require_total_memory_gb(60)  # double what we need; trying to be kind to others
+actual_output_path = "/tmp"
+resval.require_free_disk_space_gb(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resval.get_debug_string()
+print(f"{resval_debug_string}")
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
@@ -160,7 +156,7 @@ confgen_arguments = {
 }
 
 # The commands to run in nanorc, as a list
-if sufficient_resources_on_this_computer:
+if resval.this_computer_has_sufficient_resources:
     nanorc_command_list = "boot conf".split()
     nanorc_command_list += (
         "start --run-number 101 wait 5 enable-triggers wait ".split()
@@ -179,16 +175,18 @@ if sufficient_resources_on_this_computer:
     )
     nanorc_command_list += "scrap terminate".split()
 else:
-    nanorc_command_list = ["boot", "terminate"]
+    nanorc_command_list = ["wait", "1"]
 
 # The tests themselves
 
 
-def test_nanorc_success(run_nanorc):
-    if not sufficient_resources_on_this_computer:
-        pytest.skip(
-            f"This computer ({hostname}) does not have enough resources to run this test."
-        )
+def test_nanorc_success(run_nanorc, capsys):
+    if not resval.this_computer_has_sufficient_resources:
+        resval_report_string = resval.get_insufficient_resources_report()
+        with capsys.disabled():
+            print(f"\n\N{LARGE YELLOW CIRCLE} {resval_report_string}")
+        resval_summary_string = resval.get_insufficient_resources_summary()
+        pytest.skip(f"{resval_summary_string}")
 
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)\].*", current_test)
@@ -203,10 +201,9 @@ def test_nanorc_success(run_nanorc):
 
 
 def test_log_files(run_nanorc):
-    if not sufficient_resources_on_this_computer:
-        pytest.skip(
-            f"This computer ({hostname}) does not have enough resources to run this test."
-        )
+    if not resval.this_computer_has_sufficient_resources:
+        resval_summary_string = resval.get_insufficient_resources_summary()
+        pytest.skip(f"\n{resval_summary_string}")
 
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
@@ -216,19 +213,9 @@ def test_log_files(run_nanorc):
 
 
 def test_data_files(run_nanorc):
-    if not sufficient_resources_on_this_computer:
-        print(
-            f"This computer ({hostname}) does not have enough resources to run this test."
-        )
-        print(
-            f"    (CPU count is {cpu_count}, free and total memory are {free_mem} GB and {total_mem} GB.)"
-        )
-        print(
-            f"    (Minimum CPU count is {minimum_cpu_count} and minimum free memory is {minimum_free_memory_gb} GB.)"
-        )
-        pytest.skip(
-            f"This computer ({hostname}) does not have enough resources to run this test."
-        )
+    if not resval.this_computer_has_sufficient_resources:
+        resval_summary_string = resval.get_insufficient_resources_summary()
+        pytest.skip(f"\n{resval_summary_string}")
 
     local_expected_event_count = expected_event_count
     local_event_count_tolerance = expected_event_count_tolerance
