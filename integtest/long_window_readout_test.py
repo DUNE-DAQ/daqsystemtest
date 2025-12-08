@@ -1,3 +1,18 @@
+# The goal of this test is to verify that triggers that have long readout windows are
+# handled correctly by the system, including the splitting of the resulting "trigger record"
+# into a "sequence" of TriggerRecords.
+#
+# This test requires a non-trivial amount of disk space to write its raw data files,
+# and there are safety checks to verify that sufficient space is available for these files.
+# In addition, the raw data files that are produced are removed at the end of the test
+# so that they don't fill up the available space.
+# *** If you are running on a computer that does not have sufficient space in /tmp, and you would
+#     like to instead use a directory on a disk that *does* have sufficient space, you can modify
+#     the value of the "output_path_parameter" variable below.  For example,
+#     'output_path_parameter="/data"' would write the raw data files to the "/data" directory
+#     instead of "/tmp/pytest-of-${USER}/pytest-current/runcurrent".  (The test will clean up
+#     the large data files that are produced independent of which output directory is used.)
+#
 import pytest
 import os
 import re
