@@ -180,7 +180,7 @@ else:
 # The tests themselves
 
 
-def test_nanorc_success(run_nanorc):
+def test_nanorc_success(run_nanorc, capsys):
     if not resval.this_computer_has_sufficient_resources:
         resval_report_string = resval.get_insufficient_resources_report()
         with capsys.disabled():
