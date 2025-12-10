@@ -157,6 +157,26 @@ def test_data_files(run_nanorc):
 def test_metric_files(run_nanorc):
     print("") # Clear potential dot from pytest
 
+    # 10-Dec-2025, KAB: we have noticed that sometimes drunc transitions (or other parts of
+    # a run control session) take a little longer than expected.  This can cause extra metric
+    # samples to be created.  This section of code takes that into account by increasing
+    # the max allowed sample count by the amount of extra time taken, divided by 10
+    # (metric samples are produced every 10 seconds, by default).
+    # I've tried to make this code backward compatible by handling cases in which the
+    # daq_session_overall_time is not available (e.g. the try/catch).
+    max_metric_sample_count = 5  # under normal conditions, the sample count is 3, so 5 allows for some variation
+    try:
+        #print(f"DAQ session overall time: {run_nanorc.daq_session_overall_time} seconds")
+        expected_daq_session_time = 40  # this was determined by looking at the overall time from a normal run
+        if run_nanorc.daq_session_overall_time is not None:
+            extra_time_taken = run_nanorc.daq_session_overall_time - expected_daq_session_time
+            if extra_time_taken > 10:
+                extra_sample_count_allowance = int(extra_time_taken / 10)
+                max_metric_sample_count += extra_sample_count_allowance
+    except AttributeError:
+        pass
+    #print(f"max_metric_sample_count: {max_metric_sample_count}")
+
     session_name = run_nanorc.session_name if run_nanorc.session_name else run_nanorc.session
     metric_data = opmon_metric_checks.collate_opmon_data_from_files(run_nanorc.opmon_files)
 
@@ -164,7 +184,8 @@ def test_metric_files(run_nanorc):
     all_ok = True
     # a 20-second run will likely result in 3 metric samples (at 10-second intervals), so a range
     # of 1..5 should always succeed
-    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1, max_count=5)
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1,
+                                                            max_count=max_metric_sample_count)
     # the number of triggers expected in this test is ~20, so a test that checks for the reported
     # number of generated trigger records between 17 and 23 shoudl always succeed
     all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=17, max_value_sum=23)
