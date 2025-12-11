@@ -273,6 +273,13 @@
  <rel name="descriptor" class="QueueDescriptor" id="crt-grenoble-callback-bypass"/>
 </obj>
 
+
+<obj class="QueueConnectionRule" id="pacman-callback-raw-data-rule">
+ <attr name="destination_class" type="class" val="DataHandlerModule"/>
+ <rel name="descriptor" class="QueueDescriptor" id="pacman-grenoble-callback-bypass"/>
+</obj>
+
+
 <obj class="QueueConnectionRule" id="crt-grenoble-raw-data-rule">
  <attr name="destination_class" type="class" val="DataHandlerModule"/>
  <rel name="descriptor" class="QueueDescriptor" id="crt-grenoble-raw-input"/>
@@ -378,6 +385,14 @@
  <attr name="capacity" type="u32" val="10000"/>
  <attr name="data_type" type="string" val="CRTGrenobleFrame"/>
 </obj>
+
+<obj class="QueueDescriptor" id="pacman-callback-bypass">
+ <attr name="uid_base" type="string" val="pacman_raw_input_"/>
+ <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
+ <attr name="capacity" type="u32" val="10000"/>
+ <attr name="data_type" type="string" val="PACMANFrame"/>
+</obj>
+
 
 <obj class="QueueDescriptor" id="crt-grenoble-raw-input">
  <attr name="uid_base" type="string" val="raw_input_"/>

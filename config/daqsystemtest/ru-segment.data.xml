@@ -198,6 +198,12 @@
  <rel name="geo_id" class="GeoId" id="g_3_2_1_3"/>
 </obj>
 
+<obj class="DetectorStream" id="stream_201">
+ <attr name="source_id" type="u32" val="201"/>
+ <rel name="geo_id" class="GeoId" id="g_0_2_0_1"/>
+</obj>
+
+
 <obj class="GeoId" id="g_12_1_1_0">
  <attr name="detector_id" type="u32" val="12"/>
  <attr name="crate_id" type="u32" val="1"/>
@@ -337,6 +343,16 @@
  <attr name="interface_name" type="string" val="asio0"/>
  <attr name="network_name" type="enum" val="Control"/>
 </obj>
+
+<obj class="NetworkInterface" id="pacman_201_asio0">
+ <attr name="mac_address" type="string" val="00:00:00:00:00:00"/>
+ <attr name="ip_address" type="string">
+  <data val="123.456.201.000"/>
+ </attr>
+ <attr name="interface_name" type="string" val="pacman0"/>
+ <attr name="network_name" type="enum" val="Control"/>
+</obj>
+
 
 <obj class="NetworkInterface" id="wib_101_hermes0">
  <attr name="mac_address" type="string" val="00:00:00:00:00:00"/>
@@ -493,6 +509,40 @@
  </rel>
 </obj>
 
+<obj class="ReadoutApplication" id="socket-ru-01">
+ <attr name="application_name" type="string" val="daq_application"/>
+ <attr name="tp_generation_enabled" type="bool" val="0"/>
+ <attr name="ta_generation_enabled" type="bool" val="0"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="daqapp_control"/>
+  <ref class="Service" id="dataRequests"/>
+  <ref class="Service" id="timeSyncs"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="action_plans">
+  <ref class="ActionPlan" id="socket-readout-start"/>
+  <ref class="ActionPlan" id="socket-readout-stop"/>
+ </rel>
+ <rel name="queue_rules">
+  <ref class="QueueConnectionRule" id="fa-queue-rule"/>
+  <ref class="QueueConnectionRule" id="crt-bern-callback-raw-data-rule"/>
+  <ref class="QueueConnectionRule" id="fd-dlh-data-requests-queue-rule"/>
+ </rel>
+ <rel name="network_rules">
+  <ref class="NetworkConnectionRule" id="ts-net-rule"/>
+  <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
+ </rel>
+ <rel name="uses" class="RoHwConfig" id="rohw-1"/>
+ <rel name="link_handler" class="DataHandlerConf" id="def-crt-bern-link-handler"/>
+ <rel name="data_reader" class="SocketReaderConf" id="def-socket-reader-conf"/>
+ <rel name="fragment_aggregator" class="FragmentAggregatorConf" id="frag-agg-01"/>
+ <rel name="detector_connections">
+  <ref class="NetworkDetectorToDaqConnection" id="socket_crt"/>
+ </rel>
+</obj>
+
+
 <obj class="RoHwConfig" id="rohw-1">
 </obj>
 
@@ -520,6 +570,16 @@
  </rel>
  <rel name="uses" class="NetworkInterface" id="crt_101_asio0"/>
 </obj>
+
+<obj class="SocketDataSender" id="socket_sender_pacman">
+ <attr name="port" type="u32" val="1234"/>
+ <attr name="control_host" type="string" val="localhost"/>
+ <rel name="streams">
+  <ref class="DetectorStream" id="stream_201"/>
+ </rel>
+ <rel name="uses" class="NetworkInterface" id="pacman_201_asio0"/>
+</obj>
+
 
 <obj class="SocketReceiver" id="socket-ru-1-rcv">
  <rel name="uses" class="NetworkDevice" id="ru_1_readout"/>
