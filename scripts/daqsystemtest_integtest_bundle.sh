@@ -102,9 +102,10 @@ if [[ "${numad_grep_output}" != "" ]]; then
 fi
 
 # other setup
-TIMESTAMP=`date '+%Y%m%d%H%M%S'`
+INITIAL_TIMESTAMP=`date '+%Y%m%d%H%M%S'`
 mkdir -p /tmp/pytest-of-${USER}
-ITGRUNNER_LOG_FILE="/tmp/pytest-of-${USER}/daqsystemtest_integtest_bundle_${TIMESTAMP}.log"
+ITGRUNNER_LOG_FILE="/tmp/pytest-of-${USER}/daqsystemtest_integtest_bundle_${INITIAL_TIMESTAMP}.log"
+CURRENT_PID=$$
 
 let number_of_individual_tests=0
 let test_index=0
@@ -126,6 +127,12 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
     let test_index=0
     for TEST_NAME in ${integtest_list[@]}; do
         if [[ ${test_index} -ge ${first_test_index} && ${test_index} -le ${last_test_index} ]]; then
+            CURRENT_TIMESTAMP=`date '+%Y%m%d%H%M%S'`
+            # 15-Dec-2025, KAB: added the export of the following enviromental variable.  This is used
+            # by the integrationtest infrastructure to put a bread-crumb file in the directory where
+            # the test results are located.  That file, in turn, allows this script to find the directory
+            # for the current test, and make a copy of it if the test fails.
+            export DUNEDAQ_INTEGTEST_BUNDLE_INFO="${INITIAL_TIMESTAMP};${CURRENT_PID};${CURRENT_TIMESTAMP}"
             requested_test=`echo ${TEST_NAME} | egrep -i ${requested_test_names:-${TEST_NAME}}`
             if [[ "${requested_test}" != "" ]]; then
                 let individual_loop_count=0
@@ -150,10 +157,79 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
 
                     let individual_loop_count=${individual_loop_count}+1
 
-                    if [[ ${stop_on_failure} -gt 0 ]]; then
-                        if [[ ${pytest_return_code} -ne 0 ]]; then
+                    # check if the test failed
+                    if [[ ${pytest_return_code} -ne 0 ]]; then
+                        # 15-Dec-2025, KAB: make a copy of the pytest directory. This allows
+                        # testers to take a look at the results within a reasonable time frame.
+                        # (If we can't find the "jq" JSON utility, we simply note that fact
+                        # and continue.)
+                        # This code makes use of a bread-crumb file that is created by the
+                        # integrationtest infrastructure.
+                        if [[ "`which jq 2>/dev/null`" != "" ]]; then
+                            current_pytest_rundir=""
+                            bundle_info_files=(`find /tmp/pytest-of-${USER} -type f -print | grep bundle_script_info.json | xargs -r ls -1t`)
+                            for info_file in ${bundle_info_files[@]}; do
+                                script_start_time=`jq -r .bundle_script_start_time ${info_file}`
+                                script_pid=`jq -r .bundle_script_process_id ${info_file}`
+                                individual_test_start_time=`jq -r .individual_test_start_time ${info_file}`
+                                if [[ ${script_start_time} -eq ${INITIAL_TIMESTAMP} ]] && \
+                                       [[ ${script_pid} -eq ${CURRENT_PID} ]] && \
+                                       [[ ${individual_test_start_time} -eq ${CURRENT_TIMESTAMP} ]]; then
+                                    current_pytest_rundir=$info_file
+                                    break
+                                fi
+                            done
+
+                            was_successfully_copied=""
+                            if [[ "${current_pytest_rundir}" != "" ]]; then
+                                pytest_tmpdir=`echo ${current_pytest_rundir} | xargs -r dirname | xargs -r dirname`
+                                if [[ "${pytest_tmpdir}" != "" ]]; then
+                                    pytest_rootdir=`echo ${pytest_tmpdir} | xargs -r dirname`
+                                    pytest_basedir=`echo ${pytest_tmpdir} | xargs -r basename`
+                                    if [[ "${pytest_rootdir}" != "" ]] && [[ "${pytest_basedir}" != "" ]]; then
+                                        new_dir="${pytest_rootdir}/failed-${pytest_basedir}"
+                                        echo ""
+                                        echo -e "\U1F535 Copying the files from failed test ${pytest_tmpdir} to ${new_dir}. \U1F535"
+                                        cp -pR ${pytest_tmpdir} ${new_dir}
+                                        if [[ $? == 0 ]]; then
+                                            was_successfully_copied="yes"
+                                        fi
+                                    fi
+                                fi
+                            fi
+                            if [[ "${was_successfully_copied}" == "" ]]; then
+                                echo ""
+                                echo -e "\U1f7e1 WARNING: Unable to copy the pytest directory for this failed test (${current_pytest_rundir}). \U1f7e1"
+                            fi
+                        else
+                            echo ""
+                            echo -e "\U1f7e1 WARNING: Unable to find the 'jq' utility which is needed to help identify which pytest directory to copy for this failed test. \U1f7e1"
+                        fi
+
+                        # exit out of this script if the user has requested that we stop on a failure
+                        if [[ ${stop_on_failure} -gt 0 ]]; then
                             break 3
                         fi
+                    fi
+
+                    # remove stale and surplus directories from failed tests
+                    test_dirs_to_remove=()
+                    all_failed_test_dirs=(`find /tmp/pytest-of-${USER} -maxdepth 1 -type d -print | grep 'failed-' | xargs -r ls -1dt`)
+                    surplus_dirs=("${all_failed_test_dirs[@]:10}")
+                    for test_dir in ${surplus_dirs[@]}; do
+                        test_dirs_to_remove+=(${test_dir})
+                    done
+                    stale_failed_test_dirs=(`find /tmp/pytest-of-${USER} -maxdepth 1 -type d -name 'failed-*' -cmin +1560 -print`)
+                    for test_dir in ${stale_failed_test_dirs[@]}; do
+                        test_dirs_to_remove+=(${test_dir})
+                    done
+                    if [[ ${#test_dirs_to_remove[@]} -gt 0 ]];then
+                        echo -e "\U1F535 Removing ${#test_dirs_to_remove[@]} old failed test directory(ies). \U1F535"
+                        for test_dir in ${test_dirs_to_remove[@]}; do
+                            if [[ -e ${test_dir} ]]; then
+                                rm -rf ${test_dir}
+                            fi
+                        done
                     fi
                 done
             fi
