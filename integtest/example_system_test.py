@@ -79,55 +79,31 @@ common_config_obj.op_env = "test"
 common_config_obj.config_db = (
     os.path.dirname(__file__) + "/../config/daqsystemtest/example-configs.data.xml"
 )
+common_config_obj.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TCDataProcessor",     # 12-Nov-2025, KAB: turned off the merging of
+        obj_id="def-tc-processor",       # overlapping TCs so that we get more consistent
+        updates={                        # numbers of TriggerRecords in the output files.
+            "merge_overlapping_tcs": False
+        },)
+)
 
 onebyone_local_conf = copy.deepcopy(common_config_obj)
 onebyone_local_conf.session = "local-1x1-config"
-onebyone_local_conf.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_class="TCDataProcessor",     # 12-Nov-2025, KAB: turned off the merging of
-        obj_id="def-tc-processor",       # overlapping TCs so that we get more consistent
-        updates={                        # numbers of TriggerRecords in the output files.
-            "merge_overlapping_tcs": False
-        },)
-)
 
 twobythree_local_conf = copy.deepcopy(common_config_obj)
 twobythree_local_conf.session = "local-2x3-config"
-twobythree_local_conf.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_class="TCDataProcessor",     # 12-Nov-2025, KAB: turned off the merging of
-        obj_id="def-tc-processor",       # overlapping TCs so that we get more consistent
-        updates={                        # numbers of TriggerRecords in the output files.
-            "merge_overlapping_tcs": False
-        },)
-)
 
 username=os.environ.get("USER")
 onebyone_ehn1_conf = copy.deepcopy(common_config_obj)
 onebyone_ehn1_conf.session = "ehn1-local-1x1-config"
 onebyone_ehn1_conf.session_name = f"ehn1-local-1x1-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
 onebyone_ehn1_conf.connsvc_port = None
-onebyone_ehn1_conf.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_class="TCDataProcessor",     # 12-Nov-2025, KAB: turned off the merging of
-        obj_id="def-tc-processor",       # overlapping TCs so that we get more consistent
-        updates={                        # numbers of TriggerRecords in the output files.
-            "merge_overlapping_tcs": False
-        },)
-)
 
 twobythree_ehn1_conf = copy.deepcopy(common_config_obj)
 twobythree_ehn1_conf.session = "ehn1-local-2x3-config"
 twobythree_ehn1_conf.session_name = f"ehn1-local-2x3-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
 twobythree_ehn1_conf.connsvc_port = None
-twobythree_ehn1_conf.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_class="TCDataProcessor",     # 12-Nov-2025, KAB: turned off the merging of
-        obj_id="def-tc-processor",       # overlapping TCs so that we get more consistent
-        updates={                        # numbers of TriggerRecords in the output files.
-            "merge_overlapping_tcs": False
-        },)
-)
 
 def host_is_at_ehn1(hostname):
     return re.match(r"^(np02|np04)-srv-\d{3}$", hostname) or re.match(r"^(np02|np04)-srv-\d{3}.cern.ch$", hostname)
