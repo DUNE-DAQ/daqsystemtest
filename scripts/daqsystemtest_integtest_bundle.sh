@@ -193,6 +193,10 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                                         cp -pR ${pytest_tmpdir} ${new_dir}
                                         if [[ $? == 0 ]]; then
                                             was_successfully_copied="yes"
+                                            # 18-Dec-2025, KAB: added the removal of the "current" symbolic links
+                                            # from inside the copied directory (since they get broken in the copying)
+                                            rm -f ${new_dir}/configcurrent
+                                            rm -f ${new_dir}/runcurrent
                                         fi
                                     fi
                                 fi
