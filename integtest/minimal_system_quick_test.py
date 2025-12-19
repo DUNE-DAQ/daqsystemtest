@@ -77,6 +77,16 @@ substitution = data_classes.attribute_substitution(
     obj_class="RandomTCMakerConf",
     updates={"trigger_rate_hz": 1},
 )
+conf_dict.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TCReadoutMap",
+        obj_id = "def-random-readout",
+        updates={
+            "time_before": readout_window_time_before,
+            "time_after": readout_window_time_after,
+        },
+    )
+)
 conf_dict.config_substitutions.append(substitution)
 
 
