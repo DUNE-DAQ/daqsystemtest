@@ -38,6 +38,10 @@ import integrationtest.log_file_checks as log_file_checks
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
+# tweak the print() statement default behavior so that it always flushes the output.
+import functools
+print = functools.partial(print, flush=True)
+
 # Run setup
 run_duration = 15  # seconds
 check_for_logfile_errors = True

@@ -11,6 +11,10 @@ import integrationtest.data_classes as data_classes
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
+# tweak the print() statement default behavior so that it always flushes the output.
+import functools
+print = functools.partial(print, flush=True)
+
 # Values that help determine the running conditions
 run_duration = 20  # seconds
 # baseline_fragment_size_bytes=72+(464*81) # 81 frames of 464 bytes each with 72-byte Fragment header # ProtoWIB
@@ -111,15 +115,12 @@ nanorc_command_list += (
     )
 nanorc_command_list += "scrap terminate".split()
 
-# Don't require the --frame-file option since we don't need it
-frame_file_required = False
 
 # The tests themselves
 
-
 def test_nanorc_success(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)\].*", current_test)
+    match_obj = re.search(r".*\[(.+)-run_nanorc0\].*", current_test)
     if match_obj:
         current_test = match_obj.group(1)
     banner_line = re.sub(".", "=", current_test)

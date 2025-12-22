@@ -9,6 +9,10 @@ import integrationtest.opmon_metric_checks as opmon_metric_checks
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
+# tweak the print() statement default behavior so that it always flushes the output.
+import functools
+print = functools.partial(print, flush=True)
+
 # Values that help determine the running conditions
 number_of_data_producers = 2
 data_rate_slowdown_factor = 1  # 10 for ProtoWIB/DuneWIB

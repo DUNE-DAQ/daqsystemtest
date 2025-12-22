@@ -12,6 +12,10 @@ import integrationtest.resource_validation as resource_validation
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
+# tweak the print() statement default behavior so that it always flushes the output.
+import functools
+print = functools.partial(print, flush=True)
+
 # Values that help determine the running conditions
 number_of_data_producers = 2
 number_of_readout_apps = 3
@@ -183,7 +187,7 @@ def test_nanorc_success(run_nanorc):
         pytest.skip(f"{resval_summary_string}")
 
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)\].*", current_test)
+    match_obj = re.search(r".*\[(.+)-run_nanorc0\].*", current_test)
     if match_obj:
         current_test = match_obj.group(1)
     banner_line = re.sub(".", "=", current_test)

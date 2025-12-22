@@ -47,6 +47,10 @@ def _cleanup_tmpdir():
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
+# tweak the print() statement default behavior so that it always flushes the output.
+import functools
+print = functools.partial(print, flush=True)
+
 # Run setup
 run_duration = 20  # seconds
 check_for_logfile_errors = True
