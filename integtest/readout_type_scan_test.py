@@ -7,6 +7,7 @@ import urllib.request
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+import integrationtest.resource_validation as resource_validation
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -137,6 +138,16 @@ ignored_logfile_problems = {
         "errorlog: -",
     ],
 }
+
+# Determine if this computer has enough resources for these tests
+resval = resource_validation.ResourceValidator()
+resval.require_cpu_count(10)  # three for each data source (incl TPG) plus 4 more for everything else
+resval.require_free_memory_gb(8)  # double what we observe being used ('free -h')
+resval.require_total_memory_gb(16)  # double what we need; trying to be kind to others
+actual_output_path = "/tmp"
+resval.require_free_disk_space_gb(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resval.get_debug_string()
+print(f"{resval_debug_string}")
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
@@ -286,19 +297,44 @@ confgen_arguments = {
     "BernCRT_System": bern_crt_conf,
     "GrenobleCRT_System": grenoble_crt_conf
 }
+# When the computer doesn't have enough resources, we only need to run one configuration.
+# This is enough to provide feedback to the user about the lack of resources without spending
+# the time to run through all of the configurations that exist in this test.
+# It doesn't matter which configuration gets used because it doesn't really get executed,
+# so we just pick the first one.
+# The confgen_arguments key is a little important, though. We would like the pytest to still
+# provide useful feedback to the user even when the "-k" option is specified, so we combine
+# all of the existing keys into the new (dummy) one so that any valid "-k <config_name>"
+# selection will provide the desired feedback to the user about the insuffiicent resources.
+if not resval.this_computer_has_sufficient_resources:
+    all_encompassing_dummy_key = ",".join(confgen_arguments.keys())
+    first_config = next(iter(confgen_arguments.values()))
+    confgen_arguments = {
+        all_encompassing_dummy_key: first_config
+    }
 
 # The commands to run in nanorc, as a list
-nanorc_command_list = (
-    "boot conf start --run-number 101 wait 2 enable-triggers wait ".split()
-    + [str(run_duration)]
-    + "disable-triggers wait 2 drain-dataflow stop-trigger-sources wait 2 stop scrap terminate".split()
-)
-#    + "disable-triggers wait 5 drain-dataflow wait 2 stop-trigger-sources wait 2 stop scrap terminate".split()
+if resval.this_computer_has_sufficient_resources:
+    nanorc_command_list = (
+        "boot conf start --run-number 101 wait 2 enable-triggers wait ".split()
+        + [str(run_duration)]
+        + "disable-triggers wait 2 drain-dataflow stop-trigger-sources wait 2 stop scrap terminate".split()
+    )
+    #    + "disable-triggers wait 5 drain-dataflow wait 2 stop-trigger-sources wait 2 stop scrap terminate".split()
+else:
+    nanorc_command_list = ["wait", "1"]
+
 
 # The tests themselves
 
+def test_nanorc_success(run_nanorc, capsys):
+    if not resval.this_computer_has_sufficient_resources:
+        resval_report_string = resval.get_insufficient_resources_report()
+        with capsys.disabled():
+            print(f"\n\N{LARGE YELLOW CIRCLE} {resval_report_string}")
+        resval_summary_string = resval.get_insufficient_resources_summary()
+        pytest.skip(f"{resval_summary_string}")
 
-def test_nanorc_success(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)-run_nanorc0\].*", current_test)
     if match_obj:
@@ -307,14 +343,17 @@ def test_nanorc_success(run_nanorc):
     print(banner_line)
     print(current_test)
     print(banner_line)
+
     # Check that nanorc completed correctly
     assert run_nanorc.completed_process.returncode == 0
 
 
 def test_log_files(run_nanorc):
-    local_check_flag = check_for_logfile_errors
+    if not resval.this_computer_has_sufficient_resources:
+        resval_summary_string = resval.get_insufficient_resources_summary()
+        pytest.skip(f"\n{resval_summary_string}")
 
-    if local_check_flag:
+    if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
             run_nanorc.log_files, True, True, ignored_logfile_problems
@@ -322,6 +361,10 @@ def test_log_files(run_nanorc):
 
 
 def test_data_files(run_nanorc):
+    if not resval.this_computer_has_sufficient_resources:
+        resval_summary_string = resval.get_insufficient_resources_summary()
+        pytest.skip(f"\n{resval_summary_string}")
+
     local_expected_event_count = expected_event_count
     local_event_count_tolerance = expected_event_count_tolerance
     fragment_check_list = [triggercandidate_frag_params]
