@@ -4,6 +4,7 @@ import urllib.request
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+import integrationtest.resource_validation as resource_validation
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -51,6 +52,16 @@ ignored_logfile_problems = {
     ],
 }
 
+# Determine if this computer has enough resources for these tests
+resval = resource_validation.ResourceValidator()
+resval.require_cpu_count(2)  # two for each data source plus 2 more for everything else
+resval.require_free_memory_gb(4)  # double what we observe being used ('free -h')
+resval.require_total_memory_gb(8)  # double what we need; trying to be kind to others
+actual_output_path = "/tmp"
+resval.require_free_disk_space_gb(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resval.get_debug_string()
+print(f"{resval_debug_string}")
+
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
 # to run the config generation and nanorc
@@ -77,31 +88,44 @@ conf_dict.config_substitutions.append(
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(obj_class="LatencyBuffer", updates={"size": 50000})
 )
-
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_class="FakeHSIEventGeneratorConf",
         updates={"trigger_rate": 1.0},
     )
 )
-
 confgen_arguments = {"SmallFootprint": conf_dict}
+
 # The commands to run in nanorc, as a list
-nanorc_command_list = (
-    "boot conf start --run-number 101 wait 1 enable-triggers wait ".split()
-    + [str(run_duration)]
-    + "disable-triggers wait 2 drain-dataflow stop-trigger-sources stop wait 2 scrap terminate".split()
-)
+if resval.this_computer_has_sufficient_resources:
+    nanorc_command_list = (
+        "boot conf start --run-number 101 wait 1 enable-triggers wait ".split()
+        + [str(run_duration)]
+        + "disable-triggers wait 2 drain-dataflow stop-trigger-sources stop wait 2 scrap terminate".split()
+    )
+else:
+    nanorc_command_list = ["wait", "1"]
 
 # The tests themselves
 
 
-def test_nanorc_success(run_nanorc):
+def test_nanorc_success(run_nanorc, capsys):
+    if not resval.this_computer_has_sufficient_resources:
+        resval_report_string = resval.get_insufficient_resources_report()
+        with capsys.disabled():
+            print(f"\n\N{LARGE YELLOW CIRCLE} {resval_report_string}")
+        resval_summary_string = resval.get_insufficient_resources_summary()
+        pytest.skip(f"{resval_summary_string}")
+
     # Check that nanorc completed correctly
     assert run_nanorc.completed_process.returncode == 0
 
 
 def test_log_files(run_nanorc):
+    if not resval.this_computer_has_sufficient_resources:
+        resval_summary_string = resval.get_insufficient_resources_summary()
+        pytest.skip(f"\n{resval_summary_string}")
+
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
@@ -110,6 +134,10 @@ def test_log_files(run_nanorc):
 
 
 def test_data_files(run_nanorc):
+    if not resval.this_computer_has_sufficient_resources:
+        resval_summary_string = resval.get_insufficient_resources_summary()
+        pytest.skip(f"\n{resval_summary_string}")
+
     # Run some tests on the output data file
     assert len(run_nanorc.data_files) == expected_number_of_data_files
 
