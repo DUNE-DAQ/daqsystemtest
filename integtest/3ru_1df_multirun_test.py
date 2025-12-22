@@ -158,6 +158,21 @@ confgen_arguments = {
     "WIBEth_System": conf_dict,
     "Software_TPG_System": swtpg_conf,
 }
+# When the computer doesn't have enough resources, we only need to run one configuration.
+# This is enough to provide feedback to the user about the lack of resources without spending
+# the time to run through all of the configurations that exist in this test.
+# It doesn't matter which configuration gets used because it doesn't really get executed,
+# so we just pick the first one.
+# The confgen_arguments key is a little important, though. We would like the pytest to still
+# provide useful feedback to the user even when the "-k" option is specified, so we combine
+# all of the existing keys into the new (dummy) one so that any valid "-k <config_name>"
+# selection will provide the desired feedback to the user about the insuffiicent resources.
+if not resval.this_computer_has_sufficient_resources:
+    all_encompassing_dummy_key = ",".join(confgen_arguments.keys())
+    first_config = next(iter(confgen_arguments.values()))
+    confgen_arguments = {
+        all_encompassing_dummy_key: first_config
+    }
 
 # The commands to run in nanorc, as a list
 if resval.this_computer_has_sufficient_resources:
