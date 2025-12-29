@@ -167,7 +167,7 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                         # integrationtest infrastructure.
                         if [[ "`which jq 2>/dev/null`" != "" ]]; then
                             current_pytest_rundir=""
-                            bundle_info_files=(`find /tmp/pytest-of-${USER} -type f -print | grep bundle_script_info.json | xargs -r ls -1t`)
+                            mapfile -t bundle_info_files < <(find "/tmp/pytest-of-${USER}" -type f -name "bundle_script_info.json" -printf '%T@ %p\n' | grep -v 'failed-' | sort -nr | awk '{print $2}')
                             for info_file in "${bundle_info_files[@]}"; do
                                 script_start_time=`jq -r .bundle_script_start_time ${info_file}`
                                 script_pid=`jq -r .bundle_script_process_id ${info_file}`
@@ -212,7 +212,7 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
 
                         # remove stale and surplus directories from failed tests
                         test_dirs_to_remove=()
-                        all_failed_test_dirs=(`find /tmp/pytest-of-${USER} -maxdepth 1 -type d -print | grep 'failed-' | xargs -r ls -1dt`)
+                        mapfile -t all_failed_test_dirs < <(find /tmp/pytest-of-${USER} -maxdepth 1 -type d -printf '%T@ %p\n' | sort -nr | awk '{print $2}' | grep 'failed-')
                         surplus_dirs=("${all_failed_test_dirs[@]:10}")
                         for test_dir in "${surplus_dirs[@]}"; do
                             test_dirs_to_remove+=(${test_dir})
