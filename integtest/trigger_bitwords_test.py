@@ -302,16 +302,16 @@ def test_data_files(run_nanorc):
     }
 
     # Match run to checks
-    match = re.search(r'\[(.+?)-run', current_test)
-    if match:
-        key = match.group(1)
-        if key in datafile_params:
+    # 29-Dec-2025, KAB: modified this block of code to work with the addition of
+    # the process-manager-choice fixture.
+    selected_params = {}
+    for key in datafile_params.keys():
+        if key in current_test:
             selected_params = datafile_params[key]
             print("Selected params for", key, ":", selected_params)
-        else:
-            print(f"Key '{key}' not found in datafile_params.")
-    else:
-        print("Could not extract key from current_test.")
+            break
+    if not selected_params:
+        print(f"\n*** ERROR: unable to determine the datafile_params for test {current_test}.")
 
     ### Run some tests on the output data file
     all_ok = True
