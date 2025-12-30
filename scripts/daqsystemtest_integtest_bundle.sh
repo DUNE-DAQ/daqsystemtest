@@ -33,21 +33,8 @@ Options:
 # 29-Dec-2025, KAB: Determine if a non-standard pytest tmpdir has been specified
 # in the linux shell environment in which this script is being run. We need to know
 # this value in order to direct functionality in this script to the right place.
-#
-# This logic checks to see if any of several possible env vars that specify the
-# pytest output directory have been set. If any of them have been set, the first
-# one that we find is used. If not, then we default to "/tmp".
-# The env vars in this list were found in the AI response to a Google search for
-# "how to tell pytest to use a different temporary directory". The precedence that
-# is represented in the ordering of the list was determined via local testing.
-#
-# In all cases, a user-specified command-line value for the tmpdir over-rides values
-# found in env vars. That assignment is handled in the script argument processing below.
-: "${tmpdir_root:=$PYTEST_DEBUG_TEMPROOT}"
-: "${tmpdir_root:=$TMPDIR}"
-: "${tmpdir_root:=$TEMP}"
-: "${tmpdir_root:=$TMP}"
-: "${tmpdir_root:=/tmp}"
+# A user-specified command-line value for the tmpdir over-rides the value determined here.
+tmpdir_root=`dst_get_pytest_tmpdir`
 
 # Removes the ANSI characters associated with formatting, including color coding and font styling
 CaptureOutputNoANSI() {
