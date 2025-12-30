@@ -115,8 +115,17 @@ fi
 
 # other setup
 INITIAL_TIMESTAMP=`date '+%Y%m%d%H%M%S'`
-mkdir -p ${tmpdir_root}/pytest-of-${USER}
-ITGRUNNER_LOG_FILE="${tmpdir_root}/pytest-of-${USER}/daqsystemtest_integtest_bundle_${INITIAL_TIMESTAMP}.log"
+pytest_user_dir=${tmpdir_root}/pytest-of-${USER}
+mkdir -p ${pytest_user_dir}
+if [[ ! -d ${pytest_user_dir} ]]; then
+    echo "*** ERROR: directory \"${pytest_user_dir}\" does not exist."
+    exit 1
+fi
+if [[ ! -w ${pytest_user_dir} ]]; then
+    echo "*** ERROR: directory \"${pytest_user_dir}\" is not writeable in the current environment."
+    exit 1
+fi
+ITGRUNNER_LOG_FILE="${pytest_user_dir}/daqsystemtest_integtest_bundle_${INITIAL_TIMESTAMP}.log"
 CURRENT_PID=$$
 
 let number_of_individual_tests=0
@@ -179,7 +188,7 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                         # integrationtest infrastructure.
                         if [[ "`which jq 2>/dev/null`" != "" ]]; then
                             current_pytest_rundir=""
-                            mapfile -t bundle_info_files < <(find "${tmpdir_root}/pytest-of-${USER}" -type f -name "bundle_script_info.json" -printf '%T@ %p\n' | grep -v 'failed-' | sort -nr | awk '{print $2}')
+                            mapfile -t bundle_info_files < <(find "${pytest_user_dir}" -type f -name "bundle_script_info.json" -printf '%T@ %p\n' | grep -v 'failed-' | sort -nr | awk '{print $2}')
                             for info_file in "${bundle_info_files[@]}"; do
                                 script_start_time=`jq -r .bundle_script_start_time ${info_file}`
                                 script_pid=`jq -r .bundle_script_process_id ${info_file}`
@@ -224,12 +233,12 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
 
                         # remove stale and surplus directories from failed tests
                         test_dirs_to_remove=()
-                        mapfile -t all_failed_test_dirs < <(find ${tmpdir_root}/pytest-of-${USER} -maxdepth 1 -type d -printf '%T@ %p\n' | sort -nr | awk '{print $2}' | grep 'failed-')
+                        mapfile -t all_failed_test_dirs < <(find ${pytest_user_dir} -maxdepth 1 -type d -printf '%T@ %p\n' | sort -nr | awk '{print $2}' | grep 'failed-')
                         surplus_dirs=("${all_failed_test_dirs[@]:10}")
                         for test_dir in "${surplus_dirs[@]}"; do
                             test_dirs_to_remove+=(${test_dir})
                         done
-                        stale_failed_test_dirs=(`find ${tmpdir_root}/pytest-of-${USER} -maxdepth 1 -type d -name 'failed-*' -cmin +1560 -print`)
+                        stale_failed_test_dirs=(`find ${pytest_user_dir} -maxdepth 1 -type d -name 'failed-*' -cmin +1560 -print`)
                         for test_dir in "${stale_failed_test_dirs[@]}"; do
                             test_dirs_to_remove+=(${test_dir})
                         done
