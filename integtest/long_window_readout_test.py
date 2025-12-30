@@ -8,6 +8,7 @@ import psutil
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -69,7 +70,7 @@ ignored_logfile_problems = {
 sufficient_disk_space = True
 actual_output_path = output_path_parameter
 if output_path_parameter == ".":
-    actual_output_path = "/tmp"
+    actual_output_path = get_pytest_tmpdir()
 disk_space = shutil.disk_usage(actual_output_path)
 total_disk_space_gb = disk_space.total / (1024 * 1024 * 1024)
 free_disk_space_gb = disk_space.free / (1024 * 1024 * 1024)
