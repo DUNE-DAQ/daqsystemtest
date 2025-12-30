@@ -115,16 +115,17 @@ fi
 
 # other setup
 INITIAL_TIMESTAMP=`date '+%Y%m%d%H%M%S'`
+# 30-Dec-2025, KAB: check that the specified tmpdir exists and is writeable
+if [[ ! -d ${tmpdir_root} ]]; then
+    echo "*** ERROR: directory \"${tmpdir_root}\" does not exist."
+    exit 1
+fi
+if [[ ! -w ${tmpdir_root} ]]; then
+    echo "*** ERROR: directory \"${tmpdir_root}\" is not writeable in the current environment."
+    exit 1
+fi
 pytest_user_dir=${tmpdir_root}/pytest-of-${USER}
 mkdir -p ${pytest_user_dir}
-if [[ ! -d ${pytest_user_dir} ]]; then
-    echo "*** ERROR: directory \"${pytest_user_dir}\" does not exist."
-    exit 1
-fi
-if [[ ! -w ${pytest_user_dir} ]]; then
-    echo "*** ERROR: directory \"${pytest_user_dir}\" is not writeable in the current environment."
-    exit 1
-fi
 ITGRUNNER_LOG_FILE="${pytest_user_dir}/daqsystemtest_integtest_bundle_${INITIAL_TIMESTAMP}.log"
 CURRENT_PID=$$
 
