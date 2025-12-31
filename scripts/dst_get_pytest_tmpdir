@@ -1,0 +1,10 @@
+#!/bin/env python3
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
+
+def dst_get_pytest_tmpdir():
+  """Script to determine the current pytest tmpdir (the root of the current pytest output directory)."""
+  return get_pytest_tmpdir()
+
+if __name__ == '__main__':
+  tmpdir = dst_get_pytest_tmpdir()
+  print(tmpdir)

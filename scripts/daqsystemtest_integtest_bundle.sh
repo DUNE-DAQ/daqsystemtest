@@ -19,6 +19,7 @@ Options:
     -N <number of times to run the full set of selected tests, default=1>
     --stop-on-failure : causes the script to stop when one of the integtests reports a failure
     --concise-output : suppresses run control and DAQApp messages in order to focus on test results
+    --tmpdir : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
 """
     let counter=0
     echo "List of available tests:"
@@ -29,6 +30,12 @@ Options:
     echo ""
 }
 
+# 29-Dec-2025, KAB: Determine if a non-standard pytest tmpdir has been specified
+# in the linux shell environment in which this script is being run. We need to know
+# this value in order to direct functionality in this script to the right place.
+# A user-specified command-line value for the tmpdir over-rides the value determined here.
+tmpdir_root=`dst_get_pytest_tmpdir`
+
 # Removes the ANSI characters associated with formatting, including color coding and font styling
 CaptureOutputNoANSI() {
     tee -a >(sed -u 's/\x1b\[[0-9;]*m//g' >> "$1")
@@ -38,8 +45,8 @@ CaptureOutput() {
     tee -a $1
 }
 
-TEMP=`getopt -o hs:f:l:k:n:N: --long help,stop-on-failure,concise-output -- "$@"`
-eval set -- "$TEMP"
+GETOPT_TEMP=`getopt -o hs:f:l:k:n:N: --long help,stop-on-failure,concise-output,tmpdir: -- "$@"`
+eval set -- "$GETOPT_TEMP"
 
 let first_test_index=0
 let individual_test_requested_iterations=1
@@ -83,6 +90,11 @@ while true; do
             PYTEST_COMMAND="`echo ${PYTEST_COMMAND} | sed 's/ -s//'`"  # remove the -s option to turn off messages from DAQ processes
             shift
             ;;
+        --tmpdir)
+            tmpdir_root=$2
+            export PYTEST_DEBUG_TEMPROOT=${tmpdir_root}
+            shift 2
+            ;;
         --)
             shift
             break
@@ -103,8 +115,18 @@ fi
 
 # other setup
 INITIAL_TIMESTAMP=`date '+%Y%m%d%H%M%S'`
-mkdir -p /tmp/pytest-of-${USER}
-ITGRUNNER_LOG_FILE="/tmp/pytest-of-${USER}/daqsystemtest_integtest_bundle_${INITIAL_TIMESTAMP}.log"
+# 30-Dec-2025, KAB: check that the specified tmpdir exists and is writeable
+if [[ ! -d ${tmpdir_root} ]]; then
+    echo "*** ERROR: directory \"${tmpdir_root}\" does not exist."
+    exit 1
+fi
+if [[ ! -w ${tmpdir_root} ]]; then
+    echo "*** ERROR: directory \"${tmpdir_root}\" is not writeable in the current environment."
+    exit 1
+fi
+pytest_user_dir=${tmpdir_root}/pytest-of-${USER}
+mkdir -p ${pytest_user_dir}
+ITGRUNNER_LOG_FILE="${pytest_user_dir}/daqsystemtest_integtest_bundle_${INITIAL_TIMESTAMP}.log"
 CURRENT_PID=$$
 
 let number_of_individual_tests=0
@@ -167,7 +189,7 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                         # integrationtest infrastructure.
                         if [[ "`which jq 2>/dev/null`" != "" ]]; then
                             current_pytest_rundir=""
-                            mapfile -t bundle_info_files < <(find "/tmp/pytest-of-${USER}" -type f -name "bundle_script_info.json" -printf '%T@ %p\n' | grep -v 'failed-' | sort -nr | awk '{print $2}')
+                            mapfile -t bundle_info_files < <(find "${pytest_user_dir}" -type f -name "bundle_script_info.json" -printf '%T@ %p\n' | grep -v 'failed-' | sort -nr | awk '{print $2}')
                             for info_file in "${bundle_info_files[@]}"; do
                                 script_start_time=`jq -r .bundle_script_start_time ${info_file}`
                                 script_pid=`jq -r .bundle_script_process_id ${info_file}`
@@ -212,12 +234,12 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
 
                         # remove stale and surplus directories from failed tests
                         test_dirs_to_remove=()
-                        mapfile -t all_failed_test_dirs < <(find /tmp/pytest-of-${USER} -maxdepth 1 -type d -printf '%T@ %p\n' | sort -nr | awk '{print $2}' | grep 'failed-')
+                        mapfile -t all_failed_test_dirs < <(find ${pytest_user_dir} -maxdepth 1 -type d -printf '%T@ %p\n' | sort -nr | awk '{print $2}' | grep 'failed-')
                         surplus_dirs=("${all_failed_test_dirs[@]:10}")
                         for test_dir in "${surplus_dirs[@]}"; do
                             test_dirs_to_remove+=(${test_dir})
                         done
-                        stale_failed_test_dirs=(`find /tmp/pytest-of-${USER} -maxdepth 1 -type d -name 'failed-*' -cmin +1560 -print`)
+                        stale_failed_test_dirs=(`find ${pytest_user_dir} -maxdepth 1 -type d -name 'failed-*' -cmin +1560 -print`)
                         for test_dir in "${stale_failed_test_dirs[@]}"; do
                             test_dirs_to_remove+=(${test_dir})
                         done
