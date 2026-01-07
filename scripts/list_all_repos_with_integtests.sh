@@ -1,16 +1,34 @@
 #!/bin/bash
 # 19-Dec-2025, KAB
 
+if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]] || [[ "$1" == "-?" ]]; then
+    echo
+    echo "Usage: `basename $0`"
+    echo "  Lists the software repositories that have integration tests (integtests) in them."
+    echo "  Searches the base releases, local install dir, and local sourcecode dir."
+    echo
+    exit
+fi
+
+# determine the base release directory
 release_dir=`dbt-info release | grep 'Release dir:' | cut -d' ' -f3`
 base_release_name=`dbt-info release | grep 'Base release name:' | cut -d' ' -f4`
 base_release_dir="${release_dir}/../${base_release_name}"
 
-groupA="(`ls -1d ${release_dir}/spack-installation/opt/spack/*almalinux9*/gcc-*/*/*/integtest`)"
-groupB="(`ls -1d ${base_release_dir}/spack-installation/opt/spack/*almalinux9*/gcc-*/*/*/integtest`)"
-groupC=("${groupA}"+" "+"${groupB}")
+# look up the paths of all of the repositories in the core and detector-specific categories
+det_rel_repo_paths=(`ls -1d ${release_dir}/spack-installation/opt/spack/*almalinux9*/gcc-*/*/*/integtest/*_test.py`)
+base_rel_repo_paths=(`ls -1d ${base_release_dir}/spack-installation/opt/spack/*almalinux9*/gcc-*/*/*/integtest/*_test.py`)
+all_repo_paths=("${det_rel_repo_paths[@]}" "${base_rel_repo_paths[@]}")
 
-the_list=("`echo ${groupC} | xargs -r -n 1 dirname | xargs -r -n 1 dirname | xargs -r -n 1 basename | cut -d'-' -f1 | sort`")
+# add in the paths of the repositories in the local install and sourcecode dirs
+if [[ "$DBT_AREA_ROOT" != "" ]]; then
+    install_dir_repo_paths=(`ls -1 ${DBT_AREA_ROOT}/install/*/share/integtest/*_test.py`)
+    sourcecode_dir_repo_paths=(`ls -1 ${DBT_AREA_ROOT}/sourcecode/*/integtest/*_test.py`)
+    all_repo_paths=("${all_repo_paths[@]}" "${install_dir_repo_paths[@]}" "${sourcecode_dir_repo_paths[@]}")
+fi
 
-for pkg in ${the_list[@]}; do
-    echo $pkg
+repos_with_integtests=(`echo "${all_repo_paths[@]}" | sed 's,/share,,g' | xargs -r -n 1 dirname | xargs -r -n 1 dirname | xargs -r -n 1 basename | cut -d'-' -f1 | sort -u`)
+
+for repo in "${repos_with_integtests[@]}"; do
+    echo "$repo"
 done
