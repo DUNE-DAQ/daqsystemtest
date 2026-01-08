@@ -41,7 +41,9 @@ function check_config() {
 
     get_apps "$config_file"  &>/dev/null || oks_dump -f "$config_file" | grep -vE '^\s*'
     if [ $? -ne 0 ];then
-        echo "         Failed to parse config file '$config_file'"
+        echo -n "         Failed to parse config file '$config_file'"
+        echo_failure
+        echo
         return 1
     fi
     
