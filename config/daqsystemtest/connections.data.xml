@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="82" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20251104T211728"/>
+<info name="" type="" num-of-items="82" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260109T195600"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -362,6 +362,7 @@
  <attr name="uid_base" type="string" val="cb_raw_input_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
  <attr name="capacity" type="u32" val="10000"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="1"/>
  <attr name="data_type" type="string" val="CRTBernFrame"/>
 </obj>
 
@@ -369,6 +370,7 @@
  <attr name="uid_base" type="string" val="raw_input_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
  <attr name="capacity" type="u32" val="10000"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="0"/>
  <attr name="data_type" type="string" val="CRTBernFrame"/>
 </obj>
 
@@ -376,6 +378,7 @@
  <attr name="uid_base" type="string" val="cb_raw_input_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
  <attr name="capacity" type="u32" val="10000"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="1"/>
  <attr name="data_type" type="string" val="CRTGrenobleFrame"/>
 </obj>
 
@@ -383,6 +386,7 @@
  <attr name="uid_base" type="string" val="raw_input_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
  <attr name="capacity" type="u32" val="10000"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="0"/>
  <attr name="data_type" type="string" val="CRTGrenobleFrame"/>
 </obj>
 
@@ -390,6 +394,7 @@
  <attr name="uid_base" type="string" val="internal_data_requests_for_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
  <attr name="capacity" type="u32" val="1000"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="0"/>
  <attr name="data_type" type="string" val="DataRequest"/>
 </obj>
 
@@ -397,6 +402,7 @@
  <attr name="uid_base" type="string" val="dataflow_token_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
  <attr name="capacity" type="u32" val="11"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="0"/>
  <attr name="data_type" type="string" val="TriggerDecisionToken"/>
 </obj>
 
@@ -404,6 +410,7 @@
  <attr name="uid_base" type="string" val="internal_fragments_"/>
  <attr name="queue_type" type="enum" val="kFollyMPMCQueue"/>
  <attr name="capacity" type="u32" val="1000"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="0"/>
  <attr name="data_type" type="string" val="Fragment"/>
 </obj>
 
@@ -411,6 +418,7 @@
  <attr name="uid_base" type="string" val="hsi_link_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
  <attr name="capacity" type="u32" val="100000"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="0"/>
  <attr name="data_type" type="string" val="HSIFrame"/>
 </obj>
 
@@ -418,6 +426,7 @@
  <attr name="uid_base" type="string" val="raw_input_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
  <attr name="capacity" type="u32" val="10000"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="0"/>
  <attr name="data_type" type="string" val="PDSFrame"/>
 </obj>
 
@@ -425,6 +434,7 @@
  <attr name="uid_base" type="string" val="raw_input_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
  <attr name="capacity" type="u32" val="10000"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="0"/>
  <attr name="data_type" type="string" val="PDSStreamFrame"/>
 </obj>
 
@@ -432,6 +442,7 @@
  <attr name="uid_base" type="string" val="ta_input_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
  <attr name="capacity" type="u32" val="1000"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="0"/>
  <attr name="data_type" type="string" val="TriggerActivity"/>
 </obj>
 
@@ -439,6 +450,7 @@
  <attr name="uid_base" type="string" val="tc_input_"/>
  <attr name="queue_type" type="enum" val="kFollyMPMCQueue"/>
  <attr name="capacity" type="u32" val="1000"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="0"/>
  <attr name="data_type" type="string" val="TriggerCandidate"/>
 </obj>
 
@@ -446,6 +458,7 @@
  <attr name="uid_base" type="string" val="td_input_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
  <attr name="capacity" type="u32" val="1000"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="0"/>
  <attr name="data_type" type="string" val="TriggerDecision"/>
 </obj>
 
@@ -453,6 +466,7 @@
  <attr name="uid_base" type="string" val="raw_input_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
  <attr name="capacity" type="u32" val="10000"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="0"/>
  <attr name="data_type" type="string" val="TDEEthFrame"/>
 </obj>
 
@@ -460,6 +474,7 @@
  <attr name="uid_base" type="string" val="tp_input_"/>
  <attr name="queue_type" type="enum" val="kFollyMPMCQueue"/>
  <attr name="capacity" type="u32" val="10000"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="0"/>
  <attr name="data_type" type="string" val="TriggerPrimitiveVector"/>
 </obj>
 
@@ -467,6 +482,7 @@
  <attr name="uid_base" type="string" val="trigger_records_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
  <attr name="capacity" type="u32" val="11"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="0"/>
  <attr name="data_type" type="string" val="TriggerRecord"/>
 </obj>
 
@@ -474,6 +490,7 @@
  <attr name="uid_base" type="string" val="cb_raw_input_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
  <attr name="capacity" type="u32" val="10000"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="1"/>
  <attr name="data_type" type="string" val="WIBEthFrame"/>
 </obj>
 
@@ -481,6 +498,7 @@
  <attr name="uid_base" type="string" val="raw_input_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
  <attr name="capacity" type="u32" val="10000"/>
+ <attr name="direct_callbacks_enabled" type="bool" val="0"/>
  <attr name="data_type" type="string" val="WIBEthFrame"/>
 </obj>
 
