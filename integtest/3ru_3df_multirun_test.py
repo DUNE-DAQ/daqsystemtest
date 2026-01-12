@@ -194,7 +194,7 @@ nanorc_command_list += "scrap terminate".split()
 
 
 def test_nanorc_success(run_nanorc):
-    # print out the name of the current test
+    # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
     if match_obj:
