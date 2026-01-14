@@ -113,7 +113,7 @@ common_config_obj.config_substitutions.append(
 
 ehn1_twohost_1x1_conf = copy.deepcopy(common_config_obj)
 ehn1_twohost_1x1_conf.session = "local-1x1-config"
-ehn1_twohost_1x1_conf.connsvc_port = None
+ehn1_twohost_1x1_conf.connsvc_port = 0  # random
 
 confgen_arguments = {"EHN1 TwoHost 1x1 Conf": ehn1_twohost_1x1_conf}
 
