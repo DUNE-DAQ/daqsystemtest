@@ -67,14 +67,6 @@ conf_dict.config_substitutions.append(
     )
 )
 
-conf_dict.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_id="dummy-detector",
-        obj_class="DetectorConfig",
-        updates={"clock_speed_hz": 1000000000}, # FakeDataProd uses nanoseconds as its timestamps
-    )
-)
-
 doublewindow_conf = copy.deepcopy(conf_dict)
 
 doublewindow_conf.config_substitutions.append(
