@@ -103,8 +103,6 @@ nanorc_command_list += (
     )
 nanorc_command_list += "scrap terminate".split()
 
-# Don't require the --frame-file option since we don't need it
-frame_file_required = False
 
 # The tests themselves
 
