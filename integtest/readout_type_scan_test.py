@@ -10,9 +10,6 @@ import integrationtest.data_classes as data_classes
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
-# Don't require frames file
-frame_file_required = False
-
 # Values that help determine the running conditions
 number_of_data_producers = 2
 run_duration = 20  # seconds
