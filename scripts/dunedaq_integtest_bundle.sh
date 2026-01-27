@@ -16,7 +16,8 @@ Options:
        - it can be a pipe-delimited string with a list of repos, e.g. 'dfmodules|trigger'
        - it can have the special value of \"all\" - integtests in all repos will be run
        - it can have the special value of \"local\" - integtests in locally-cloned repos will be run
-    -k <pipe-delimited string to select which tests will be run ('egrep -i' match to test name)>
+    -k, --include <pipe-delimited string to select the tests that will be run ('egrep -i' match to test name)>
+    -x, --exclude <pipe-delimited string to specify tests to be excluded ('egrep -i' match to test name)>
     -n <number of times to run each individual test, default=1>
     -N <number of times to run the full set of selected tests, default=1>
     --stop-on-failure : causes the script to stop when one of the integtests reports a failure
@@ -40,7 +41,7 @@ CaptureOutput() {
     tee -a $1
 }
 
-GETOPT_TEMP=`getopt -o hr:k:n:N: --long help,stop-on-failure,concise-output,tmpdir: -- "$@"`
+GETOPT_TEMP=`getopt -o hr:k:x:n:N: --long help,stop-on-failure,concise-output,include,exclude,tmpdir: -- "$@"`
 if [ $? -ne 0 ]; then
     exit 1
 fi
@@ -50,6 +51,7 @@ let individual_test_requested_iterations=1
 let full_set_requested_interations=1
 let stop_on_failure=0
 requested_test_names=
+excluded_test_names=
 PYTEST_COMMAND="pytest -s --tb=short"  # our core pytest command, with DAQ printout included and short pytest traceback
 
 while true; do
@@ -91,8 +93,12 @@ while true; do
             fi
             shift 2
             ;;
-        -k)
+        -k|--include)
             requested_test_names=$2
+            shift 2
+            ;;
+        -x|--exclude)
+            excluded_test_names=$2
             shift 2
             ;;
         -n)
@@ -165,7 +171,8 @@ let test_index=0
 for FULL_TEST_NAME in "${integtest_list[@]}"; do
     test_name=`basename ${FULL_TEST_NAME}`
     requested_test=`echo ${test_name} | egrep -i ${requested_test_names:-${test_name}}`
-    if [[ "${requested_test}" != "" ]]; then
+    excluded_test=`echo ${test_name} | egrep -i ${excluded_test_names:-nullnullnull}`
+    if [[ "${requested_test}" != "" ]] && [[ "${excluded_test}" == "" ]]; then
         let number_of_individual_tests=${number_of_individual_tests}+1
     fi
     let test_index=${test_index}+1
@@ -187,7 +194,8 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
         # for the current test, and make a copy of it if the test fails.
         export DUNEDAQ_INTEGTEST_BUNDLE_INFO="${INITIAL_TIMESTAMP};${CURRENT_PID};${CURRENT_TIMESTAMP}"
         requested_test=`echo ${test_name} | egrep -i ${requested_test_names:-${test_name}}`
-        if [[ "${requested_test}" != "" ]]; then
+        excluded_test=`echo ${test_name} | egrep -i ${excluded_test_names:-nullnullnull}`
+        if [[ "${requested_test}" != "" ]] && [[ "${excluded_test}" == "" ]]; then
             let individual_loop_count=0
             while [[ ${individual_loop_count} -lt ${individual_test_requested_iterations} ]]; do
                 let overall_test_index=${overall_test_index}+1
@@ -201,11 +209,11 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                     if [[ -w "${DBT_AREA_ROOT}" ]]; then
                         ${PYTEST_COMMAND} ${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
                     else
-                        ${PYTEST_COMMAND} -p no:cacheprovider ${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+                        ${PYTEST_COMMAND} -p no:cacheprovider --no-summary ${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
                     fi
                 else
                     share_envvar_name="${test_repo^^}_SHARE"  # double caret converts env var to uppercase
-                    ${PYTEST_COMMAND} -p no:cacheprovider ${!share_envvar_name}/integtest/${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+                    ${PYTEST_COMMAND} -p no:cacheprovider --no-summary ${!share_envvar_name}/integtest/${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
                 fi
                 let pytest_return_code=${PIPESTATUS[0]}
 
