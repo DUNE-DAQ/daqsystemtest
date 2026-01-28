@@ -241,9 +241,9 @@ atexit.register(_cleanup_tmpdir)
 ### Tests
 # Run control
 def test_nanorc_success(run_nanorc):
+    # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-
-    match_obj = re.search(r".*\[(.+)-run_nanorc0\].*", current_test)
+    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
     if match_obj:
         current_test = match_obj.group(1)
     banner_line = re.sub(".", "=", current_test)
@@ -256,8 +256,6 @@ def test_nanorc_success(run_nanorc):
 
 # Log files
 def test_log_files(run_nanorc):
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-
     session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
 
     log_dir = pathlib.Path("/log")
