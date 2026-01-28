@@ -210,4 +210,40 @@ crtmodules/crt_reader_test.py
 Looking for integtests in the _asdf jklp_ repo(s)...
 
 -> "asdf" does not appear to be a valid repository name.
--> "jklp" does not appear to be a valid repository name.```
+-> "jklp" does not appear to be a valid repository name.
+```
+
+### list_repos_with_integtests.sh
+
+```
+(dbt) [biery@daq 28JanFDDevInstrTest]$ list_repos_with_integtests.sh 
+
+Looking for _all_ repositories with integtests in them...
+
+asiolibs
+crtmodules
+daqsystemtest
+dfmodules
+hsilibs
+listrev
+snbmodules
+trigger
+(dbt) [biery@daq 28JanFDDevInstrTest]$ list_repos_with_integtests.sh local
+
+Looking for _local_ repositories with integtests in them...
+
+daqsystemtest
+dfmodules
+(dbt) [biery@daq 28JanFDDevInstrTest]$ list_repos_with_integtests.sh asdf
+
+Looking for _all_ repositories with integtests in them...
+
+asiolibs
+crtmodules
+daqsystemtest
+dfmodules
+hsilibs
+listrev
+snbmodules
+trigger
+```
