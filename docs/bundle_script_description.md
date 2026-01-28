@@ -60,7 +60,7 @@ Here are examples of using each of the scripts:
 ### dunedaq_integtest_bundle.sh
 
 ```
-(dbt) [biery@daq 28JanFDDevInstrTest]$ dunedaq_integtest_bundle.sh --list-only
+(dbt) [biery@daq]$ dunedaq_integtest_bundle.sh --list-only
 
 Integtests from the _daqsystemtest_ repo will be run...
 
@@ -77,12 +77,13 @@ The following tests will be run:
   daqsystemtest/tpreplay_test.py
   daqsystemtest/tpstream_writing_test.py
   daqsystemtest/trigger_bitwords_test.py
-(dbt) [biery@daq 28JanFDDevInstrTest]$ 
-(dbt) [biery@daq 28JanFDDevInstrTest]$ dunedaq_integtest_bundle.sh -r listrev --list-only
+
+(dbt) [biery@daq]$ dunedaq_integtest_bundle.sh -r listrev --list-only
 
 The following tests will be run:
   listrev/listrev_test.py
-(dbt) [biery@daq 28JanFDDevInstrTest]$ dunedaq_integtest_bundle.sh -r local --list-only
+
+(dbt) [biery@daq]$ dunedaq_integtest_bundle.sh -r local --list-only
 
 Building the list of _local_ integtests...
 
@@ -107,12 +108,14 @@ The following tests will be run:
   dfmodules/multiple_data_writers_test.py
   dfmodules/offline_prod_run_test.py
   dfmodules/trmonrequestor_test.py
-(dbt) [biery@daq 28JanFDDevInstrTest]$ dunedaq_integtest_bundle.sh -r "asiolibs|crtmodules" --list-only
+
+(dbt) [biery@daq]$ dunedaq_integtest_bundle.sh -r "asiolibs|crtmodules" --list-only
 
 The following tests will be run:
   asiolibs/socket_reader_test.py
   crtmodules/crt_reader_test.py
-(dbt) [biery@daq 28JanFDDevInstrTest]$ dunedaq_integtest_bundle.sh -r local -k tp --list-only
+
+(dbt) [biery@daq]$ dunedaq_integtest_bundle.sh -r local -k tp --list-only
 
 Building the list of _local_ integtests...
 
@@ -122,7 +125,8 @@ The following tests will be run:
   daqsystemtest/tpreplay_test.py
   daqsystemtest/tpstream_writing_test.py
   dfmodules/disabled_output_test.py
-(dbt) [biery@daq 28JanFDDevInstrTest]$ dunedaq_integtest_bundle.sh -r local -k tp -x "disabled|tpreplay" --list-only
+
+(dbt) [biery@daq]$ dunedaq_integtest_bundle.sh -r local -k tp -x "disabled|tpreplay" --list-only
 
 Building the list of _local_ integtests...
 
@@ -135,7 +139,7 @@ The following tests will be run:
 ### list_available_integtests.sh
 
 ```
-(dbt) [biery@daq 28JanFDDevInstrTest]$ list_available_integtests.sh
+(dbt) [biery@daq]$ list_available_integtests.sh
 
 Looking for integtests in _all_ repos...
 
@@ -171,7 +175,8 @@ snbmodules/snb_minimal_system_test.py
 trigger/change_rate_test.py
 trigger/tc_time_outside_window_test.py
 trigger/td_leakage_between_runs_test.py
-(dbt) [biery@daq 28JanFDDevInstrTest]$ list_available_integtests.sh local
+
+(dbt) [biery@daq]$ list_available_integtests.sh local
 
 Looking for integtests in _local_ repos...
 
@@ -195,17 +200,15 @@ dfmodules/max_file_size_test.py
 dfmodules/multiple_data_writers_test.py
 dfmodules/offline_prod_run_test.py
 dfmodules/trmonrequestor_test.py
-(dbt) [biery@daq 28JanFDDevInstrTest]$ 
-(dbt) [biery@daq 28JanFDDevInstrTest]$ 
-(dbt) [biery@daq 28JanFDDevInstrTest]$ 
-(dbt) [biery@daq 28JanFDDevInstrTest]$ 
-(dbt) [biery@daq 28JanFDDevInstrTest]$ list_available_integtests.sh asiolibs crtmodules
+
+(dbt) [biery@daq]$ list_available_integtests.sh asiolibs crtmodules
 
 Looking for integtests in the _asiolibs crtmodules_ repo(s)...
 
 asiolibs/socket_reader_test.py
 crtmodules/crt_reader_test.py
-(dbt) [biery@daq 28JanFDDevInstrTest]$ list_available_integtests.sh asdf jklp
+
+(dbt) [biery@daq]$ list_available_integtests.sh asdf jklp
 
 Looking for integtests in the _asdf jklp_ repo(s)...
 
@@ -216,7 +219,7 @@ Looking for integtests in the _asdf jklp_ repo(s)...
 ### list_repos_with_integtests.sh
 
 ```
-(dbt) [biery@daq 28JanFDDevInstrTest]$ list_repos_with_integtests.sh 
+(dbt) [biery@daq]$ list_repos_with_integtests.sh 
 
 Looking for _all_ repositories with integtests in them...
 
@@ -228,13 +231,15 @@ hsilibs
 listrev
 snbmodules
 trigger
-(dbt) [biery@daq 28JanFDDevInstrTest]$ list_repos_with_integtests.sh local
+
+(dbt) [biery@daq]$ list_repos_with_integtests.sh local
 
 Looking for _local_ repositories with integtests in them...
 
 daqsystemtest
 dfmodules
-(dbt) [biery@daq 28JanFDDevInstrTest]$ list_repos_with_integtests.sh asdf
+
+(dbt) [biery@daq]$ list_repos_with_integtests.sh asdf
 
 Looking for _all_ repositories with integtests in them...
 
