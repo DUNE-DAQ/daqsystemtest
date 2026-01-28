@@ -23,6 +23,7 @@ Options:
     --stop-on-failure : causes the script to stop when one of the integtests reports a failure
     --concise-output : suppresses run control and DAQApp messages in order to focus on test results
     --tmpdir : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
+    --list-only : list the tests that match the requested patterns without running them
 """
 }
 
@@ -41,7 +42,7 @@ CaptureOutput() {
     tee -a $1
 }
 
-GETOPT_TEMP=`getopt -o hr:k:x:n:N: --long help,stop-on-failure,concise-output,include,exclude,tmpdir: -- "$@"`
+GETOPT_TEMP=`getopt -o hr:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,list-only -- "$@"`
 if [ $? -ne 0 ]; then
     exit 1
 fi
@@ -52,6 +53,7 @@ let full_set_requested_interations=1
 let stop_on_failure=0
 requested_test_names=
 excluded_test_names=
+only_list_tests=""
 PYTEST_COMMAND="pytest -s --tb=short"  # our core pytest command, with DAQ printout included and short pytest traceback
 
 while true; do
@@ -63,7 +65,7 @@ while true; do
         -r)
             if [[ "$2" == "all" ]]; then
                 echo ""
-                echo "Building the list of all integtests..."
+                echo "Building the list of _all_ integtests..."
                 integtest_list=(`list_available_integtests.sh 2>/dev/null`)
                 if [[ ${#integtest_list[@]} -eq 0 ]]; then
                     echo ""
@@ -73,7 +75,7 @@ while true; do
                 fi
             elif [[ "$2" == "local" ]]; then
                 echo ""
-                echo "Building the list of local integtests..."
+                echo "Building the list of _local_ integtests..."
                 integtest_list=(`list_available_integtests.sh local 2>/dev/null`)
                 if [[ ${#integtest_list[@]} -eq 0 ]]; then
                     echo ""
@@ -123,6 +125,10 @@ while true; do
             export PYTEST_DEBUG_TEMPROOT=${tmpdir_root}
             shift 2
             ;;
+        --list-only)
+            only_list_tests="yes"
+            shift
+            ;;
         --)
             shift
             break
@@ -133,6 +139,8 @@ done
 # run the integtests from the daqsystemtest repo if no repo was specified
 if [[ "${integtest_list}" == "" ]]; then
     integtest_list=(`list_available_integtests.sh daqsystemtest 2>/dev/null`)
+    echo ""
+    echo "Integtests from the _daqsystemtest_ repo will be run..."
 fi
 
 # check if the numad daemon is running
@@ -166,6 +174,10 @@ mkdir -p ${pytest_user_dir}
 ITGRUNNER_LOG_FILE="${pytest_user_dir}/dunedaq_integtest_bundle_${INITIAL_TIMESTAMP}.log"
 CURRENT_PID=$$
 
+if [[ "$only_list_tests" != "" ]]; then
+    echo ""
+    echo "The following tests will be run:"
+fi
 let number_of_individual_tests=0
 let test_index=0
 for FULL_TEST_NAME in "${integtest_list[@]}"; do
@@ -174,10 +186,16 @@ for FULL_TEST_NAME in "${integtest_list[@]}"; do
     excluded_test=`echo ${test_name} | egrep -i ${excluded_test_names:-nullnullnull}`
     if [[ "${requested_test}" != "" ]] && [[ "${excluded_test}" == "" ]]; then
         let number_of_individual_tests=${number_of_individual_tests}+1
+        if [[ "$only_list_tests" != "" ]]; then
+            echo "  ${FULL_TEST_NAME}"
+        fi
     fi
     let test_index=${test_index}+1
 done
 let total_number_of_tests=${number_of_individual_tests}*${individual_test_requested_iterations}*${full_set_requested_interations}
+if [[ "$only_list_tests" != "" ]]; then
+    exit 0
+fi
 
 # run the tests
 let overall_test_index=0  # this is only used for user feedback

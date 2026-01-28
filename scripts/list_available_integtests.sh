@@ -3,24 +3,36 @@
 
 if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]] || [[ "$1" == "-?" ]]; then
     echo
-    echo "Usage: `basename $0` [optional list of repo names]"
+    echo "Usage: `basename $0` [optional list of repo names|local|all]"
     echo "  e.g. `basename $0` daqsystemtest"
     echo "  If no repo name is specified, integtests for all repos are listed."
     echo "  If a special repo name of \"local\" is specified, only integtests for repos"
     echo "      in the local software area are listed."
+    echo "  If a special repo name of \"all\" is specified, integtests for all repos are listed."
     echo
     exit
 fi
 
+echo "" >&2
 repo_list=()
 if [[ $# -ge 1 ]]; then
     if [[ "$1" == "local" ]]; then
-        repo_list=(`list_repos_with_integtests.sh local`)
+        echo "Looking for integtests in _local_ repos..." >&2
+        echo "" >&2
+        repo_list=(`list_repos_with_integtests.sh local 2>/dev/null`)
+    elif [[ "$1" == "all" ]]; then
+        echo "Looking for integtests in _all_ repos..." >&2
+        echo "" >&2
+        repo_list=(`list_repos_with_integtests.sh 2>/dev/null`)
     else
+        echo "Looking for integtests in the _$@_ repo(s)..." >&2
+        echo "" >&2
         repo_list=("$@")
     fi
 else
-    repo_list=(`list_repos_with_integtests.sh`)
+    echo "Looking for integtests in _all_ repos..." >&2
+    echo "" >&2
+    repo_list=(`list_repos_with_integtests.sh 2>/dev/null`)
 fi
 
 for repo_name in "${repo_list[@]}"; do

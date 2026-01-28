@@ -16,7 +16,10 @@ fi
 all_repo_paths=()
 
 # skip repos in the base release, if the user has specified "local"
+echo "" >&2
 if [[ $# -eq 0 ]] || [[ "$1" != "local" ]]; then
+    echo "Looking for _all_ repositories with integtests in them..." >&2
+    echo "" >&2
 
     # determine the base release directory
     release_dir=`dbt-info release | grep 'Release dir:' | cut -d' ' -f3`
@@ -27,6 +30,9 @@ if [[ $# -eq 0 ]] || [[ "$1" != "local" ]]; then
     det_rel_repo_paths=(`ls -1d ${release_dir}/spack-installation/opt/spack/*almalinux9*/gcc-*/*/*/integtest/*_test.py`)
     base_rel_repo_paths=(`ls -1d ${base_release_dir}/spack-installation/opt/spack/*almalinux9*/gcc-*/*/*/integtest/*_test.py`)
     all_repo_paths=("${det_rel_repo_paths[@]}" "${base_rel_repo_paths[@]}")
+else
+    echo "Looking for _local_ repositories with integtests in them..." >&2
+    echo "" >&2
 fi
 
 # add in the paths of the repositories in the local install and sourcecode dirs
