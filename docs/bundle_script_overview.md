@@ -3,8 +3,8 @@
 The following scripts are intended to help developers find and run _integtests_ (regression and integration tests) in all repositories:
 
 * `dunedaq_integtest_bundle.sh` - runs sets ("bundles") of integtests. This script supports the running of integtests from repositories that have been cloned into a local software area as well as repositories that are being used from a base release on CVMFS.
-* `list_repos_with_integtests.sh`
 * `list_available_integtests.sh`
+* `list_repos_with_integtests.sh`
 
 Users may choose to primarily use the `dunedaq_integtest_bundle.sh` script, but the two "`list`" scripts may be occasionally useful, so they are also described here.
 
@@ -33,17 +33,6 @@ Options:
     --list-only : list the tests that match the requested patterns without running them
 ```
 
-Here are examples of run
-### list_repos_with_integtests.sh --help 
-
-```
-Usage: list_repos_with_integtests.sh [optional "local" keyword]
-  Lists the software repositories that have integration tests (integtests) in them.
-  Searches the base releases, local install dir, and local sourcecode dir,
-  unless "local" is passed as an argument. In that case, only the local
-  install and sourcecode directories are searched.
-```
-
 ### list_available_integtests.sh --help
 
 ```
@@ -53,6 +42,16 @@ Usage: list_available_integtests.sh [optional list of repo names|local|all]
   If a special repo name of "local" is specified, only integtests for repos
       in the local software area are listed.
   If a special repo name of "all" is specified, integtests for all repos are listed.
+```
+
+### list_repos_with_integtests.sh --help 
+
+```
+Usage: list_repos_with_integtests.sh [optional "local" keyword]
+  Lists the software repositories that have integration tests (integtests) in them.
+  Searches the base releases, local install dir, and local sourcecode dir,
+  unless "local" is passed as an argument. In that case, only the local
+  install and sourcecode directories are searched.
 ```
 
 Here are examples of using each of the scripts:
