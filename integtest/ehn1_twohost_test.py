@@ -1,15 +1,27 @@
-# 14-Jan-2026, KAB: Steps to run this test:
-# Log into np04-srv-028 and set up a software area with the appropriate branch of daqsystemtest.
-# 'cd $DBT_AREA_ROOT/sourcecode/daqsystemtest/integtest'
-# 'mkdir -p $HOME/dunedaq/scratch'
-# 'export PYTEST_DEBUG_TEMPROOT=$HOME/dunedaq/scratch'
-# 'pytest -s ./ehn1_twohost_test.py'
+# 29-Jan-2026, KAB: Steps to run this test:
+# - Log into any np04-srv-XYZ computer and set up a software area with the
+#     appropriate branch of daqsystemtest.
+# - 'cd $DBT_AREA_ROOT/sourcecode/daqsystemtest/integtest'
+# - 'mkdir -p $HOME/dunedaq/scratch'
+# - 'export PYTEST_DEBUG_TEMPROOT=$HOME/dunedaq/scratch'
+# - 'pytest -s ./ehn1_twohost_test.py'
+#
+# This test currently puts the various DAQ processes on the following computers:
+# - np04-srv-021:  ru-01, ru-controller
+# - np04-srv-022:  mlt, tc-maker-1, trg-controller
+# - np04-srv-028:  local-connection-server, tp-stream-writer
+# - np04-srv-029:  dfo-01, df-01, df-controller
+# - localhost:  hsi-fake-01, hsi-fake-to-tc-app, root-controller
+#
+# The choice of running the tp-stream-writer on a different computer than the other
+# Dataflow apps was just to show that it works.  And, running the ConnectivityServer
+# on a computer other than "localhost" was also to show that it can be done.
+#
 
 import pytest
 import os
 import copy
 import re
-import random
 import string
 import pathlib
 
@@ -96,11 +108,92 @@ common_config_obj.config_substitutions.append(
 )
 common_config_obj.config_substitutions.append(
     data_classes.relationship_substitution(
+        obj_class="ReadoutApplication",
+        obj_id="ru-01",
+        rel_name="runs_on",
+        replacement_object_class="VirtualHost",
+        replacement_object_id="vnp04-srv-021"
+    )
+)
+common_config_obj.config_substitutions.append(
+    data_classes.relationship_substitution(
+        obj_class="RCApplication",
+        obj_id="ru-controller",
+        rel_name="runs_on",
+        replacement_object_class="VirtualHost",
+        replacement_object_id="vnp04-srv-021"
+    )
+)
+common_config_obj.config_substitutions.append(
+    data_classes.relationship_substitution(
+        obj_class="MLTApplication",
+        obj_id="mlt",
+        rel_name="runs_on",
+        replacement_object_class="VirtualHost",
+        replacement_object_id="vnp04-srv-022"
+    )
+)
+common_config_obj.config_substitutions.append(
+    data_classes.relationship_substitution(
+        obj_class="TriggerApplication",
+        obj_id="tc-maker-1",
+        rel_name="runs_on",
+        replacement_object_class="VirtualHost",
+        replacement_object_id="vnp04-srv-022"
+    )
+)
+common_config_obj.config_substitutions.append(
+    data_classes.relationship_substitution(
+        obj_class="RCApplication",
+        obj_id="trg-controller",
+        rel_name="runs_on",
+        replacement_object_class="VirtualHost",
+        replacement_object_id="vnp04-srv-022"
+    )
+)
+common_config_obj.config_substitutions.append(
+    data_classes.relationship_substitution(
         obj_class="DFOApplication",
         obj_id="dfo-01",
         rel_name="runs_on",
         replacement_object_class="VirtualHost",
-        replacement_object_id="vnp04-srv-021"
+        replacement_object_id="vnp04-srv-029"
+    )
+)
+common_config_obj.config_substitutions.append(
+    data_classes.relationship_substitution(
+        obj_class="DFApplication",
+        obj_id="df-01",
+        rel_name="runs_on",
+        replacement_object_class="VirtualHost",
+        replacement_object_id="vnp04-srv-029"
+    )
+)
+common_config_obj.config_substitutions.append(
+    data_classes.relationship_substitution(
+        obj_class="TPStreamWriterApplication",
+        obj_id="tp-stream-writer",
+        rel_name="runs_on",
+        replacement_object_class="VirtualHost",
+        replacement_object_id="vnp04-srv-028"
+    )
+)
+common_config_obj.config_substitutions.append(
+    data_classes.relationship_substitution(
+        obj_class="RCApplication",
+        obj_id="df-controller",
+        rel_name="runs_on",
+        replacement_object_class="VirtualHost",
+        replacement_object_id="vnp04-srv-029"
+    )
+)
+common_config_obj.config_substitutions.append(
+    data_classes.relationship_substitution(
+        obj_class="ConnectionService",
+        obj_id="local-connection-server",
+        rel_name="runs_on",
+        replacement_object_class="VirtualHost",
+        replacement_object_id="vnp04-srv-028"
     )
 )
 common_config_obj.config_substitutions.append(
@@ -129,13 +222,6 @@ nanorc_command_list = (
 
 
 def test_nanorc_success(run_nanorc, capsys):
-    if not "np04-srv-028" in hostname:
-        with capsys.disabled():
-            print(f"\n\N{LARGE YELLOW CIRCLE} Currently, this test can only be run from np04-srv-028 (not {hostname}).")
-        pytest.skip(
-            f"This computer ({hostname}) is not the expected one for this test (np04-srv-028)"
-        )
-
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)-run_nanorc0\].*", current_test)
     if match_obj:
@@ -150,11 +236,6 @@ def test_nanorc_success(run_nanorc, capsys):
 
 
 def test_log_files(run_nanorc):
-    if not "np04-srv-028" in hostname:
-        pytest.skip(
-            f"This computer ({hostname}) is not the expected one for this test (np04-srv-028)"
-        )
-
     session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
 
     # Check that at least some of the expected log files are present
@@ -181,11 +262,6 @@ def test_log_files(run_nanorc):
 
 def test_data_files(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-
-    if not "np04-srv-028" in hostname:
-        pytest.skip(
-            f"This computer ({hostname}) is not the expected one for this test (np04-srv-028)"
-        )
 
     datafile_params = {
         "EHN1 TwoHost 1x1 Conf": {"expected_fragment_count": 4, "expected_file_count": 1},
