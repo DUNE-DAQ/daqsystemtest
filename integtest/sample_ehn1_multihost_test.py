@@ -4,7 +4,7 @@
 # - 'cd $DBT_AREA_ROOT/sourcecode/daqsystemtest/integtest'
 # - 'mkdir -p $HOME/dunedaq/scratch'
 # - 'export PYTEST_DEBUG_TEMPROOT=$HOME/dunedaq/scratch'
-# - 'pytest -s ./ehn1_twohost_test.py'
+# - 'pytest -s ./sample_ehn1_multihost_test.py'
 #
 # This test currently puts the various DAQ processes on the following computers:
 # - np04-srv-021:  ru-01, ru-controller
@@ -204,11 +204,11 @@ common_config_obj.config_substitutions.append(
     )
 )
 
-ehn1_twohost_1x1_conf = copy.deepcopy(common_config_obj)
-ehn1_twohost_1x1_conf.session = "local-1x1-config"
-ehn1_twohost_1x1_conf.connsvc_port = 0  # random
+ehn1_multihost_1x1_conf = copy.deepcopy(common_config_obj)
+ehn1_multihost_1x1_conf.session = "local-1x1-config"
+ehn1_multihost_1x1_conf.connsvc_port = 0  # random
 
-confgen_arguments = {"EHN1 TwoHost 1x1 Conf": ehn1_twohost_1x1_conf}
+confgen_arguments = {"EHN1 MultiHost 1x1 Conf": ehn1_multihost_1x1_conf}
 
 
 # The commands to run in nanorc, as a list
@@ -264,7 +264,7 @@ def test_data_files(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
 
     datafile_params = {
-        "EHN1 TwoHost 1x1 Conf": {"expected_fragment_count": 4, "expected_file_count": 1},
+        "EHN1 MultiHost 1x1 Conf": {"expected_fragment_count": 4, "expected_file_count": 1},
     }
 
     expected_file_count = 0
