@@ -396,7 +396,6 @@
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="fa-queue-rule"/>
   <ref class="QueueConnectionRule" id="tp-queue-rule"/>
-  <ref class="QueueConnectionRule" id="wib-eth-raw-data-rule"/>
   <ref class="QueueConnectionRule" id="fd-dlh-data-requests-queue-rule"/>
  </rel>
  <rel name="network_rules">
@@ -415,6 +414,7 @@
  <rel name="tp_handler" class="DataHandlerConf" id="def-tp-handler"/>
  <rel name="data_reader" class="DPDKReaderConf" id="def-emu-nic-receiver-conf"/>
  <rel name="fragment_aggregator" class="FragmentAggregatorConf" id="frag-agg-01"/>
+	<rel name="callback_desc" class="RawDataCallbackDescriptor" id="wib-eth-raw-input"/>
  <rel name="detector_connections">
   <ref class="NetworkDetectorToDaqConnection" id="conn_apa1"/>
  </rel>
@@ -436,7 +436,6 @@
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="fa-queue-rule"/>
   <ref class="QueueConnectionRule" id="tp-queue-rule"/>
-  <ref class="QueueConnectionRule" id="wib-eth-raw-data-rule"/>
   <ref class="QueueConnectionRule" id="fd-dlh-data-requests-queue-rule"/>
  </rel>
  <rel name="network_rules">
@@ -455,6 +454,7 @@
  <rel name="tp_handler" class="DataHandlerConf" id="def-tp-handler"/>
  <rel name="data_reader" class="DPDKReaderConf" id="def-emu-nic-receiver-conf"/>
  <rel name="fragment_aggregator" class="FragmentAggregatorConf" id="frag-agg-01"/>
+	<rel name="callback_desc" class="RawDataCallbackDescriptor" id="wib-eth-raw-input"/>
  <rel name="detector_connections">
   <ref class="NetworkDetectorToDaqConnection" id="conn_apa2"/>
  </rel>
@@ -477,7 +477,6 @@
  </rel>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="fa-queue-rule"/>
-  <ref class="QueueConnectionRule" id="crt-bern-callback-raw-data-rule"/>
   <ref class="QueueConnectionRule" id="fd-dlh-data-requests-queue-rule"/>
  </rel>
  <rel name="network_rules">
@@ -488,6 +487,7 @@
  <rel name="link_handler" class="DataHandlerConf" id="def-crt-bern-link-handler"/>
  <rel name="data_reader" class="SocketReaderConf" id="def-socket-reader-conf"/>
  <rel name="fragment_aggregator" class="FragmentAggregatorConf" id="frag-agg-01"/>
+	<rel name="callback_desc" class="RawDataCallbackDescriptor" id="crt-bern-raw-input"/>
  <rel name="detector_connections">
   <ref class="NetworkDetectorToDaqConnection" id="socket_crt"/>
  </rel>
