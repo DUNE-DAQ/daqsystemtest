@@ -8,6 +8,7 @@ import psutil
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -69,7 +70,7 @@ ignored_logfile_problems = {
 sufficient_disk_space = True
 actual_output_path = output_path_parameter
 if output_path_parameter == ".":
-    actual_output_path = "/tmp"
+    actual_output_path = get_pytest_tmpdir()
 disk_space = shutil.disk_usage(actual_output_path)
 total_disk_space_gb = disk_space.total / (1024 * 1024 * 1024)
 free_disk_space_gb = disk_space.free / (1024 * 1024 * 1024)
@@ -211,14 +212,16 @@ def test_nanorc_success(run_nanorc):
             f"The raw data output path ({actual_output_path}) does not have enough space to run this test."
         )
 
+    # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)\].*", current_test)
+    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
     if match_obj:
         current_test = match_obj.group(1)
     banner_line = re.sub(".", "=", current_test)
     print(banner_line)
     print(current_test)
     print(banner_line)
+
     # Check that nanorc completed correctly
     assert run_nanorc.completed_process.returncode == 0
 

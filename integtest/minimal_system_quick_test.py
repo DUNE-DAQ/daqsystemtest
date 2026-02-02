@@ -1,9 +1,12 @@
 import pytest
+import os
+import re
 import urllib.request
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+import integrationtest.opmon_metric_checks as opmon_metric_checks
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -76,6 +79,16 @@ substitution = data_classes.attribute_substitution(
     obj_class="RandomTCMakerConf",
     updates={"trigger_rate_hz": 1},
 )
+conf_dict.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TCReadoutMap",
+        obj_id = "def-random-readout",
+        updates={
+            "time_before": readout_window_time_before,
+            "time_after": readout_window_time_after,
+        },
+    )
+)
 conf_dict.config_substitutions.append(substitution)
 
 
@@ -91,6 +104,16 @@ nanorc_command_list = (
 
 
 def test_nanorc_success(run_nanorc):
+    # print the name of the current test
+    current_test = os.environ.get("PYTEST_CURRENT_TEST")
+    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
+    if match_obj:
+        current_test = match_obj.group(1)
+    banner_line = re.sub(".", "=", current_test)
+    print(banner_line)
+    print(current_test)
+    print(banner_line)
+
     # Check that nanorc completed correctly
     assert run_nanorc.completed_process.returncode == 0
 
@@ -149,4 +172,57 @@ def test_data_files(run_nanorc):
         for kdx in range(len(nontrig_fragment_check_list)):
             all_ok &= data_file_checks.check_fragment_error_flags( data_file, nontrig_fragment_check_list[kdx])
 
+    assert all_ok
+
+
+# 26-Nov-2025, KAB: added some sample opmon metric checks, for demonstration purposes
+def test_metric_files(run_nanorc):
+    print("") # Clear potential dot from pytest
+
+    # 10-Dec-2025, KAB: we have noticed that sometimes drunc transitions (or other parts of
+    # a run control session) take a little longer than expected.  This can cause extra metric
+    # samples to be created.  This section of code takes that into account by increasing
+    # the max allowed sample count by the amount of extra time taken, divided by 10
+    # (metric samples are produced every 10 seconds, by default).
+    # I've tried to make this code backward compatible by handling cases in which the
+    # daq_session_overall_time is not available (e.g. the try/catch).
+    #
+    # The expected DAQ session time is the sum of the time spent in the "running" state
+    # (specified in the run control commands above [run_duration]) plus the "wait" times in
+    # the RC commands plus the time spent in RC transitions.  With a run duration of 20 sec,
+    # the session time has been measured to be ~40 seconds, so we take the extra 20 seconds
+    # into account.
+    expected_daq_session_time = run_duration + 20
+    #
+    # To calculate the expected number of metric samples, we subtract a small-ish amount of
+    # time that the DAQ session spends in state(s) that don't produce metrics (say 3 seconds)
+    # and divide by 10, where 10 seconds is the interval between each reporting of metrics.
+    expected_metric_sample_count = int((expected_daq_session_time - 3) / 10)
+    #
+    # We'll set the maximum allowed sample count slightly higher than the expected value.
+    max_metric_sample_count = expected_metric_sample_count + 2
+    try:
+        #print(f"\nDAQ session overall time: {run_nanorc.daq_session_overall_time} seconds")
+        if run_nanorc.daq_session_overall_time is not None:
+            extra_time_taken = run_nanorc.daq_session_overall_time - expected_daq_session_time
+            if extra_time_taken > 10:
+                extra_sample_count_allowance = int(extra_time_taken / 10)
+                max_metric_sample_count += extra_sample_count_allowance
+    except AttributeError:
+        pass
+
+    session_name = run_nanorc.session_name if run_nanorc.session_name else run_nanorc.session
+    metric_data = opmon_metric_checks.collate_opmon_data_from_files(run_nanorc.opmon_files)
+
+    metric_key_list = [session_name, "df-01", "df-01-trb", "dfmodules.TRBInfo", "generated_trigger_records"]
+    all_ok = True
+    # a 20-second run will likely result in 3 metric samples (at 10-second intervals), so a range
+    # of 1..5 should always succeed
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1,
+                                                            max_count=max_metric_sample_count)
+    # the number of triggers expected in this test is based on the run duration, so we check for
+    # a reported number of generated trigger records between slightly above/below that
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list,
+                                                         min_value_sum=run_duration-3,
+                                                         max_value_sum=run_duration+3)
     assert all_ok

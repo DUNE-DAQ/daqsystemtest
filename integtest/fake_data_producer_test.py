@@ -67,14 +67,6 @@ conf_dict.config_substitutions.append(
     )
 )
 
-conf_dict.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_id="dummy-detector",
-        obj_class="DetectorConfig",
-        updates={"clock_speed_hz": 1000000000}, # FakeDataProd uses nanoseconds as its timestamps
-    )
-)
-
 doublewindow_conf = copy.deepcopy(conf_dict)
 
 doublewindow_conf.config_substitutions.append(
@@ -112,21 +104,21 @@ nanorc_command_list += (
     )
 nanorc_command_list += "scrap terminate".split()
 
-# Don't require the --frame-file option since we don't need it
-frame_file_required = False
 
 # The tests themselves
 
 
 def test_nanorc_success(run_nanorc):
+    # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)\].*", current_test)
+    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
     if match_obj:
         current_test = match_obj.group(1)
     banner_line = re.sub(".", "=", current_test)
     print(banner_line)
     print(current_test)
     print(banner_line)
+
     # Check that nanorc completed correctly
     assert run_nanorc.completed_process.returncode == 0
 

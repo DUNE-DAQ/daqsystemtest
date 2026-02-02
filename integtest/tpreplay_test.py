@@ -241,9 +241,9 @@ atexit.register(_cleanup_tmpdir)
 ### Tests
 # Run control
 def test_nanorc_success(run_nanorc):
+    # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-
-    match_obj = re.search(r".*\[(.+)-run_nanorc0\].*", current_test)
+    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
     if match_obj:
         current_test = match_obj.group(1)
     banner_line = re.sub(".", "=", current_test)
@@ -256,8 +256,6 @@ def test_nanorc_success(run_nanorc):
 
 # Log files
 def test_log_files(run_nanorc):
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-
     session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
 
     log_dir = pathlib.Path("/log")
@@ -296,20 +294,21 @@ def test_data_files(run_nanorc):
     }
 
     # Match run to checks
-    match = re.search(r'\[(.+?)-run', current_test)
-    if match:
-        key = match.group(1)
-        if key in datafile_params:
+    # 29-Dec-2025, KAB: modified this block of code to work with the addition of
+    # the process-manager-choice fixture.
+    selected_params = {}
+    for key in datafile_params.keys():
+        if key in current_test:
             selected_params = datafile_params[key]
             print("Selected params for", key, ":", selected_params)
-        else:
-            print(f"Key '{key}' not found in datafile_params.")
-    else:
-        print("Could not extract key from current_test.")
+            break
+    if not selected_params:
+        print(f"\n*** ERROR: unable to determine the datafile_params for test {current_test}.")
 
     ### Run some tests on the output data file
     all_ok = True
 
+    all_ok &= len(run_nanorc.data_files) == selected_params["n_data_files"]
     if all_ok:
         print(f"\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({selected_params['n_data_files']})")
     else:
