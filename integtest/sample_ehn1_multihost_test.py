@@ -140,6 +140,18 @@ retval = proc.returncode
 if retval != 0:
     computers_that_are_unreachable.append(needed_computer)
 
+# verify that the pytest tmpdir has been set to a multi-host (NFS) location
+pytest_tmpdir_looks_reasonable = False
+pytest_tmpdir = os.environ.get("PYTEST_DEBUG_TEMPROOT")
+if pytest_tmpdir is not None:
+    if os.path.isdir(pytest_tmpdir):
+        pytest_tmpdir_looks_reasonable = True
+    else:
+        print("")
+        print("")
+        print(f"*** WARNING: the directory referenced by PYTEST_DEBUG_TEMPROOT ({pytest_tmpdir}) does not exist!")
+        print("")
+
 common_config_obj = data_classes.drunc_config()
 common_config_obj.op_env = "test"
 common_config_obj.config_db = (
@@ -259,7 +271,7 @@ confgen_arguments = {"EHN1 MultiHost 1x1 Conf": ehn1_multihost_1x1_conf}
 
 
 # The commands to run in nanorc, as a list
-if len(computers_that_are_unreachable) == 0:
+if len(computers_that_are_unreachable) == 0 and pytest_tmpdir_looks_reasonable:
     nanorc_command_list = (
         "boot wait 2 conf start --run-number 101 wait 1 enable-triggers wait ".split()
         + [str(run_duration)]
@@ -277,6 +289,9 @@ def test_nanorc_success(run_nanorc, capsys):
             f"The following computers are needed for this test but are unreachable via ssh: {computers_that_are_unreachable}."
         )
         pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
+    if not pytest_tmpdir_looks_reasonable:
+        print("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
+        pytest.skip("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
 
     print("")
     print("*** PLEASE NOTE: this script is cleaning up stale _gunicorn_ processes on np04-srv-028...")
@@ -303,6 +318,8 @@ def test_nanorc_success(run_nanorc, capsys):
 def test_log_files(run_nanorc):
     if len(computers_that_are_unreachable) > 0:
         pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
+    if not pytest_tmpdir_looks_reasonable:
+        pytest.skip("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
 
     # Check that at least some of the expected log files are present
     session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
@@ -330,6 +347,8 @@ def test_log_files(run_nanorc):
 def test_data_files(run_nanorc):
     if len(computers_that_are_unreachable) > 0:
         pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
+    if not pytest_tmpdir_looks_reasonable:
+        pytest.skip("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
 
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     datafile_params = {
@@ -396,6 +415,8 @@ def test_data_files(run_nanorc):
 def test_tpstream_files(run_nanorc):
     if len(computers_that_are_unreachable) > 0:
         pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
+    if not pytest_tmpdir_looks_reasonable:
+        pytest.skip("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
 
     tpstream_files = run_nanorc.tpset_files
     local_expected_event_count = (
