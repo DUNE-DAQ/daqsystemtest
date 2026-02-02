@@ -278,7 +278,9 @@ def test_nanorc_success(run_nanorc, capsys):
         )
         pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
 
-    print("*** PLEASE NOTE: this script is cleaning up stale _gunicorn_ process on np04-srv-028...")
+    print("")
+    print("*** PLEASE NOTE: this script is cleaning up stale _gunicorn_ processes on np04-srv-028...")
+    print("")
     proc = subprocess.Popen(f"ssh np04-srv-028 killall gunicorn", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.communicate()
     retval = proc.returncode
@@ -404,8 +406,11 @@ def test_tpstream_files(run_nanorc):
 
     assert len(tpstream_files) == 1  # one for each run
 
+    print("")
     all_ok = True
     for idx in range(len(tpstream_files)):
+        base_filename = os.path.basename(tpstream_files[idx])
+        print(f"Checking {base_filename}...")
         data_file = data_file_checks.DataFile(tpstream_files[idx])
         # all_ok &= data_file_checks.sanity_check(data_file) # Sanity check doesn't work for stream files
         all_ok &= data_file_checks.check_file_attributes(data_file)
