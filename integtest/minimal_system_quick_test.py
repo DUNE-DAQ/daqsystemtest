@@ -18,7 +18,7 @@ readout_window_time_before = 1000
 readout_window_time_after = 1001
 
 # Default values for validation parameters
-expected_number_of_data_files = 1
+expected_number_of_data_files = 100
 check_for_logfile_errors = True
 expected_event_count = run_duration
 expected_event_count_tolerance = 2
