@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="49" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20251105T144619"/>
+<info name="" type="" num-of-items="49" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260202T153912"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -117,9 +117,6 @@
   <ref class="ActionPlan" id="crt-readout-start"/>
   <ref class="ActionPlan" id="crt-readout-stop"/>
  </rel>
- <rel name="queue_rules">
-  <ref class="QueueConnectionRule" id="crt-bern-raw-data-rule"/>
- </rel>
  <rel name="data_writers">
   <ref class="SocketWriterConf" id="def-socket-writer-conf"/>
  </rel>
@@ -127,6 +124,7 @@
  <rel name="detector_connections">
   <ref class="NetworkDetectorToDaqConnection" id="socket_crt"/>
  </rel>
+ <rel name="callback_desc" class="RawDataCallbackDescriptor" id="crt-bern-raw-input"/>
 </obj>
 
 <obj class="DPDKPortConfiguration" id="dpdk_e810_conf">
@@ -414,10 +412,10 @@
  <rel name="tp_handler" class="DataHandlerConf" id="def-tp-handler"/>
  <rel name="data_reader" class="DPDKReaderConf" id="def-emu-nic-receiver-conf"/>
  <rel name="fragment_aggregator" class="FragmentAggregatorConf" id="frag-agg-01"/>
-	<rel name="callback_desc" class="RawDataCallbackDescriptor" id="wib-eth-raw-input"/>
  <rel name="detector_connections">
   <ref class="NetworkDetectorToDaqConnection" id="conn_apa1"/>
  </rel>
+ <rel name="callback_desc" class="RawDataCallbackDescriptor" id="wib-eth-raw-input"/>
 </obj>
 
 <obj class="ReadoutApplication" id="ru-02">
@@ -454,10 +452,10 @@
  <rel name="tp_handler" class="DataHandlerConf" id="def-tp-handler"/>
  <rel name="data_reader" class="DPDKReaderConf" id="def-emu-nic-receiver-conf"/>
  <rel name="fragment_aggregator" class="FragmentAggregatorConf" id="frag-agg-01"/>
-	<rel name="callback_desc" class="RawDataCallbackDescriptor" id="wib-eth-raw-input"/>
  <rel name="detector_connections">
   <ref class="NetworkDetectorToDaqConnection" id="conn_apa2"/>
  </rel>
+ <rel name="callback_desc" class="RawDataCallbackDescriptor" id="wib-eth-raw-input"/>
 </obj>
 
 <obj class="ReadoutApplication" id="socket-ru-01">
@@ -487,10 +485,10 @@
  <rel name="link_handler" class="DataHandlerConf" id="def-crt-bern-link-handler"/>
  <rel name="data_reader" class="SocketReaderConf" id="def-socket-reader-conf"/>
  <rel name="fragment_aggregator" class="FragmentAggregatorConf" id="frag-agg-01"/>
-	<rel name="callback_desc" class="RawDataCallbackDescriptor" id="crt-bern-raw-input"/>
  <rel name="detector_connections">
   <ref class="NetworkDetectorToDaqConnection" id="socket_crt"/>
  </rel>
+ <rel name="callback_desc" class="RawDataCallbackDescriptor" id="crt-bern-raw-input"/>
 </obj>
 
 <obj class="RoHwConfig" id="rohw-1">

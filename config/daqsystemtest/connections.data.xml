@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="82" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20251104T211728"/>
+<info name="" type="" num-of-items="70" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260202T153912"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -376,11 +376,40 @@
  <attr name="data_type" type="string" val="TriggerRecord"/>
 </obj>
 
-
 <obj class="RCBroadcaster" id="broadcaster-root">
  <attr name="type" type="enum" val="kafka"/>
  <attr name="address" type="string" val="monkafka.cern.ch:30092"/>
  <attr name="publish_timeout" type="u32" val="2"/>
+</obj>
+
+<obj class="RawDataCallbackDescriptor" id="crt-bern-raw-input">
+ <attr name="uid_base" type="string" val="raw_input_"/>
+ <attr name="data_type" type="string" val="CRTBernFrame"/>
+</obj>
+
+<obj class="RawDataCallbackDescriptor" id="crt-grenoble-raw-input">
+ <attr name="uid_base" type="string" val="raw_input_"/>
+ <attr name="data_type" type="string" val="CRTGrenobleFrame"/>
+</obj>
+
+<obj class="RawDataCallbackDescriptor" id="pds-raw-input">
+ <attr name="uid_base" type="string" val="raw_input_"/>
+ <attr name="data_type" type="string" val="PDSFrame"/>
+</obj>
+
+<obj class="RawDataCallbackDescriptor" id="pds-stream-raw-input">
+ <attr name="uid_base" type="string" val="raw_input_"/>
+ <attr name="data_type" type="string" val="PDSStreamFrame"/>
+</obj>
+
+<obj class="RawDataCallbackDescriptor" id="tde-raw-input">
+ <attr name="uid_base" type="string" val="raw_input_"/>
+ <attr name="data_type" type="string" val="TDEEthFrame"/>
+</obj>
+
+<obj class="RawDataCallbackDescriptor" id="wib-eth-raw-input">
+ <attr name="uid_base" type="string" val="raw_input_"/>
+ <attr name="data_type" type="string" val="WIBEthFrame"/>
 </obj>
 
 <obj class="Service" id="HSIEvents">
@@ -442,39 +471,5 @@
  <attr name="protocol" type="string" val="tcp"/>
  <attr name="port" type="u16" val="0"/>
 </obj>
-
-
-
-
-	<obj class="RawDataCallbackDescriptor" id="crt-bern-raw-input">
-		<attr name="uid_base" type="string" val="raw_input_"/>
-		<attr name="data_type" type="string" val="CRTBernFrame"/>
-	</obj>
-
-	<obj class="RawDataCallbackDescriptor" id="crt-grenoble-raw-input">
-		<attr name="uid_base" type="string" val="raw_input_"/>
-		<attr name="data_type" type="string" val="CRTGrenobleFrame"/>
-	</obj>
-
-	<obj class="RawDataCallbackDescriptor" id="pds-raw-input">
-		<attr name="uid_base" type="string" val="raw_input_"/>
-		<attr name="data_type" type="string" val="PDSFrame"/>
-	</obj>
-
-	<obj class="RawDataCallbackDescriptor" id="pds-stream-raw-input">
-		<attr name="uid_base" type="string" val="raw_input_"/>
-		<attr name="data_type" type="string" val="PDSStreamFrame"/>
-	</obj>
-
-	<obj class="RawDataCallbackDescriptor" id="tde-raw-input">
-		<attr name="uid_base" type="string" val="raw_input_"/>
-		<attr name="data_type" type="string" val="TDEEthFrame"/>
-	</obj>
-
-	<obj class="RawDataCallbackDescriptor" id="wib-eth-raw-input">
-		<attr name="uid_base" type="string" val="raw_input_"/>
-		<attr name="data_type" type="string" val="WIBEthFrame"/>
-	</obj>
-
 
 </oks-data>
