@@ -272,6 +272,8 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                                         new_dir="${pytest_rootdir}/failed-${pytest_basedir}"
                                         echo ""
                                         echo -e "\U1F535 Copying the files from failed test ${pytest_tmpdir} to ${new_dir}. \U1F535"
+                                        echo -e "\U1F535 Please note that copied directories from failed tests typically get cleaned up after 26 hours, \U1F535"
+                                        echo -e "\U1F535 or when 10 newer failures happen, whichever comes first. \U1F535"
                                         cp -pR "${pytest_tmpdir}" "${new_dir}"
                                         if [[ $? == 0 ]]; then
                                             was_successfully_copied="yes"
@@ -304,6 +306,7 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                             test_dirs_to_remove+=(${test_dir})
                         done
                         if [[ ${#test_dirs_to_remove[@]} -gt 0 ]];then
+                            echo ""
                             echo -e "\U1F535 Removing ${#test_dirs_to_remove[@]} old failed test directory(ies). \U1F535"
                             for test_dir in "${test_dirs_to_remove[@]}"; do
                                 if [[ -e "${test_dir}" ]]; then
