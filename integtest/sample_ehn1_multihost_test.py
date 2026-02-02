@@ -2,8 +2,8 @@
 # - Log into any np04-srv-XYZ computer and set up a software area with the
 #     appropriate branch of daqsystemtest.
 # - 'cd $DBT_AREA_ROOT/sourcecode/daqsystemtest/integtest'
-# - 'mkdir -p $HOME/dunedaq/scratch'
-# - 'export PYTEST_DEBUG_TEMPROOT=$HOME/dunedaq/scratch'
+# - 'mkdir -p $HOME/dunedaq/scratch'  # only need to do this once per user account
+# - 'export PYTEST_DEBUG_TEMPROOT=$HOME/dunedaq/scratch'  # once per login/shell
 # - 'pytest -s ./sample_ehn1_multihost_test.py'
 #
 # This test currently puts the various DAQ processes on the following computers:
@@ -17,6 +17,14 @@
 # Dataflow apps was just to show that it works.  And, running the ConnectivityServer
 # on a computer other than "localhost" was also to show that it can be done.
 #
+# To enable the capturing of TRACE messages on all of the computers...
+# - 'export TRACE_FILE=/tmp/pytest-of-${USER}/log/${USER}_dunedaq.trace'  # once per login/shell
+# - 'mkdir -p /tmp/pytest-of-${USER}/log'  # only need to do this once per computer
+# - 'ssh np04-srv-021 "mkdir -p /tmp/pytest-of-${USER}/log"'  # only once per user
+# - 'ssh np04-srv-022 "mkdir -p /tmp/pytest-of-${USER}/log"'  # only once per user
+# - 'ssh np04-srv-028 "mkdir -p /tmp/pytest-of-${USER}/log"'  # only once per user
+# - 'ssh np04-srv-029 "mkdir -p /tmp/pytest-of-${USER}/log"'  # only once per user
+# - 'pytest -s ./sample_ehn1_multihost_test.py'
 
 import pytest
 import os
@@ -47,6 +55,20 @@ wibeth_frag_params = {
     "expected_fragment_count": 0,  # determined later
     "min_size_bytes": 7272,
     "max_size_bytes": 28872,
+}
+wibeth_tpset_params = {
+    "fragment_type_description": "TP Stream",
+    "fragment_type": "Trigger_Primitive",
+    "expected_fragment_count": 1 * 3,  # number of readout apps times 3 planes per APA/CRP
+    "frag_counts_by_record_ordinal": {"first": {"min_count": 1, "max_count": 1 * 3},
+                                      "default": {"min_count": 1 * 3, "max_count": 1 * 3} },
+    "min_size_bytes": 72,
+    "max_size_bytes": 120000,
+    "debug_mask": 0x0,
+    "frag_sizes_by_record_ordinal": {  "first": {"min_size_bytes":     96, "max_size_bytes": 240000},
+                                      "second": {"min_size_bytes":     96, "max_size_bytes": 240000},
+                                        "last": {"min_size_bytes":     96, "max_size_bytes": 240000},
+                                     "default": {"min_size_bytes": 170000, "max_size_bytes": 230000} }
 }
 # sizes: 128 is for one TC with zero TAs inside it (72+56)
 #        208 is for one TC with one TA inside it (72+56+80)
@@ -90,8 +112,33 @@ ignored_logfile_problems = {
     ]
 }
 
-# The arguments to pass to the config generator, excluding the json
-# output directory (the test framework handles that)
+# Verify that we can SSH to the 4 computers needed for this test
+import subprocess
+computers_that_are_unreachable = []
+needed_computer="np04-srv-021"
+proc = subprocess.Popen(f"ssh {needed_computer} date", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+proc.communicate()
+retval = proc.returncode
+if retval != 0:
+    computers_that_are_unreachable.append(needed_computer)
+needed_computer="np04-srv-022"
+proc = subprocess.Popen(f"ssh {needed_computer} date", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+proc.communicate()
+retval = proc.returncode
+if retval != 0:
+    computers_that_are_unreachable.append(needed_computer)
+needed_computer="np04-srv-028"
+proc = subprocess.Popen(f"ssh {needed_computer} date", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+proc.communicate()
+retval = proc.returncode
+if retval != 0:
+    computers_that_are_unreachable.append(needed_computer)
+needed_computer="np04-srv-029"
+proc = subprocess.Popen(f"ssh {needed_computer} date", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+proc.communicate()
+retval = proc.returncode
+if retval != 0:
+    computers_that_are_unreachable.append(needed_computer)
 
 common_config_obj = data_classes.drunc_config()
 common_config_obj.op_env = "test"
@@ -212,16 +259,32 @@ confgen_arguments = {"EHN1 MultiHost 1x1 Conf": ehn1_multihost_1x1_conf}
 
 
 # The commands to run in nanorc, as a list
-nanorc_command_list = (
-    "boot wait 2 conf start --run-number 101 wait 1 enable-triggers wait ".split()
-    + [str(run_duration)]
-    + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop scrap terminate".split()
-)
+if len(computers_that_are_unreachable) == 0:
+    nanorc_command_list = (
+        "boot wait 2 conf start --run-number 101 wait 1 enable-triggers wait ".split()
+        + [str(run_duration)]
+        + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop scrap terminate".split()
+    )
+else:
+    nanorc_command_list = ["wait", "1"]
 
 # The tests themselves
 
 
 def test_nanorc_success(run_nanorc, capsys):
+    if len(computers_that_are_unreachable) > 0:
+        print(
+            f"The following computers are needed for this test but are unreachable via ssh: {computers_that_are_unreachable}."
+        )
+        pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
+
+    print("*** PLEASE NOTE: this script is cleaning up stale _gunicorn_ process on np04-srv-028...")
+    proc = subprocess.Popen(f"ssh np04-srv-028 killall gunicorn", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc.communicate()
+    retval = proc.returncode
+    if retval != 0:
+        print("*** WARNING: the cleanup of stale _gunicorn_ process on np04-srv-028 did not succeed...")
+
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)-run_nanorc0\].*", current_test)
     if match_obj:
@@ -236,9 +299,11 @@ def test_nanorc_success(run_nanorc, capsys):
 
 
 def test_log_files(run_nanorc):
-    session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
+    if len(computers_that_are_unreachable) > 0:
+        pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
 
     # Check that at least some of the expected log files are present
+    session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
     assert any(
         f"{session_name}_df-01" in str(logname)
         for logname in run_nanorc.log_files
@@ -261,8 +326,10 @@ def test_log_files(run_nanorc):
 
 
 def test_data_files(run_nanorc):
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
+    if len(computers_that_are_unreachable) > 0:
+        pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
 
+    current_test = os.environ.get("PYTEST_CURRENT_TEST")
     datafile_params = {
         "EHN1 MultiHost 1x1 Conf": {"expected_fragment_count": 4, "expected_file_count": 1},
     }
@@ -321,4 +388,35 @@ def test_data_files(run_nanorc):
                 data_file, fragment_check_list[jdx]
             )
 
+    assert all_ok
+
+
+def test_tpstream_files(run_nanorc):
+    if len(computers_that_are_unreachable) > 0:
+        pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
+
+    tpstream_files = run_nanorc.tpset_files
+    local_expected_event_count = (
+        run_duration + 8
+    )  # TPStreamWriterModule is currently configured to write at 1 Hz, addl TimeSlices expected because of wait times in drunc command list
+    local_event_count_tolerance = local_expected_event_count / 10
+    fragment_check_list = [wibeth_tpset_params]  # WIBEth
+
+    assert len(tpstream_files) == 1  # one for each run
+
+    all_ok = True
+    for idx in range(len(tpstream_files)):
+        data_file = data_file_checks.DataFile(tpstream_files[idx])
+        # all_ok &= data_file_checks.sanity_check(data_file) # Sanity check doesn't work for stream files
+        all_ok &= data_file_checks.check_file_attributes(data_file)
+        all_ok &= data_file_checks.check_event_count(
+            data_file, local_expected_event_count, local_event_count_tolerance
+        )
+        for jdx in range(len(fragment_check_list)):
+            all_ok &= data_file_checks.check_fragment_count(
+                data_file, fragment_check_list[jdx]
+            )
+            all_ok &= data_file_checks.check_fragment_sizes(
+                data_file, fragment_check_list[jdx]
+            )
     assert all_ok
