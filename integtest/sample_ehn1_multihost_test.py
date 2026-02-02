@@ -285,12 +285,13 @@ else:
 
 def test_nanorc_success(run_nanorc, capsys):
     if len(computers_that_are_unreachable) > 0:
-        print(
-            f"The following computers are needed for this test but are unreachable via ssh: {computers_that_are_unreachable}."
-        )
+        with capsys.disabled():
+            print(f"\n\n\N{LARGE YELLOW CIRCLE} The following computers are needed for this test but are unreachable from this computer ({hostname}) via ssh:")
+            print(f"      {computers_that_are_unreachable}")
         pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
     if not pytest_tmpdir_looks_reasonable:
-        print("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
+        with capsys.disabled():
+            print("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
         pytest.skip("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
 
     print("")
