@@ -27,8 +27,8 @@ if [[ $# -eq 0 ]] || [[ "$1" != "local" ]]; then
     base_release_dir="${release_dir}/../${base_release_name}"
 
     # look up the paths of all of the repositories in the core and detector-specific categories
-    det_rel_repo_paths=(`ls -1d ${release_dir}/spack-installation/opt/spack/*almalinux9*/gcc-*/*/*/integtest/*_test.py`)
-    base_rel_repo_paths=(`ls -1d ${base_release_dir}/spack-installation/opt/spack/*almalinux9*/gcc-*/*/*/integtest/*_test.py`)
+    det_rel_repo_paths=(`ls -1d ${release_dir}/spack-installation/opt/spack/*linux*/gcc-*/*/*/integtest/*_test.py`)
+    base_rel_repo_paths=(`ls -1d ${base_release_dir}/spack-installation/opt/spack/*linux*/gcc-*/*/*/integtest/*_test.py`)
     all_repo_paths=("${det_rel_repo_paths[@]}" "${base_rel_repo_paths[@]}")
 else
     echo "Looking for _local_ repositories with integtests in them..." >&2
