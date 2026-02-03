@@ -2,13 +2,13 @@ import pytest
 import os
 import re
 import copy
-import math
 import urllib.request
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
 import integrationtest.resource_validation as resource_validation
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -93,16 +93,43 @@ ignored_logfile_problems = {
     ],
 }
 
+# Introduction: the basic pattern used in the DUNE DAQ integration tests is to set up and
+# run one or more instances of the DAQ system ("DAQ sessions") and then verify that the
+# results of each test run (which often use emulated data sources) match what is expected,
+# given the configuration(s) of the DAQ system that the test writer provided.
+#
+# In all of this, the word "test" is a bit over-loaded.
+# * The pytest framework refers to the functions that are run to check the results of the
+#   data-taking as "tests". We tend to call those "validations" or "checks".  When we
+#   see the summary at the end of an integtest report that 'N tests were run', that
+#   means N validation functions were run by the pytest framework to check the results
+#   of the data taking in various ways.
+# * Distinct from that, we tend to use the word "test" to refer to one of our integtests.
+#   That is, the set of DAQ sessions and validation checks that are in one of these *_test.py
+#   files.
+#
+# In each of these integtest files, there are two categories of information that are required
+# to be provided to our integtest infrastructure and one optional type. These are used to
+# set up and loop through the desired DAQ sessions. The categories are the following:
+# 1. the configuration of the DAQ system (system topology, application parameters, etc.)
+# 2. the list of process managers that should be used [optional]
+# 3. the list of run control commands that should be executed
+# More information is provided about each of these below [coming soon!].
+#
+
 # Determine if this computer has enough resources for these tests
 resval = resource_validation.ResourceValidator()
 resval.require_cpu_count(20)  # two for each data source plus 8 more for everything else
 resval.require_free_memory_gb(20)  # double what we observe being used ('free -h')
 resval.require_total_memory_gb(40)  # double what we need; trying to be kind to others
-actual_output_path = "/tmp"
+actual_output_path = get_pytest_tmpdir()
 resval.require_free_disk_space_gb(actual_output_path, 1)  # more than what we observe
 resval_debug_string = resval.get_debug_string()
 print(f"{resval_debug_string}")
 
+# 29-Dec-2025, KAB: The following comment about three variables is out-of-date.
+# It will be replaced soon, and the comment block above is a start on that.
+#
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
 # to run the config generation and nanorc
@@ -153,6 +180,7 @@ confgen_arguments = {
     "WIBEth_System": conf_dict,
     "Software_TPG_System": swtpg_conf,
 }
+
 # When the computer doesn't have enough resources, we only need to run one configuration.
 # This is enough to provide feedback to the user about the lack of resources without spending
 # the time to run through all of the configurations that exist in this test.
@@ -168,6 +196,12 @@ if not resval.this_computer_has_sufficient_resources:
     confgen_arguments = {
         all_encompassing_dummy_key: first_config
     }
+
+# 29-Dec-2025, KAB: added sample process manager choices.
+process_manager_choices = {
+    "StandAloneSSH_PM" : {"pm_type": "ssh-standalone"},
+#   "ParamikoClient_PM" : {"pm_type": "ssh-standalone-paramiko-client"},
+}
 
 # The commands to run in nanorc, as a list
 if resval.this_computer_has_sufficient_resources:
@@ -202,14 +236,16 @@ def test_nanorc_success(run_nanorc, capsys):
         resval_summary_string = resval.get_insufficient_resources_summary()
         pytest.skip(f"{resval_summary_string}")
 
+    # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)-run_nanorc0\].*", current_test)
+    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
     if match_obj:
         current_test = match_obj.group(1)
     banner_line = re.sub(".", "=", current_test)
     print(banner_line)
     print(current_test)
     print(banner_line)
+
     # Check that nanorc completed correctly
     assert run_nanorc.completed_process.returncode == 0
 

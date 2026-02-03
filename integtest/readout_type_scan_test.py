@@ -8,6 +8,7 @@ import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
 import integrationtest.resource_validation as resource_validation
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -144,7 +145,7 @@ resval = resource_validation.ResourceValidator()
 resval.require_cpu_count(10)  # three for each data source (incl TPG) plus 4 more for everything else
 resval.require_free_memory_gb(8)  # double what we observe being used ('free -h')
 resval.require_total_memory_gb(16)  # double what we need; trying to be kind to others
-actual_output_path = "/tmp"
+actual_output_path = get_pytest_tmpdir()
 resval.require_free_disk_space_gb(actual_output_path, 1)  # more than what we observe
 resval_debug_string = resval.get_debug_string()
 print(f"{resval_debug_string}")
@@ -335,8 +336,9 @@ def test_nanorc_success(run_nanorc, capsys):
         resval_summary_string = resval.get_insufficient_resources_summary()
         pytest.skip(f"{resval_summary_string}")
 
+    # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)-run_nanorc0\].*", current_test)
+    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
     if match_obj:
         current_test = match_obj.group(1)
     banner_line = re.sub(".", "=", current_test)

@@ -7,11 +7,10 @@
 # In addition, the raw data files that are produced are removed at the end of the test
 # so that they don't fill up the available space.
 # *** If you are running on a computer that does not have sufficient space in /tmp, and you would
-#     like to instead use a directory on a disk that *does* have sufficient space, you can modify
-#     the value of the "output_path_parameter" variable below.  For example,
-#     'output_path_parameter="/data"' would write the raw data files to the "/data" directory
-#     instead of "/tmp/pytest-of-${USER}/pytest-current/runcurrent".  (The test will clean up
-#     the large data files that are produced independent of which output directory is used.)
+#     like to instead use a directory on a disk that *does* have sufficient space, you can specify
+#     a non-standard pytest output directory using the "--tmpdir <dir_path>" to the
+#     dunedaq_integtest_bundle.sh script.  (The test will clean up the large data files that are
+#     produced independent of which output directory is used.)
 #
 import pytest
 import os
@@ -24,6 +23,7 @@ import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
 import integrationtest.resource_validation as resource_validation
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -82,7 +82,7 @@ resval = resource_validation.ResourceValidator()
 resval.require_cpu_count(30)  # two for each data source plus 6 more for everything else
 resval.require_free_memory_gb(85)  # 50% more than what we observe being used ('free -h')
 resval.require_total_memory_gb(115)  # double what we need; trying to be kind to others
-actual_output_path = "/tmp"
+actual_output_path = get_pytest_tmpdir()
 resval.require_free_disk_space_gb(actual_output_path, 25)  # 25% more than what we need
 resval.require_total_disk_space_gb(actual_output_path, 40)  # double what we need
 resval_debug_string = resval.get_debug_string()
@@ -203,14 +203,16 @@ def test_nanorc_success(run_nanorc, capsys):
         resval_summary_string = resval.get_insufficient_resources_summary()
         pytest.skip(f"{resval_summary_string}")
 
+    # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)-run_nanorc0\].*", current_test)
+    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
     if match_obj:
         current_test = match_obj.group(1)
     banner_line = re.sub(".", "=", current_test)
     print(banner_line)
     print(current_test)
     print(banner_line)
+
     # Check that nanorc completed correctly
     assert run_nanorc.completed_process.returncode == 0
 
