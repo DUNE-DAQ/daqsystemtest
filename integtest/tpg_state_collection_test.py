@@ -7,6 +7,8 @@ import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
 import integrationtest.opmon_metric_checks as opmon_metric_checks
+import integrationtest.resource_validation as resource_validation
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -106,6 +108,16 @@ ignored_logfile_problems = {
     ],
 }
 
+# Determine if this computer has enough resources for these tests
+resval = resource_validation.ResourceValidator()
+resval.require_cpu_count(16)  # 3 for each data source (incl TPG) plus 2 more for everything else; overall safety factor of 2
+resval.require_free_memory_gb(10)  # double what we observe being used ('free -h')
+resval.require_total_memory_gb(20)  # 4x what we need; trying to be kind to others
+actual_output_path = get_pytest_tmpdir()
+resval.require_free_disk_space_gb(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resval.get_debug_string()
+print(f"{resval_debug_string}")
+
 object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 
 conf_dict = data_classes.drunc_config()
@@ -189,21 +201,31 @@ conf_dict.config_substitutions.append(
 confgen_arguments = {"Software_TPG_System": conf_dict}
 
 # The commands to run in nanorc, as a list
-nanorc_command_list = (
-    "boot conf wait 5".split()
-    + "start --run-number 101 wait 1 enable-triggers wait ".split()
-    + [str(run_duration)]
-    + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop ".split()
-    + "start --run-number 102 wait 1 enable-triggers wait ".split()
-    + [str(run_duration)]
-    + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop ".split()
-    + " scrap terminate".split()
-)
+if resval.this_computer_has_sufficient_resources:
+    nanorc_command_list = (
+        "boot conf wait 5".split()
+        + "start --run-number 101 wait 1 enable-triggers wait ".split()
+        + [str(run_duration)]
+        + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop ".split()
+        + "start --run-number 102 wait 1 enable-triggers wait ".split()
+        + [str(run_duration)]
+        + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop ".split()
+        + " scrap terminate".split()
+    )
+else:
+    nanorc_command_list = ["wait", "1"]
 
 # The tests themselves
 
 
-def test_nanorc_success(run_nanorc):
+def test_nanorc_success(run_nanorc, capsys):
+    if not resval.this_computer_has_sufficient_resources:
+        resval_report_string = resval.get_insufficient_resources_report()
+        with capsys.disabled():
+            print(f"\n\N{LARGE YELLOW CIRCLE} {resval_report_string}")
+        resval_summary_string = resval.get_insufficient_resources_summary()
+        pytest.skip(f"{resval_summary_string}")
+
     # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
@@ -219,6 +241,10 @@ def test_nanorc_success(run_nanorc):
 
 
 def test_log_files(run_nanorc):
+    if not resval.this_computer_has_sufficient_resources:
+        resval_summary_string = resval.get_insufficient_resources_summary()
+        pytest.skip(f"\n{resval_summary_string}")
+
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
@@ -227,6 +253,10 @@ def test_log_files(run_nanorc):
 
 
 def test_data_files(run_nanorc):
+    if not resval.this_computer_has_sufficient_resources:
+        resval_summary_string = resval.get_insufficient_resources_summary()
+        pytest.skip(f"\n{resval_summary_string}")
+
     local_expected_event_count = expected_event_count
     local_event_count_tolerance = expected_event_count_tolerance
     low_number_of_files = expected_number_of_data_files
@@ -275,6 +305,10 @@ def test_data_files(run_nanorc):
 
 
 def test_tpstream_files(run_nanorc):
+    if not resval.this_computer_has_sufficient_resources:
+        resval_summary_string = resval.get_insufficient_resources_summary()
+        pytest.skip(f"\n{resval_summary_string}")
+
     tpstream_files = run_nanorc.tpset_files
     local_expected_event_count = (
         run_duration + 8
@@ -305,6 +339,10 @@ def test_tpstream_files(run_nanorc):
 # 26-Nov-2025, KAB: added checking of opmon metrics to verify that the ones that are
 # specifically enabled in this test work as expected.
 def test_metric_files(run_nanorc):
+    if not resval.this_computer_has_sufficient_resources:
+        resval_summary_string = resval.get_insufficient_resources_summary()
+        pytest.skip(f"\n{resval_summary_string}")
+
     print("") # Clear potential dot from pytest
 
     session_name = run_nanorc.session_name if run_nanorc.session_name else run_nanorc.session

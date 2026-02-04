@@ -9,6 +9,8 @@ import pathlib
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+import integrationtest.resource_validation as resource_validation
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -75,6 +77,16 @@ ignored_logfile_problems = {
     ]
 }
 
+# Determine if this computer has enough resources for these tests
+resval = resource_validation.ResourceValidator()
+resval.require_cpu_count(60)  # 3 for each data source (incl TPG) plus 6 more for everything else; overall safety factor of 2
+resval.require_free_memory_gb(24)  # double what we observe being used ('free -h')
+resval.require_total_memory_gb(48)  # 4x what we need; trying to be kind to others
+actual_output_path = get_pytest_tmpdir()
+resval.require_free_disk_space_gb(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resval.get_debug_string()
+print(f"{resval_debug_string}")
+
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 
@@ -126,18 +138,43 @@ else:
         "Local 2x3 Conf": twobythree_local_conf,
     }
 
+# When the computer doesn't have enough resources, we only need to run one configuration.
+# This is enough to provide feedback to the user about the lack of resources without spending
+# the time to run through all of the configurations that exist in this test.
+# It doesn't matter which configuration gets used because it doesn't really get executed,
+# so we just pick the first one.
+# The confgen_arguments key is a little important, though. We would like the pytest to still
+# provide useful feedback to the user even when the "-k" option is specified, so we combine
+# all of the existing keys into the new (dummy) one so that any valid "-k <config_name>"
+# selection will provide the desired feedback to the user about the insuffiicent resources.
+if not resval.this_computer_has_sufficient_resources:
+    all_encompassing_dummy_key = ",".join(confgen_arguments.keys())
+    first_config = next(iter(confgen_arguments.values()))
+    confgen_arguments = {
+        all_encompassing_dummy_key: first_config
+    }
 
 # The commands to run in nanorc, as a list
-nanorc_command_list = (
-    "boot wait 2 conf start --run-number 101 wait 1 enable-triggers wait ".split()
-    + [str(run_duration)]
-    + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop scrap terminate".split()
-)
+if resval.this_computer_has_sufficient_resources:
+    nanorc_command_list = (
+        "boot wait 2 conf start --run-number 101 wait 1 enable-triggers wait ".split()
+        + [str(run_duration)]
+        + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop scrap terminate".split()
+    )
+else:
+    nanorc_command_list = ["wait", "1"]
 
 # The tests themselves
 
 
-def test_nanorc_success(run_nanorc):
+def test_nanorc_success(run_nanorc, capsys):
+    if not resval.this_computer_has_sufficient_resources:
+        resval_report_string = resval.get_insufficient_resources_report()
+        with capsys.disabled():
+            print(f"\n\N{LARGE YELLOW CIRCLE} {resval_report_string}")
+        resval_summary_string = resval.get_insufficient_resources_summary()
+        pytest.skip(f"{resval_summary_string}")
+
     # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
@@ -158,15 +195,17 @@ def test_nanorc_success(run_nanorc):
 
 
 def test_log_files(run_nanorc):
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
+    if not resval.this_computer_has_sufficient_resources:
+        resval_summary_string = resval.get_insufficient_resources_summary()
+        pytest.skip(f"\n{resval_summary_string}")
 
+    current_test = os.environ.get("PYTEST_CURRENT_TEST")
     if not host_is_at_ehn1(hostname) and "EHN1" in current_test:
         pytest.skip(
             f"This computer ({hostname}) is not at EHN1, not running EHN1 sessions"
         )
 
     session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
-
     if host_is_at_ehn1(hostname) and "EHN1" in current_test:
         log_dir = pathlib.Path("/log")
         run_nanorc.log_files += list(log_dir.glob(f"log_*_{session_name}*.txt"))
@@ -194,8 +233,11 @@ def test_log_files(run_nanorc):
 
 
 def test_data_files(run_nanorc):
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
+    if not resval.this_computer_has_sufficient_resources:
+        resval_summary_string = resval.get_insufficient_resources_summary()
+        pytest.skip(f"\n{resval_summary_string}")
 
+    current_test = os.environ.get("PYTEST_CURRENT_TEST")
     if not host_is_at_ehn1(hostname) and "EHN1" in current_test:
         pytest.skip(
             f"This computer ({hostname}) is not at EHN1, not running EHN1 sessions"

@@ -9,7 +9,7 @@
 # *** If you are running on a computer that does not have sufficient space in /tmp, and you would
 #     like to instead use a directory on a disk that *does* have sufficient space, you can specify
 #     a non-standard pytest output directory using the "--tmpdir <dir_path>" to the
-#     dunedaq_integtest_bundle.sh script.  (The test will clean up the large data files that are
+#     dunedaq_integtest_bundle.sh script.  (This test will clean up the large data files that are
 #     produced independent of which output directory is used.)
 #
 import pytest
@@ -79,9 +79,9 @@ ignored_logfile_problems = {
 
 # Determine if this computer has enough resources for these tests
 resval = resource_validation.ResourceValidator()
-resval.require_cpu_count(30)  # two for each data source plus 6 more for everything else
-resval.require_free_memory_gb(85)  # 50% more than what we observe being used ('free -h')
-resval.require_total_memory_gb(115)  # double what we need; trying to be kind to others
+resval.require_cpu_count(60)  # 2 for each data source plus 6 more for everything else; overall safety factor of 2
+resval.require_free_memory_gb(87)  # 50% more than what we observe being used ('free -h')
+resval.require_total_memory_gb(116)  # double what we need; trying to be kind to others
 actual_output_path = get_pytest_tmpdir()
 resval.require_free_disk_space_gb(actual_output_path, 25)  # 25% more than what we need
 resval.require_total_disk_space_gb(actual_output_path, 40)  # double what we need

@@ -96,9 +96,9 @@ ignored_logfile_problems = {
 
 # Determine if this computer has enough resources for these tests
 resval = resource_validation.ResourceValidator()
-resval.require_cpu_count(24)  # two for each data source plus 6 more for everything else
-resval.require_free_memory_gb(30)  # double what we observe being used ('free -h')
-resval.require_total_memory_gb(60)  # double what we need; trying to be kind to others
+resval.require_cpu_count(60)  # 3 for each data source (incl TPG) plus 3 more for everything else; overall safety factor of 2
+resval.require_free_memory_gb(32)  # double what we observe being used ('free -h')
+resval.require_total_memory_gb(64)  # 4x what we need; trying to be kind to others
 actual_output_path = get_pytest_tmpdir()
 resval.require_free_disk_space_gb(actual_output_path, 1)  # more than what we observe
 resval_debug_string = resval.get_debug_string()
