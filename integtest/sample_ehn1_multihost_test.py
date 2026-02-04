@@ -112,33 +112,46 @@ ignored_logfile_problems = {
     ]
 }
 
-# Verify that we can SSH to the 4 computers needed for this test
+# Set up the software environment on each of the 4 computers needed for this test.
+# This serves two purposes: it verifies that we can ssh to
+# those computers (so we know that we are running at EHN1, etc.), and it pre-loads
+# the software release from CVMFS onto all of those computers (so the startup of
+# DAQ apps such as the ConnectivityServer don't take a long time initially).
 import subprocess
 computers_that_are_unreachable = []
-needed_computer="np04-srv-021"
-proc = subprocess.Popen(f"ssh {needed_computer} date", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-proc.communicate()
-retval = proc.returncode
-if retval != 0:
-    computers_that_are_unreachable.append(needed_computer)
-needed_computer="np04-srv-022"
-proc = subprocess.Popen(f"ssh {needed_computer} date", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-proc.communicate()
-retval = proc.returncode
-if retval != 0:
-    computers_that_are_unreachable.append(needed_computer)
-needed_computer="np04-srv-028"
-proc = subprocess.Popen(f"ssh {needed_computer} date", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-proc.communicate()
-retval = proc.returncode
-if retval != 0:
-    computers_that_are_unreachable.append(needed_computer)
-needed_computer="np04-srv-029"
-proc = subprocess.Popen(f"ssh {needed_computer} date", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-proc.communicate()
-retval = proc.returncode
-if retval != 0:
-    computers_that_are_unreachable.append(needed_computer)
+sw_area_root = os.environ.get("DBT_AREA_ROOT")
+if sw_area_root is not None:
+    print("")
+    needed_computer="np04-srv-021"
+    print(f"Confirming that we can ssh to {needed_computer}...")
+    proc = subprocess.Popen(f"ssh {needed_computer} 'cd {sw_area_root}; . ./env.sh'", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc.communicate()
+    retval = proc.returncode
+    if retval != 0:
+        computers_that_are_unreachable.append(needed_computer)
+    needed_computer="np04-srv-022"
+    print(f"Confirming that we can ssh to {needed_computer}...")
+    proc = subprocess.Popen(f"ssh {needed_computer} 'cd {sw_area_root}; . ./env.sh'", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc.communicate()
+    retval = proc.returncode
+    if retval != 0:
+        computers_that_are_unreachable.append(needed_computer)
+    needed_computer="np04-srv-028"
+    print(f"Confirming that we can ssh to {needed_computer}...")
+    proc = subprocess.Popen(f"ssh {needed_computer} 'cd {sw_area_root}; . ./env.sh'", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc.communicate()
+    retval = proc.returncode
+    if retval != 0:
+        computers_that_are_unreachable.append(needed_computer)
+    needed_computer="np04-srv-029"
+    print(f"Confirming that we can ssh to {needed_computer}...")
+    proc = subprocess.Popen(f"ssh {needed_computer} 'cd {sw_area_root}; . ./env.sh'", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc.communicate()
+    retval = proc.returncode
+    if retval != 0:
+        computers_that_are_unreachable.append(needed_computer)
+else:
+    computers_that_are_unreachable = ["Unable to determine the value of DBT_AREA_ROOT env var"]
 
 # verify that the pytest tmpdir has been set to a multi-host (NFS) location
 pytest_tmpdir_looks_reasonable = False
