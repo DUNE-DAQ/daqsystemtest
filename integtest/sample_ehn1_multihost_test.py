@@ -151,7 +151,7 @@ if sw_area_root is not None:
     if retval != 0:
         computers_that_are_unreachable.append(needed_computer)
 else:
-    computers_that_are_unreachable = ["Unable to determine the value of DBT_AREA_ROOT env var"]
+    computers_that_are_unreachable = ["Unable to determine the value of the DBT_AREA_ROOT env var"]
 
 # verify that the pytest tmpdir has been set to a multi-host (NFS) location
 pytest_tmpdir_looks_reasonable = False
