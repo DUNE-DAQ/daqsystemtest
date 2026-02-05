@@ -382,32 +382,32 @@
  <attr name="publish_timeout" type="u32" val="2"/>
 </obj>
 
-<obj class="RawDataCallbackDescriptor" id="crt-bern-raw-input">
+<obj class="DataMoveCallbackDescriptor" id="crt-bern-raw-input">
  <attr name="uid_base" type="string" val="raw_input_"/>
  <attr name="data_type" type="string" val="CRTBernFrame"/>
 </obj>
 
-<obj class="RawDataCallbackDescriptor" id="crt-grenoble-raw-input">
+<obj class="DataMoveCallbackDescriptor" id="crt-grenoble-raw-input">
  <attr name="uid_base" type="string" val="raw_input_"/>
  <attr name="data_type" type="string" val="CRTGrenobleFrame"/>
 </obj>
 
-<obj class="RawDataCallbackDescriptor" id="pds-raw-input">
+<obj class="DataMoveCallbackDescriptor" id="pds-raw-input">
  <attr name="uid_base" type="string" val="raw_input_"/>
  <attr name="data_type" type="string" val="PDSFrame"/>
 </obj>
 
-<obj class="RawDataCallbackDescriptor" id="pds-stream-raw-input">
+<obj class="DataMoveCallbackDescriptor" id="pds-stream-raw-input">
  <attr name="uid_base" type="string" val="raw_input_"/>
  <attr name="data_type" type="string" val="PDSStreamFrame"/>
 </obj>
 
-<obj class="RawDataCallbackDescriptor" id="tde-raw-input">
+<obj class="DataMoveCallbackDescriptor" id="tde-raw-input">
  <attr name="uid_base" type="string" val="raw_input_"/>
  <attr name="data_type" type="string" val="TDEEthFrame"/>
 </obj>
 
-<obj class="RawDataCallbackDescriptor" id="wib-eth-raw-input">
+<obj class="DataMoveCallbackDescriptor" id="wib-eth-raw-input">
  <attr name="uid_base" type="string" val="raw_input_"/>
  <attr name="data_type" type="string" val="WIBEthFrame"/>
 </obj>

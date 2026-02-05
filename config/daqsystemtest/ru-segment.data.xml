@@ -124,7 +124,7 @@
  <rel name="detector_connections">
   <ref class="NetworkDetectorToDaqConnection" id="socket_crt"/>
  </rel>
- <rel name="callback_desc" class="RawDataCallbackDescriptor" id="crt-bern-raw-input"/>
+ <rel name="callback_desc" class="DataMoveCallbackDescriptor" id="crt-bern-raw-input"/>
 </obj>
 
 <obj class="DPDKPortConfiguration" id="dpdk_e810_conf">
@@ -415,7 +415,7 @@
  <rel name="detector_connections">
   <ref class="NetworkDetectorToDaqConnection" id="conn_apa1"/>
  </rel>
- <rel name="callback_desc" class="RawDataCallbackDescriptor" id="wib-eth-raw-input"/>
+ <rel name="callback_desc" class="DataMoveCallbackDescriptor" id="wib-eth-raw-input"/>
 </obj>
 
 <obj class="ReadoutApplication" id="ru-02">
@@ -455,7 +455,7 @@
  <rel name="detector_connections">
   <ref class="NetworkDetectorToDaqConnection" id="conn_apa2"/>
  </rel>
- <rel name="callback_desc" class="RawDataCallbackDescriptor" id="wib-eth-raw-input"/>
+ <rel name="callback_desc" class="DataMoveCallbackDescriptor" id="wib-eth-raw-input"/>
 </obj>
 
 <obj class="ReadoutApplication" id="socket-ru-01">
@@ -488,7 +488,7 @@
  <rel name="detector_connections">
   <ref class="NetworkDetectorToDaqConnection" id="socket_crt"/>
  </rel>
- <rel name="callback_desc" class="RawDataCallbackDescriptor" id="crt-bern-raw-input"/>
+ <rel name="callback_desc" class="DataMoveCallbackDescriptor" id="crt-bern-raw-input"/>
 </obj>
 
 <obj class="RoHwConfig" id="rohw-1">
