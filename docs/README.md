@@ -1,10 +1,11 @@
 # daqsystemtest
 
-This repository contains configurations and `pytest` test modules for system-level DAQ tests. Currently, there are two relevant subdirectories:
-* `integtest/`: `pytest`-based integration tests, often use for regression testing
+This repository contains configurations and `pytest` _test modules_ for system-level DAQ tests. Currently, there are a few relevant subdirectories:
+* `integtest/`: `pytest`-based integration tests, often used for regression testing
+* `scripts/`: scripts that help that help run tests and validate configurations
 * `config/`: OKS-based configuration files that demonstrate various features of our configuration system
 
-The `pytest` test modules (a.k.a. `integtests`) are meant to be run as part of the release testing procedure to ensure that all of the functionality needed by DUNE-DAQ is present.  
+The `pytest` _test modules_ in the `integtests` subdirectory are meant to be run as part of the release testing procedure to ensure that all of the functionality needed by DUNE-DAQ is present.  
 
 For a short summary of the `pytest` integration tests that are currently available, click [here](../integtest/README.md).
 
