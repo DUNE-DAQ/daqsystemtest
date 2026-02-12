@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="29" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="biery" last-modified-on="daq.fnal.gov" last-modification-time="20250903T173857"/>
+<info name="" type="" num-of-items="30" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="wasu" last-modified-on="np04-srv-019.cern.ch" last-modification-time="20260210T135330"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -131,7 +131,7 @@
 
 <obj class="RCApplication" id="root-controller">
  <attr name="application_name" type="string" val="drunc-controller"/>
- <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="runs_on" class="VirtualHost" id="vnp04-srv-016"/>
  <rel name="exposes_service">
   <ref class="Service" id="root-rccontroller_control"/>
  </rel>
@@ -161,7 +161,7 @@
 
 <obj class="Service" id="local-connectivity-service">
  <attr name="protocol" type="string" val="http"/>
- <attr name="port" type="u16" val="30005"/>
+ <attr name="port" type="u16" val="30220"/>
 </obj>
 
 <obj class="Service" id="rccontroller_control">
@@ -171,7 +171,7 @@
 
 <obj class="Service" id="root-rccontroller_control">
  <attr name="protocol" type="string" val="grpc"/>
- <attr name="port" type="u16" val="30006"/>
+ <attr name="port" type="u16" val="31722"/>
 </obj>
 
 <obj class="Variable" id="ehn1-env-connectivity-port">
@@ -212,7 +212,7 @@
 
 <obj class="Variable" id="local-env-connectivity-port">
  <attr name="name" type="string" val="CONNECTION_PORT"/>
- <attr name="value" type="string" val="30005"/>
+ <attr name="value" type="string" val="30220"/>
 </obj>
 
 <obj class="Variable" id="local-env-ers-debug-level">

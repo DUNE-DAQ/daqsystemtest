@@ -78,9 +78,15 @@
 </comments>
 
 
-<obj class="PhysicalHost" id="localhost">
+<obj class="PhysicalHost" id="np04-srv-019">
  <rel name="contains">
   <ref class="ProcessingResource" id="localhost_cpus"/>
+ </rel>
+</obj>
+
+<obj class="PhysicalHost" id="np04-srv-016">
+ <rel name="contains">
+  <ref class="ProcessingResource" id="np04-srv-016_cpus"/>
  </rel>
 </obj>
 
@@ -121,6 +127,15 @@
 </obj>
 
 <obj class="ProcessingResource" id="localhost_cpus">
+ <attr name="cpu_cores" type="u16">
+  <data val="0"/>
+  <data val="1"/>
+  <data val="2"/>
+  <data val="3"/>
+ </attr>
+</obj>
+
+<obj class="ProcessingResource" id="np04-srv-016_cpus">
  <attr name="cpu_cores" type="u16">
   <data val="0"/>
   <data val="1"/>
@@ -183,7 +198,7 @@
  <rel name="uses">
   <ref class="ProcessingResource" id="localhost_cpus"/>
  </rel>
- <rel name="runs_on" class="PhysicalHost" id="localhost"/>
+ <rel name="runs_on" class="PhysicalHost" id="np04-srv-019"/>
 </obj>
 
 <obj class="VirtualHost" id="vnp04-srv-021">
@@ -191,6 +206,13 @@
   <ref class="ProcessingResource" id="np04-srv-021_cpus"/>
  </rel>
  <rel name="runs_on" class="PhysicalHost" id="np04-srv-021"/>
+</obj>
+
+<obj class="VirtualHost" id="vnp04-srv-016">
+ <rel name="uses">
+  <ref class="ProcessingResource" id="np04-srv-016_cpus"/>
+ </rel>
+ <rel name="runs_on" class="PhysicalHost" id="np04-srv-016"/>
 </obj>
 
 <obj class="VirtualHost" id="vnp04-srv-022">

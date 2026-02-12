@@ -97,7 +97,7 @@
 
 <obj class="FakeHSIApplication" id="hsi-fake-01">
  <attr name="application_name" type="string" val="daq_application"/>
- <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="runs_on" class="VirtualHost" id="vnp04-srv-016"/>
  <rel name="exposes_service">
   <ref class="Service" id="daqapp_control"/>
  </rel>

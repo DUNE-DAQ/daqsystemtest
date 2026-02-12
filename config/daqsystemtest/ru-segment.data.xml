@@ -74,6 +74,7 @@
  <file path="config/daqsystemtest/moduleconfs.data.xml"/>
  <file path="config/daqsystemtest/hosts.data.xml"/>
  <file path="config/daqsystemtest/ccm.data.xml"/>
+ <file path="config/daqsystemtest/df-segment.data.xml"/>
 </include>
 
 <comments>
@@ -358,7 +359,7 @@
 
 <obj class="RCApplication" id="ru-controller">
  <attr name="application_name" type="string" val="drunc-controller"/>
- <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="runs_on" class="VirtualHost" id="vnp04-srv-016"/>
  <rel name="exposes_service">
   <ref class="Service" id="rccontroller_control"/>
  </rel>
@@ -497,6 +498,9 @@
 </obj>
 
 <obj class="Segment" id="ru-segment">
+ <rel name="segments">
+  <ref class="Segment" id="df-segment"/>
+ </rel>
  <rel name="applications">
   <ref class="ReadoutApplication" id="ru-01"/>
   <ref class="ReadoutApplication" id="ru-02"/>

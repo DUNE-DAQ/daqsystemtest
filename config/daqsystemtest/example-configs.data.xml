@@ -101,7 +101,6 @@
 <obj class="Segment" id="root-segment">
  <rel name="segments">
   <ref class="Segment" id="ru-segment"/>
-  <ref class="Segment" id="df-segment"/>
   <ref class="Segment" id="trg-segment"/>
   <ref class="Segment" id="hsi-fake-segment"/>
  </rel>
