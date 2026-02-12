@@ -81,6 +81,7 @@ ignored_logfile_problems = {
 resval = resource_validation.ResourceValidator()
 resval.cpu_count_needs(30, 60)  # 2 for each data source plus 6 more for everything else
 resval.free_memory_needs(64, 116)  # 10% more than what we observe being used ('free -h')
+resval.total_memory_needs()  # no specific request, but it's useful to see how much is available
 actual_output_path = get_pytest_tmpdir()
 resval.free_disk_space_needs(actual_output_path, 25)  # 25% more than what we need
 resval.total_disk_space_needs(actual_output_path, recommended_total_disk_space=40)  # double what we need
