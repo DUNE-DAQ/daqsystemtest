@@ -79,11 +79,10 @@ ignored_logfile_problems = {
 
 # Determine if this computer has enough resources for these tests
 resval = resource_validation.ResourceValidator()
-resval.require_cpu_count(60)  # 3 for each data source (incl TPG) plus 6 more for everything else; overall safety factor of 2
-resval.require_free_memory_gb(24)  # double what we observe being used ('free -h')
-resval.require_total_memory_gb(48)  # 4x what we need; trying to be kind to others
+resval.cpu_count_needs(30, 60)  # 3 for each data source (incl TPG) plus 6 more for everything else
+resval.free_memory_needs(15, 24)  # 25% more than what we observe being used ('free -h')
 actual_output_path = get_pytest_tmpdir()
-resval.require_free_disk_space_gb(actual_output_path, 1)  # more than what we observe
+resval.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
 resval_debug_string = resval.get_debug_string()
 print(f"{resval_debug_string}")
 
@@ -147,7 +146,7 @@ else:
 # provide useful feedback to the user even when the "-k" option is specified, so we combine
 # all of the existing keys into the new (dummy) one so that any valid "-k <config_name>"
 # selection will provide the desired feedback to the user about the insuffiicent resources.
-if not resval.this_computer_has_sufficient_resources:
+if not resval.required_resources_are_present:
     all_encompassing_dummy_key = ",".join(confgen_arguments.keys())
     first_config = next(iter(confgen_arguments.values()))
     confgen_arguments = {
@@ -155,7 +154,7 @@ if not resval.this_computer_has_sufficient_resources:
     }
 
 # The commands to run in nanorc, as a list
-if resval.this_computer_has_sufficient_resources:
+if resval.required_resources_are_present:
     nanorc_command_list = (
         "boot wait 2 conf start --run-number 101 wait 1 enable-triggers wait ".split()
         + [str(run_duration)]
@@ -168,12 +167,16 @@ else:
 
 
 def test_nanorc_success(run_nanorc, capsys):
-    if not resval.this_computer_has_sufficient_resources:
-        resval_report_string = resval.get_insufficient_resources_report()
+    if not resval.required_resources_are_present:
+        resval_report_string = resval.get_required_resources_report()
         with capsys.disabled():
             print(f"\n\N{LARGE YELLOW CIRCLE} {resval_report_string}")
-        resval_summary_string = resval.get_insufficient_resources_summary()
+        resval_summary_string = resval.get_required_resources_summary()
         pytest.skip(f"{resval_summary_string}")
+    if not resval.recommended_resources_are_present:
+        resval_report_string = resval.get_recommended_resources_report()
+        with capsys.disabled():
+            print(f"\n\N{LARGE YELLOW CIRCLE} {resval_report_string}")
 
     # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
@@ -195,8 +198,8 @@ def test_nanorc_success(run_nanorc, capsys):
 
 
 def test_log_files(run_nanorc):
-    if not resval.this_computer_has_sufficient_resources:
-        resval_summary_string = resval.get_insufficient_resources_summary()
+    if not resval.required_resources_are_present:
+        resval_summary_string = resval.get_required_resources_summary()
         pytest.skip(f"\n{resval_summary_string}")
 
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
@@ -233,8 +236,8 @@ def test_log_files(run_nanorc):
 
 
 def test_data_files(run_nanorc):
-    if not resval.this_computer_has_sufficient_resources:
-        resval_summary_string = resval.get_insufficient_resources_summary()
+    if not resval.required_resources_are_present:
+        resval_summary_string = resval.get_required_resources_summary()
         pytest.skip(f"\n{resval_summary_string}")
 
     current_test = os.environ.get("PYTEST_CURRENT_TEST")

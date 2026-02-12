@@ -79,12 +79,11 @@ ignored_logfile_problems = {
 
 # Determine if this computer has enough resources for these tests
 resval = resource_validation.ResourceValidator()
-resval.require_cpu_count(60)  # 2 for each data source plus 6 more for everything else; overall safety factor of 2
-resval.require_free_memory_gb(87)  # 50% more than what we observe being used ('free -h')
-resval.require_total_memory_gb(116)  # double what we need; trying to be kind to others
+resval.cpu_count_needs(30, 60)  # 2 for each data source plus 6 more for everything else
+resval.free_memory_needs(64, 116)  # 10% more than what we observe being used ('free -h')
 actual_output_path = get_pytest_tmpdir()
-resval.require_free_disk_space_gb(actual_output_path, 25)  # 25% more than what we need
-resval.require_total_disk_space_gb(actual_output_path, 40)  # double what we need
+resval.free_disk_space_needs(actual_output_path, 25)  # 25% more than what we need
+resval.total_disk_space_needs(actual_output_path, recommended_total_disk_space=40)  # double what we need
 resval_debug_string = resval.get_debug_string()
 print(f"{resval_debug_string}")
 
@@ -172,7 +171,7 @@ confgen_arguments = {  # "No_TR_Splitting": conf_dict,
 }
 
 # The commands to run in nanorc, as a list
-if resval.this_computer_has_sufficient_resources:
+if resval.required_resources_are_present:
     nanorc_command_list = "boot conf".split()
     nanorc_command_list += (
         "start --trigger-rate ".split()
@@ -196,12 +195,16 @@ else:
 
 
 def test_nanorc_success(run_nanorc, capsys):
-    if not resval.this_computer_has_sufficient_resources:
-        resval_report_string = resval.get_insufficient_resources_report()
+    if not resval.required_resources_are_present:
+        resval_report_string = resval.get_required_resources_report()
         with capsys.disabled():
             print(f"\n\N{LARGE YELLOW CIRCLE} {resval_report_string}")
-        resval_summary_string = resval.get_insufficient_resources_summary()
+        resval_summary_string = resval.get_required_resources_summary()
         pytest.skip(f"{resval_summary_string}")
+    if not resval.recommended_resources_are_present:
+        resval_report_string = resval.get_recommended_resources_report()
+        with capsys.disabled():
+            print(f"\n\N{LARGE YELLOW CIRCLE} {resval_report_string}")
 
     # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
@@ -218,8 +221,8 @@ def test_nanorc_success(run_nanorc, capsys):
 
 
 def test_log_files(run_nanorc):
-    if not resval.this_computer_has_sufficient_resources:
-        resval_summary_string = resval.get_insufficient_resources_summary()
+    if not resval.required_resources_are_present:
+        resval_summary_string = resval.get_required_resources_summary()
         pytest.skip(f"\n{resval_summary_string}")
 
     if check_for_logfile_errors:
@@ -230,8 +233,8 @@ def test_log_files(run_nanorc):
 
 
 def test_data_files(run_nanorc):
-    if not resval.this_computer_has_sufficient_resources:
-        resval_summary_string = resval.get_insufficient_resources_summary()
+    if not resval.required_resources_are_present:
+        resval_summary_string = resval.get_required_resources_summary()
         pytest.skip(f"\n{resval_summary_string}")
 
     local_expected_event_count = expected_event_count
@@ -266,8 +269,8 @@ def test_data_files(run_nanorc):
 
 
 def test_cleanup(run_nanorc):
-    if not resval.this_computer_has_sufficient_resources:
-        resval_summary_string = resval.get_insufficient_resources_summary()
+    if not resval.required_resources_are_present:
+        resval_summary_string = resval.get_required_resources_summary()
         pytest.skip(f"\n{resval_summary_string}")
 
     pathlist_string = ""
