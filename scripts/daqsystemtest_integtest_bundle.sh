@@ -20,6 +20,7 @@ Options:
     --stop-on-failure : causes the script to stop when one of the integtests reports a failure
     --concise-output : suppresses run control and DAQApp messages in order to focus on test results
     --tmpdir : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
+    --skip-resource-checks: Skips the CPU/Memory/Disk resource checks, forcing tests to run
 """
     let counter=0
     echo "List of available tests:"
@@ -45,7 +46,7 @@ CaptureOutput() {
     tee -a $1
 }
 
-GETOPT_TEMP=`getopt -o hs:f:l:k:n:N: --long help,stop-on-failure,concise-output,tmpdir: -- "$@"`
+GETOPT_TEMP=`getopt -o hs:f:l:k:n:N: --long help,stop-on-failure,concise-output,skip-resource-checks,tmpdir: -- "$@"`
 eval set -- "$GETOPT_TEMP"
 
 let first_test_index=0
@@ -88,6 +89,10 @@ while true; do
             ;;
         --concise-output)
             PYTEST_COMMAND="`echo ${PYTEST_COMMAND} | sed 's/ -s//'`"  # remove the -s option to turn off messages from DAQ processes
+            shift
+            ;;
+        --skip-resource-checks)
+            PYTEST_COMMAND="${PYTEST_COMMAND} --skip-resource-checks" # Add the --skip-resource-checks pytest option
             shift
             ;;
         --tmpdir)

@@ -108,12 +108,12 @@ ignored_logfile_problems = {
 }
 
 # Determine if this computer has enough resources for these tests
-resval = resource_validation.ResourceValidator()
-resval.cpu_count_needs(8, 16)  # 3 for each data source (incl TPG) plus 2 more for everything else
-resval.free_memory_needs(6, 10)  # 20% more than what we observe being used ('free -h')
+resource_validator = resource_validation.ResourceValidator()
+resource_validator.cpu_count_needs(8, 16)  # 3 for each data source (incl TPG) plus 2 more for everything else
+resource_validator.free_memory_needs(6, 10)  # 20% more than what we observe being used ('free -h')
 actual_output_path = get_pytest_tmpdir()
-resval.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
-resval_debug_string = resval.get_debug_string()
+resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resource_validator.get_debug_string()
 print(f"{resval_debug_string}")
 
 object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
@@ -179,35 +179,21 @@ conf_dict.config_substitutions.append(
 confgen_arguments = {"Software_TPG_System": conf_dict}
 
 # The commands to run in nanorc, as a list
-if resval.required_resources_are_present:
-    nanorc_command_list = (
-        "boot conf wait 5".split()
-        + "start --run-number 101 wait 1 enable-triggers wait ".split()
-        + [str(run_duration)]
-        + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop ".split()
-        + "start --run-number 102 wait 1 enable-triggers wait ".split()
-        + [str(run_duration)]
-        + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop ".split()
-        + " scrap terminate".split()
-    )
-else:
-    nanorc_command_list = ["wait", "1"]
+nanorc_command_list = (
+    "boot conf wait 5".split()
+    + "start --run-number 101 wait 1 enable-triggers wait ".split()
+    + [str(run_duration)]
+    + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop ".split()
+    + "start --run-number 102 wait 1 enable-triggers wait ".split()
+    + [str(run_duration)]
+    + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop ".split()
+    + " scrap terminate".split()
+)
 
 # The tests themselves
 
 
 def test_nanorc_success(run_nanorc, capsys):
-    if not resval.required_resources_are_present:
-        resval_report_string = resval.get_required_resources_report()
-        with capsys.disabled():
-            print(f"\n\N{LARGE YELLOW CIRCLE} {resval_report_string}")
-        resval_summary_string = resval.get_required_resources_summary()
-        pytest.skip(f"{resval_summary_string}")
-    if not resval.recommended_resources_are_present:
-        resval_report_string = resval.get_recommended_resources_report()
-        with capsys.disabled():
-            print(f"\n*** Note: {resval_report_string}")
-
     # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
@@ -223,10 +209,6 @@ def test_nanorc_success(run_nanorc, capsys):
 
 
 def test_log_files(run_nanorc):
-    if not resval.required_resources_are_present:
-        resval_summary_string = resval.get_required_resources_summary()
-        pytest.skip(f"\n{resval_summary_string}")
-
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
@@ -235,10 +217,6 @@ def test_log_files(run_nanorc):
 
 
 def test_data_files(run_nanorc):
-    if not resval.required_resources_are_present:
-        resval_summary_string = resval.get_required_resources_summary()
-        pytest.skip(f"\n{resval_summary_string}")
-
     local_expected_event_count = expected_event_count
     local_event_count_tolerance = expected_event_count_tolerance
     low_number_of_files = expected_number_of_data_files
@@ -287,10 +265,6 @@ def test_data_files(run_nanorc):
 
 
 def test_tpstream_files(run_nanorc):
-    if not resval.required_resources_are_present:
-        resval_summary_string = resval.get_required_resources_summary()
-        pytest.skip(f"\n{resval_summary_string}")
-
     tpstream_files = run_nanorc.tpset_files
     local_expected_event_count = (
         run_duration + 8

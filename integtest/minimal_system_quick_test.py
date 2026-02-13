@@ -60,12 +60,12 @@ ignored_logfile_problems = {
 }
 
 # Determine if this computer has enough resources for these tests
-resval = resource_validation.ResourceValidator()
-resval.cpu_count_needs(6, 12)  # 2 for each data source plus 2 more for everything else
-resval.free_memory_needs(5, 8)  # 25% more than what we observe being used ('free -h')
+resource_validator = resource_validation.ResourceValidator()
+resource_validator.cpu_count_needs(6, 12)  # 2 for each data source plus 2 more for everything else
+resource_validator.free_memory_needs(5, 8)  # 25% more than what we observe being used ('free -h')
 actual_output_path = get_pytest_tmpdir()
-resval.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
-resval_debug_string = resval.get_debug_string()
+resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resource_validator.get_debug_string()
 print(f"{resval_debug_string}")
 
 # The next three variable declarations *must* be present as globals in the test
@@ -109,30 +109,16 @@ conf_dict.config_substitutions.append(substitution)
 
 confgen_arguments = {"MinimalSystem": conf_dict}
 # The commands to run in nanorc, as a list
-if resval.required_resources_are_present:
-    nanorc_command_list = (
+nanorc_command_list = (
         "boot conf start --run-number 101 wait 1 enable-triggers wait ".split()
         + [str(run_duration)]
         + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop scrap terminate".split()
     )
-else:
-    nanorc_command_list = ["wait", "1"]
 
 # The tests themselves
 
 
 def test_nanorc_success(run_nanorc, capsys):
-    if not resval.required_resources_are_present:
-        resval_report_string = resval.get_required_resources_report()
-        with capsys.disabled():
-            print(f"\n\N{LARGE YELLOW CIRCLE} {resval_report_string}")
-        resval_summary_string = resval.get_required_resources_summary()
-        pytest.skip(f"{resval_summary_string}")
-    if not resval.recommended_resources_are_present:
-        resval_report_string = resval.get_recommended_resources_report()
-        with capsys.disabled():
-            print(f"\n*** Note: {resval_report_string}")
-
     # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
@@ -148,10 +134,6 @@ def test_nanorc_success(run_nanorc, capsys):
 
 
 def test_log_files(run_nanorc):
-    if not resval.required_resources_are_present:
-        resval_summary_string = resval.get_required_resources_summary()
-        pytest.skip(f"\n{resval_summary_string}")
-
     # Check that at least some of the expected log files are present
     assert any(
         f"{run_nanorc.session}_df-01" in str(logname)
@@ -175,10 +157,6 @@ def test_log_files(run_nanorc):
 
 
 def test_data_files(run_nanorc):
-    if not resval.required_resources_are_present:
-        resval_summary_string = resval.get_required_resources_summary()
-        pytest.skip(f"\n{resval_summary_string}")
-
     # Run some tests on the output data file
     all_ok = len(run_nanorc.data_files) == expected_number_of_data_files
     print("") # Clear potential dot from pytest
@@ -213,10 +191,6 @@ def test_data_files(run_nanorc):
 
 # 26-Nov-2025, KAB: added some sample opmon metric checks, for demonstration purposes
 def test_metric_files(run_nanorc):
-    if not resval.required_resources_are_present:
-        resval_summary_string = resval.get_required_resources_summary()
-        pytest.skip(f"\n{resval_summary_string}")
-
     print("") # Clear potential dot from pytest
 
     # 10-Dec-2025, KAB: we have noticed that sometimes drunc transitions (or other parts of

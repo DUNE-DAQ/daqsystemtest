@@ -24,6 +24,7 @@ Options:
     --concise-output : suppresses run control and DAQApp messages in order to focus on test results
     --tmpdir : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
     --list-only : list the tests that match the requested patterns without running them
+    --skip-resource-checks: Skips the CPU/Memory/Disk resource checks, forcing tests to run
 """
 }
 
@@ -42,7 +43,7 @@ CaptureOutput() {
     tee -a $1
 }
 
-GETOPT_TEMP=`getopt -o hr:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,list-only -- "$@"`
+GETOPT_TEMP=`getopt -o hr:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,list-only,skip-resource-checks -- "$@"`
 if [ $? -ne 0 ]; then
     exit 1
 fi
@@ -124,6 +125,10 @@ while true; do
             tmpdir_root=$2
             export PYTEST_DEBUG_TEMPROOT=${tmpdir_root}
             shift 2
+            ;;
+        --skip-resource-checks)
+            PYTEST_COMMAND="${PYTEST_COMMAND} --skip-resource-checks" # Add the --skip-resource-checks pytest option
+            shift
             ;;
         --list-only)
             only_list_tests="yes"
