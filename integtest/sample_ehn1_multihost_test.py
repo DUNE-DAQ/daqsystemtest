@@ -304,16 +304,13 @@ def test_nanorc_success(run_nanorc, capsys):
         pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
     if not pytest_tmpdir_looks_reasonable:
         with capsys.disabled():
-            print("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
+            print("\n\n\N{LARGE YELLOW CIRCLE} The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
         pytest.skip("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
-    if not resval.recommended_resources_are_present:
-        resval_report_string = resval.get_recommended_resources_report()
-        with capsys.disabled():
-            print(f"\n\N{LARGE YELLOW CIRCLE} {resval_report_string}")
 
-    print("")
-    print("*** PLEASE NOTE: this script is cleaning up stale _gunicorn_ processes on np04-srv-028...")
-    print("")
+    with capsys.disabled():
+        print("")
+        print("\n\n\N{LARGE YELLOW CIRCLE} PLEASE NOTE: this script is cleaning up stale _gunicorn_ processes on np04-srv-028...")
+        print("")
     proc = subprocess.Popen(f"ssh np04-srv-028 killall gunicorn", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.communicate()
     retval = proc.returncode
