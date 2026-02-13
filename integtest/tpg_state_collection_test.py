@@ -227,7 +227,7 @@ def test_nanorc_success(run_nanorc, capsys):
     if not resval.recommended_resources_are_present:
         resval_report_string = resval.get_recommended_resources_report()
         with capsys.disabled():
-            print(f"\n\N{LARGE YELLOW CIRCLE} {resval_report_string}")
+            print(f"\n*** Note: {resval_report_string}")
 
     # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
