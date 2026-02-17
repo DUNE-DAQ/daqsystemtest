@@ -24,7 +24,7 @@ Options:
     --concise-output : suppresses run control and DAQApp messages in order to focus on test results
     --tmpdir : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
     --list-only : list the tests that match the requested patterns without running them
-    --skip-resource-checks: Skips the CPU/Memory/Disk resource checks, forcing tests to run
+    --pytest-options : string with one or more command-line options to pass to Pytest (verbatim)
 """
 }
 
@@ -43,7 +43,7 @@ CaptureOutput() {
     tee -a $1
 }
 
-GETOPT_TEMP=`getopt -o hr:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,list-only,skip-resource-checks -- "$@"`
+GETOPT_TEMP=`getopt -o hr:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,list-only,pytest-options: -- "$@"`
 if [ $? -ne 0 ]; then
     exit 1
 fi
@@ -118,7 +118,8 @@ while true; do
             shift
             ;;
         --concise-output)
-            PYTEST_COMMAND="`echo ${PYTEST_COMMAND} | sed 's/ -s//'`"  # remove the -s option to turn off messages from DAQ processes
+            # replace the pytest "-s" option with "-rs" to suppress all output except pytest.skip messages
+            PYTEST_COMMAND="`echo ${PYTEST_COMMAND} | sed 's/ -s/ -rs/'`"
             shift
             ;;
         --tmpdir)
@@ -126,9 +127,9 @@ while true; do
             export PYTEST_DEBUG_TEMPROOT=${tmpdir_root}
             shift 2
             ;;
-        --skip-resource-checks)
-            PYTEST_COMMAND="${PYTEST_COMMAND} --skip-resource-checks" # Add the --skip-resource-checks pytest option
-            shift
+        --pytest-options)
+            PYTEST_COMMAND="${PYTEST_COMMAND} $2"  # Add the specified options to the pytest command
+            shift 2
             ;;
         --list-only)
             only_list_tests="yes"
