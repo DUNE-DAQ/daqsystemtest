@@ -95,12 +95,12 @@ ignored_logfile_problems = {
 }
 
 # Determine if this computer has enough resources for these tests
-resval = resource_validation.ResourceValidator()
-resval.cpu_count_needs(30, 60)  # 3 for each data source (incl TPG) plus 3 more for everything else
-resval.free_memory_needs(20, 32)  # 25% more than what we observe being used ('free -h')
+resource_validator = resource_validation.ResourceValidator()
+resource_validator.cpu_count_needs(30, 60)  # 3 for each data source (incl TPG) plus 3 more for everything else
+resource_validator.free_memory_needs(20, 32)  # 25% more than what we observe being used ('free -h')
 actual_output_path = get_pytest_tmpdir()
-resval.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
-resval_debug_string = resval.get_debug_string()
+resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resource_validator.get_debug_string()
 print(f"{resval_debug_string}")
 
 # The next three variable declarations *must* be present as globals in the test
@@ -158,58 +158,29 @@ confgen_arguments = {
     "WIBEth_System": conf_dict,
     "Software_TPG_System": swtpg_conf,
 }
-# When the computer doesn't have enough resources, we only need to run one configuration.
-# This is enough to provide feedback to the user about the lack of resources without spending
-# the time to run through all of the configurations that exist in this test.
-# It doesn't matter which configuration gets used because it doesn't really get executed,
-# so we just pick the first one.
-# The confgen_arguments key is a little important, though. We would like the pytest to still
-# provide useful feedback to the user even when the "-k" option is specified, so we combine
-# all of the existing keys into the new (dummy) one so that any valid "-k <config_name>"
-# selection will provide the desired feedback to the user about the insuffiicent resources.
-if not resval.required_resources_are_present:
-    all_encompassing_dummy_key = ",".join(confgen_arguments.keys())
-    first_config = next(iter(confgen_arguments.values()))
-    confgen_arguments = {
-        all_encompassing_dummy_key: first_config
-    }
 
 # The commands to run in nanorc, as a list
-if resval.required_resources_are_present:
-    nanorc_command_list = "boot conf".split()
-    nanorc_command_list += (
-        "start --run-number 101 wait 5 enable-triggers wait ".split()
-        + [str(run_duration)]
-        + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
-    )
-    nanorc_command_list += (
-        "start --run-number 102 wait 1 enable-triggers wait ".split()
-        + [str(run_duration)]
-        + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
-    )
-    nanorc_command_list += (
-        "start --run-number 103 wait 1 enable-triggers wait ".split()
-        + [str(run_duration)]
-        + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
-    )
-    nanorc_command_list += "scrap terminate".split()
-else:
-    nanorc_command_list = ["wait", "1"]
+nanorc_command_list = "boot conf".split()
+nanorc_command_list += (
+    "start --run-number 101 wait 5 enable-triggers wait ".split()
+    + [str(run_duration)]
+    + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
+)
+nanorc_command_list += (
+    "start --run-number 102 wait 1 enable-triggers wait ".split()
+    + [str(run_duration)]
+    + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
+)
+nanorc_command_list += (
+    "start --run-number 103 wait 1 enable-triggers wait ".split()
+    + [str(run_duration)]
+    + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
+)
+nanorc_command_list += "scrap terminate".split()
 
 # The tests themselves
 
-def test_nanorc_success(run_nanorc, capsys):
-    if not resval.required_resources_are_present:
-        resval_report_string = resval.get_required_resources_report()
-        with capsys.disabled():
-            print(f"\n\N{LARGE YELLOW CIRCLE} {resval_report_string}")
-        resval_summary_string = resval.get_required_resources_summary()
-        pytest.skip(f"{resval_summary_string}")
-    if not resval.recommended_resources_are_present:
-        resval_report_string = resval.get_recommended_resources_report()
-        with capsys.disabled():
-            print(f"\n*** Note: {resval_report_string}")
-
+def test_nanorc_success(run_nanorc):
     # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
@@ -225,10 +196,6 @@ def test_nanorc_success(run_nanorc, capsys):
 
 
 def test_log_files(run_nanorc):
-    if not resval.required_resources_are_present:
-        resval_summary_string = resval.get_required_resources_summary()
-        pytest.skip(f"\n{resval_summary_string}")
-
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
@@ -237,10 +204,6 @@ def test_log_files(run_nanorc):
 
 
 def test_data_files(run_nanorc):
-    if not resval.required_resources_are_present:
-        resval_summary_string = resval.get_required_resources_summary()
-        pytest.skip(f"\n{resval_summary_string}")
-
     local_expected_event_count = expected_event_count
     local_event_count_tolerance = expected_event_count_tolerance
     fragment_check_list = [triggercandidate_frag_params, hsi_frag_params, wibeth_frag_params]
