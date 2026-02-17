@@ -110,15 +110,15 @@ conf_dict.config_substitutions.append(substitution)
 confgen_arguments = {"MinimalSystem": conf_dict}
 # The commands to run in nanorc, as a list
 nanorc_command_list = (
-        "boot conf start --run-number 101 wait 1 enable-triggers wait ".split()
-        + [str(run_duration)]
-        + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop scrap terminate".split()
-    )
+    "boot conf start --run-number 101 wait 1 enable-triggers wait ".split()
+    + [str(run_duration)]
+    + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop scrap terminate".split()
+)
 
 # The tests themselves
 
 
-def test_nanorc_success(run_nanorc, capsys):
+def test_nanorc_success(run_nanorc):
     # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
