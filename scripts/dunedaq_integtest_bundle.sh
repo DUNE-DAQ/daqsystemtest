@@ -12,7 +12,7 @@ Usage:
 Options:
     -h, --help : prints out usage information
     -r <the list of repositories for which integtests will be run>
-       - this can be the name of a single repo
+       - this can be the name of a single repo; it defaults to \"daqsystemtest\"
        - it can be a pipe-delimited string with a list of repos, e.g. 'dfmodules|trigger'
        - it can have the special value of \"all\" - integtests in all repos will be run
        - it can have the special value of \"local\" - integtests in locally-cloned repos will be run
@@ -45,6 +45,7 @@ CaptureOutput() {
 
 GETOPT_TEMP=`getopt -o hr:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,list-only,pytest-options: -- "$@"`
 if [ $? -ne 0 ]; then
+    usage
     exit 1
 fi
 eval set -- "$GETOPT_TEMP"
@@ -362,3 +363,4 @@ if [[ "${numad_grep_output}" != "" ]]; then
     echo "*** context switch can disrupt the stable running of the DAQ processes."          | CaptureOutput ${ITGRUNNER_LOG_FILE}
     echo "********************************************************************************" | CaptureOutput ${ITGRUNNER_LOG_FILE}
 fi
+echo ""
