@@ -12,7 +12,7 @@ Usage:
 Options:
     -h, --help : prints out usage information
     -r <the list of repositories for which integtests will be run>
-       - this can be the name of a single repo
+       - this can be the name of a single repo; it defaults to \"daqsystemtest\"
        - it can be a pipe-delimited string with a list of repos, e.g. 'dfmodules|trigger'
        - it can have the special value of \"all\" - integtests in all repos will be run
        - it can have the special value of \"local\" - integtests in locally-cloned repos will be run
@@ -24,6 +24,7 @@ Options:
     --concise-output : suppresses run control and DAQApp messages in order to focus on test results
     --tmpdir : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
     --list-only : list the tests that match the requested patterns without running them
+    --pytest-options : string with one or more command-line options to pass to Pytest (verbatim)
 """
 }
 
@@ -42,8 +43,9 @@ CaptureOutput() {
     tee -a $1
 }
 
-GETOPT_TEMP=`getopt -o hr:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,list-only -- "$@"`
+GETOPT_TEMP=`getopt -o hr:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,list-only,pytest-options: -- "$@"`
 if [ $? -ne 0 ]; then
+    usage
     exit 1
 fi
 eval set -- "$GETOPT_TEMP"
@@ -117,12 +119,17 @@ while true; do
             shift
             ;;
         --concise-output)
-            PYTEST_COMMAND="`echo ${PYTEST_COMMAND} | sed 's/ -s//'`"  # remove the -s option to turn off messages from DAQ processes
+            # replace the pytest "-s" option with "-rs" to suppress all output except pytest.skip messages
+            PYTEST_COMMAND="`echo ${PYTEST_COMMAND} | sed 's/ -s/ -rs/'`"
             shift
             ;;
         --tmpdir)
             tmpdir_root=$2
             export PYTEST_DEBUG_TEMPROOT=${tmpdir_root}
+            shift 2
+            ;;
+        --pytest-options)
+            PYTEST_COMMAND="${PYTEST_COMMAND} $2"  # Add the specified options to the pytest command
             shift 2
             ;;
         --list-only)
@@ -356,3 +363,4 @@ if [[ "${numad_grep_output}" != "" ]]; then
     echo "*** context switch can disrupt the stable running of the DAQ processes."          | CaptureOutput ${ITGRUNNER_LOG_FILE}
     echo "********************************************************************************" | CaptureOutput ${ITGRUNNER_LOG_FILE}
 fi
+echo ""

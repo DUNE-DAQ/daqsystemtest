@@ -15,7 +15,7 @@ It does the following:
     - Presence and correctness of log files
     - Data file contents (number of SIDs, file count)
 
-Tests are structured using `pytest` and use fixtures provided via 
+Tests are structured using `pytest` and use fixtures provided via
 `integrationtest.integrationtest_drunc`.
 
 Temporary config directories are cleaned up using `atexit` once the test completes.
@@ -36,6 +36,8 @@ import tempfile
 import integrationtest.data_classes as data_classes
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
+import integrationtest.resource_validation as resource_validation
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 from daqconf.consolidate import copy_configuration
 from pathlib import Path
@@ -46,6 +48,10 @@ def _cleanup_tmpdir():
         shutil.rmtree(tmpdirname)
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
+
+# tweak the print() statement default behavior so that it always flushes the output.
+import functools
+print = functools.partial(print, flush=True)
 
 # Run setup
 run_duration = 20  # seconds
@@ -68,6 +74,15 @@ ignored_logfile_problems = {
     "-controller": [
     ]
 }
+
+# Determine if this computer has enough resources for these tests
+resource_validator = resource_validation.ResourceValidator()
+resource_validator.cpu_count_needs(6, 12)  # 3 for ConnSvc threads plus 3 more for everything else
+resource_validator.free_memory_needs(3, 4)  # 50% more than what we observe being used ('free -h')
+actual_output_path = get_pytest_tmpdir()
+resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resource_validator.get_debug_string()
+print(f"{resval_debug_string}")
 
 ### Config setup
 # Create temp config
@@ -221,7 +236,7 @@ tpreplay_np04_conf.config_substitutions.append(
 )
 
 # Finally store configs in map
-confgen_arguments = { 
+confgen_arguments = {
   "np02-tpreplay": tpreplay_local_conf,
   "np04-tpreplay": tpreplay_np04_conf
 }
@@ -229,11 +244,11 @@ confgen_arguments = {
 # The commands to run in nanorc, as a list
 nanorc_command_list = "boot conf wait 5".split()
 nanorc_command_list += (
-        "start ".split()
-        + "--run-number 101 enable-triggers wait ".split()
-        + [str(run_duration)]
-        + "disable-triggers drain-dataflow wait 2 stop-trigger-sources wait 2 stop wait 2".split()
-    )
+    "start ".split()
+    + "--run-number 101 enable-triggers wait ".split()
+    + [str(run_duration)]
+    + "disable-triggers drain-dataflow wait 2 stop-trigger-sources wait 2 stop wait 2".split()
+)
 nanorc_command_list += "scrap terminate".split()
 
 atexit.register(_cleanup_tmpdir)
