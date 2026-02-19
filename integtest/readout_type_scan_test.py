@@ -38,8 +38,8 @@ tde_frag_params = {
     "fragment_type_description": "TDEEth",
     "fragment_type": "TDEEth",
     "expected_fragment_count": number_of_data_producers,
-    "min_size_bytes": 7272,
-    "max_size_bytes": 14472,
+    "min_size_bytes": 14472,  # 19-Feb-2026, KAB: the time span of a TDEEth frame is 2000 ticks
+    "max_size_bytes": 21672,  # With a readout window of 2005 ticks, we'll get 2 or 3 frames
 }
 bern_crt_frag_params = {
     "fragment_type_description": "CRTBern",
