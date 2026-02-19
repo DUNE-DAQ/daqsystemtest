@@ -38,8 +38,8 @@ tde_frag_params = {
     "fragment_type_description": "TDEEth",
     "fragment_type": "TDEEth",
     "expected_fragment_count": number_of_data_producers,
-    "min_size_bytes": 7272,
-    "max_size_bytes": 14472,
+    "min_size_bytes": 14472,  # 19-Feb-2026, KAB: the time span of a TDEEth frame is 2000 ticks
+    "max_size_bytes": 21672,  # With a readout window of 2005 ticks, we'll get 2 or 3 frames
 }
 bern_crt_frag_params = {
     "fragment_type_description": "CRTBern",
@@ -244,11 +244,12 @@ daphne_stream_conf.frame_file = "asset://?label=DAPHNEStream&subsystem=readout"
 
 daphne_stream_conf.config_substitutions.append(
     data_classes.attribute_substitution(
-        obj_class="TCReadoutMap",
-        obj_id = "def-random-readout",
+        obj_class="RandomTCMakerConf",
+        obj_id = "random-tc-generator",
         updates={
-            "time_before": 62000,
-            "time_after": 500,
+            "candidate_backshift_ts": 0,
+            "candidate_window_before_ts": 62000,
+            "candidate_window_after_ts": 500,
         },
     )
 )
@@ -258,11 +259,12 @@ daphne_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 daphne_conf.frame_file = "asset://?checksum=a8990a9eb3a505d4ded62dfdfa9e2681" # np02vd_run036012_sample_membrane_pds
 daphne_conf.config_substitutions.append(
     data_classes.attribute_substitution(
-        obj_class="TCReadoutMap",
-        obj_id = "def-random-readout",
+        obj_class="RandomTCMakerConf",
+        obj_id = "random-tc-generator",
         updates={
-            "time_before": 62000,
-            "time_after": 500,
+            "candidate_backshift_ts": 0,
+            "candidate_window_before_ts": 62000,
+            "candidate_window_after_ts": 500,
         },
     )
 )
