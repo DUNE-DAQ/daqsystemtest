@@ -9,8 +9,14 @@ import pathlib
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+import integrationtest.resource_validation as resource_validation
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
+
+# tweak the print() statement default behavior so that it always flushes the output.
+import functools
+print = functools.partial(print, flush=True)
 
 # Values that help determine the running conditions
 run_duration = 20  # seconds
@@ -71,6 +77,15 @@ ignored_logfile_problems = {
     ]
 }
 
+# Determine if this computer has enough resources for these tests
+resource_validator = resource_validation.ResourceValidator()
+resource_validator.cpu_count_needs(30, 60)  # 3 for each data source (incl TPG) plus 6 more for everything else
+resource_validator.free_memory_needs(15, 24)  # 25% more than what we observe being used ('free -h')
+actual_output_path = get_pytest_tmpdir()
+resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resource_validator.get_debug_string()
+print(f"{resval_debug_string}")
+
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 
@@ -122,7 +137,6 @@ else:
         "Local 2x3 Conf": twobythree_local_conf,
     }
 
-
 # The commands to run in nanorc, as a list
 nanorc_command_list = (
     "boot wait 2 conf start --run-number 101 wait 1 enable-triggers wait ".split()
@@ -155,14 +169,12 @@ def test_nanorc_success(run_nanorc):
 
 def test_log_files(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-
     if not host_is_at_ehn1(hostname) and "EHN1" in current_test:
         pytest.skip(
             f"This computer ({hostname}) is not at EHN1, not running EHN1 sessions"
         )
 
     session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
-
     if host_is_at_ehn1(hostname) and "EHN1" in current_test:
         log_dir = pathlib.Path("/log")
         run_nanorc.log_files += list(log_dir.glob(f"log_*_{session_name}*.txt"))
@@ -191,7 +203,6 @@ def test_log_files(run_nanorc):
 
 def test_data_files(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-
     if not host_is_at_ehn1(hostname) and "EHN1" in current_test:
         pytest.skip(
             f"This computer ({hostname}) is not at EHN1, not running EHN1 sessions"
