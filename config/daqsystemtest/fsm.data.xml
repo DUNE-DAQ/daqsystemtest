@@ -219,10 +219,12 @@
  <rel name="pre_transitions">
   <ref class="FSMxTransition" id="pre_change_rate"/>
   <ref class="FSMxTransition" id="pre_start_prod"/>
+  <ref class="FSMxTransition" id="pre_conf"/>
  </rel>
  <rel name="post_transitions">
   <ref class="FSMxTransition" id="post_start_prod"/>
   <ref class="FSMxTransition" id="post_drain_dataflow_prod"/>
+  <ref class="FSMxTransition" id="post_conf"/>
  </rel>
  <rel name="actions">
   <ref class="FSMaction" id="usvc-provided-run-number"/>
@@ -263,16 +265,19 @@
  <rel name="pre_transitions">
   <ref class="FSMxTransition" id="pre_change_rate"/>
   <ref class="FSMxTransition" id="pre_start_test"/>
+  <ref class="FSMxTransition" id="pre_conf"/>
  </rel>
  <rel name="post_transitions">
   <ref class="FSMxTransition" id="post_start_test"/>
   <ref class="FSMxTransition" id="post_drain_dataflow_test"/>
+  <ref class="FSMxTransition" id="post_conf"/>
  </rel>
  <rel name="actions">
   <ref class="FSMaction" id="user-provided-run-number"/>
   <ref class="FSMaction" id="trigger-rate-specifier"/>
   <ref class="FSMaction" id="file-logbook"/>
   <ref class="FSMaction" id="file-run-registry"/>
+  <ref class="FSMaction" id="thread-pinning"/>
  </rel>
 </obj>
 
@@ -362,12 +367,34 @@
  </attr>
 </obj>
 
+<obj class="FSMxTransition" id="post_conf">
+ <attr name="transition" type="string" val="conf"/>
+ <attr name="order" type="string">
+  <data val="thread-pinning"/>
+ </attr>
+ <attr name="mandatory" type="string">
+  <data val="thread-pinning"/>
+ </attr>
+</obj>
+
+<obj class="FSMxTransition" id="pre_conf">
+ <attr name="transition" type="string" val="conf"/>
+ <attr name="order" type="string">
+  <data val="thread-pinning"/>
+ </attr>
+ <attr name="mandatory" type="string">
+  <data val="thread-pinning"/>
+ </attr>
+</obj>
+
 <obj class="FSMxTransition" id="post_start_prod">
  <attr name="transition" type="string" val="start"/>
  <attr name="order" type="string">
+  <data val="thread-pinning"/>
   <data val="elisa-logbook"/>
  </attr>
  <attr name="mandatory" type="string">
+  <data val="thread-pinning"/>
   <data val="elisa-logbook"/>
  </attr>
 </obj>
