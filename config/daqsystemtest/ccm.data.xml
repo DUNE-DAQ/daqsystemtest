@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="29" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="mrigan" last-modified-on="np04-srv-016.cern.ch" last-modification-time="20250312T105152"/>
+<info name="" type="" num-of-items="29" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="biery" last-modified-on="daq.fnal.gov" last-modification-time="20250903T173857"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -77,6 +77,8 @@
  <comment creation-time="20240918T094920" created-by="maroda" created-on="np04-srv-015.cern.ch" author="maroda" text="add local file"/>
  <comment creation-time="20250214T095127" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added new Session with SocketReaderModule"/>
  <comment creation-time="20250312T102000" created-by="mrigan" created-on="np04-srv-016.cern.ch" author="mrigan" text=" "/>
+ <comment creation-time="20250526T125621" created-by="dergonul" created-on="np04-srv-031.cern.ch" author="dergonul" text="Added new sessions for CRTBernFrame and CRTGrenobleFrame"/>
+ <comment creation-time="20250805T092423" created-by="dergonul" created-on="np04-srv-028.cern.ch" author="dergonul" text="Emu CRT configs"/>
 </comments>
 
 
@@ -84,8 +86,8 @@
  <attr name="application_name" type="string" val="echo"/>
  <attr name="commandline_parameters" type="string">
   <data val="Process PID $$;"/>
-  <data val="trap &apos;pkill -INT -P $$&apos; EXIT;"/>
-  <data val="gunicorn -b 0.0.0.0:5000 --workers=1 --worker-class=gthread --threads=2 --timeout 5000000000 --log-level=info connection-service.connection-flask:app"/>
+  <data val="trap &apos;pkill -QUIT -P $$&apos; EXIT;"/>
+  <data val="setsid gunicorn -b 0.0.0.0:${CONNECTION_PORT} --workers=1 --worker-class=gthread --threads=2 --timeout 5000000000 --log-level=info connectivityserver.connectionflask:app"/>
  </attr>
  <attr name="threads" type="u16" val="1"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
@@ -131,7 +133,7 @@
  <attr name="application_name" type="string" val="drunc-controller"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="rccontroller_control"/>
+  <ref class="Service" id="root-rccontroller_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="fsm" class="FSMconfiguration" id="fsmConf-test"/>
@@ -141,7 +143,7 @@
  <attr name="application_name" type="string" val="drunc-controller"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
-  <ref class="Service" id="rccontroller_control"/>
+  <ref class="Service" id="root-rccontroller_control"/>
  </rel>
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="fsm" class="FSMconfiguration" id="fsmConf-test"/>
@@ -159,7 +161,7 @@
 
 <obj class="Service" id="local-connectivity-service">
  <attr name="protocol" type="string" val="http"/>
- <attr name="port" type="u16" val="5000"/>
+ <attr name="port" type="u16" val="30005"/>
 </obj>
 
 <obj class="Service" id="rccontroller_control">
@@ -167,14 +169,14 @@
  <attr name="port" type="u16" val="0"/>
 </obj>
 
+<obj class="Service" id="root-rccontroller_control">
+ <attr name="protocol" type="string" val="grpc"/>
+ <attr name="port" type="u16" val="30006"/>
+</obj>
+
 <obj class="Variable" id="ehn1-env-connectivity-port">
  <attr name="name" type="string" val="CONNECTION_PORT"/>
  <attr name="value" type="string" val="30005"/>
-</obj>
-
-<obj class="Variable" id="ehn1-env-connectivity-server">
- <attr name="name" type="string" val="CONNECTION_SERVER"/>
- <attr name="value" type="string" val="np04-srv-017"/>
 </obj>
 
 <obj class="Variable" id="ehn1-env-ers-error">
@@ -208,6 +210,16 @@
  <attr name="value" type="string" val="erstrace,throttle,lstdout,protobufstream(monkafka.cern.ch:30092)"/>
 </obj>
 
+<obj class="Variable" id="local-env-connectivity-port">
+ <attr name="name" type="string" val="CONNECTION_PORT"/>
+ <attr name="value" type="string" val="30005"/>
+</obj>
+
+<obj class="Variable" id="local-env-ers-debug-level">
+ <attr name="name" type="string" val="DUNEDAQ_ERS_DEBUG_LEVEL"/>
+ <attr name="value" type="string" val="-1"/>
+</obj>
+
 <obj class="Variable" id="local-env-ers-error">
  <attr name="name" type="string" val="DUNEDAQ_ERS_ERROR"/>
  <attr name="value" type="string" val="erstrace,throttle,lstdout"/>
@@ -233,11 +245,6 @@
  <attr name="value" type="string" val="erstrace,throttle,lstdout"/>
 </obj>
 
-<obj class="Variable" id="local-env-ers-debug-level">
- <attr name="name" type="string" val="DUNEDAQ_ERS_DEBUG_LEVEL"/>
- <attr name="value" type="string" val="-1"/>
-</obj>
-
 <obj class="VariableSet" id="ehn1-variables">
  <rel name="contains">
   <ref class="Variable" id="ehn1-env-ers-error"/>
@@ -246,6 +253,7 @@
   <ref class="Variable" id="ehn1-env-ers-stream-libs"/>
   <ref class="Variable" id="ehn1-env-ers-verb"/>
   <ref class="Variable" id="ehn1-env-ers-warning"/>
+  <ref class="Variable" id="ehn1-env-connectivity-port"/>
  </rel>
 </obj>
 
@@ -257,6 +265,7 @@
   <ref class="Variable" id="local-env-ers-verb"/>
   <ref class="Variable" id="local-env-ers-warning"/>
   <ref class="Variable" id="local-env-ers-debug-level"/>
+  <ref class="Variable" id="local-env-connectivity-port"/>
  </rel>
 </obj>
 

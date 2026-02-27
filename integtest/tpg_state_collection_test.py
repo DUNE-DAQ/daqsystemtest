@@ -6,6 +6,7 @@ import urllib.request
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+import integrationtest.opmon_metric_checks as opmon_metric_checks
 import integrationtest.resource_validation as resource_validation
 from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
@@ -163,6 +164,26 @@ conf_dict.config_substitutions.append(
 )
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
+        obj_class="AVXFrugalPedestalSubtractProcessor",
+        obj_id="tpg-pedsub-proc",
+        updates={
+            "metric_collect_time_sample_period": 10000,
+            "metric_collect_toggle_state": True,
+            "requested_internal_states": "pedestal,accum",
+        },
+    )
+)
+conf_dict.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TPCRawDataProcessor",
+        obj_id="def-wib-processor",
+        updates={
+            "metric_collect_opmon_period": 10000,
+        },
+    )
+)
+conf_dict.config_substitutions.append(
+    data_classes.attribute_substitution(
         obj_class="DataStoreConf",
         obj_id="default",
         updates={"directory_path": output_dir},
@@ -289,4 +310,56 @@ def test_tpstream_files(run_nanorc):
             all_ok &= data_file_checks.check_fragment_sizes(
                 data_file, fragment_check_list[jdx]
             )
+    assert all_ok
+
+
+# 26-Nov-2025, KAB: added checking of opmon metrics to verify that the ones that are
+# specifically enabled in this test work as expected.
+def test_metric_files(run_nanorc):
+    print("") # Clear potential dot from pytest
+
+    session_name = run_nanorc.session_name if run_nanorc.session_name else run_nanorc.session
+    metric_data = opmon_metric_checks.collate_opmon_data_from_files(run_nanorc.opmon_files)
+
+    all_ok = True
+
+    # *** Check that the pedestal subtraction processor metrics are being produced as expected.
+    # DLH-0, 'accum' metrics
+    metric_key_list = [session_name, "ru-det-conn-0", "DLH-0", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "accum"]
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=1)
+
+    # DLH-0, 'pedestal' metrics
+    # (In this test, the calculation of the pedestal for each WIB channel [used in TP
+    # generation] starts with a non-zero initial value, but the calculated value
+    # quickly becomes zero because this test uses the WIBEth All Zeroes binary file from the
+    # asset system.  As the name implies, the ADC values for the WIBs in that file are all zero.
+    # The fake-data-replay code randomly modifies a small fraction of the ADC values to be non-zero
+    # to provide fake "signals" that the trigger-primitive-generation code sees, but in this test,
+    # the rate of such fake non-zero signals is not large enough to affect the calculated pedestal.
+    # Because of all of that, the pedestal value check in this section can verify that the metric
+    # reporting system sees a pedestal value of zero.)
+    metric_key_list = [session_name, "ru-det-conn-0", "DLH-0", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "pedestal"]
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=0, max_value_sum=0)
+
+    # DLH-1, 'accum' metrics
+    metric_key_list = [session_name, "ru-det-conn-0", "DLH-1", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "accum"]
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=1)
+
+    # DLH-1, 'pedestal' metrics
+    # (In this test, the calculation of the pedestal for each WIB channel [used in TP
+    # generation] starts with a non-zero initial value, but the calculated value
+    # quickly becomes zero because this test uses the WIBEth All Zeroes binary file from the
+    # asset system.  As the name implies, the ADC values for the WIBs in that file are all zero.
+    # The fake-data-replay code randomly modifies a small fraction of the ADC values to be non-zero
+    # to provide fake "signals" that the trigger-primitive-generation code sees, but in this test,
+    # the rate of such fake non-zero signals is not large enough to affect the calculated pedestal.
+    # Because of all of that, the pedestal value check in this section can verify that the metric
+    # reporting system sees a pedestal value of zero.)
+    metric_key_list = [session_name, "ru-det-conn-0", "DLH-1", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "pedestal"]
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=0, max_value_sum=0)
+
     assert all_ok

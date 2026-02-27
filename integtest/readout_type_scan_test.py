@@ -7,17 +7,19 @@ import urllib.request
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+import integrationtest.resource_validation as resource_validation
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
-# Don't require frames file
-frame_file_required = False
+# tweak the print() statement default behavior so that it always flushes the output.
+import functools
+print = functools.partial(print, flush=True)
 
 # Values that help determine the running conditions
 number_of_data_producers = 2
 run_duration = 20  # seconds
 data_rate_slowdown_factor = 10  # is this still used anywhere?  (KAB, 28-Apr-2050)
-ta_prescale = 100
 
 # Default values for validation parameters
 expected_number_of_data_files = 1
@@ -36,8 +38,22 @@ tde_frag_params = {
     "fragment_type_description": "TDEEth",
     "fragment_type": "TDEEth",
     "expected_fragment_count": number_of_data_producers,
-    "min_size_bytes": 7272,
-    "max_size_bytes": 14472,
+    "min_size_bytes": 14472,  # 19-Feb-2026, KAB: the time span of a TDEEth frame is 2000 ticks
+    "max_size_bytes": 21672,  # With a readout window of 2005 ticks, we'll get 2 or 3 frames
+}
+bern_crt_frag_params = {
+    "fragment_type_description": "CRTBern",
+    "fragment_type": "CRTBern",
+    "expected_fragment_count": number_of_data_producers,
+    "min_size_bytes": 384,
+    "max_size_bytes": 488,
+}
+grenoble_crt_frag_params = {
+    "fragment_type_description": "CRTGrenoble",
+    "fragment_type": "CRTGrenoble",
+    "expected_fragment_count": number_of_data_producers,
+    "min_size_bytes": 1752,
+    "max_size_bytes": 2312,
 }
 
 # 1ms readout window = 62512 DTS ticks
@@ -50,7 +66,7 @@ daphne_stream_frag_params = {
     "expected_fragment_count": number_of_data_producers,
     "min_size_bytes": 72+461026-20*472,
     "max_size_bytes": 72+461026+20*472,
-}  
+}
 daphne_frag_params = {
     "fragment_type_description": "DAPHNE",
     "fragment_type": "DAPHNE",
@@ -107,6 +123,13 @@ daphne_triggerprimitive_frag_params = {
     "min_size_bytes": 96,
     "max_size_bytes": 4392,
 }
+tdeeth_triggerprimitive_frag_params = {
+    "fragment_type_description": "Trigger Primitive",
+    "fragment_type": "Trigger_Primitive",
+    "expected_fragment_count": (1 * 3),  # number of readout apps * 3
+    "min_size_bytes": 72,
+    "max_size_bytes": 144,
+}
 ignored_logfile_problems = {
     "-controller": [
         "Worker with pid \\d+ was terminated due to signal 1",
@@ -116,6 +139,15 @@ ignored_logfile_problems = {
         "errorlog: -",
     ],
 }
+
+# Determine if this computer has enough resources for these tests
+resource_validator = resource_validation.ResourceValidator()
+resource_validator.cpu_count_needs(8, 16)  # 3 for each data source (incl TPG) plus 2 more for everything else
+resource_validator.free_memory_needs(6, 10)  # 20% more than what we observe being used ('free -h')
+actual_output_path = get_pytest_tmpdir()
+resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resource_validator.get_debug_string()
+print(f"{resval_debug_string}")
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
@@ -131,14 +163,14 @@ conf_dict.tpg_enabled = False
 conf_dict.frame_file = "asset://?label=ProtoWIB&subsystem=readout"  # ProtoWIB
 
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id=conf_dict.session,
         obj_class="Session",
         updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="RandomTCMakerConf",
         updates={"trigger_rate_hz": 1},
     )
@@ -150,47 +182,89 @@ wib_tpg_conf.frame_file = (
     "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"  # WIBEth All Zeros
 )
 wib_tpg_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TAMakerPrescaleAlgorithm",
         obj_id="dummy-ta-maker",
-        updates={"prescale": ta_prescale},
+        updates={"prescale": 100},
     )
 )
 
 wibeth_conf = copy.deepcopy(conf_dict)
-# wibeth_conf.frame_file = "asset://?label=WIBEth&subsystem=readout"
-wibeth_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"
+wibeth_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
 
 tde_conf = copy.deepcopy(conf_dict)
 tde_conf.dro_map_config.det_id = 11
-tde_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
-#tde_conf.frame_file = "asset://?checksum=759e5351436bead208cf4963932d6327"
+tde_conf.dro_map_config.crate_id_offset = 5
+tde_conf.dro_map_config.slot_id = 3
+tde_conf.frame_file = "asset://?checksum=1793479772dfef8cb23a071a7383520b"
+tde_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TPCRawDataProcessor",
+        obj_id="def-wib-processor",
+        updates={"channel_map": "PD2VDTPCChannelMap"},
+    )
+)
+
+tde_tpg_conf = copy.deepcopy(tde_conf)
+tde_tpg_conf.tpg_enabled = True
+tde_tpg_conf.config_substitutions.append(
+    data_classes.list_element_addition(
+        obj_class="TCDataProcessor",
+        obj_id="def-tc-processor",
+        rel_name="tc_readout_map",
+        additional_object_class="TCReadoutMap",
+        additional_object_id="prescale-tc-map-entry",
+    )
+)
+tde_tpg_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="AVXThresholdProcessor",
+        obj_id="tpg-threshold-proc",
+        updates={"plane0": 500, "plane1": 500, "plane2": 500},
+    )
+)
+tde_tpg_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TAMakerPrescaleAlgorithm",
+        obj_id="dummy-ta-maker",
+        updates={"prescale": 100},
+    )
+)
+tde_tpg_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="GeoId",
+        obj_id="geioId-1",
+        updates={"slot_id": 4, "stream_id": 0},
+    )
+)
 
 daphne_stream_conf = copy.deepcopy(conf_dict)
 daphne_stream_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 daphne_stream_conf.frame_file = "asset://?label=DAPHNEStream&subsystem=readout"
 
 daphne_stream_conf.config_substitutions.append(
-    data_classes.config_substitution(
-        obj_class="TCReadoutMap",
-        obj_id = "def-random-readout",
+    data_classes.attribute_substitution(
+        obj_class="RandomTCMakerConf",
+        obj_id = "random-tc-generator",
         updates={
-            "time_before": 62000,
-            "time_after": 500,
+            "candidate_backshift_ts": 0,
+            "candidate_window_before_ts": 62000,
+            "candidate_window_after_ts": 500,
         },
     )
 )
 
 daphne_conf = copy.deepcopy(conf_dict)
 daphne_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
-daphne_conf.frame_file = "asset://?checksum=a8990a9eb3a505d4ded62dfdfa9e2681"
+daphne_conf.frame_file = "asset://?checksum=a8990a9eb3a505d4ded62dfdfa9e2681" # np02vd_run036012_sample_membrane_pds
 daphne_conf.config_substitutions.append(
-    data_classes.config_substitution(
-        obj_class="TCReadoutMap",
-        obj_id = "def-random-readout",
+    data_classes.attribute_substitution(
+        obj_class="RandomTCMakerConf",
+        obj_id = "random-tc-generator",
         updates={
-            "time_before": 62000,
-            "time_after": 500,
+            "candidate_backshift_ts": 0,
+            "candidate_window_before_ts": 62000,
+            "candidate_window_after_ts": 500,
         },
     )
 )
@@ -198,12 +272,20 @@ daphne_conf.config_substitutions.append(
 daphne_tpg_conf = copy.deepcopy(daphne_conf)
 daphne_tpg_conf.tpg_enabled = True
 daphne_tpg_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TAMakerPrescaleAlgorithm",
         obj_id="dummy-ta-maker",
         updates={"prescale": 750},
     )
 )
+
+bern_crt_conf = copy.deepcopy(conf_dict)
+bern_crt_conf.dro_map_config.det_id = 12
+bern_crt_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
+
+grenoble_crt_conf = copy.deepcopy(conf_dict)
+grenoble_crt_conf.dro_map_config.det_id = 13
+grenoble_crt_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
 
 
 confgen_arguments = {
@@ -212,7 +294,10 @@ confgen_arguments = {
     "DAPHNE_Stream_System": daphne_stream_conf,
     "DAPHNE_System": daphne_conf,
     "DAPHNE_TPG_System": daphne_tpg_conf,
-    "TDEEth_System": tde_conf
+    "TDEEth_System": tde_conf,
+    "TDEEth_TPG_System": tde_tpg_conf,
+    "BernCRT_System": bern_crt_conf,
+    "GrenobleCRT_System": grenoble_crt_conf
 }
 
 # The commands to run in nanorc, as a list
@@ -223,26 +308,26 @@ nanorc_command_list = (
 )
 #    + "disable-triggers wait 5 drain-dataflow wait 2 stop-trigger-sources wait 2 stop scrap terminate".split()
 
+
 # The tests themselves
 
-
 def test_nanorc_success(run_nanorc):
+    # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)\].*", current_test)
+    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
     if match_obj:
         current_test = match_obj.group(1)
     banner_line = re.sub(".", "=", current_test)
     print(banner_line)
     print(current_test)
     print(banner_line)
+
     # Check that nanorc completed correctly
     assert run_nanorc.completed_process.returncode == 0
 
 
 def test_log_files(run_nanorc):
-    local_check_flag = check_for_logfile_errors
-
-    if local_check_flag:
+    if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
             run_nanorc.log_files, True, True, ignored_logfile_problems
@@ -262,35 +347,47 @@ def test_data_files(run_nanorc):
         fragment_check_list.append(wibeth_frag_params)
     elif "TDEEth" in current_test:
         fragment_check_list.append(tde_frag_params)
+    elif "BernCRT" in current_test:
+        fragment_check_list.append(bern_crt_frag_params)
+    elif "GrenobleCRT" in current_test:
+        fragment_check_list.append(grenoble_crt_frag_params)
     if run_nanorc.confgen_config.tpg_enabled:
         fragment_check_list.append(triggeractivity_frag_params)
         if "WIBEth" in current_test:
             fragment_check_list.append(wibeth_triggerprimitive_frag_params)
             local_expected_event_count += (
-                (6250 / ta_prescale)
+                0.625
                 * number_of_data_producers
                 * run_duration
-                / 100
             )
             local_event_count_tolerance += (
-                (250 / ta_prescale)
+                0.025
                 * number_of_data_producers
                 * run_duration
-                / 100
             )
         if "DAPHNE" in current_test:
             fragment_check_list.append(daphne_triggerprimitive_frag_params)
             local_expected_event_count += (
-                (6250 / ta_prescale)
+                0.3125
                 * number_of_data_producers
                 * run_duration * 3
-                / 200
             )
             local_event_count_tolerance += (
-                (250 / ta_prescale)
+                0.01
                 * number_of_data_producers
                 * run_duration * 6
-                / 250
+            )
+        if "TDEEth" in current_test:
+            fragment_check_list.append(tdeeth_triggerprimitive_frag_params)
+            local_expected_event_count += (
+                0.70
+                * number_of_data_producers
+                * run_duration
+            )
+            local_event_count_tolerance += (
+                0.025
+                * number_of_data_producers
+                * run_duration
             )
 
     # Run some tests on the output data file

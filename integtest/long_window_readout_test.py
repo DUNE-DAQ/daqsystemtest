@@ -1,3 +1,17 @@
+# The goal of this test is to verify that triggers that have long readout windows are
+# handled correctly by the system, including the splitting of the resulting "trigger record"
+# into a "sequence" of TriggerRecords.
+#
+# This test requires a non-trivial amount of disk space to write its raw data files,
+# and there are safety checks to verify that sufficient space is available for these files.
+# In addition, the raw data files that are produced are removed at the end of the test
+# so that they don't fill up the available space.
+# *** If you are running on a computer that does not have sufficient space in /tmp, and you would
+#     like to instead use a directory on a disk that *does* have sufficient space, you can specify
+#     a non-standard pytest output directory using the "--tmpdir <dir_path>" to the
+#     dunedaq_integtest_bundle.sh script.  (This test will clean up the large data files that are
+#     produced independent of which output directory is used.)
+#
 import pytest
 import os
 import re
@@ -8,6 +22,8 @@ import psutil
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+import integrationtest.resource_validation as resource_validation
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -25,14 +41,10 @@ trigger_rate = 0.05  # Hz
 token_count = 1
 readout_window_time_before = 100000000  # 1.616 second is the intention for b+a
 readout_window_time_after = 1000000
-trigger_record_max_window = 500000  # intention is 8 msec
-tr_queue_size = token_count * (readout_window_time_before + readout_window_time_after) / trigger_record_max_window /  number_of_dataflow_apps
+trigger_record_sequence_length = 500000  # intention is 8 msec
+tr_queue_size = token_count * (readout_window_time_before + readout_window_time_after) / trigger_record_sequence_length /  number_of_dataflow_apps
 latency_buffer_size = 600000
 data_rate_slowdown_factor = 1
-minimum_cpu_count = 24
-minimum_free_memory_gb = 52
-minimum_total_disk_space_gb = 32  # double what we need
-minimum_free_disk_space_gb = 24  # 50% more than what we need
 
 # Default values for validation parameters
 expected_number_of_data_files = 4 * number_of_dataflow_apps
@@ -65,33 +77,16 @@ ignored_logfile_problems = {
     ],
 }
 
-# Determine if the conditions are right for these tests
-sufficient_disk_space = True
-actual_output_path = output_path_parameter
-if output_path_parameter == ".":
-    actual_output_path = "/tmp"
-disk_space = shutil.disk_usage(actual_output_path)
-total_disk_space_gb = disk_space.total / (1024 * 1024 * 1024)
-free_disk_space_gb = disk_space.free / (1024 * 1024 * 1024)
-print(
-    f"DEBUG: Space on disk for output path {actual_output_path}: total = {total_disk_space_gb} GB and free = {free_disk_space_gb} GB."
-)
-if (
-    total_disk_space_gb < minimum_total_disk_space_gb
-    or free_disk_space_gb < minimum_free_disk_space_gb
-):
-    sufficient_disk_space = False
-sufficient_resources_on_this_computer = True
-cpu_count = os.cpu_count()
-hostname = os.uname().nodename
-mem_obj = psutil.virtual_memory()
-free_mem = round((mem_obj.available / (1024 * 1024 * 1024)), 2)
-total_mem = round((mem_obj.total / (1024 * 1024 * 1024)), 2)
-print(
-    f"DEBUG: CPU count is {cpu_count}, free and total memory are {free_mem} GB and {total_mem} GB."
-)
-if cpu_count < minimum_cpu_count or free_mem < minimum_free_memory_gb:
-    sufficient_resources_on_this_computer = False
+# Determine if this computer has enough resources for these tests
+resource_validator = resource_validation.ResourceValidator()
+resource_validator.cpu_count_needs(30, 60)  # 2 for each data source plus 6 more for everything else
+resource_validator.free_memory_needs(64, 116)  # 10% more than what we observe being used ('free -h')
+resource_validator.total_memory_needs()  # no specific request, but it's useful to see how much is available
+actual_output_path = get_pytest_tmpdir()
+resource_validator.free_disk_space_needs(actual_output_path, 25)  # 25% more than what we need
+resource_validator.total_disk_space_needs(actual_output_path, recommended_total_disk_space=40)  # double what we need
+resval_debug_string = resource_validator.get_debug_string()
+print(f"{resval_debug_string}")
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
@@ -109,44 +104,45 @@ conf_dict.n_df_apps = number_of_dataflow_apps
 conf_dict.fake_hsi_enabled = False
 
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id=conf_dict.session,
         obj_class="Session",
         updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="LatencyBuffer", updates={"size": latency_buffer_size}
     )
 )
 
 
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="RandomTCMakerConf",
         updates={"trigger_rate_hz": trigger_rate},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
-        obj_class="TCReadoutMap",
-        obj_id = "def-random-readout",
+    data_classes.attribute_substitution(
+        obj_class="RandomTCMakerConf",
+        obj_id = "random-tc-generator",
         updates={
-            "time_before": readout_window_time_before,
-            "time_after": readout_window_time_after,
+            "candidate_backshift_ts": 0,
+            "candidate_window_before_ts": readout_window_time_before,
+            "candidate_window_after_ts": readout_window_time_after,
         },
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="DataStoreConf",
         obj_id="default",
         updates={"max_file_size": 4 * 1024 * 1024 * 1024},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="DataStoreConf",
         obj_id="default",
         updates={"directory_path": output_path_parameter},
@@ -155,17 +151,17 @@ conf_dict.config_substitutions.append(
 
 trsplit_conf = copy.deepcopy(conf_dict)
 trsplit_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TRBConf",
         updates={
-            "max_time_window": trigger_record_max_window,
+            "max_sequence_length_ticks": trigger_record_sequence_length,
             "trigger_record_timeout_ms": 1000 / trigger_rate
         },
     )
 )
 
 trsplit_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="QueueDescriptor",
         obj_id="trigger-records",
         updates={"capacity": tr_queue_size},
@@ -177,61 +173,42 @@ confgen_arguments = {  # "No_TR_Splitting": conf_dict,
 }
 
 # The commands to run in nanorc, as a list
-if sufficient_disk_space and sufficient_resources_on_this_computer:
-    nanorc_command_list = "boot conf".split()
-    nanorc_command_list += (
-        "start --trigger-rate ".split()
-        + [str(trigger_rate)]
-        + "--run-number 101 wait 15 enable-triggers wait ".split()
-        + [str(run_duration)]
-        + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop wait 2".split()
-    )
-    nanorc_command_list += (
-        "start --trigger-rate ".split()
-        + [str(trigger_rate)]
-        + "--run-number 102 wait 15 enable-triggers wait ".split()
-        + [str(run_duration)]
-        + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop wait 2".split()
-    )
-    nanorc_command_list += "scrap terminate".split()
-else:
-    nanorc_command_list = ["boot", "terminate"]
+nanorc_command_list = "boot conf".split()
+nanorc_command_list += (
+    "start --trigger-rate ".split()
+    + [str(trigger_rate)]
+    + "--run-number 101 wait 15 enable-triggers wait ".split()
+    + [str(run_duration)]
+    + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop wait 2".split()
+)
+nanorc_command_list += (
+    "start --trigger-rate ".split()
+    + [str(trigger_rate)]
+    + "--run-number 102 wait 15 enable-triggers wait ".split()
+    + [str(run_duration)]
+    + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop wait 2".split()
+)
+nanorc_command_list += "scrap terminate".split()
 
 # The tests themselves
 
 
 def test_nanorc_success(run_nanorc):
-    if not sufficient_resources_on_this_computer:
-        pytest.skip(
-            f"This computer ({hostname}) does not have enough resources to run this test."
-        )
-    if not sufficient_disk_space:
-        pytest.skip(
-            f"The raw data output path ({actual_output_path}) does not have enough space to run this test."
-        )
-
+    # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)\].*", current_test)
+    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
     if match_obj:
         current_test = match_obj.group(1)
     banner_line = re.sub(".", "=", current_test)
     print(banner_line)
     print(current_test)
     print(banner_line)
+
     # Check that nanorc completed correctly
     assert run_nanorc.completed_process.returncode == 0
 
 
 def test_log_files(run_nanorc):
-    if not sufficient_resources_on_this_computer:
-        pytest.skip(
-            f"This computer ({hostname}) does not have enough resources to run this test."
-        )
-    if not sufficient_disk_space:
-        pytest.skip(
-            f"The raw data output path ({actual_output_path}) does not have enough space to run this test."
-        )
-
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
@@ -240,34 +217,6 @@ def test_log_files(run_nanorc):
 
 
 def test_data_files(run_nanorc):
-    if not sufficient_resources_on_this_computer:
-        print(
-            f"This computer ({hostname}) does not have enough resources to run this test."
-        )
-        print(
-            f"    (CPU count is {cpu_count}, free and total memory are {free_mem} GB and {total_mem} GB.)"
-        )
-        print(
-            f"    (Minimum CPU count is {minimum_cpu_count} and minimum free memory is {minimum_free_memory_gb} GB.)"
-        )
-        pytest.skip(
-            f"This computer ({hostname}) does not have enough resources to run this test."
-        )
-
-    if not sufficient_disk_space:
-        print(
-            f"The raw data output path ({actual_output_path}) does not have enough space to run this test."
-        )
-        print(
-            f"    (Free and total space are {free_disk_space_gb} GB and {total_disk_space_gb} GB.)"
-        )
-        print(
-            f"    (Minimums are {minimum_free_disk_space_gb} GB and {minimum_total_disk_space_gb} GB.)"
-        )
-        pytest.skip(
-            f"The raw data output path ({actual_output_path}) does not have enough space to run this test."
-        )
-
     local_expected_event_count = expected_event_count
     local_event_count_tolerance = expected_event_count_tolerance
     fragment_check_list = [triggercandidate_frag_params]
@@ -300,11 +249,6 @@ def test_data_files(run_nanorc):
 
 
 def test_cleanup(run_nanorc):
-    if not sufficient_disk_space:
-        pytest.skip(
-            f"The raw data output path ({actual_output_path}) does not have enough space to run this test."
-        )
-
     pathlist_string = ""
     filelist_string = ""
     for data_file in run_nanorc.data_files:

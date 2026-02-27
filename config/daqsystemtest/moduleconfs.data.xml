@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="78" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="mrigan" last-modified-on="np04-srv-031.cern.ch" last-modification-time="20250423T102725"/>
+<info name="" type="" num-of-items="96" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20251105T144619"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -77,13 +77,79 @@
 
 <comments>
  <comment creation-time="20250214T120354" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added socket communication classes"/>
+ <comment creation-time="20250526T144643" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRT link handlers"/>
+ <comment creation-time="20250530T150821" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRTBernReaderConf"/>
+ <comment creation-time="20250530T151321" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRTGrenobleReaderConf"/>
+ <comment creation-time="20250530T151933" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRT data source steps"/>
+ <comment creation-time="20250530T152100" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRT action plans"/>
+ <comment creation-time="20250530T152404" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added CRT action plans"/>
+ <comment creation-time="20250623T201605" created-by="ramarine" created-on="np04-srv-017.cern.ch" author="ramarine" text="PDSlinked"/>
+ <comment creation-time="20250625T095129" created-by="ramarine" created-on="np04-srv-017.cern.ch" author="ramarine" text="deleted latency buffer"/>
+ <comment creation-time="20250625T100027" created-by="ramarine" created-on="np04-srv-017.cern.ch" author="ramarine" text="def-pds-tp-handler deleted"/>
+ <comment creation-time="20250805T092423" created-by="dergonul" created-on="np04-srv-028.cern.ch" author="dergonul" text="Emu CRT configs"/>
 </comments>
 
 
+<obj class="AVXAbsRunSumProcessor" id="tpg-absrs-proc">
+ <attr name="metric_collect_time_sample_period" type="u64" val="256"/>
+ <attr name="memory_factor_plane0" type="u8" val="8"/>
+ <attr name="memory_factor_plane1" type="u8" val="8"/>
+ <attr name="memory_factor_plane2" type="u8" val="8"/>
+ <attr name="memory_divisor_plane0" type="u8" val="10"/>
+ <attr name="memory_divisor_plane1" type="u8" val="10"/>
+ <attr name="memory_divisor_plane2" type="u8" val="10"/>
+ <attr name="scale_factor_plane0" type="u8" val="10"/>
+ <attr name="scale_factor_plane1" type="u8" val="10"/>
+ <attr name="scale_factor_plane2" type="u8" val="10"/>
+ <attr name="scale_divisor_plane0" type="u8" val="10"/>
+ <attr name="scale_divisor_plane1" type="u8" val="10"/>
+ <attr name="scale_divisor_plane2" type="u8" val="10"/>
+</obj>
+
+<obj class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc">
+ <attr name="metric_collect_time_sample_period" type="u64" val="256"/>
+ <attr name="accum_limit" type="u8" val="10"/>
+</obj>
+
+<obj class="AVXRunSumProcessor" id="tpg-rs-proc">
+ <attr name="metric_collect_time_sample_period" type="u64" val="256"/>
+ <attr name="memory_factor_plane0" type="u8" val="8"/>
+ <attr name="memory_factor_plane1" type="u8" val="8"/>
+ <attr name="memory_factor_plane2" type="u8" val="8"/>
+ <attr name="memory_divisor_plane0" type="u8" val="10"/>
+ <attr name="memory_divisor_plane1" type="u8" val="10"/>
+ <attr name="memory_divisor_plane2" type="u8" val="10"/>
+ <attr name="scale_factor_plane0" type="u8" val="10"/>
+ <attr name="scale_factor_plane1" type="u8" val="10"/>
+ <attr name="scale_factor_plane2" type="u8" val="10"/>
+ <attr name="scale_divisor_plane0" type="u8" val="10"/>
+ <attr name="scale_divisor_plane1" type="u8" val="10"/>
+ <attr name="scale_divisor_plane2" type="u8" val="10"/>
+</obj>
+
 <obj class="AVXThresholdProcessor" id="tpg-threshold-proc">
+ <attr name="metric_collect_time_sample_period" type="u64" val="256"/>
  <attr name="plane0" type="u16" val="100"/>
  <attr name="plane1" type="u16" val="100"/>
  <attr name="plane2" type="u16" val="100"/>
+</obj>
+
+<obj class="ActionPlan" id="crt-readout-start">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="data-source-step"/>
+ </rel>
+</obj>
+
+<obj class="ActionPlan" id="crt-readout-stop">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
+ </rel>
 </obj>
 
 <obj class="ActionPlan" id="readout-start">
@@ -91,7 +157,7 @@
  <rel name="command" class="FSMCommand" id="start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
   <ref class="DaqModulesGroupByType" id="data-source-step"/>
  </rel>
@@ -103,7 +169,49 @@
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="data-source-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+ </rel>
+</obj>
+
+<obj class="ActionPlan" id="snb-readout-start">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+  <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="snb-dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="snb-data-source-step"/>
+ </rel>
+</obj>
+
+<obj class="ActionPlan" id="snb-readout-stop">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="snb-data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="snb-dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+ </rel>
+</obj>
+
+<obj class="ActionPlan" id="socket-readout-start">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
+  <ref class="DaqModulesGroupByType" id="dlh-step"/>
+  <ref class="DaqModulesGroupByType" id="socket-reader-data-source-step"/>
+ </rel>
+</obj>
+
+<obj class="ActionPlan" id="socket-readout-stop">
+ <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
+ <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
+ <rel name="steps">
+  <ref class="DaqModulesGroupByType" id="socket-reader-data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="dlh-step"/>
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
  </rel>
 </obj>
@@ -117,56 +225,28 @@
  </rel>
 </obj>
 
-<obj class="ActionPlan" id="socket-readout-start">
- <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="start"/>
- <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
-  <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="socket-reader-data-source-step"/>
- </rel>
+<obj class="CRTBernReaderConf" id="def-crt-bern-receiver-conf">
+ <attr name="template_for" type="class" val="CRTBernReaderModule"/>
+ <attr name="emulation_mode" type="bool" val="0"/>
 </obj>
 
-<obj class="ActionPlan" id="socket-readout-stop">
- <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
- <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="socket-reader-data-source-step"/>
-  <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
-  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
- </rel>
+<obj class="CRTGrenobleReaderConf" id="def-crt-grenoble-receiver-conf">
+ <attr name="template_for" type="class" val="CRTGrenobleReaderModule"/>
+ <attr name="emulation_mode" type="bool" val="0"/>
 </obj>
 
-<obj class="ActionPlan" id="socket-write-start">
- <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="start"/>
- <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
-  <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
- </rel>
-</obj>
-
-<obj class="ActionPlan" id="socket-write-stop">
- <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
- <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
-  <ref class="DaqModulesGroupByType" id="dlh-step"/>
-  <ref class="DaqModulesGroupByType" id="tp-handler-step"/>
-  <ref class="DaqModulesGroupByType" id="aggregator-step"/>
- </rel> 
+<obj class="CRTReaderConf" id="def-emu-crt-receiver-conf">
+ <attr name="template_for" type="class" val="FDFakeReaderModule"/>
+ <attr name="emulation_mode" type="bool" val="1"/>
+ <rel name="emulation_conf" class="StreamEmulationParameters" id="crt-stream-emu"/>
 </obj>
 
 <obj class="DFOConf" id="dfoconf-01">
  <attr name="general_queue_timeout_ms" type="u32" val="100"/>
  <attr name="stop_timeout_ms" type="u32" val="100"/>
  <attr name="td_send_retries" type="s32" val="5"/>
- <attr name="busy_threshold" type="s32" val="2"/>
- <attr name="free_threshold" type="s32" val="1"/>
+ <attr name="busy_threshold" type="s32" val="4"/>
+ <attr name="free_threshold" type="s32" val="3"/>
 </obj>
 
 <obj class="DPDKReaderConf" id="def-emu-nic-receiver-conf">
@@ -181,84 +261,150 @@
 </obj>
 
 <obj class="DaqModulesGroupByType" id="aggregator-step">
+ <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="FragmentAggregatorModule"/>
  </attr>
 </obj>
 
+<obj class="DaqModulesGroupByType" id="crt-bern-reader-data-source-step">
+ <attr name="optional" type="bool" val="0"/>
+ <attr name="modules" type="class">
+  <data val="CRTBernReaderModule"/>
+ </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="crt-grenoble-reader-data-source-step">
+ <attr name="optional" type="bool" val="0"/>
+ <attr name="modules" type="class">
+  <data val="CRTGrenobleReaderModule"/>
+ </attr>
+</obj>
+
 <obj class="DaqModulesGroupByType" id="data-source-step">
+ <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="FDFakeReaderModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="dlh-step">
+ <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="FDDataHandlerModule"/>
  </attr>
 </obj>
 
+<obj class="DaqModulesGroupByType" id="optional-tp-handler-step">
+ <attr name="optional" type="bool" val="1"/>
+ <attr name="modules" type="class">
+  <data val="TriggerDataHandlerModule"/>
+ </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="snb-data-source-step">
+ <attr name="optional" type="bool" val="0"/>
+ <attr name="modules" type="class">
+  <data val="SNBFileReaderModule"/>
+ </attr>
+</obj>
+
+<obj class="DaqModulesGroupByType" id="snb-dlh-step">
+ <attr name="optional" type="bool" val="0"/>
+ <attr name="modules" type="class">
+  <data val="SNBDataHandlerModule"/>
+ </attr>
+</obj>
+
 <obj class="DaqModulesGroupByType" id="socket-reader-data-source-step">
+ <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="SocketReaderModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="socket-writer-data-source-step">
+ <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
-  <data val="FakeSocketWriterModule"/>
- </attr>
-</obj>
-
-<obj class="DaqModulesGroupByType" id="tp-handler-step">
- <attr name="modules" type="class">
-  <data val="TriggerDataHandlerModule"/>
+  <data val="SocketWriterModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="subscriber-step">
+ <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="DataSubscriberModule"/>
  </attr>
 </obj>
 
 <obj class="DaqModulesGroupByType" id="ta-handler-step">
+ <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
   <data val="TriggerDataHandlerModule"/>
  </attr>
+</obj>
+
+<obj class="DataHandlerConf" id="def-crt-bern-link-handler">
+ <attr name="template_for" type="class" val="FDDataHandlerModule"/>
+ <attr name="input_data_type" type="string" val="CRTBernFrame"/>
+ <attr name="generate_timesync" type="bool" val="1"/>
+ <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
+ <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
+ <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
+ <rel name="data_processor" class="DataProcessor" id="def-base-processor"/>
+</obj>
+
+<obj class="DataHandlerConf" id="def-crt-grenoble-link-handler">
+ <attr name="template_for" type="class" val="FDDataHandlerModule"/>
+ <attr name="input_data_type" type="string" val="CRTGrenobleFrame"/>
+ <attr name="generate_timesync" type="bool" val="1"/>
+ <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
+ <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
+ <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
+ <rel name="data_processor" class="DataProcessor" id="def-base-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-link-handler">
  <attr name="template_for" type="class" val="FDDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="WIBEthFrame"/>
  <attr name="generate_timesync" type="bool" val="1"/>
+ <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="RawDataProcessor" id="def-wib-processor"/>
+ <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-pds-link-handler">
  <attr name="template_for" type="class" val="FDDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="PDSFrame"/>
  <attr name="generate_timesync" type="bool" val="1"/>
+ <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="RawDataProcessor" id="def-wib-processor"/>
+ <rel name="data_processor" class="PDSRawDataProcessor" id="def-pds-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-pds-stream-link-handler">
  <attr name="template_for" type="class" val="FDDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="PDSStreamFrame"/>
  <attr name="generate_timesync" type="bool" val="1"/>
+ <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="RawDataProcessor" id="def-wib-processor"/>
+ <rel name="data_processor" class="DataProcessor" id="def-base-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-ta-handler">
  <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="TriggerActivity"/>
  <attr name="generate_timesync" type="bool" val="0"/>
+ <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-ta-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="TADataProcessor" id="def-ta-processor"/>
@@ -268,6 +414,8 @@
  <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="TriggerCandidate"/>
  <attr name="generate_timesync" type="bool" val="0"/>
+ <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-tc-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="TCDataProcessor" id="def-tc-processor"/>
@@ -277,15 +425,19 @@
  <attr name="template_for" type="class" val="FDDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="TDEEthFrame"/>
  <attr name="generate_timesync" type="bool" val="1"/>
+ <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="RawDataProcessor" id="def-wib-processor"/>
+ <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
 </obj>
 
 <obj class="DataHandlerConf" id="def-tp-handler">
  <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="TriggerPrimitiveVector"/>
  <attr name="generate_timesync" type="bool" val="0"/>
+ <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-tp-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="TPDataProcessor" id="tp-processor"/>
@@ -295,6 +447,8 @@
  <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="TriggerPrimitiveVector"/>
  <attr name="generate_timesync" type="bool" val="0"/>
+ <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-tp-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="TPDataProcessor" id="tpreplay-tp-processor"/>
@@ -304,9 +458,17 @@
  <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="TriggerPrimitive"/>
  <attr name="generate_timesync" type="bool" val="0"/>
+ <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="TPDataProcessor" id="tp-processor"/>
+</obj>
+
+<obj class="DataProcessor" id="def-base-processor">
+ <attr name="queue_sizes" type="u32" val="10000"/>
+ <attr name="thread_names_prefix" type="string" val="postproc-"/>
+ <attr name="latency_monitoring" type="bool" val="1"/>
 </obj>
 
 <obj class="DataReaderConf" id="ta-subscriber-1">
@@ -331,7 +493,6 @@
  <attr name="max_file_size" type="u64" val="4294967296"/>
  <attr name="disable_unique_filename_suffix" type="bool" val="0"/>
  <attr name="free_space_safety_factor" type="s32" val="5"/>
- <attr name="compression_level" type="u8" val="0"/>
  <rel name="file_layout_params" class="HDF5FileLayoutParams" id="default"/>
  <rel name="filename_params" class="FilenameParams" id="default"/>
 </obj>
@@ -343,9 +504,19 @@
  <attr name="max_file_size" type="u64" val="4294967296"/>
  <attr name="disable_unique_filename_suffix" type="bool" val="0"/>
  <attr name="free_space_safety_factor" type="s32" val="5"/>
- <attr name="compression_level" type="u8" val="0"/>
  <rel name="file_layout_params" class="HDF5FileLayoutParams" id="tp_file_layout"/>
  <rel name="filename_params" class="FilenameParams" id="tp-file-params"/>
+</obj>
+
+<obj class="DataStoreConf" id="default_tr_mon_conf">
+ <attr name="type" type="string" val="HDF5DataStore"/>
+ <attr name="directory_path" type="string" val="."/>
+ <attr name="mode" type="enum" val="one-event-per-file"/>
+ <attr name="max_file_size" type="u64" val="4294967296"/>
+ <attr name="disable_unique_filename_suffix" type="bool" val="0"/>
+ <attr name="free_space_safety_factor" type="s32" val="5"/>
+ <rel name="file_layout_params" class="HDF5FileLayoutParams" id="default"/>
+ <rel name="filename_params" class="FilenameParams" id="tr-mon-file-params"/>
 </obj>
 
 <obj class="DataWriterConf" id="dw-01">
@@ -354,6 +525,14 @@
  <attr name="max_write_retry_time_ms" type="s32" val="1000"/>
  <attr name="write_retry_time_increase_factor" type="s32" val="2"/>
  <rel name="data_store_params" class="DataStoreConf" id="default"/>
+</obj>
+
+<obj class="DataWriterConf" id="tr_mon_dw-01">
+ <attr name="data_storage_prescale" type="s32" val="1"/>
+ <attr name="min_write_retry_time_ms" type="s32" val="1"/>
+ <attr name="max_write_retry_time_ms" type="s32" val="1000"/>
+ <attr name="write_retry_time_increase_factor" type="s32" val="2"/>
+ <rel name="data_store_params" class="DataStoreConf" id="default_tr_mon_conf"/>
 </obj>
 
 <obj class="FilenameParams" id="default">
@@ -370,6 +549,18 @@
  <attr name="digits_for_run_number" type="s32" val="6"/>
  <attr name="digits_for_file_index" type="s32" val="4"/>
  <attr name="digits_for_trigger_number" type="s32" val="6"/>
+</obj>
+
+<obj class="FilenameParams" id="tr-mon-file-params">
+ <attr name="file_type_prefix" type="enum" val="trmon"/>
+ <attr name="run_number_prefix" type="string" val="run"/>
+ <attr name="digits_for_run_number" type="s32" val="6"/>
+ <attr name="digits_for_file_index" type="s32" val="4"/>
+ <attr name="digits_for_trigger_number" type="s32" val="6"/>
+</obj>
+
+<obj class="FragmentAggregatorConf" id="frag-agg-01">
+ <attr name="fragment_send_timeout_ms" type="u32" val="1000"/>
 </obj>
 
 <obj class="HDF5FileLayoutParams" id="default">
@@ -489,25 +680,23 @@
  <attr name="expected_timestamp_step" type="s32" val="1000"/>
 </obj>
 
+<obj class="PDSRawDataProcessor" id="def-pds-processor">
+ <attr name="queue_sizes" type="u32" val="10000"/>
+ <attr name="thread_names_prefix" type="string" val="postproc-"/>
+ <attr name="latency_monitoring" type="bool" val="1"/>
+ <attr name="channel_map" type="string" val="SimplePDSChannelMap"/>
+</obj>
+
 <obj class="RandomTCMakerConf" id="random-tc-generator">
  <attr name="timestamp_method" type="enum" val="kTimeSync"/>
  <attr name="latency_monitoring" type="bool" val="1"/>
  <attr name="template_for" type="class" val="RandomTCMakerModule"/>
  <attr name="trigger_rate_hz" type="float" val="1"/>
  <attr name="time_distribution" type="enum" val="kUniform"/>
- <rel name="tc_readout" class="TCReadoutMap" id="def-random-readout"/>
-</obj>
-
-<obj class="RawDataProcessor" id="def-wib-processor">
- <attr name="queue_sizes" type="u32" val="10000"/>
- <attr name="thread_names_prefix" type="string" val="postproc-"/>
- <attr name="latency_monitoring" type="bool" val="1"/>
- <attr name="channel_map" type="string" val="PD2HDChannelMap"/>
- <rel name="processing_steps">
-  <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
-  <ref class="AVXThresholdProcessor" id="tpg-threshold-proc"/>
- </rel>
- <rel name="sot_minima" class="SamplesOverThresholdMinima" id="def-sot-minima"/>
+ <attr name="candidate_type_name" type="string" val="kRandom"/>
+ <attr name="candidate_backshift_ts" type="s64" val="0"/>
+ <attr name="candidate_window_before_ts" type="u32" val="2000"/>
+ <attr name="candidate_window_after_ts" type="u32" val="5"/>
 </obj>
 
 <obj class="RequestHandler" id="def-data-request-handler">
@@ -547,6 +736,12 @@
  <attr name="periodic_data_transmission_ms" type="u32" val="5"/>
 </obj>
 
+<obj class="SamplesOverThresholdMinima" id="def-sot-minima">
+ <attr name="sot_minimum_plane0" type="u16" val="1"/>
+ <attr name="sot_minimum_plane1" type="u16" val="1"/>
+ <attr name="sot_minimum_plane2" type="u16" val="1"/>
+</obj>
+
 <obj class="SocketReaderConf" id="def-socket-reader-conf">
  <attr name="template_for" type="class" val="SocketReaderModule"/>
  <attr name="emulation_mode" type="bool" val="0"/>
@@ -555,10 +750,19 @@
 </obj>
 
 <obj class="SocketWriterConf" id="def-socket-writer-conf">
- <attr name="template_for" type="class" val="FakeSocketWriterModule"/>
- <attr name="emulation_mode" type="bool" val="0"/>
+ <attr name="template_for" type="class" val="SocketWriterModule"/>
  <attr name="socket_type" type="enum" val="UDP"/>
  <attr name="remote_ip" type="string" val="127.0.0.1"/>
+</obj>
+
+<obj class="StreamEmulationParameters" id="crt-stream-emu">
+ <attr name="data_file_name" type="string" val="/cvmfs/dunedaq.opensciencegrid.org/assets/files/d/d/1/wibeth_output_all_zeros.bin"/>
+ <attr name="input_file_size_limit" type="u32" val="5777280"/>
+ <attr name="set_t0" type="bool" val="1"/>
+ <attr name="random_population_size" type="u32" val="100000"/>
+ <attr name="frame_error_rate_hz" type="float" val="0"/>
+ <attr name="generate_periodic_adc_pattern" type="bool" val="0"/>
+ <attr name="TP_rate_per_channel" type="float" val="1"/>
 </obj>
 
 <obj class="StreamEmulationParameters" id="stream-emu">
@@ -644,14 +848,24 @@
  <attr name="time_after" type="u32" val="1001"/>
 </obj>
 
-<obj class="TPDataProcessor" id="tpreplay-tp-processor">
+<obj class="TCReadoutMap" id="prescale-tc-map-entry">
+ <attr name="tc_type_name" type="string" val="kPrescale"/>
+ <attr name="time_before" type="u32" val="2000"/>
+ <attr name="time_after" type="u32" val="5"/>
+</obj>
+
+<obj class="TPCRawDataProcessor" id="def-wib-processor">
  <attr name="queue_sizes" type="u32" val="10000"/>
- <attr name="thread_names_prefix" type="string" val="proc-"/>
- <attr name="latency_monitoring" type="bool" val="0"/>
- <attr name="print_tp_info" type="bool" val="0"/>
- <rel name="algorithms">
-  <ref class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker"/>
+ <attr name="thread_names_prefix" type="string" val="postproc-"/>
+ <attr name="latency_monitoring" type="bool" val="1"/>
+ <attr name="channel_map" type="string" val="PD2HDTPCChannelMap"/>
+ <attr name="frame_count_limit" type="u32" val="100"/>
+ <attr name="metric_collect_opmon_period" type="u32" val="100000"/>
+ <rel name="processing_steps">
+  <ref class="AVXFrugalPedestalSubtractProcessor" id="tpg-pedsub-proc"/>
+  <ref class="AVXThresholdProcessor" id="tpg-threshold-proc"/>
  </rel>
+ <rel name="sot_minima" class="SamplesOverThresholdMinima" id="def-sot-minima"/>
 </obj>
 
 <obj class="TPDataProcessor" id="tp-processor">
@@ -664,32 +878,56 @@
  </rel>
 </obj>
 
-<obj class="TPStreamConf" id="def-tp-stream-1">
- <attr name="filename" type="string" val=""/>
- <attr name="index" type="u32" val="0"/>
-</obj>
-
-<obj class="TRBConf" id="trb-01">
- <attr name="queues_timeout" type="u32" val="100"/>
- <attr name="trigger_record_timeout_ms" type="u32" val="2858"/>
+<obj class="TPDataProcessor" id="tpreplay-tp-processor">
+ <attr name="queue_sizes" type="u32" val="10000"/>
+ <attr name="thread_names_prefix" type="string" val="proc-"/>
+ <attr name="latency_monitoring" type="bool" val="0"/>
+ <attr name="print_tp_info" type="bool" val="0"/>
+ <rel name="algorithms">
+  <ref class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker"/>
+ </rel>
 </obj>
 
 <obj class="TPReplayModuleConf" id="tpreplay-tp-maker">
  <attr name="template_for" type="class" val="TPReplayModule"/>
- <attr name="number_of_loops" type="u32" val="1"/>
+ <attr name="number_of_loops" type="s32" val="1"/>
  <attr name="maximum_wait_time_us" type="u32" val="1000"/>
+ <attr name="channel_map" type="string" val="PD2HDTPCChannelMap"/>
  <attr name="total_planes" type="u32" val="1"/>
- <attr name="channel_map" type="string" val="PD2HDChannelMap"/>
- <attr name="filter_out_plane" type="u32" val="0"/>
+ <attr name="filter_out_plane" type="u32">
+  <data val="0"/>
+ </attr>
  <rel name="tp_streams">
   <ref class="TPStreamConf" id="def-tp-stream-1"/>
  </rel>
 </obj>
 
-<obj class="SamplesOverThresholdMinima" id="def-sot-minima">
- <attr name="sot_minimum_plane0" type="u16" val="1"/>
- <attr name="sot_minimum_plane1" type="u16" val="1"/>
- <attr name="sot_minimum_plane2" type="u16" val="1"/>
+<obj class="TPStreamConf" id="def-tp-stream-1">
+ <attr name="filename" type="string" val=""/>
+</obj>
+
+<obj class="TRBConf" id="trb-01">
+ <attr name="tr_queue_timeout" type="u32" val="100"/>
+ <attr name="request_queue_timeout" type="u32" val="100"/>
+ <attr name="trigger_record_timeout_ms" type="u32" val="2858"/>
+ <attr name="maximum_open_trigger_records" type="u32" val="100"/>
+</obj>
+
+<obj class="TRMonRequestorConf" id="trmr-01">
+ <attr name="minimum_request_interval_ms" type="u32" val="1000"/>
+ <attr name="maximum_outstanding_requests" type="u32" val="1"/>
+</obj>
+
+<obj class="TriggerBitword" id="test-bitword">
+ <attr name="bitword" type="string">
+  <data val="kPrescale"/>
+ </attr>
+</obj>
+
+<obj class="TriggerBitword" id="test-bitword2">
+ <attr name="bitword" type="string">
+  <data val="kTiming"/>
+ </attr>
 </obj>
 
 </oks-data>

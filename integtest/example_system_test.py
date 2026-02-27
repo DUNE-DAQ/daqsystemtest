@@ -2,12 +2,21 @@ import pytest
 import os
 import copy
 import re
+import random
+import string
+import pathlib
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+import integrationtest.resource_validation as resource_validation
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
+
+# tweak the print() statement default behavior so that it always flushes the output.
+import functools
+print = functools.partial(print, flush=True)
 
 # Values that help determine the running conditions
 run_duration = 20  # seconds
@@ -24,7 +33,7 @@ wibeth_frag_params = {
     "fragment_type": "WIBEth",
     "expected_fragment_count": 0,  # determined later
     "min_size_bytes": 7272,
-    "max_size_bytes": 21672,
+    "max_size_bytes": 28872,
 }
 # sizes: 128 is for one TC with zero TAs inside it (72+56)
 #        208 is for one TC with one TA inside it (72+56+80)
@@ -49,6 +58,8 @@ triggerprimitive_frag_params = {
     "min_size_bytes": 72,
     "max_size_bytes": 168,
 }
+# 03-Jul-2025, KAB: changing the default max size from 72 to 100 to handle cases in which there
+# was a Random or Prescale trigger along with a coincidental HSI event within the readout window.
 hsi_frag_params = {
     "fragment_type_description": "HSI",
     "fragment_type": "Hardware_Signal",
@@ -56,20 +67,24 @@ hsi_frag_params = {
     "min_size_bytes": 72,
     "max_size_bytes": 100,
     "frag_sizes_by_TC_type": {"kTiming": {"min_size_bytes": 100, "max_size_bytes": 100},
-                              "default": {"min_size_bytes":  72, "max_size_bytes":  72} }
+                              "default": {"min_size_bytes":  72, "max_size_bytes": 100} }
 }
 ignored_logfile_problems = {
     "-controller": [
-        "Worker with pid \\d+ was terminated due to signal",
-        "Connection '.*' not found on the application registry",
     ],
     "local-connection-server": [
         "errorlog: -",
-        "Worker with pid \\d+ was terminated due to signal",
-        r"Worker \(pid:\d+\) was sent SIGHUP"
-    ],
-#    "log_.*": ["connect: Connection refused", "Connection reset by peer", "end of stream"],
+    ]
 }
+
+# Determine if this computer has enough resources for these tests
+resource_validator = resource_validation.ResourceValidator()
+resource_validator.cpu_count_needs(30, 60)  # 3 for each data source (incl TPG) plus 6 more for everything else
+resource_validator.free_memory_needs(15, 24)  # 25% more than what we observe being used ('free -h')
+actual_output_path = get_pytest_tmpdir()
+resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resource_validator.get_debug_string()
+print(f"{resval_debug_string}")
 
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
@@ -79,6 +94,14 @@ common_config_obj.op_env = "test"
 common_config_obj.config_db = (
     os.path.dirname(__file__) + "/../config/daqsystemtest/example-configs.data.xml"
 )
+common_config_obj.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TCDataProcessor",     # 12-Nov-2025, KAB: turned off the merging of
+        obj_id="def-tc-processor",       # overlapping TCs so that we get more consistent
+        updates={                        # numbers of TriggerRecords in the output files.
+            "merge_overlapping_tcs": False
+        },)
+)
 
 onebyone_local_conf = copy.deepcopy(common_config_obj)
 onebyone_local_conf.session = "local-1x1-config"
@@ -86,18 +109,22 @@ onebyone_local_conf.session = "local-1x1-config"
 twobythree_local_conf = copy.deepcopy(common_config_obj)
 twobythree_local_conf.session = "local-2x3-config"
 
+username=os.environ.get("USER")
 onebyone_ehn1_conf = copy.deepcopy(common_config_obj)
 onebyone_ehn1_conf.session = "ehn1-local-1x1-config"
+onebyone_ehn1_conf.session_name = f"ehn1-local-1x1-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
+onebyone_ehn1_conf.connsvc_port = None
 
 twobythree_ehn1_conf = copy.deepcopy(common_config_obj)
 twobythree_ehn1_conf.session = "ehn1-local-2x3-config"
+twobythree_ehn1_conf.session_name = f"ehn1-local-2x3-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
+twobythree_ehn1_conf.connsvc_port = None
 
-
-def host_is_at_cern(hostname):
+def host_is_at_ehn1(hostname):
     return re.match(r"^(np02|np04)-srv-\d{3}$", hostname) or re.match(r"^(np02|np04)-srv-\d{3}.cern.ch$", hostname)
 
 
-if host_is_at_cern(hostname):
+if host_is_at_ehn1(hostname):
     confgen_arguments = {
         "Local 1x1 Conf": onebyone_local_conf,
         "Local 2x3 Conf": twobythree_local_conf,
@@ -110,10 +137,9 @@ else:
         "Local 2x3 Conf": twobythree_local_conf,
     }
 
-
 # The commands to run in nanorc, as a list
 nanorc_command_list = (
-    "boot wait 5 conf start --run-number 101 wait 1 enable-triggers wait ".split()
+    "boot wait 2 conf start --run-number 101 wait 1 enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop scrap terminate".split()
 )
@@ -122,11 +148,19 @@ nanorc_command_list = (
 
 
 def test_nanorc_success(run_nanorc):
+    # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
+    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
+    if match_obj:
+        current_test = match_obj.group(1)
+    banner_line = re.sub(".", "=", current_test)
+    print(banner_line)
+    print(current_test)
+    print(banner_line)
 
-    if not host_is_at_cern(hostname) and "EHN1" in current_test:
+    if not host_is_at_ehn1(hostname) and "EHN1" in current_test:
         pytest.skip(
-            f"This computer ({hostname}) is not at CERN, not running EHN1 sessions"
+            f"This computer ({hostname}) is not at EHN1, not running EHN1 sessions"
         )
 
     # Check that nanorc completed correctly
@@ -135,25 +169,29 @@ def test_nanorc_success(run_nanorc):
 
 def test_log_files(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-
-    if not host_is_at_cern(hostname) and "EHN1" in current_test:
+    if not host_is_at_ehn1(hostname) and "EHN1" in current_test:
         pytest.skip(
-            f"This computer ({hostname}) is not at CERN, not running EHN1 sessions"
+            f"This computer ({hostname}) is not at EHN1, not running EHN1 sessions"
         )
+
+    session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
+    if host_is_at_ehn1(hostname) and "EHN1" in current_test:
+        log_dir = pathlib.Path("/log")
+        run_nanorc.log_files += list(log_dir.glob(f"log_*_{session_name}*.txt"))
 
     # Check that at least some of the expected log files are present
     assert any(
-        f"{run_nanorc.session}_df-01" in str(logname)
+        f"{session_name}_df-01" in str(logname)
         for logname in run_nanorc.log_files
     )
     assert any(
-        f"{run_nanorc.session}_dfo" in str(logname) for logname in run_nanorc.log_files
+        f"{session_name}_dfo" in str(logname) for logname in run_nanorc.log_files
     )
     assert any(
-        f"{run_nanorc.session}_mlt" in str(logname) for logname in run_nanorc.log_files
+        f"{session_name}_mlt" in str(logname) for logname in run_nanorc.log_files
     )
     assert any(
-        f"{run_nanorc.session}_ru" in str(logname) for logname in run_nanorc.log_files
+        f"{session_name}_ru" in str(logname) for logname in run_nanorc.log_files
     )
 
     if check_for_logfile_errors:
@@ -165,10 +203,9 @@ def test_log_files(run_nanorc):
 
 def test_data_files(run_nanorc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-
-    if not host_is_at_cern(hostname) and "EHN1" in current_test:
+    if not host_is_at_ehn1(hostname) and "EHN1" in current_test:
         pytest.skip(
-            f"This computer ({hostname}) is not at CERN, not running EHN1 sessions"
+            f"This computer ({hostname}) is not at EHN1, not running EHN1 sessions"
         )
 
     datafile_params = {

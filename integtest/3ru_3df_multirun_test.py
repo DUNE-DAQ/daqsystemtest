@@ -2,14 +2,19 @@ import pytest
 import os
 import re
 import copy
-import math
 import urllib.request
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+import integrationtest.resource_validation as resource_validation
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
+
+# tweak the print() statement default behavior so that it always flushes the output.
+import functools
+print = functools.partial(print, flush=True)
 
 # Values that help determine the running conditions
 number_of_data_producers = 2
@@ -88,6 +93,42 @@ ignored_logfile_problems = {
     ],
 }
 
+# Introduction: the basic pattern used in the DUNE DAQ integration tests is to set up and
+# run one or more instances of the DAQ system ("DAQ sessions") and then verify that the
+# results of each test run (which often use emulated data sources) match what is expected,
+# given the configuration(s) of the DAQ system that the test writer provided.
+#
+# In all of this, the word "test" is a bit over-loaded.
+# * The pytest framework refers to the functions that are run to check the results of the
+#   data-taking as "tests". We tend to call those "validations" or "checks".  When we
+#   see the summary at the end of an integtest report that 'N tests were run', that
+#   means N validation functions were run by the pytest framework to check the results
+#   of the data taking in various ways.
+# * Distinct from that, we tend to use the word "test" to refer to one of our integtests.
+#   That is, the set of DAQ sessions and validation checks that are in one of these *_test.py
+#   files.
+#
+# In each of these integtest files, there are two categories of information that are required
+# to be provided to our integtest infrastructure and one optional type. These are used to
+# set up and loop through the desired DAQ sessions. The categories are the following:
+# 1. the configuration of the DAQ system (system topology, application parameters, etc.)
+# 2. the list of process managers that should be used [optional]
+# 3. the list of run control commands that should be executed
+# More information is provided about each of these below [coming soon!].
+#
+
+# Determine if this computer has enough resources for these tests
+resource_validator = resource_validation.ResourceValidator()
+resource_validator.cpu_count_needs(22, 44)  # 3 for each data source (incl TPG) plus 4 more for everything else
+resource_validator.free_memory_needs(15, 24)  # 25% more than what we observe being used ('free -h')
+actual_output_path = get_pytest_tmpdir()
+resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resource_validator.get_debug_string()
+print(f"{resval_debug_string}")
+
+# 29-Dec-2025, KAB: The following comment about three variables is out-of-date.
+# It will be replaced soon, and the comment block above is a start on that.
+#
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
 # to run the config generation and nanorc
@@ -103,20 +144,20 @@ conf_dict.tpg_enabled = False
 conf_dict.n_df_apps = number_of_dataflow_apps
 
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id=conf_dict.session,
         obj_class="Session",
         updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="RandomTCMakerConf",
         updates={"trigger_rate_hz": trigger_rate},
     )
 )
 conf_dict.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="LatencyBuffer", updates={"size": 200000}
     )
 )
@@ -127,7 +168,7 @@ swtpg_conf.frame_file = (
     "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"  # WIBEth All Zeros
 )
 swtpg_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TAMakerPrescaleAlgorithm",
         obj_id="dummy-ta-maker",
         updates={"prescale": ta_prescale},
@@ -138,6 +179,13 @@ confgen_arguments = {
     "WIBEth_System": conf_dict,
     "Software_TPG_System": swtpg_conf,
 }
+
+# 29-Dec-2025, KAB: added sample process manager choices.
+process_manager_choices = {
+    "StandAloneSSH_PM" : {"pm_type": "ssh-standalone"},
+#   "ParamikoClient_PM" : {"pm_type": "ssh-standalone-paramiko-client"},
+}
+
 # The commands to run in nanorc, as a list
 nanorc_command_list = "boot conf".split()
 nanorc_command_list += (
@@ -161,14 +209,16 @@ nanorc_command_list += "scrap terminate".split()
 
 
 def test_nanorc_success(run_nanorc):
+    # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)\].*", current_test)
+    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
     if match_obj:
         current_test = match_obj.group(1)
     banner_line = re.sub(".", "=", current_test)
     print(banner_line)
     print(current_test)
     print(banner_line)
+
     # Check that nanorc completed correctly
     assert run_nanorc.completed_process.returncode == 0
 
