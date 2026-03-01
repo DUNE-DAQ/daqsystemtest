@@ -151,7 +151,7 @@ print(f"{resval_debug_string}")
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
-# to run the config generation and nanorc
+# to run the config generation and dunerc
 
 object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 
@@ -300,8 +300,8 @@ confgen_arguments = {
     "GrenobleCRT_System": grenoble_crt_conf
 }
 
-# The commands to run in nanorc, as a list
-nanorc_command_list = (
+# The commands to run in dunerc, as a list
+dunerc_command_list = (
     "boot conf start --run-number 101 wait 2 enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers wait 2 drain-dataflow stop-trigger-sources wait 2 stop scrap terminate".split()
@@ -311,7 +311,7 @@ nanorc_command_list = (
 
 # The tests themselves
 
-def test_nanorc_success(run_nanorc):
+def test_dunerc_success(run_dunerc):
     # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
@@ -322,19 +322,19 @@ def test_nanorc_success(run_nanorc):
     print(current_test)
     print(banner_line)
 
-    # Check that nanorc completed correctly
-    assert run_nanorc.completed_process.returncode == 0
+    # Check that dunerc completed correctly
+    assert run_dunerc.completed_process.returncode == 0
 
 
-def test_log_files(run_nanorc):
+def test_log_files(run_dunerc):
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
-            run_nanorc.log_files, True, True, ignored_logfile_problems
+            run_dunerc.log_files, True, True, ignored_logfile_problems
         )
 
 
-def test_data_files(run_nanorc):
+def test_data_files(run_dunerc):
     local_expected_event_count = expected_event_count
     local_event_count_tolerance = expected_event_count_tolerance
     fragment_check_list = [triggercandidate_frag_params]
@@ -351,7 +351,7 @@ def test_data_files(run_nanorc):
         fragment_check_list.append(bern_crt_frag_params)
     elif "GrenobleCRT" in current_test:
         fragment_check_list.append(grenoble_crt_frag_params)
-    if run_nanorc.confgen_config.tpg_enabled:
+    if run_dunerc.confgen_config.tpg_enabled:
         fragment_check_list.append(triggeractivity_frag_params)
         if "WIBEth" in current_test:
             fragment_check_list.append(wibeth_triggerprimitive_frag_params)
@@ -392,15 +392,15 @@ def test_data_files(run_nanorc):
 
     # Run some tests on the output data file
     all_ok = True
-    all_ok &= len(run_nanorc.data_files) == expected_number_of_data_files
+    all_ok &= len(run_dunerc.data_files) == expected_number_of_data_files
     print("") # Clear potential dot from pytest
     if all_ok:
         print(f"\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({expected_number_of_data_files})")
     else:
-        print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {expected_number_of_data_files}, found {len(run_nanorc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
+        print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {expected_number_of_data_files}, found {len(run_dunerc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
 
-    for idx in range(len(run_nanorc.data_files)):
-        data_file = data_file_checks.DataFile(run_nanorc.data_files[idx])
+    for idx in range(len(run_dunerc.data_files)):
+        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx])
         all_ok &= data_file_checks.sanity_check(data_file)
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(

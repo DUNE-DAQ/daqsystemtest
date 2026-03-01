@@ -70,7 +70,7 @@ print(f"{resval_debug_string}")
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
-# to run the config generation and nanorc
+# to run the config generation and dunerc
 
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
@@ -108,8 +108,8 @@ conf_dict.config_substitutions.append(substitution)
 
 
 confgen_arguments = {"MinimalSystem": conf_dict}
-# The commands to run in nanorc, as a list
-nanorc_command_list = (
+# The commands to run in dunerc, as a list
+dunerc_command_list = (
     "boot conf start --run-number 101 wait 1 enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop scrap terminate".split()
@@ -118,7 +118,7 @@ nanorc_command_list = (
 # The tests themselves
 
 
-def test_nanorc_success(run_nanorc):
+def test_dunerc_success(run_dunerc):
     # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
@@ -129,48 +129,48 @@ def test_nanorc_success(run_nanorc):
     print(current_test)
     print(banner_line)
 
-    # Check that nanorc completed correctly
-    assert run_nanorc.completed_process.returncode == 0
+    # Check that dunerc completed correctly
+    assert run_dunerc.completed_process.returncode == 0
 
 
-def test_log_files(run_nanorc):
+def test_log_files(run_dunerc):
     # Check that at least some of the expected log files are present
     assert any(
-        f"{run_nanorc.session}_df-01" in str(logname)
-        for logname in run_nanorc.log_files
+        f"{run_dunerc.session}_df-01" in str(logname)
+        for logname in run_dunerc.log_files
     )
     assert any(
-        f"{run_nanorc.session}_dfo" in str(logname) for logname in run_nanorc.log_files
+        f"{run_dunerc.session}_dfo" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{run_nanorc.session}_mlt" in str(logname) for logname in run_nanorc.log_files
+        f"{run_dunerc.session}_mlt" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{run_nanorc.session}_ru" in str(logname) for logname in run_nanorc.log_files
+        f"{run_dunerc.session}_ru" in str(logname) for logname in run_dunerc.log_files
     )
 
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
-            run_nanorc.log_files, True, True, ignored_logfile_problems
+            run_dunerc.log_files, True, True, ignored_logfile_problems
         )
 
 
-def test_data_files(run_nanorc):
+def test_data_files(run_dunerc):
     # Run some tests on the output data file
-    all_ok = len(run_nanorc.data_files) == expected_number_of_data_files
+    all_ok = len(run_dunerc.data_files) == expected_number_of_data_files
     print("") # Clear potential dot from pytest
     if all_ok:
         print(f"\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({expected_number_of_data_files})")
     else:
-        print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {expected_number_of_data_files}, found {len(run_nanorc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
+        print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {expected_number_of_data_files}, found {len(run_dunerc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
 
     fragment_check_list = [triggercandidate_frag_params, hsi_frag_params]
     fragment_check_list.append(wibeth_frag_params)
     nontrig_fragment_check_list = [hsi_frag_params, wibeth_frag_params]
 
-    for idx in range(len(run_nanorc.data_files)):
-        data_file = data_file_checks.DataFile(run_nanorc.data_files[idx])
+    for idx in range(len(run_dunerc.data_files)):
+        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx])
         all_ok &= data_file_checks.sanity_check(data_file)
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(
@@ -190,7 +190,7 @@ def test_data_files(run_nanorc):
 
 
 # 26-Nov-2025, KAB: added some sample opmon metric checks, for demonstration purposes
-def test_metric_files(run_nanorc):
+def test_metric_files(run_dunerc):
     print("") # Clear potential dot from pytest
 
     # 10-Dec-2025, KAB: we have noticed that sometimes drunc transitions (or other parts of
@@ -216,17 +216,17 @@ def test_metric_files(run_nanorc):
     # We'll set the maximum allowed sample count slightly higher than the expected value.
     max_metric_sample_count = expected_metric_sample_count + 2
     try:
-        #print(f"\nDAQ session overall time: {run_nanorc.daq_session_overall_time} seconds")
-        if run_nanorc.daq_session_overall_time is not None:
-            extra_time_taken = run_nanorc.daq_session_overall_time - expected_daq_session_time
+        #print(f"\nDAQ session overall time: {run_dunerc.daq_session_overall_time} seconds")
+        if run_dunerc.daq_session_overall_time is not None:
+            extra_time_taken = run_dunerc.daq_session_overall_time - expected_daq_session_time
             if extra_time_taken > 10:
                 extra_sample_count_allowance = int(extra_time_taken / 10)
                 max_metric_sample_count += extra_sample_count_allowance
     except AttributeError:
         pass
 
-    session_name = run_nanorc.session_name if run_nanorc.session_name else run_nanorc.session
-    metric_data = opmon_metric_checks.collate_opmon_data_from_files(run_nanorc.opmon_files)
+    session_name = run_dunerc.session_name if run_dunerc.session_name else run_dunerc.session
+    metric_data = opmon_metric_checks.collate_opmon_data_from_files(run_dunerc.opmon_files)
 
     metric_key_list = [session_name, "df-01", "df-01-trb", "dfmodules.TRBInfo", "generated_trigger_records"]
     all_ok = True

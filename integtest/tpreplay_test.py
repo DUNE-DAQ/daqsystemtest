@@ -9,7 +9,7 @@ It does the following:
 1. Creates a temporary configuration DB file (via OKS) for each session.
 2. Populates the config DB with TPStream and SourceID objects.
 3. Customizes runtime configuration through deep config substitutions.
-4. Runs a pre-defined nanorc command sequence (boot → start → stop → terminate).
+4. Runs a pre-defined dunerc command sequence (boot → start → stop → terminate).
 5. Validates:
     - Nanorc command success
     - Presence and correctness of log files
@@ -241,21 +241,21 @@ confgen_arguments = {
   "np04-tpreplay": tpreplay_np04_conf
 }
 
-# The commands to run in nanorc, as a list
-nanorc_command_list = "boot conf wait 5".split()
-nanorc_command_list += (
+# The commands to run in dunerc, as a list
+dunerc_command_list = "boot conf wait 5".split()
+dunerc_command_list += (
     "start ".split()
     + "--run-number 101 enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers drain-dataflow wait 2 stop-trigger-sources wait 2 stop wait 2".split()
 )
-nanorc_command_list += "scrap terminate".split()
+dunerc_command_list += "scrap terminate".split()
 
 atexit.register(_cleanup_tmpdir)
 
 ### Tests
 # Run control
-def test_nanorc_success(run_nanorc):
+def test_dunerc_success(run_dunerc):
     # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
@@ -266,41 +266,41 @@ def test_nanorc_success(run_nanorc):
     print(current_test)
     print(banner_line)
 
-    # Check that nanorc completed correctly
-    assert run_nanorc.completed_process.returncode == 0
+    # Check that dunerc completed correctly
+    assert run_dunerc.completed_process.returncode == 0
 
 # Log files
-def test_log_files(run_nanorc):
-    session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
+def test_log_files(run_dunerc):
+    session_name = run_dunerc.session_name if run_dunerc.session_name is not None else run_dunerc.session
 
     log_dir = pathlib.Path("/log")
-    run_nanorc.log_files += [
+    run_dunerc.log_files += [
         f for f in log_dir.glob(f"log_*_{session_name}*.txt") if f.exists()
     ]
 
     # Check that at least some of the expected log files are present
     assert any(
         f"{session_name}_df-01" in str(logname)
-        for logname in run_nanorc.log_files
+        for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_dfo" in str(logname) for logname in run_nanorc.log_files
+        f"{session_name}_dfo" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_mlt" in str(logname) for logname in run_nanorc.log_files
+        f"{session_name}_mlt" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_tpreplay" in str(logname) for logname in run_nanorc.log_files
+        f"{session_name}_tpreplay" in str(logname) for logname in run_dunerc.log_files
     )
 
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
-            run_nanorc.log_files, True, True, ignored_logfile_problems
-        ), f"Errors found in log files: {run_nanorc.log_files}"
+            run_dunerc.log_files, True, True, ignored_logfile_problems
+        ), f"Errors found in log files: {run_dunerc.log_files}"
 
 # Data files
-def test_data_files(run_nanorc):
+def test_data_files(run_dunerc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
 
     datafile_params = {
@@ -323,15 +323,15 @@ def test_data_files(run_nanorc):
     ### Run some tests on the output data file
     all_ok = True
 
-    all_ok &= len(run_nanorc.data_files) == selected_params["n_data_files"]
+    all_ok &= len(run_dunerc.data_files) == selected_params["n_data_files"]
     if all_ok:
         print(f"\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({selected_params['n_data_files']})")
     else:
-        print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {selected_params['n_data_files']}, found {len(run_nanorc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
+        print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {selected_params['n_data_files']}, found {len(run_dunerc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
 
     ## Other test
     # number of SIDs
-    data_file = data_file_checks.DataFile(run_nanorc.data_files[0])
+    data_file = data_file_checks.DataFile(run_dunerc.data_files[0])
     all_ok &= data_file_checks.check_n_unique_sids(data_file, selected_params['n_sids_tp'], selected_params['n_sids_ta'], selected_params['n_sids_tc'] )
     if all_ok:
         print(f"\N{WHITE HEAVY CHECK MARK} The expected number of unique Source IDs was found ({selected_params['n_sids_tp'], selected_params['n_sids_ta'], selected_params['n_sids_tc']})")

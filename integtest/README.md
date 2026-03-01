@@ -6,7 +6,7 @@
 Here is a sample command for invoking a test (feel free to keep or drop the options in brackets, as you prefer):
 
 ```
-pytest -s minimal_system_quick_test.py [--nanorc-option log-level debug]  # this nanorc option is still useful even when using drunc
+pytest -s minimal_system_quick_test.py [--dunerc-option log-level debug]  # this dunerc option is still useful even when using drunc
 ```
 
 The "-k" pytest option can be used ro selectively run a subset of the configurations in one of our integtest files.  For example:
