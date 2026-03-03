@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="10" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="mrigan" last-modified-on="np04-srv-016.cern.ch" last-modification-time="20251003T122227"/>
+<info name="" type="" num-of-items="10" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="mroda" last-modified-on="mroda-xpsp" last-modification-time="20260303T155350"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -88,6 +88,8 @@
  <comment creation-time="20250526T125621" created-by="dergonul" created-on="np04-srv-031.cern.ch" author="dergonul" text="Added new session for CRTBernFrame and CRTGrenobleFrame"/>
  <comment creation-time="20250805T092423" created-by="dergonul" created-on="np04-srv-028.cern.ch" author="dergonul" text="Emu CRT configs"/>
  <comment creation-time="20251003T122227" created-by="mrigan" created-on="np04-srv-016.cern.ch" author="mrigan" text="actually using local vars variableset"/>
+ <comment creation-time="20260303T155301" created-by="mroda" created-on="mroda-xpsp" author="mroda" text="draft of RM"/>
+ <comment creation-time="20260303T155350" created-by="mroda" created-on="mroda-xpsp" author="mroda" text="More sessions with RM"/>
 </comments>
 
 
@@ -135,6 +137,7 @@
  <rel name="segment" class="Segment" id="root-segment"/>
  <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
  <rel name="opmon_uri" class="OpMonURI" id="cern-opmon-uri"/>
+ <rel name="resource_manager" class="ResourceManagerConf" id="resource-manager"/>
 </obj>
 
 <obj class="Session" id="ehn1-local-2x3-config">
@@ -192,6 +195,7 @@
  </rel>
  <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
  <rel name="opmon_uri" class="OpMonURI" id="local-opmon-uri"/>
+ <rel name="resource_manager" class="ResourceManagerConf" id="resource-manager"/>
 </obj>
 
 <obj class="Session" id="local-2x3-config">
@@ -208,6 +212,7 @@
  </rel>
  <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
  <rel name="opmon_uri" class="OpMonURI" id="local-opmon-uri"/>
+ <rel name="resource_manager" class="ResourceManagerConf" id="resource-manager"/>
 </obj>
 
 <obj class="Session" id="local-socket-1x1-config">
