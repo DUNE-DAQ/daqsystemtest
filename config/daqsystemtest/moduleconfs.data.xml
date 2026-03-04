@@ -438,6 +438,7 @@
  <attr name="generate_timesync" type="bool" val="0"/>
  <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
  <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
+ <attr name="post_processing_delay_ticks" type="u64" val="6250000"/>
  <rel name="request_handler" class="RequestHandler" id="def-tp-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="TPDataProcessor" id="tp-processor"/>
