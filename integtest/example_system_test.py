@@ -75,6 +75,8 @@ ignored_logfile_problems = {
     "local-connection-server": [
         "errorlog: -",
     ],
+    # 04-Mar-2026, KAB: added the absl::InitializeLog warning message to the ignored list for
+    # all DAQ processes, given that we currently don't have a way suppress it at its source.
     r".*": [
         r"WARNING: All log messages before absl::InitializeLog\(\) is called are written to STDERR"
     ]
