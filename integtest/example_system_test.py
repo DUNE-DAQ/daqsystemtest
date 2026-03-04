@@ -74,6 +74,9 @@ ignored_logfile_problems = {
     ],
     "local-connection-server": [
         "errorlog: -",
+    ],
+    r".*": [
+        r"WARNING: All log messages before absl::InitializeLog\(\) is called are written to STDERR"
     ]
 }
 
