@@ -44,7 +44,6 @@ readout_window_time_after = 1000000
 trigger_record_sequence_length = 500000  # intention is 8 msec
 tr_queue_size = token_count * (readout_window_time_before + readout_window_time_after) / trigger_record_sequence_length /  number_of_dataflow_apps
 latency_buffer_size = 600000
-data_rate_slowdown_factor = 1
 
 # Default values for validation parameters
 expected_number_of_data_files = 4 * number_of_dataflow_apps
@@ -98,18 +97,11 @@ conf_dict = data_classes.drunc_config()
 conf_dict.dro_map_config.n_streams = number_of_data_producers
 conf_dict.dro_map_config.n_apps = number_of_readout_apps
 conf_dict.op_env = "integtest"
-conf_dict.session = "longwindow"
+conf_dict.config_session_name = "longwindow"
 conf_dict.tpg_enabled = False
 conf_dict.n_df_apps = number_of_dataflow_apps
 conf_dict.fake_hsi_enabled = False
 
-conf_dict.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_id=conf_dict.session,
-        obj_class="Session",
-        updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
-    )
-)
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_class="LatencyBuffer", updates={"size": latency_buffer_size}

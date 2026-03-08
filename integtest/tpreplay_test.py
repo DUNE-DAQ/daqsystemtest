@@ -103,7 +103,7 @@ common_config_obj.config_db = ( tmpdirname + "/example-configs.data.xml" )
 
 # Get default tpreplay config
 tpreplay_local_conf = copy.deepcopy(common_config_obj)
-tpreplay_local_conf.session = "local-tpreplay-config"
+tpreplay_local_conf.config_session_name = "local-tpreplay-config"
 
 # Get necessary dal objects
 a_source_id_dal = local_db.get_dal(class_name="SourceIDConf", uid="tpreplay-tp-srcid-100000")
@@ -271,7 +271,7 @@ def test_nanorc_success(run_nanorc):
 
 # Log files
 def test_log_files(run_nanorc):
-    session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
+    session_name = run_nanorc.daq_session_name
 
     log_dir = pathlib.Path("/log")
     run_nanorc.log_files += [

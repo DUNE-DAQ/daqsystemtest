@@ -277,7 +277,7 @@ common_config_obj.config_substitutions.append(
 )
 
 ehn1_multihost_1x1_conf = copy.deepcopy(common_config_obj)
-ehn1_multihost_1x1_conf.session = "local-1x1-config"
+ehn1_multihost_1x1_conf.config_session_name = "local-1x1-config"
 ehn1_multihost_1x1_conf.connsvc_port = 0  # random
 
 confgen_arguments = {"EHN1 MultiHost 1x1 Conf": ehn1_multihost_1x1_conf}
@@ -337,19 +337,18 @@ def test_log_files(run_nanorc):
         pytest.skip("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
 
     # Check that at least some of the expected log files are present
-    session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
     assert any(
-        f"{session_name}_df-01" in str(logname)
+        f"{run_nanorc.daq_session_name}_df-01" in str(logname)
         for logname in run_nanorc.log_files
     )
     assert any(
-        f"{session_name}_dfo" in str(logname) for logname in run_nanorc.log_files
+        f"{run_nanorc.daq_session_name}_dfo" in str(logname) for logname in run_nanorc.log_files
     )
     assert any(
-        f"{session_name}_mlt" in str(logname) for logname in run_nanorc.log_files
+        f"{run_nanorc.daq_session_name}_mlt" in str(logname) for logname in run_nanorc.log_files
     )
     assert any(
-        f"{session_name}_ru" in str(logname) for logname in run_nanorc.log_files
+        f"{run_nanorc.daq_session_name}_ru" in str(logname) for logname in run_nanorc.log_files
     )
 
     if check_for_logfile_errors:

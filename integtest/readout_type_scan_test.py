@@ -19,7 +19,6 @@ print = functools.partial(print, flush=True)
 # Values that help determine the running conditions
 number_of_data_producers = 2
 run_duration = 20  # seconds
-data_rate_slowdown_factor = 10  # is this still used anywhere?  (KAB, 28-Apr-2050)
 
 # Default values for validation parameters
 expected_number_of_data_files = 1
@@ -158,17 +157,10 @@ object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 conf_dict = data_classes.drunc_config()
 conf_dict.dro_map_config.n_streams = number_of_data_producers
 conf_dict.op_env = "integtest"
-conf_dict.session = "readout"
+conf_dict.config_session_name = "readout"
 conf_dict.tpg_enabled = False
 conf_dict.frame_file = "asset://?label=ProtoWIB&subsystem=readout"  # ProtoWIB
 
-conf_dict.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_id=conf_dict.session,
-        obj_class="Session",
-        updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
-    )
-)
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_class="RandomTCMakerConf",
