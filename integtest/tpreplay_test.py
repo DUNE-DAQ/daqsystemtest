@@ -11,7 +11,7 @@ It does the following:
 3. Customizes runtime configuration through deep config substitutions.
 4. Runs a pre-defined dunerc command sequence (boot → start → stop → terminate).
 5. Validates:
-    - Nanorc command success
+    - DuneRC command success
     - Presence and correctness of log files
     - Data file contents (number of SIDs, file count)
 
