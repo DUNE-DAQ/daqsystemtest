@@ -283,6 +283,7 @@ daphne_stream_conf.config_substitutions.append(
 daphne_eth_stream_conf = copy.deepcopy(conf_dict)
 daphne_eth_stream_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 daphne_eth_stream_conf.use_fakedataprod = True
+daphne_eth_stream_conf.fake_data_fragment_type = "DAPHNEEthStream"
 # TODO: replace use_fakedataprod with asset file once one exists
 # daphne_eth_stream_conf.frame_file = "asset://?label=DAPHNEEthStream&subsystem=readout"
 
@@ -326,6 +327,7 @@ daphne_tpg_conf.config_substitutions.append(
 daphne_eth_conf = copy.deepcopy(conf_dict)
 daphne_eth_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 daphne_eth_conf.use_fakedataprod = True
+daphne_eth_conf.fake_data_fragment_type = "DAPHNEEth"
 # TODO: replace use_fakedataprod with asset file once one exists
 # daphne_eth_conf.frame_file = "asset://?label=DAPHNEEth&subsystem=readout"
 daphne_eth_conf.config_substitutions.append(
