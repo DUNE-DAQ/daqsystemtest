@@ -182,8 +182,8 @@ confgen_arguments = {
 
 # 29-Dec-2025, KAB: added sample process manager choices.
 process_manager_choices = {
-    "StandAloneSSH_PM" : {"pm_type": "ssh-standalone"},
-#   "ParamikoClient_PM" : {"pm_type": "ssh-standalone-paramiko-client"},
+    "StandAloneSSH_PM" : "ssh-standalone",
+#   "ParamikoClient_PM" : "ssh-standalone-paramiko-client",
 }
 
 # The commands to run in dunerc, as a list
