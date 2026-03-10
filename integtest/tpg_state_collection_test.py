@@ -7,8 +7,14 @@ import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
 import integrationtest.opmon_metric_checks as opmon_metric_checks
+import integrationtest.resource_validation as resource_validation
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
+
+# tweak the print() statement default behavior so that it always flushes the output.
+import functools
+print = functools.partial(print, flush=True)
 
 # Values that help determine the running conditions
 number_of_data_producers = 2
@@ -101,6 +107,15 @@ ignored_logfile_problems = {
         "errorlog: -",
     ],
 }
+
+# Determine if this computer has enough resources for these tests
+resource_validator = resource_validation.ResourceValidator()
+resource_validator.cpu_count_needs(8, 16)  # 3 for each data source (incl TPG) plus 2 more for everything else
+resource_validator.free_memory_needs(6, 10)  # 20% more than what we observe being used ('free -h')
+actual_output_path = get_pytest_tmpdir()
+resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resource_validator.get_debug_string()
+print(f"{resval_debug_string}")
 
 object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 

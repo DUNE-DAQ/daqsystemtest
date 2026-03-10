@@ -7,8 +7,14 @@ import urllib.request
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+import integrationtest.resource_validation as resource_validation
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
+
+# tweak the print() statement default behavior so that it always flushes the output.
+import functools
+print = functools.partial(print, flush=True)
 
 # Values that help determine the running conditions
 number_of_data_producers = 2
@@ -32,8 +38,8 @@ tde_frag_params = {
     "fragment_type_description": "TDEEth",
     "fragment_type": "TDEEth",
     "expected_fragment_count": number_of_data_producers,
-    "min_size_bytes": 7272,
-    "max_size_bytes": 14472,
+    "min_size_bytes": 14472,  # 19-Feb-2026, KAB: the time span of a TDEEth frame is 2000 ticks
+    "max_size_bytes": 21672,  # With a readout window of 2005 ticks, we'll get 2 or 3 frames
 }
 bern_crt_frag_params = {
     "fragment_type_description": "CRTBern",
@@ -60,7 +66,7 @@ daphne_stream_frag_params = {
     "expected_fragment_count": number_of_data_producers,
     "min_size_bytes": 72+461026-20*472,
     "max_size_bytes": 72+461026+20*472,
-}  
+}
 daphne_frag_params = {
     "fragment_type_description": "DAPHNE",
     "fragment_type": "DAPHNE",
@@ -133,6 +139,15 @@ ignored_logfile_problems = {
         "errorlog: -",
     ],
 }
+
+# Determine if this computer has enough resources for these tests
+resource_validator = resource_validation.ResourceValidator()
+resource_validator.cpu_count_needs(8, 16)  # 3 for each data source (incl TPG) plus 2 more for everything else
+resource_validator.free_memory_needs(6, 10)  # 20% more than what we observe being used ('free -h')
+actual_output_path = get_pytest_tmpdir()
+resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resource_validator.get_debug_string()
+print(f"{resval_debug_string}")
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
@@ -229,11 +244,12 @@ daphne_stream_conf.frame_file = "asset://?label=DAPHNEStream&subsystem=readout"
 
 daphne_stream_conf.config_substitutions.append(
     data_classes.attribute_substitution(
-        obj_class="TCReadoutMap",
-        obj_id = "def-random-readout",
+        obj_class="RandomTCMakerConf",
+        obj_id = "random-tc-generator",
         updates={
-            "time_before": 62000,
-            "time_after": 500,
+            "candidate_backshift_ts": 0,
+            "candidate_window_before_ts": 62000,
+            "candidate_window_after_ts": 500,
         },
     )
 )
@@ -243,11 +259,12 @@ daphne_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 daphne_conf.frame_file = "asset://?checksum=a8990a9eb3a505d4ded62dfdfa9e2681" # np02vd_run036012_sample_membrane_pds
 daphne_conf.config_substitutions.append(
     data_classes.attribute_substitution(
-        obj_class="TCReadoutMap",
-        obj_id = "def-random-readout",
+        obj_class="RandomTCMakerConf",
+        obj_id = "random-tc-generator",
         updates={
-            "time_before": 62000,
-            "time_after": 500,
+            "candidate_backshift_ts": 0,
+            "candidate_window_before_ts": 62000,
+            "candidate_window_after_ts": 500,
         },
     )
 )
@@ -291,8 +308,8 @@ nanorc_command_list = (
 )
 #    + "disable-triggers wait 5 drain-dataflow wait 2 stop-trigger-sources wait 2 stop scrap terminate".split()
 
-# The tests themselves
 
+# The tests themselves
 
 def test_nanorc_success(run_nanorc):
     # print the name of the current test
@@ -310,9 +327,7 @@ def test_nanorc_success(run_nanorc):
 
 
 def test_log_files(run_nanorc):
-    local_check_flag = check_for_logfile_errors
-
-    if local_check_flag:
+    if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
             run_nanorc.log_files, True, True, ignored_logfile_problems

@@ -1,7 +1,7 @@
 """
 Integration Test for Trigger Bitword Configurations
 
-Reminder: 
+Reminder:
 Trigger bitwords are used to control which triggers are allowed to be promoted to trigger decisions.
 The bitwords functionality is independent of whatever sources are producing the triggers (TCs).
 
@@ -35,8 +35,14 @@ import string
 import integrationtest.data_classes as data_classes
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
+import integrationtest.resource_validation as resource_validation
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
+
+# tweak the print() statement default behavior so that it always flushes the output.
+import functools
+print = functools.partial(print, flush=True)
 
 # Run setup
 run_duration = 15  # seconds
@@ -54,6 +60,15 @@ ignored_logfile_problems = {
     "-controller": [
     ]
 }
+
+# Determine if this computer has enough resources for these tests
+resource_validator = resource_validation.ResourceValidator()
+resource_validator.cpu_count_needs(15, 30)  # 3 for each data source (incl TPG) plus 3 more for everything else
+resource_validator.free_memory_needs(9, 14)  # 30% more than what we observe being used ('free -h')
+actual_output_path = get_pytest_tmpdir()
+resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resource_validator.get_debug_string()
+print(f"{resval_debug_string}")
 
 ### Config setup
 common_config_obj = data_classes.drunc_config()
@@ -191,7 +206,7 @@ coincidence_bitword_conf.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_id="random-tc-generator",
         obj_class="RandomTCMakerConf",
-        updates={"trigger_rate_hz": 40},)
+        updates={"trigger_rate_hz": 40, "candidate_backshift_ts": 0, "candidate_window_before_ts": 62500, "candidate_window_after_ts": 62500},)
 )
 coincidence_bitword_conf.config_substitutions.append(
     data_classes.attribute_substitution(
@@ -219,7 +234,7 @@ coincidence_bitword_conf.config_substitutions.append(
 )
 
 # Finally store configs in map
-confgen_arguments = { 
+confgen_arguments = {
   "no-bit": no_bitword_conf,
   "prescale-bit": prescale_bitword_conf,
   "timing-bit": timing_bitword_conf,
@@ -231,11 +246,11 @@ confgen_arguments = {
 # The commands to run in nanorc, as a list
 nanorc_command_list = "boot conf".split()
 nanorc_command_list += (
-        "start ".split()
-        + "--run-number 101 enable-triggers wait ".split()
-        + [str(run_duration)]
-        + "disable-triggers drain-dataflow wait 2 stop-trigger-sources wait 2 stop wait 2".split()
-    )
+    "start ".split()
+    + "--run-number 101 enable-triggers wait ".split()
+    + [str(run_duration)]
+    + "disable-triggers drain-dataflow wait 2 stop-trigger-sources wait 2 stop wait 2".split()
+)
 nanorc_command_list += "scrap terminate".split()
 
 ### Tests
@@ -256,8 +271,6 @@ def test_nanorc_success(run_nanorc):
 
 # Log files
 def test_log_files(run_nanorc):
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-
     session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
 
     log_dir = pathlib.Path("/log")

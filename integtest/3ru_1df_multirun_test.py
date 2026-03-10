@@ -9,8 +9,14 @@ import urllib.request
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+import integrationtest.resource_validation as resource_validation
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
+
+# tweak the print() statement default behavior so that it always flushes the output.
+import functools
+print = functools.partial(print, flush=True)
 
 # Values that help determine the running conditions
 number_of_data_producers = 3
@@ -25,8 +31,6 @@ expected_number_of_data_files = 3
 check_for_logfile_errors = True
 expected_event_count = trigger_rate * run_duration
 expected_event_count_tolerance = math.ceil(expected_event_count / 10)
-minimum_cpu_count = 18
-minimum_free_memory_gb = 24
 
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
@@ -90,18 +94,14 @@ ignored_logfile_problems = {
     ],
 }
 
-# Determine if this computer is powerful enough for these tests
-sufficient_resources_on_this_computer = True
-cpu_count = os.cpu_count()
-hostname = os.uname().nodename
-mem_obj = psutil.virtual_memory()
-free_mem = round((mem_obj.available / (1024 * 1024 * 1024)), 2)
-total_mem = round((mem_obj.total / (1024 * 1024 * 1024)), 2)
-print(
-    f"DEBUG: CPU count is {cpu_count}, free and total memory are {free_mem} GB and {total_mem} GB."
-)
-if cpu_count < minimum_cpu_count or free_mem < minimum_free_memory_gb:
-    sufficient_resources_on_this_computer = False
+# Determine if this computer has enough resources for these tests
+resource_validator = resource_validation.ResourceValidator()
+resource_validator.cpu_count_needs(30, 60)  # 3 for each data source (incl TPG) plus 3 more for everything else
+resource_validator.free_memory_needs(20, 32)  # 25% more than what we observe being used ('free -h')
+actual_output_path = get_pytest_tmpdir()
+resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resource_validator.get_debug_string()
+print(f"{resval_debug_string}")
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
@@ -160,36 +160,27 @@ confgen_arguments = {
 }
 
 # The commands to run in nanorc, as a list
-if sufficient_resources_on_this_computer:
-    nanorc_command_list = "boot conf".split()
-    nanorc_command_list += (
-        "start --run-number 101 wait 5 enable-triggers wait ".split()
-        + [str(run_duration)]
-        + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
-    )
-    nanorc_command_list += (
-        "start --run-number 102 wait 1 enable-triggers wait ".split()
-        + [str(run_duration)]
-        + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
-    )
-    nanorc_command_list += (
-        "start --run-number 103 wait 1 enable-triggers wait ".split()
-        + [str(run_duration)]
-        + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
-    )
-    nanorc_command_list += "scrap terminate".split()
-else:
-    nanorc_command_list = ["boot", "terminate"]
+nanorc_command_list = "boot conf".split()
+nanorc_command_list += (
+    "start --run-number 101 wait 5 enable-triggers wait ".split()
+    + [str(run_duration)]
+    + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
+)
+nanorc_command_list += (
+    "start --run-number 102 wait 1 enable-triggers wait ".split()
+    + [str(run_duration)]
+    + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
+)
+nanorc_command_list += (
+    "start --run-number 103 wait 1 enable-triggers wait ".split()
+    + [str(run_duration)]
+    + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
+)
+nanorc_command_list += "scrap terminate".split()
 
 # The tests themselves
 
-
 def test_nanorc_success(run_nanorc):
-    if not sufficient_resources_on_this_computer:
-        pytest.skip(
-            f"This computer ({hostname}) does not have enough resources to run this test."
-        )
-
     # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
@@ -205,11 +196,6 @@ def test_nanorc_success(run_nanorc):
 
 
 def test_log_files(run_nanorc):
-    if not sufficient_resources_on_this_computer:
-        pytest.skip(
-            f"This computer ({hostname}) does not have enough resources to run this test."
-        )
-
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
@@ -218,20 +204,6 @@ def test_log_files(run_nanorc):
 
 
 def test_data_files(run_nanorc):
-    if not sufficient_resources_on_this_computer:
-        print(
-            f"This computer ({hostname}) does not have enough resources to run this test."
-        )
-        print(
-            f"    (CPU count is {cpu_count}, free and total memory are {free_mem} GB and {total_mem} GB.)"
-        )
-        print(
-            f"    (Minimum CPU count is {minimum_cpu_count} and minimum free memory is {minimum_free_memory_gb} GB.)"
-        )
-        pytest.skip(
-            f"This computer ({hostname}) does not have enough resources to run this test."
-        )
-
     local_expected_event_count = expected_event_count
     local_event_count_tolerance = expected_event_count_tolerance
     fragment_check_list = [triggercandidate_frag_params, hsi_frag_params, wibeth_frag_params]
