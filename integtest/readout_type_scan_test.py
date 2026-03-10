@@ -67,6 +67,32 @@ daphne_stream_frag_params = {
     "min_size_bytes": 72+461026-20*472,
     "max_size_bytes": 72+461026+20*472,
 }
+
+# DAPHNEEthStreamFrame: DAQEthHeader(16) + Header(4 x uint64 = 32) + ADC(4ch x 280smp x 14bit/64 = 245 x 8 = 1960) = 2008 bytes/frame
+# 1ms readout window = 62512 DTS ticks
+# num frames = ro_win / tick diff = 62512/280 = 223 (approximately)
+# fragment size = num frames * frame size = 223 * 2008 = 447784
+daphne_eth_stream_frag_params = {
+    "fragment_type_description": "DAPHNEEthStream",
+    "fragment_type": "DAPHNEEthStream",
+    "expected_fragment_count": number_of_data_producers,
+    "min_size_bytes": 72+447784-20*2008,
+    "max_size_bytes": 72+447784+20*2008,
+}
+
+# DAPHNEEthFrame: DAQEthHeader(16) + Header(7 x uint64 = 56) + ADC(1024smp x 14bit/64 = 224 x 8 = 1792) = 1864 bytes/frame
+# Same frame size as DAPHNEFrame, so fragment size ranges are identical
+daphne_eth_frag_params = {
+    "fragment_type_description": "DAPHNEEth",
+    "fragment_type": "DAPHNEEth",
+    "expected_fragment_count": number_of_data_producers,
+    "min_size_bytes": 1936,
+    "max_size_bytes": 120000,
+    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes":   1936, "max_size_bytes":  32000},
+                                "kRandom": {"min_size_bytes": 112000, "max_size_bytes": 118000},
+                                "default": {"min_size_bytes":   1936, "max_size_bytes": 118000} }
+}
+
 daphne_frag_params = {
     "fragment_type_description": "DAPHNE",
     "fragment_type": "DAPHNE",
@@ -254,6 +280,25 @@ daphne_stream_conf.config_substitutions.append(
     )
 )
 
+daphne_eth_stream_conf = copy.deepcopy(conf_dict)
+daphne_eth_stream_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
+daphne_eth_stream_conf.use_fakedataprod = True
+daphne_eth_stream_conf.fake_data_fragment_type = "DAPHNEEthStream"
+# TODO: replace use_fakedataprod with asset file once one exists
+# daphne_eth_stream_conf.frame_file = "asset://?label=DAPHNEEthStream&subsystem=readout"
+
+daphne_eth_stream_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="RandomTCMakerConf",
+        obj_id = "random-tc-generator",
+        updates={
+            "candidate_backshift_ts": 0,
+            "candidate_window_before_ts": 62000,
+            "candidate_window_after_ts": 500,
+        },
+    )
+)
+
 daphne_conf = copy.deepcopy(conf_dict)
 daphne_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 daphne_conf.frame_file = "asset://?checksum=a8990a9eb3a505d4ded62dfdfa9e2681" # np02vd_run036012_sample_membrane_pds
@@ -279,6 +324,34 @@ daphne_tpg_conf.config_substitutions.append(
     )
 )
 
+daphne_eth_conf = copy.deepcopy(conf_dict)
+daphne_eth_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
+daphne_eth_conf.use_fakedataprod = True
+daphne_eth_conf.fake_data_fragment_type = "DAPHNEEth"
+# TODO: replace use_fakedataprod with asset file once one exists
+# daphne_eth_conf.frame_file = "asset://?label=DAPHNEEth&subsystem=readout"
+daphne_eth_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="RandomTCMakerConf",
+        obj_id = "random-tc-generator",
+        updates={
+            "candidate_backshift_ts": 0,
+            "candidate_window_before_ts": 62000,
+            "candidate_window_after_ts": 500,
+        },
+    )
+)
+
+daphne_eth_tpg_conf = copy.deepcopy(daphne_eth_conf)
+daphne_eth_tpg_conf.tpg_enabled = True
+daphne_eth_tpg_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TAMakerPrescaleAlgorithm",
+        obj_id="dummy-ta-maker",
+        updates={"prescale": 750},
+    )
+)
+
 bern_crt_conf = copy.deepcopy(conf_dict)
 bern_crt_conf.dro_map_config.det_id = 12
 bern_crt_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
@@ -292,8 +365,12 @@ confgen_arguments = {
     "WIBEth_System": wibeth_conf,
     "WIBEth_TPG_System": wib_tpg_conf,
     "DAPHNE_Stream_System": daphne_stream_conf,
+    "DAPHNEEthStream_System": daphne_eth_stream_conf,
     "DAPHNE_System": daphne_conf,
     "DAPHNE_TPG_System": daphne_tpg_conf,
+    "DAPHNEEth_System": daphne_eth_conf,
+    # TODO: re-enable once realistic asset file exists for DAPHNEEth
+    # "DAPHNEEth_TPG_System": daphne_eth_tpg_conf,
     "TDEEth_System": tde_conf,
     "TDEEth_TPG_System": tde_tpg_conf,
     "BernCRT_System": bern_crt_conf,
@@ -341,6 +418,10 @@ def test_data_files(run_dunerc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     if "DAPHNE_Stream" in current_test:
         fragment_check_list.append(daphne_stream_frag_params)
+    elif "DAPHNEEthStream" in current_test:
+        fragment_check_list.append(daphne_eth_stream_frag_params)
+    elif "DAPHNEEth" in current_test:
+        fragment_check_list.append(daphne_eth_frag_params)
     elif "DAPHNE" in current_test:
         fragment_check_list.append(daphne_frag_params)
     elif "WIBEth" in current_test:
@@ -365,7 +446,7 @@ def test_data_files(run_dunerc):
                 * number_of_data_producers
                 * run_duration
             )
-        if "DAPHNE" in current_test:
+        if "DAPHNEEth" in current_test or "DAPHNE" in current_test:
             fragment_check_list.append(daphne_triggerprimitive_frag_params)
             local_expected_event_count += (
                 0.3125
