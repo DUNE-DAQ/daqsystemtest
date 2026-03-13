@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="70" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260202T153912"/>
+<info name="" type="" num-of-items="65" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260202T153912"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -313,14 +313,6 @@
  <rel name="descriptor" class="QueueDescriptor" id="trigger-records"/>
 </obj>
 
-<obj class="QueueConnectionRule" id="crt-bern-raw-input-queue">
- <rel name="descriptor" class="QueueDescriptor" id="crt-bern-raw-input-queue-desc"/>
-</obj>
-
-<obj class="QueueConnectionRule" id="crt-grenoble-raw-input-queue">
- <rel name="descriptor" class="QueueDescriptor" id="crt-grenoble-raw-input-queue-desc"/>
-</obj>
-
 <obj class="QueueDescriptor" id="data-req-queue-desc">
  <attr name="uid_base" type="string" val="internal_data_requests_for_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
@@ -384,20 +376,6 @@
  <attr name="data_type" type="string" val="TriggerRecord"/>
 </obj>
 
-<obj class="QueueDescriptor" id="crt-bern-raw-input-queue-desc">
- <attr name="uid_base" type="string" val="raw_input_queue_"/>
- <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
- <attr name="capacity" type="u32" val="10000"/>
- <attr name="data_type" type="string" val="CRTBernFrame"/>
-</obj>
-
-<obj class="QueueDescriptor" id="crt-grenoble-raw-input-queue-desc">
- <attr name="uid_base" type="string" val="raw_input_queue_"/>
- <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
- <attr name="capacity" type="u32" val="10000"/>
- <attr name="data_type" type="string" val="CRTGrenobleFrame"/>
-</obj>
-
 <obj class="RCBroadcaster" id="broadcaster-root">
  <attr name="type" type="enum" val="kafka"/>
  <attr name="address" type="string" val="monkafka.cern.ch:30092"/>
@@ -405,11 +383,6 @@
 </obj>
 
 <obj class="DataMoveCallbackDescriptor" id="crt-bern-raw-input">
- <attr name="uid_base" type="string" val="raw_input_"/>
- <attr name="data_type" type="string" val="CRTBernFrame"/>
-</obj>
-
-<obj class="DataMoveCallbackDescriptor" id="null_callback_desc">
  <attr name="uid_base" type="string" val="raw_input_"/>
  <attr name="data_type" type="string" val="CRTBernFrame"/>
 </obj>
