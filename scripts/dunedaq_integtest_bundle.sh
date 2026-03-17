@@ -24,7 +24,14 @@ Options:
     --concise-output : suppresses run control and DAQApp messages in order to focus on test results
     --tmpdir : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
     --list-only : list the tests that match the requested patterns without running them
-    --pytest-options : string with one or more command-line options to pass to Pytest (verbatim)
+    --pytest-options : string with one or more dunedaq-specific command-line options to pass to Pytest
+       - available options include the following:
+         --dunerc-path <path> : Path to DUNE run control. Default is to search in \$PATH
+         --skip-resource-checks : Whether to skip the node resource (CPU/Memory) checks for this test
+         --process-manager-type <type> : The run control process manager type to use for this test, e.g. ssh-standalone
+         --dunerc-option <option-name> <option-value> : Repeatable, run control arguments without leading dashes
+             for example, --dunerc-option log-level debug
+       - example: --pytest-options \"--skip-resource-checks --process-manager-type ssh-standalone --dunerc-option no-override-logs\"
 """
 }
 
@@ -129,7 +136,7 @@ while true; do
             shift 2
             ;;
         --pytest-options)
-            PYTEST_COMMAND="${PYTEST_COMMAND} $2"  # Add the specified options to the pytest command
+            PYTEST_COMMAND="${PYTEST_COMMAND} $2 --"  # Add the specified options to the pytest command
             shift 2
             ;;
         --list-only)

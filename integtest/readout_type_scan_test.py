@@ -67,6 +67,32 @@ daphne_stream_frag_params = {
     "min_size_bytes": 72+461026-20*472,
     "max_size_bytes": 72+461026+20*472,
 }
+
+# DAPHNEEthStreamFrame: DAQEthHeader(16) + Header(4 x uint64 = 32) + ADC(4ch x 280smp x 14bit/64 = 245 x 8 = 1960) = 2008 bytes/frame
+# 1ms readout window = 62512 DTS ticks
+# num frames = ro_win / tick diff = 62512/280 = 223 (approximately)
+# fragment size = num frames * frame size = 223 * 2008 = 447784
+daphne_eth_stream_frag_params = {
+    "fragment_type_description": "DAPHNEEthStream",
+    "fragment_type": "DAPHNEEthStream",
+    "expected_fragment_count": number_of_data_producers,
+    "min_size_bytes": 72+447784-20*2008,
+    "max_size_bytes": 72+447784+20*2008,
+}
+
+# DAPHNEEthFrame: DAQEthHeader(16) + Header(7 x uint64 = 56) + ADC(1024smp x 14bit/64 = 224 x 8 = 1792) = 1864 bytes/frame
+# Same frame size as DAPHNEFrame, so fragment size ranges are identical
+daphne_eth_frag_params = {
+    "fragment_type_description": "DAPHNEEth",
+    "fragment_type": "DAPHNEEth",
+    "expected_fragment_count": number_of_data_producers,
+    "min_size_bytes": 1936,
+    "max_size_bytes": 120000,
+    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes":   1936, "max_size_bytes":  32000},
+                                "kRandom": {"min_size_bytes": 112000, "max_size_bytes": 118000},
+                                "default": {"min_size_bytes":   1936, "max_size_bytes": 118000} }
+}
+
 daphne_frag_params = {
     "fragment_type_description": "DAPHNE",
     "fragment_type": "DAPHNE",
@@ -151,7 +177,7 @@ print(f"{resval_debug_string}")
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
-# to run the config generation and nanorc
+# to run the config generation and dunerc
 
 object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 
@@ -254,6 +280,25 @@ daphne_stream_conf.config_substitutions.append(
     )
 )
 
+daphne_eth_stream_conf = copy.deepcopy(conf_dict)
+daphne_eth_stream_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
+daphne_eth_stream_conf.use_fakedataprod = True
+daphne_eth_stream_conf.fake_data_fragment_type = "DAPHNEEthStream"
+# TODO: replace use_fakedataprod with asset file once one exists
+# daphne_eth_stream_conf.frame_file = "asset://?label=DAPHNEEthStream&subsystem=readout"
+
+daphne_eth_stream_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="RandomTCMakerConf",
+        obj_id = "random-tc-generator",
+        updates={
+            "candidate_backshift_ts": 0,
+            "candidate_window_before_ts": 62000,
+            "candidate_window_after_ts": 500,
+        },
+    )
+)
+
 daphne_conf = copy.deepcopy(conf_dict)
 daphne_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 daphne_conf.frame_file = "asset://?checksum=a8990a9eb3a505d4ded62dfdfa9e2681" # np02vd_run036012_sample_membrane_pds
@@ -279,6 +324,34 @@ daphne_tpg_conf.config_substitutions.append(
     )
 )
 
+daphne_eth_conf = copy.deepcopy(conf_dict)
+daphne_eth_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
+daphne_eth_conf.use_fakedataprod = True
+daphne_eth_conf.fake_data_fragment_type = "DAPHNEEth"
+# TODO: replace use_fakedataprod with asset file once one exists
+# daphne_eth_conf.frame_file = "asset://?label=DAPHNEEth&subsystem=readout"
+daphne_eth_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="RandomTCMakerConf",
+        obj_id = "random-tc-generator",
+        updates={
+            "candidate_backshift_ts": 0,
+            "candidate_window_before_ts": 62000,
+            "candidate_window_after_ts": 500,
+        },
+    )
+)
+
+daphne_eth_tpg_conf = copy.deepcopy(daphne_eth_conf)
+daphne_eth_tpg_conf.tpg_enabled = True
+daphne_eth_tpg_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TAMakerPrescaleAlgorithm",
+        obj_id="dummy-ta-maker",
+        updates={"prescale": 750},
+    )
+)
+
 bern_crt_conf = copy.deepcopy(conf_dict)
 bern_crt_conf.dro_map_config.det_id = 12
 bern_crt_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
@@ -292,16 +365,20 @@ confgen_arguments = {
     "WIBEth_System": wibeth_conf,
     "WIBEth_TPG_System": wib_tpg_conf,
     "DAPHNE_Stream_System": daphne_stream_conf,
+    "DAPHNEEthStream_System": daphne_eth_stream_conf,
     "DAPHNE_System": daphne_conf,
     "DAPHNE_TPG_System": daphne_tpg_conf,
+    "DAPHNEEth_System": daphne_eth_conf,
+    # TODO: re-enable once realistic asset file exists for DAPHNEEth
+    # "DAPHNEEth_TPG_System": daphne_eth_tpg_conf,
     "TDEEth_System": tde_conf,
     "TDEEth_TPG_System": tde_tpg_conf,
     "BernCRT_System": bern_crt_conf,
     "GrenobleCRT_System": grenoble_crt_conf
 }
 
-# The commands to run in nanorc, as a list
-nanorc_command_list = (
+# The commands to run in dunerc, as a list
+dunerc_command_list = (
     "boot conf start --run-number 101 wait 2 enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers wait 2 drain-dataflow stop-trigger-sources wait 2 stop scrap terminate".split()
@@ -311,7 +388,7 @@ nanorc_command_list = (
 
 # The tests themselves
 
-def test_nanorc_success(run_nanorc):
+def test_dunerc_success(run_dunerc):
     # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
@@ -322,25 +399,29 @@ def test_nanorc_success(run_nanorc):
     print(current_test)
     print(banner_line)
 
-    # Check that nanorc completed correctly
-    assert run_nanorc.completed_process.returncode == 0
+    # Check that dunerc completed correctly
+    assert run_dunerc.completed_process.returncode == 0
 
 
-def test_log_files(run_nanorc):
+def test_log_files(run_dunerc):
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
-            run_nanorc.log_files, True, True, ignored_logfile_problems
+            run_dunerc.log_files, True, True, ignored_logfile_problems
         )
 
 
-def test_data_files(run_nanorc):
+def test_data_files(run_dunerc):
     local_expected_event_count = expected_event_count
     local_event_count_tolerance = expected_event_count_tolerance
     fragment_check_list = [triggercandidate_frag_params]
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     if "DAPHNE_Stream" in current_test:
         fragment_check_list.append(daphne_stream_frag_params)
+    elif "DAPHNEEthStream" in current_test:
+        fragment_check_list.append(daphne_eth_stream_frag_params)
+    elif "DAPHNEEth" in current_test:
+        fragment_check_list.append(daphne_eth_frag_params)
     elif "DAPHNE" in current_test:
         fragment_check_list.append(daphne_frag_params)
     elif "WIBEth" in current_test:
@@ -351,7 +432,7 @@ def test_data_files(run_nanorc):
         fragment_check_list.append(bern_crt_frag_params)
     elif "GrenobleCRT" in current_test:
         fragment_check_list.append(grenoble_crt_frag_params)
-    if run_nanorc.confgen_config.tpg_enabled:
+    if run_dunerc.confgen_config.tpg_enabled:
         fragment_check_list.append(triggeractivity_frag_params)
         if "WIBEth" in current_test:
             fragment_check_list.append(wibeth_triggerprimitive_frag_params)
@@ -365,7 +446,7 @@ def test_data_files(run_nanorc):
                 * number_of_data_producers
                 * run_duration
             )
-        if "DAPHNE" in current_test:
+        if "DAPHNEEth" in current_test or "DAPHNE" in current_test:
             fragment_check_list.append(daphne_triggerprimitive_frag_params)
             local_expected_event_count += (
                 0.3125
@@ -392,15 +473,15 @@ def test_data_files(run_nanorc):
 
     # Run some tests on the output data file
     all_ok = True
-    all_ok &= len(run_nanorc.data_files) == expected_number_of_data_files
+    all_ok &= len(run_dunerc.data_files) == expected_number_of_data_files
     print("") # Clear potential dot from pytest
     if all_ok:
         print(f"\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({expected_number_of_data_files})")
     else:
-        print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {expected_number_of_data_files}, found {len(run_nanorc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
+        print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {expected_number_of_data_files}, found {len(run_dunerc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
 
-    for idx in range(len(run_nanorc.data_files)):
-        data_file = data_file_checks.DataFile(run_nanorc.data_files[idx])
+    for idx in range(len(run_dunerc.data_files)):
+        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx])
         all_ok &= data_file_checks.sanity_check(data_file)
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(
