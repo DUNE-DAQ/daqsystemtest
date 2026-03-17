@@ -587,7 +587,7 @@
 </obj>
 
 <obj class="SocketDataSender" id="socket_sender_crt_2">
- <attr name="socket_type" type="enum" val="UDP"/>
+ <attr name="socket_type" type="enum" val="TCP"/>
  <attr name="local_port" type="u32" val="12346"/>
  <attr name="remote_port" type="u32" val="20002"/>
  <rel name="streams">
