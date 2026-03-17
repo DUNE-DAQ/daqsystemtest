@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="58" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20260305T122304"/>
+<info name="" type="" num-of-items="62" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20260305T122304"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -157,17 +157,17 @@
 
 <obj class="DetectorStream" id="stream_1007">
  <attr name="source_id" type="u32" val="1007"/>
- <rel name="geo_id" class="GeoId" id="g_13_1_1_0"/>
+ <rel name="geo_id" class="GeoId" id="g_12_1_1_0"/>
 </obj>
 
 <obj class="DetectorStream" id="stream_1008">
  <attr name="source_id" type="u32" val="1008"/>
- <rel name="geo_id" class="GeoId" id="g_13_1_1_1"/>
+ <rel name="geo_id" class="GeoId" id="g_12_1_1_1"/>
 </obj>
 
 <obj class="DetectorStream" id="stream_1009">
  <attr name="source_id" type="u32" val="1009"/>
- <rel name="geo_id" class="GeoId" id="g_13_2_1_0"/>
+ <rel name="geo_id" class="GeoId" id="g_12_2_1_0"/>
 </obj>
 
 <obj class="DetectorStream" id="stream_101">
@@ -177,7 +177,7 @@
 
 <obj class="DetectorStream" id="stream_1010">
  <attr name="source_id" type="u32" val="1010"/>
- <rel name="geo_id" class="GeoId" id="g_13_2_1_1"/>
+ <rel name="geo_id" class="GeoId" id="g_12_2_1_1"/>
 </obj>
 
 <obj class="DetectorStream" id="stream_102">
@@ -214,6 +214,26 @@
  <attr name="detector_id" type="u32" val="12"/>
  <attr name="crate_id" type="u32" val="1"/>
  <attr name="slot_id" type="u32" val="1"/>
+</obj>
+
+<obj class="GeoId" id="g_12_1_1_1">
+ <attr name="detector_id" type="u32" val="12"/>
+ <attr name="crate_id" type="u32" val="1"/>
+ <attr name="slot_id" type="u32" val="1"/>
+ <attr name="stream_id" type="u32" val="1"/>
+</obj>
+
+<obj class="GeoId" id="g_12_2_1_0">
+ <attr name="detector_id" type="u32" val="12"/>
+ <attr name="crate_id" type="u32" val="2"/>
+ <attr name="slot_id" type="u32" val="1"/>
+</obj>
+
+<obj class="GeoId" id="g_12_2_1_1">
+ <attr name="detector_id" type="u32" val="12"/>
+ <attr name="crate_id" type="u32" val="2"/>
+ <attr name="slot_id" type="u32" val="1"/>
+ <attr name="stream_id" type="u32" val="1"/>
 </obj>
 
 <obj class="GeoId" id="g_13_1_1_0">
@@ -567,7 +587,7 @@
 </obj>
 
 <obj class="SocketDataSender" id="socket_sender_crt_2">
- <attr name="socket_type" type="enum" val="TCP"/>
+ <attr name="socket_type" type="enum" val="UDP"/>
  <attr name="local_port" type="u32" val="12346"/>
  <attr name="remote_port" type="u32" val="20002"/>
  <rel name="streams">
