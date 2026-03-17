@@ -118,7 +118,7 @@
   <ref class="ActionPlan" id="crt-readout-start"/>
   <ref class="ActionPlan" id="crt-readout-stop"/>
  </rel>
- <rel name="data_reader" class="CRTBernReaderConf" id="def-crt-bern-receiver-conf"/>
+ <rel name="data_reader" class="CRTReaderConf" id="def-emu-crt-receiver-conf"/>
  <rel name="data_writer" class="SocketWriterConf" id="def-socket-writer-conf"/>
  <rel name="detector_connections">
   <ref class="SocketDetectorToDaqConnection" id="socket_crt"/>
