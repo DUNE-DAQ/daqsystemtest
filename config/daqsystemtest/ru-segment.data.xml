@@ -108,7 +108,7 @@
 </comments>
 
 
-<obj class="CRTReaderApplication" id="crt-data-source-01">
+<obj class="CRTFrameBuilderApplication" id="crt-data-source-01">
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
@@ -119,7 +119,7 @@
   <ref class="ActionPlan" id="crt-readout-start"/>
   <ref class="ActionPlan" id="crt-readout-stop"/>
  </rel>
- <rel name="data_reader" class="CRTReaderConf" id="def-emu-crt-receiver-conf"/>
+ <rel name="detector_frame_builder" class="CRTFrameBuilderConf" id="def-crt-bern-frame-builder-conf"/>
  <rel name="data_writer" class="SocketWriterConf" id="def-socket-writer-conf"/>
  <rel name="detector_connections">
   <ref class="SocketDetectorToDaqConnection" id="socket_crt"/>
@@ -570,7 +570,7 @@
 
 <obj class="Segment" id="socket-ru-segment">
  <rel name="applications">
-  <ref class="CRTReaderApplication" id="crt-data-source-01"/>
+  <ref class="CRTFrameBuilderApplication" id="crt-data-source-01"/>
   <ref class="ReadoutApplication" id="socket-ru-01"/>
  </rel>
  <rel name="controller" class="RCApplication" id="socket-ru-controller"/>

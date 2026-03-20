@@ -225,20 +225,12 @@
  </rel>
 </obj>
 
-<obj class="CRTBernReaderConf" id="def-crt-bern-receiver-conf">
- <attr name="template_for" type="class" val="CRTBernReaderModule"/>
- <attr name="emulation_mode" type="bool" val="0"/>
+<obj class="CRTBernFrameBuilderConf" id="def-crt-bern-frame-builder-conf">
+ <attr name="template_for" type="class" val="CRTBernFrameBuilderModule"/>
 </obj>
 
-<obj class="CRTGrenobleReaderConf" id="def-crt-grenoble-receiver-conf">
- <attr name="template_for" type="class" val="CRTGrenobleReaderModule"/>
- <attr name="emulation_mode" type="bool" val="0"/>
-</obj>
-
-<obj class="CRTReaderConf" id="def-emu-crt-receiver-conf">
- <attr name="template_for" type="class" val="FDFakeReaderModule"/>
- <attr name="emulation_mode" type="bool" val="1"/>
- <rel name="emulation_conf" class="StreamEmulationParameters" id="crt-stream-emu"/>
+<obj class="CRTGrenobleFrameBuilderConf" id="def-crt-grenoble-frame-builder-conf">
+ <attr name="template_for" type="class" val="CRTGrenobleFrameBuilderModule"/>
 </obj>
 
 <obj class="DFOConf" id="dfoconf-01">
@@ -267,17 +259,17 @@
  </attr>
 </obj>
 
-<obj class="DaqModulesGroupByType" id="crt-bern-reader-data-source-step">
+<obj class="DaqModulesGroupByType" id="crt-bern-frame-builder-data-source-step">
  <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
-  <data val="CRTBernReaderModule"/>
+  <data val="CRTBernFrameBuilderModule"/>
  </attr>
 </obj>
 
-<obj class="DaqModulesGroupByType" id="crt-grenoble-reader-data-source-step">
+<obj class="DaqModulesGroupByType" id="crt-grenoble-frame-builder-data-source-step">
  <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
-  <data val="CRTGrenobleReaderModule"/>
+  <data val="CRTGrenobleFrameBuilderModule"/>
  </attr>
 </obj>
 
