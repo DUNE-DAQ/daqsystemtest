@@ -841,12 +841,6 @@
  <attr name="time_after" type="u32" val="1001"/>
 </obj>
 
-<obj class="TCReadoutMap" id="def-tc-map">
- <attr name="tc_type_name" type="string" val="kTiming"/>
- <attr name="time_before" type="u32" val="3000"/>
- <attr name="time_after" type="u32" val="1001"/>
-</obj>
-
 <obj class="TCReadoutMap" id="prescale-tc-map-entry">
  <attr name="tc_type_name" type="string" val="kPrescale"/>
  <attr name="time_before" type="u32" val="2000"/>
