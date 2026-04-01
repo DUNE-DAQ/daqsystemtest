@@ -11,6 +11,7 @@ import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
 import integrationtest.resource_validation as resource_validation
 from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
+from integrationtest.verbosity_helper import IntegtestVerbosityLevels
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -88,8 +89,6 @@ resource_validator.cpu_count_needs(30, 60)  # 3 for each data source (incl TPG) 
 resource_validator.free_memory_needs(15, 24)  # 25% more than what we observe being used ('free -h')
 actual_output_path = get_pytest_tmpdir()
 resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
-resval_debug_string = resource_validator.get_debug_string()
-print(f"{resval_debug_string}")
 
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
@@ -153,15 +152,16 @@ dunerc_command_list = (
 
 
 def test_dunerc_success(run_dunerc):
-    # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
     if match_obj:
         current_test = match_obj.group(1)
-    banner_line = re.sub(".", "=", current_test)
-    print(banner_line)
-    print(current_test)
-    print(banner_line)
+    if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.drunc_transitions):
+        # print the name of the current test
+        banner_line = re.sub(".", "=", current_test)
+        print(banner_line)
+        print(current_test)
+        print(banner_line)
 
     if not host_is_at_ehn1(hostname) and "EHN1" in current_test:
         pytest.skip(
@@ -260,7 +260,7 @@ def test_data_files(run_dunerc):
     all_ok = True
 
     for idx in range(len(run_dunerc.data_files)):
-        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx])
+        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx], run_dunerc.verbosity_helper)
         all_ok &= data_file_checks.sanity_check(data_file)
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(

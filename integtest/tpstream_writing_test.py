@@ -8,6 +8,7 @@ import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
 import integrationtest.resource_validation as resource_validation
 from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
+from integrationtest.verbosity_helper import IntegtestVerbosityLevels
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -113,8 +114,6 @@ resource_validator.cpu_count_needs(8, 16)  # 3 for each data source (incl TPG) p
 resource_validator.free_memory_needs(6, 10)  # 20% more than what we observe being used ('free -h')
 actual_output_path = get_pytest_tmpdir()
 resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
-resval_debug_string = resource_validator.get_debug_string()
-print(f"{resval_debug_string}")
 
 object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 
@@ -194,15 +193,16 @@ dunerc_command_list = (
 
 
 def test_dunerc_success(run_dunerc):
-    # print the name of the current test
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
-    if match_obj:
-        current_test = match_obj.group(1)
-    banner_line = re.sub(".", "=", current_test)
-    print(banner_line)
-    print(current_test)
-    print(banner_line)
+    if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.drunc_transitions):
+        # print the name of the current test
+        current_test = os.environ.get("PYTEST_CURRENT_TEST")
+        match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
+        if match_obj:
+            current_test = match_obj.group(1)
+        banner_line = re.sub(".", "=", current_test)
+        print(banner_line)
+        print(current_test)
+        print(banner_line)
 
     # Check that dunerc completed correctly
     assert run_dunerc.completed_process.returncode == 0
@@ -248,7 +248,7 @@ def test_data_files(run_dunerc):
 
     all_ok = True
     for idx in range(len(run_dunerc.data_files)):
-        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx])
+        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx], run_dunerc.verbosity_helper)
         all_ok &= data_file_checks.sanity_check(data_file)
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(
@@ -276,7 +276,7 @@ def test_tpstream_files(run_dunerc):
 
     all_ok = True
     for idx in range(len(tpstream_files)):
-        data_file = data_file_checks.DataFile(tpstream_files[idx])
+        data_file = data_file_checks.DataFile(tpstream_files[idx], run_dunerc.verbosity_helper)
         # all_ok &= data_file_checks.sanity_check(data_file) # Sanity check doesn't work for stream files
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(

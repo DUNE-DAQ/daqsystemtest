@@ -345,7 +345,6 @@ done
 
 # print out summary information
 echo ""                                                   | CaptureOutput ${ITGRUNNER_LOG_FILE}
-echo ""                                                   | CaptureOutput ${ITGRUNNER_LOG_FILE}
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++"  | CaptureOutput ${ITGRUNNER_LOG_FILE}
 echo "++++++++++++++++++++ SUMMARY ++++++++++++++++++++"  | CaptureOutput ${ITGRUNNER_LOG_FILE}
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++"  | CaptureOutput ${ITGRUNNER_LOG_FILE}

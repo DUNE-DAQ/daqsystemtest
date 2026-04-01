@@ -118,38 +118,18 @@ ignored_logfile_problems = {
 # the software release from CVMFS onto all of those computers (so the startup of
 # DAQ apps such as the ConnectivityServer don't take a long time initially).
 import subprocess
+computers_that_are_needed = ["np04-srv-021", "np04-srv-022", "np04-srv-028", "np04-srv-029"]
 computers_that_are_unreachable = []
 sw_area_root = os.environ.get("DBT_AREA_ROOT")
 if sw_area_root is not None:
     print("")
-    needed_computer="np04-srv-021"
-    print(f"Confirming that we can ssh to {needed_computer}...")
-    proc = subprocess.Popen(f"ssh {needed_computer} 'cd {sw_area_root}; . ./env.sh'", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    proc.communicate()
-    retval = proc.returncode
-    if retval != 0:
-        computers_that_are_unreachable.append(needed_computer)
-    needed_computer="np04-srv-022"
-    print(f"Confirming that we can ssh to {needed_computer}...")
-    proc = subprocess.Popen(f"ssh {needed_computer} 'cd {sw_area_root}; . ./env.sh'", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    proc.communicate()
-    retval = proc.returncode
-    if retval != 0:
-        computers_that_are_unreachable.append(needed_computer)
-    needed_computer="np04-srv-028"
-    print(f"Confirming that we can ssh to {needed_computer}...")
-    proc = subprocess.Popen(f"ssh {needed_computer} 'cd {sw_area_root}; . ./env.sh'", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    proc.communicate()
-    retval = proc.returncode
-    if retval != 0:
-        computers_that_are_unreachable.append(needed_computer)
-    needed_computer="np04-srv-029"
-    print(f"Confirming that we can ssh to {needed_computer}...")
-    proc = subprocess.Popen(f"ssh {needed_computer} 'cd {sw_area_root}; . ./env.sh'", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    proc.communicate()
-    retval = proc.returncode
-    if retval != 0:
-        computers_that_are_unreachable.append(needed_computer)
+    for needed_computer in computers_that_are_needed:
+        print(f"Confirming that we can ssh to {needed_computer}...")
+        proc = subprocess.Popen(f"ssh {needed_computer} 'cd {sw_area_root}; . ./env.sh'", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc.communicate()
+        retval = proc.returncode
+        if retval != 0:
+            computers_that_are_unreachable.append(needed_computer)
 else:
     computers_that_are_unreachable = ["Unable to determine the value of the DBT_AREA_ROOT env var"]
 
@@ -410,7 +390,7 @@ def test_data_files(run_dunerc):
     all_ok = True
 
     for idx in range(len(run_dunerc.data_files)):
-        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx])
+        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx], run_dunerc.verbosity_helper)
         all_ok &= data_file_checks.sanity_check(data_file)
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(
@@ -447,7 +427,7 @@ def test_tpstream_files(run_dunerc):
     for idx in range(len(tpstream_files)):
         base_filename = os.path.basename(tpstream_files[idx])
         print(f"Checking {base_filename}...")
-        data_file = data_file_checks.DataFile(tpstream_files[idx])
+        data_file = data_file_checks.DataFile(tpstream_files[idx], run_dunerc.verbosity_helper)
         # all_ok &= data_file_checks.sanity_check(data_file) # Sanity check doesn't work for stream files
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(

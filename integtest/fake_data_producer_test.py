@@ -10,6 +10,7 @@ import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
 import integrationtest.resource_validation as resource_validation
 from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
+from integrationtest.verbosity_helper import IntegtestVerbosityLevels
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -58,8 +59,6 @@ resource_validator.cpu_count_needs(4, 8)  # 4 for everything
 resource_validator.free_memory_needs(4)  # double what we observe being used ('free -h')
 actual_output_path = get_pytest_tmpdir()
 resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
-resval_debug_string = resource_validator.get_debug_string()
-print(f"{resval_debug_string}")
 
 # The next three variable declarations *must* be present as globals in the test
 # file. They're read by the "fixtures" in conftest.py to determine how
@@ -124,15 +123,16 @@ dunerc_command_list += "scrap terminate".split()
 # The tests themselves
 
 def test_dunerc_success(run_dunerc):
-    # print the name of the current test
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
-    if match_obj:
-        current_test = match_obj.group(1)
-    banner_line = re.sub(".", "=", current_test)
-    print(banner_line)
-    print(current_test)
-    print(banner_line)
+    if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.drunc_transitions):
+        # print the name of the current test
+        current_test = os.environ.get("PYTEST_CURRENT_TEST")
+        match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
+        if match_obj:
+            current_test = match_obj.group(1)
+        banner_line = re.sub(".", "=", current_test)
+        print(banner_line)
+        print(current_test)
+        print(banner_line)
 
     # Check that dunerc completed correctly
     assert run_dunerc.completed_process.returncode == 0
@@ -163,16 +163,15 @@ def test_data_files(run_dunerc):
     fragment_check_list = [frag_params]
 
     # Run some tests on the output data file
-    all_ok = True
-    all_ok &= len(run_dunerc.data_files) == expected_number_of_data_files
-    print("") # Clear potential dot from pytest
+    all_ok = len(run_dunerc.data_files) == expected_number_of_data_files
     if all_ok:
-        print(f"\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({expected_number_of_data_files})")
+        if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.drunc_transitions):
+            print(f"\n\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({expected_number_of_data_files})")
     else:
-        print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {expected_number_of_data_files}, found {len(run_dunerc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
+        print(f"\n\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {expected_number_of_data_files}, found {len(run_dunerc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
 
     for idx in range(len(run_dunerc.data_files)):
-        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx])
+        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx], run_dunerc.verbosity_helper)
         all_ok &= data_file_checks.sanity_check(data_file)
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(

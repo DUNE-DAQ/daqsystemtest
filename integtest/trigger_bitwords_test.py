@@ -37,6 +37,7 @@ import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.resource_validation as resource_validation
 from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
+from integrationtest.verbosity_helper import IntegtestVerbosityLevels
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -67,8 +68,6 @@ resource_validator.cpu_count_needs(15, 30)  # 3 for each data source (incl TPG) 
 resource_validator.free_memory_needs(9, 14)  # 30% more than what we observe being used ('free -h')
 actual_output_path = get_pytest_tmpdir()
 resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
-resval_debug_string = resource_validator.get_debug_string()
-print(f"{resval_debug_string}")
 
 ### Config setup
 common_config_obj = data_classes.drunc_config()
@@ -250,15 +249,16 @@ dunerc_command_list += "scrap terminate".split()
 ### Tests
 # Run control
 def test_dunerc_success(run_dunerc):
-    # print the name of the current test
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
-    if match_obj:
-        current_test = match_obj.group(1)
-    banner_line = re.sub(".", "=", current_test)
-    print(banner_line)
-    print(current_test)
-    print(banner_line)
+    if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.drunc_transitions):
+        # print the name of the current test
+        current_test = os.environ.get("PYTEST_CURRENT_TEST")
+        match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
+        if match_obj:
+            current_test = match_obj.group(1)
+        banner_line = re.sub(".", "=", current_test)
+        print(banner_line)
+        print(current_test)
+        print(banner_line)
 
     # Check that dunerc completed correctly
     assert run_dunerc.completed_process.returncode == 0
@@ -298,7 +298,7 @@ def test_data_files(run_dunerc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
 
     # sanity checks
-    data_file_checks.trigger_sanity_checks()
+    data_file_checks.trigger_sanity_checks(run_dunerc.verbosity_helper)
 
     datafile_params = {
         "no-bit": {"n_data_files": 1, "expected_trigger_types": ["kTiming", "kPrescale", "kRandom"], "multi_required": False},
@@ -316,36 +316,39 @@ def test_data_files(run_dunerc):
     for key in datafile_params.keys():
         if key in current_test:
             selected_params = datafile_params[key]
-            print("Selected params for", key, ":", selected_params)
+            if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.integtest_debug):
+                print("Selected params for", key, ":", selected_params)
             break
     if not selected_params:
         print(f"\n*** ERROR: unable to determine the datafile_params for test {current_test}.")
 
     ### Run some tests on the output data file
-    all_ok = True
 
     ## N of data files
-    all_ok &= len(run_dunerc.data_files) == selected_params["n_data_files"]
+    all_ok = len(run_dunerc.data_files) == selected_params["n_data_files"]
 
     if all_ok:
-        print(f"\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({selected_params['n_data_files']})")
+        if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.drunc_transitions):
+            print(f"\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({selected_params['n_data_files']})")
     else:
         print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {selected_params['n_data_files']}, found {len(run_dunerc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
 
     ## Other test
     if selected_params["n_data_files"] > 0:
-        data_file = data_file_checks.DataFile(run_dunerc.data_files[0])
+        data_file = data_file_checks.DataFile(run_dunerc.data_files[0], run_dunerc.verbosity_helper)
         # TR types
         all_ok &= data_file_checks.check_tr_trigger_types(data_file, selected_params['expected_trigger_types'])
         if all_ok:
-            print(f"\N{WHITE HEAVY CHECK MARK} All expected TC bits were found ({selected_params['expected_trigger_types']})")
+            if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.drunc_transitions):
+                print(f"\N{WHITE HEAVY CHECK MARK} All expected TC bits were found ({selected_params['expected_trigger_types']})")
         else:
             print(f"\N{POLICE CARS REVOLVING LIGHT} The extracted TC bits do not correspond to the expected ones! \N{POLICE CARS REVOLVING LIGHT}")
 
         # TR multiplicity
         all_ok &= data_file_checks.check_tr_type_multiplicity(data_file, selected_params['multi_required'])
         if all_ok:
-            print(f"\N{WHITE HEAVY CHECK MARK} The TR type multiplicity was found as expected ({selected_params['multi_required']})")
+            if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.drunc_transitions):
+                print(f"\N{WHITE HEAVY CHECK MARK} The TR type multiplicity was found as expected ({selected_params['multi_required']})")
         else:
             print(f"\N{POLICE CARS REVOLVING LIGHT} The TR type multiplicity is NOT as expected ({selected_params['multi_required']})! \N{POLICE CARS REVOLVING LIGHT}")
 
