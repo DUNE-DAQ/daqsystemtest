@@ -340,8 +340,8 @@
  <attr name="template_for" type="class" val="FDDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="CRTBernFrame"/>
  <attr name="generate_timesync" type="bool" val="1"/>
- <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
- <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
+ <attr name="post_processing_delay_min_wait_ms" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait_ms" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="DataProcessor" id="def-base-processor"/>
@@ -351,8 +351,8 @@
  <attr name="template_for" type="class" val="FDDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="CRTGrenobleFrame"/>
  <attr name="generate_timesync" type="bool" val="1"/>
- <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
- <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
+ <attr name="post_processing_delay_min_wait_ms" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait_ms" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="DataProcessor" id="def-base-processor"/>
@@ -362,8 +362,8 @@
  <attr name="template_for" type="class" val="FDDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="WIBEthFrame"/>
  <attr name="generate_timesync" type="bool" val="1"/>
- <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
- <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
+ <attr name="post_processing_delay_min_wait_ms" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait_ms" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
@@ -373,8 +373,8 @@
  <attr name="template_for" type="class" val="FDDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="PDSFrame"/>
  <attr name="generate_timesync" type="bool" val="1"/>
- <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
- <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
+ <attr name="post_processing_delay_min_wait_ms" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait_ms" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="PDSRawDataProcessor" id="def-pds-processor"/>
@@ -384,8 +384,8 @@
  <attr name="template_for" type="class" val="FDDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="PDSStreamFrame"/>
  <attr name="generate_timesync" type="bool" val="1"/>
- <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
- <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
+ <attr name="post_processing_delay_min_wait_ms" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait_ms" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="DataProcessor" id="def-base-processor"/>
@@ -395,8 +395,8 @@
  <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="TriggerActivity"/>
  <attr name="generate_timesync" type="bool" val="0"/>
- <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
- <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
+ <attr name="post_processing_delay_min_wait_ms" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait_ms" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-ta-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="TADataProcessor" id="def-ta-processor"/>
@@ -406,8 +406,8 @@
  <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="TriggerCandidate"/>
  <attr name="generate_timesync" type="bool" val="0"/>
- <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
- <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
+ <attr name="post_processing_delay_min_wait_ms" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait_ms" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-tc-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="TCDataProcessor" id="def-tc-processor"/>
@@ -417,8 +417,8 @@
  <attr name="template_for" type="class" val="FDDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="TDEEthFrame"/>
  <attr name="generate_timesync" type="bool" val="1"/>
- <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
- <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
+ <attr name="post_processing_delay_min_wait_ms" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait_ms" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
@@ -428,8 +428,8 @@
  <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="TriggerPrimitiveVector"/>
  <attr name="generate_timesync" type="bool" val="0"/>
- <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
- <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
+ <attr name="post_processing_delay_min_wait_ms" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait_ms" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-tp-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="TPDataProcessor" id="tp-processor"/>
@@ -439,8 +439,8 @@
  <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="TriggerPrimitiveVector"/>
  <attr name="generate_timesync" type="bool" val="0"/>
- <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
- <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
+ <attr name="post_processing_delay_min_wait_ms" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait_ms" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-tp-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="TPDataProcessor" id="tpreplay-tp-processor"/>
@@ -450,8 +450,8 @@
  <attr name="template_for" type="class" val="TriggerDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="TriggerPrimitive"/>
  <attr name="generate_timesync" type="bool" val="0"/>
- <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
- <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
+ <attr name="post_processing_delay_min_wait_ms" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait_ms" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="TPDataProcessor" id="tp-processor"/>
