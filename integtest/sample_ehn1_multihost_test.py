@@ -305,6 +305,10 @@ def test_dunerc_success(run_dunerc, capsys):
     if not pytest_tmpdir_looks_reasonable:
         with capsys.disabled():
             print("\n\n\N{LARGE YELLOW CIRCLE} The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
+            print("\N{LARGE YELLOW CIRCLE} This is needed for this integtest to run.")
+            print("\N{LARGE YELLOW CIRCLE} Suggested steps: 'mkdir -p $HOME/dunedaq/scratch; export PYTEST_DEBUG_TEMPROOT=$HOME/dunedaq/scratch'")
+            print("\N{LARGE YELLOW CIRCLE} And you may want to consider 'unset PYTEST_DEBUG_TEMPROOT' after running the test.")
+            print("\N{LARGE YELLOW CIRCLE} Please see the comments at the top of this integtest for more information.")
         pytest.skip("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
 
     with capsys.disabled():
