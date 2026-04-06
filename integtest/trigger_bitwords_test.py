@@ -222,12 +222,6 @@ coincidence_bitword_conf.config_substitutions.append(
 )
 coincidence_bitword_conf.config_substitutions.append(
     data_classes.attribute_substitution(
-        obj_id="def-tc-map",
-        obj_class="TCReadoutMap",
-        updates={"time_before": 62500, "time_after": 62500},)
-)
-coincidence_bitword_conf.config_substitutions.append(
-    data_classes.attribute_substitution(
         obj_id="def-hsi-tc-map",
         obj_class="TCReadoutMap",
         updates={"time_before": 62500, "time_after": 62500},)
