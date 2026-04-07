@@ -29,13 +29,15 @@
 import pytest
 import os
 import copy
-import re
 import string
 import pathlib
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+
+import functools
+print = functools.partial(print, flush=True)  # always flush print() output
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -301,15 +303,6 @@ def test_dunerc_success(run_dunerc, capsys):
     if retval != 0:
         print("*** WARNING: the cleanup of stale _gunicorn_ process on np04-srv-028 did not succeed...")
 
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)-run_dunerc0\].*", current_test)
-    if match_obj:
-        current_test = match_obj.group(1)
-    banner_line = re.sub(".", "=", current_test)
-    print(banner_line)
-    print(current_test)
-    print(banner_line)
-
     # Check that dunerc completed correctly
     assert run_dunerc.completed_process.returncode == 0
 
@@ -339,7 +332,8 @@ def test_log_files(run_dunerc):
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
-            run_dunerc.log_files, True, True, ignored_logfile_problems
+            run_dunerc.log_files, True, True, ignored_logfile_problems,
+            verbosity_helper=run_dunerc.verbosity_helper
         )
 
 
