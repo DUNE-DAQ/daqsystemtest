@@ -21,10 +21,13 @@ Options:
     -n <number of times to run each individual test, default=1>
     -N <number of times to run the full set of selected tests, default=1>
     --stop-on-failure : causes the script to stop when one of the integtests reports a failure
+    --verbosity <level> : requested level of console messages, in range 1-6, where 1 is least
+    --trigger-full-rc-output <phrase that will trigger the full printout of run control messages>
+       - the phrase can be a Python regex, which can be useful in handling colorized text
     --concise-output : suppresses run control and DAQApp messages in order to focus on test results
-    --tmpdir : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
+    --tmpdir <dir> : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
     --list-only : list the tests that match the requested patterns without running them
-    --pytest-options : string with one or more dunedaq-specific command-line options to pass to Pytest
+    --pytest-options <options> : string with one or more dunedaq-specific command-line options to pass to Pytest
        - available options include the following:
          --dunerc-path <path> : Path to DUNE run control. Default is to search in \$PATH
          --skip-resource-checks : Whether to skip the node resource (CPU/Memory) checks for this test
@@ -50,7 +53,7 @@ CaptureOutput() {
     tee -a $1
 }
 
-GETOPT_TEMP=`getopt -o hr:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,list-only,pytest-options: -- "$@"`
+GETOPT_TEMP=`getopt -o hr:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,verbosity:,trigger-full-rc-output:,list-only,pytest-options: -- "$@"`
 if [ $? -ne 0 ]; then
     usage
     exit 1
@@ -64,6 +67,7 @@ requested_test_names=
 excluded_test_names=
 only_list_tests=""
 PYTEST_COMMAND="pytest -s --tb=short"  # our core pytest command, with DAQ printout included and short pytest traceback
+PYTEST_OPTIONS=""
 
 while true; do
     case "$1" in
@@ -135,8 +139,21 @@ while true; do
             export PYTEST_DEBUG_TEMPROOT=${tmpdir_root}
             shift 2
             ;;
+        --verbosity)
+            PYTEST_OPTIONS="$PYTEST_OPTIONS --integtest-verbosity $2"
+            let level=$2
+            if [[ $level -ge 6 ]]; then
+                PYTEST_OPTIONS="$PYTEST_OPTIONS --dunerc-option log-level debug"
+            fi
+            shift 2
+            ;;
+        --trigger-full-rc-output)
+            watch_string=`echo "$2" | sed 's/ /_SPC_/g'`
+            PYTEST_OPTIONS="$PYTEST_OPTIONS --dunerc-fullprint-watch-string $watch_string"
+            shift 2
+            ;;
         --pytest-options)
-            PYTEST_COMMAND="${PYTEST_COMMAND} $2 --"  # Add the specified options to the pytest command
+            PYTEST_OPTIONS="$PYTEST_OPTIONS $2"
             shift 2
             ;;
         --list-only)
@@ -149,6 +166,9 @@ while true; do
             ;;
     esac
 done
+if [[ "${PYTEST_OPTIONS}" != "" ]]; then
+    PYTEST_COMMAND="${PYTEST_COMMAND} ${PYTEST_OPTIONS} --"  # Add the requested options to the pytest command
+fi
 
 # run the integtests from the daqsystemtest repo if no repo was specified
 if [[ "${integtest_list}" == "" ]]; then
