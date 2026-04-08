@@ -30,7 +30,6 @@ import pytest
 import os
 import copy
 import string
-import pathlib
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
@@ -124,14 +123,22 @@ computers_that_are_needed = ["np04-srv-021", "np04-srv-022", "np04-srv-028", "np
 computers_that_are_unreachable = []
 sw_area_root = os.environ.get("DBT_AREA_ROOT")
 if sw_area_root is not None:
-    print("")
-    for needed_computer in computers_that_are_needed:
-        print(f"Confirming that we can ssh to {needed_computer}...")
-        proc = subprocess.Popen(f"ssh {needed_computer} 'cd {sw_area_root}; . ./env.sh'", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        proc.communicate()
-        retval = proc.returncode
-        if retval != 0:
-            computers_that_are_unreachable.append(needed_computer)
+    sw_setup_script = ""
+    if os.path.exists(f"{sw_area_root}/env.sh"):
+        sw_setup_script = "env.sh"
+    elif os.path.exists(f"{sw_area_root}/dbt-setup-release-env.sh.sh"):
+        sw_setup_script = "dbt-setup-release-env.sh"
+    if sw_setup_script:
+        print("")
+        for needed_computer in computers_that_are_needed:
+            print(f"Confirming that we can ssh to {needed_computer}...")
+            proc = subprocess.Popen(f"ssh {needed_computer} 'cd {sw_area_root}; . ./{sw_setup_script}'", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            proc.communicate()
+            retval = proc.returncode
+            if retval != 0:
+                computers_that_are_unreachable.append(needed_computer)
+    else:
+        computers_that_are_unreachable = ["Unable to determine which software area setup script to use"]
 else:
     computers_that_are_unreachable = ["Unable to determine the value of the DBT_AREA_ROOT env var"]
 
