@@ -1,10 +1,9 @@
 # 29-Jan-2026, KAB: Steps to run this test:
 # - Log into any np04-srv-XYZ computer and set up a software area with the
 #     appropriate branch of daqsystemtest.
-# - 'cd $DBT_AREA_ROOT/sourcecode/daqsystemtest/integtest'
 # - 'mkdir -p $HOME/dunedaq/scratch'  # only need to do this once per user account
 # - 'export PYTEST_DEBUG_TEMPROOT=$HOME/dunedaq/scratch'  # once per login/shell
-# - 'pytest -s ./sample_ehn1_multihost_test.py'
+# - 'pytest -s $DBT_AREA_ROOT/sourcecode/daqsystemtest/integtest/sample_ehn1_multihost_test.py'
 #
 # This test currently puts the various DAQ processes on the following computers:
 # - np04-srv-021:  ru-01, ru-controller
@@ -18,13 +17,13 @@
 # on a computer other than "localhost" was also to show that it can be done.
 #
 # To enable the capturing of TRACE messages on all of the computers...
-# - 'export TRACE_FILE=/tmp/pytest-of-${USER}/log/${USER}_dunedaq.trace'  # once per login/shell
 # - 'mkdir -p /tmp/pytest-of-${USER}/log'  # only need to do this once per computer
 # - 'ssh np04-srv-021 "mkdir -p /tmp/pytest-of-${USER}/log"'  # only once per user
 # - 'ssh np04-srv-022 "mkdir -p /tmp/pytest-of-${USER}/log"'  # only once per user
 # - 'ssh np04-srv-028 "mkdir -p /tmp/pytest-of-${USER}/log"'  # only once per user
 # - 'ssh np04-srv-029 "mkdir -p /tmp/pytest-of-${USER}/log"'  # only once per user
-# - 'pytest -s ./sample_ehn1_multihost_test.py'
+# - 'export TRACE_FILE=/tmp/pytest-of-${USER}/log/${USER}_dunedaq.trace'  # once per login/shell
+# - 'pytest -s $DBT_AREA_ROOT/sourcecode/daqsystemtest/integtest/sample_ehn1_multihost_test.py'
 
 import pytest
 import os
@@ -33,7 +32,9 @@ import string
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
+import integrationtest.basic_checks as basic_checks
 import integrationtest.data_classes as data_classes
+from integrationtest.verbosity_helper import IntegtestVerbosityLevels
 
 import functools
 print = functools.partial(print, flush=True)  # always flush print() output
@@ -285,7 +286,7 @@ else:
 # The tests themselves
 
 
-def test_dunerc_success(run_dunerc, capsys):
+def test_dunerc_success(run_dunerc, capsys, caplog):
     if len(computers_that_are_unreachable) > 0:
         with capsys.disabled():
             print(f"\n\n\N{LARGE YELLOW CIRCLE} The following computers are needed for this test but are unreachable from this computer ({hostname}) via ssh:")
@@ -300,18 +301,19 @@ def test_dunerc_success(run_dunerc, capsys):
             print("\N{LARGE YELLOW CIRCLE} Please see the comments at the top of this integtest for more information.")
         pytest.skip("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
 
-    with capsys.disabled():
-        print("")
-        print("\n\n\N{LARGE YELLOW CIRCLE} PLEASE NOTE: this script is cleaning up stale _gunicorn_ processes on np04-srv-028...")
-        print("")
-    proc = subprocess.Popen(f"ssh np04-srv-028 killall gunicorn", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    proc.communicate()
-    retval = proc.returncode
-    if retval != 0:
-        print("*** WARNING: the cleanup of stale _gunicorn_ process on np04-srv-028 did not succeed...")
+    # 08-Apr-2026, KAB: maybe gunicorn shutdown is working now?
+    #with capsys.disabled():
+    #    print("")
+    #    print("\n\n\N{LARGE YELLOW CIRCLE} PLEASE NOTE: this script is cleaning up stale _gunicorn_ processes on np04-srv-028...")
+    #    print("")
+    #proc = subprocess.Popen(f"ssh np04-srv-028 killall gunicorn", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    #proc.communicate()
+    #retval = proc.returncode
+    #if retval != 0:
+    #    print("*** WARNING: the cleanup of stale _gunicorn_ process on np04-srv-028 did not succeed...")
 
-    # Check that dunerc completed correctly
-    assert run_dunerc.completed_process.returncode == 0
+    # check on run control success, problems during pytest setup, etc.
+    basic_checks.basic_checks(run_dunerc, caplog, print_test_name=False)
 
 
 def test_log_files(run_dunerc):
@@ -427,11 +429,11 @@ def test_tpstream_files(run_dunerc):
 
     assert len(tpstream_files) == 1  # one for each run
 
-    print("")
+    #print("")
     all_ok = True
     for idx in range(len(tpstream_files)):
         base_filename = os.path.basename(tpstream_files[idx])
-        print(f"Checking {base_filename}...")
+        #print(f"Checking {base_filename}...")
         data_file = data_file_checks.DataFile(tpstream_files[idx], run_dunerc.verbosity_helper)
         # all_ok &= data_file_checks.sanity_check(data_file) # Sanity check doesn't work for stream files
         all_ok &= data_file_checks.check_file_attributes(data_file)
