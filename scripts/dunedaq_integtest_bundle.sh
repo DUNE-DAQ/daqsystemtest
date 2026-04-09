@@ -21,10 +21,11 @@ Options:
     -n <number of times to run each individual test, default=1>
     -N <number of times to run the full set of selected tests, default=1>
     --stop-on-failure : causes the script to stop when one of the integtests reports a failure
-    --verbosity <level> : requested level of console messages, in range 1-6, where 1 is least
+    --verbosity <level> : requested level of console messages, in range 1-6, where 1 is least, 6 is DRUNC debug
     --trigger-full-rc-output <phrase that will trigger the full printout of run control messages>
        - the phrase can be a Python regex, which can be useful in handling colorized text
     --concise-output : suppresses run control and DAQApp messages in order to focus on test results
+       - this is equivalent to \"--verbosity 1\"
     --tmpdir <dir> : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
     --list-only : list the tests that match the requested patterns without running them
     --pytest-options <options> : string with one or more dunedaq-specific command-line options to pass to Pytest
@@ -130,8 +131,7 @@ while true; do
             shift
             ;;
         --concise-output)
-            # replace the pytest "-s" option with "-rs" to suppress all output except pytest.skip messages
-            PYTEST_COMMAND="`echo ${PYTEST_COMMAND} | sed 's/ -s/ -rs/'`"
+            PYTEST_OPTIONS="$PYTEST_OPTIONS --integtest-verbosity 1"
             shift
             ;;
         --tmpdir)
