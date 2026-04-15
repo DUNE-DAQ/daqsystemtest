@@ -283,20 +283,20 @@ ehn1_multihost_1x1_conf.connsvc_port = 0  # random
 confgen_arguments = {"EHN1 MultiHost 1x1 Conf": ehn1_multihost_1x1_conf}
 
 
-# The commands to run in nanorc, as a list
+# The commands to run in dunerc, as a list
 if len(computers_that_are_unreachable) == 0 and pytest_tmpdir_looks_reasonable:
-    nanorc_command_list = (
+    dunerc_command_list = (
         "boot wait 2 conf start --run-number 101 wait 1 enable-triggers wait ".split()
         + [str(run_duration)]
         + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop scrap terminate".split()
     )
 else:
-    nanorc_command_list = ["wait", "1"]
+    dunerc_command_list = ["wait", "1"]
 
 # The tests themselves
 
 
-def test_nanorc_success(run_nanorc, capsys):
+def test_dunerc_success(run_dunerc, capsys):
     if len(computers_that_are_unreachable) > 0:
         with capsys.disabled():
             print(f"\n\n\N{LARGE YELLOW CIRCLE} The following computers are needed for this test but are unreachable from this computer ({hostname}) via ssh:")
@@ -305,6 +305,10 @@ def test_nanorc_success(run_nanorc, capsys):
     if not pytest_tmpdir_looks_reasonable:
         with capsys.disabled():
             print("\n\n\N{LARGE YELLOW CIRCLE} The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
+            print("\N{LARGE YELLOW CIRCLE} This is needed for this integtest to run.")
+            print("\N{LARGE YELLOW CIRCLE} Suggested steps: 'mkdir -p $HOME/dunedaq/scratch; export PYTEST_DEBUG_TEMPROOT=$HOME/dunedaq/scratch'")
+            print("\N{LARGE YELLOW CIRCLE} And you may want to consider 'unset PYTEST_DEBUG_TEMPROOT' after running the test.")
+            print("\N{LARGE YELLOW CIRCLE} Please see the comments at the top of this integtest for more information.")
         pytest.skip("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
 
     with capsys.disabled():
@@ -318,7 +322,7 @@ def test_nanorc_success(run_nanorc, capsys):
         print("*** WARNING: the cleanup of stale _gunicorn_ process on np04-srv-028 did not succeed...")
 
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)-run_nanorc0\].*", current_test)
+    match_obj = re.search(r".*\[(.+)-run_dunerc0\].*", current_test)
     if match_obj:
         current_test = match_obj.group(1)
     banner_line = re.sub(".", "=", current_test)
@@ -326,11 +330,11 @@ def test_nanorc_success(run_nanorc, capsys):
     print(current_test)
     print(banner_line)
 
-    # Check that nanorc completed correctly
-    assert run_nanorc.completed_process.returncode == 0
+    # Check that dunerc completed correctly
+    assert run_dunerc.completed_process.returncode == 0
 
 
-def test_log_files(run_nanorc):
+def test_log_files(run_dunerc):
     if len(computers_that_are_unreachable) > 0:
         pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
     if not pytest_tmpdir_looks_reasonable:
@@ -338,27 +342,27 @@ def test_log_files(run_nanorc):
 
     # Check that at least some of the expected log files are present
     assert any(
-        f"{run_nanorc.daq_session_name}_df-01" in str(logname)
-        for logname in run_nanorc.log_files
+        f"{run_dunerc.daq_session_name}_df-01" in str(logname)
+        for logname in run_dunerc.log_files
     )
     assert any(
-        f"{run_nanorc.daq_session_name}_dfo" in str(logname) for logname in run_nanorc.log_files
+        f"{run_dunerc.daq_session_name}_dfo" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{run_nanorc.daq_session_name}_mlt" in str(logname) for logname in run_nanorc.log_files
+        f"{run_dunerc.daq_session_name}_mlt" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{run_nanorc.daq_session_name}_ru" in str(logname) for logname in run_nanorc.log_files
+        f"{run_dunerc.daq_session_name}_ru" in str(logname) for logname in run_dunerc.log_files
     )
 
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
-            run_nanorc.log_files, True, True, ignored_logfile_problems
+            run_dunerc.log_files, True, True, ignored_logfile_problems
         )
 
 
-def test_data_files(run_nanorc):
+def test_data_files(run_dunerc):
     if len(computers_that_are_unreachable) > 0:
         pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
     if not pytest_tmpdir_looks_reasonable:
@@ -378,7 +382,7 @@ def test_data_files(run_nanorc):
     assert expected_file_count != 0,f"Unable to locate test parameters for {current_test}"
 
     # Run some tests on the output data file
-    assert len(run_nanorc.data_files) == expected_file_count, f"Unexpected file count: Actual: {len(run_nanorc.data_files)}, Expected: {expected_file_count}"
+    assert len(run_dunerc.data_files) == expected_file_count, f"Unexpected file count: Actual: {len(run_dunerc.data_files)}, Expected: {expected_file_count}"
 
     local_expected_fragment_count = expected_fragment_count
     wibeth_frag_params["expected_fragment_count"] = local_expected_fragment_count
@@ -408,8 +412,8 @@ def test_data_files(run_nanorc):
 
     all_ok = True
 
-    for idx in range(len(run_nanorc.data_files)):
-        data_file = data_file_checks.DataFile(run_nanorc.data_files[idx])
+    for idx in range(len(run_dunerc.data_files)):
+        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx])
         all_ok &= data_file_checks.sanity_check(data_file)
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(
@@ -426,13 +430,13 @@ def test_data_files(run_nanorc):
     assert all_ok
 
 
-def test_tpstream_files(run_nanorc):
+def test_tpstream_files(run_dunerc):
     if len(computers_that_are_unreachable) > 0:
         pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
     if not pytest_tmpdir_looks_reasonable:
         pytest.skip("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
 
-    tpstream_files = run_nanorc.tpset_files
+    tpstream_files = run_dunerc.tpset_files
     local_expected_event_count = (
         run_duration + 8
     )  # TPStreamWriterModule is currently configured to write at 1 Hz, addl TimeSlices expected because of wait times in drunc command list

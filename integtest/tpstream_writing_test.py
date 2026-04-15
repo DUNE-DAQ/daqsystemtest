@@ -170,8 +170,8 @@ conf_dict.config_substitutions.append(
 
 confgen_arguments = {"Software_TPG_System": conf_dict}
 
-# The commands to run in nanorc, as a list
-nanorc_command_list = (
+# The commands to run in dunerc, as a list
+dunerc_command_list = (
     "boot conf wait 5".split()
     + "start --run-number 101 wait 1 enable-triggers wait ".split()
     + [str(run_duration)]
@@ -185,7 +185,7 @@ nanorc_command_list = (
 # The tests themselves
 
 
-def test_nanorc_success(run_nanorc):
+def test_dunerc_success(run_dunerc):
     # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
     match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
@@ -196,19 +196,19 @@ def test_nanorc_success(run_nanorc):
     print(current_test)
     print(banner_line)
 
-    # Check that nanorc completed correctly
-    assert run_nanorc.completed_process.returncode == 0
+    # Check that dunerc completed correctly
+    assert run_dunerc.completed_process.returncode == 0
 
 
-def test_log_files(run_nanorc):
+def test_log_files(run_dunerc):
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
-            run_nanorc.log_files, True, True, ignored_logfile_problems
+            run_dunerc.log_files, True, True, ignored_logfile_problems
         )
 
 
-def test_data_files(run_nanorc):
+def test_data_files(run_dunerc):
     local_expected_event_count = expected_event_count
     local_event_count_tolerance = expected_event_count_tolerance
     low_number_of_files = expected_number_of_data_files
@@ -234,13 +234,13 @@ def test_data_files(run_nanorc):
 
     # Run some tests on the output data file
     assert (
-        len(run_nanorc.data_files) == high_number_of_files
-        or len(run_nanorc.data_files) == low_number_of_files
+        len(run_dunerc.data_files) == high_number_of_files
+        or len(run_dunerc.data_files) == low_number_of_files
     )
 
     all_ok = True
-    for idx in range(len(run_nanorc.data_files)):
-        data_file = data_file_checks.DataFile(run_nanorc.data_files[idx])
+    for idx in range(len(run_dunerc.data_files)):
+        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx])
         all_ok &= data_file_checks.sanity_check(data_file)
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(
@@ -256,8 +256,8 @@ def test_data_files(run_nanorc):
     assert all_ok
 
 
-def test_tpstream_files(run_nanorc):
-    tpstream_files = run_nanorc.tpset_files
+def test_tpstream_files(run_dunerc):
+    tpstream_files = run_dunerc.tpset_files
     local_expected_event_count = (
         run_duration + 8
     )  # TPStreamWriterModule is currently configured to write at 1 Hz, addl TimeSlices expected because of wait times in drunc command list
