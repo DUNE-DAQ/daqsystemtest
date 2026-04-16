@@ -1,7 +1,7 @@
 #!/bin/bash
 # 10-Oct-2023, KAB
 
-integtest_list=()
+initial_integtest_list=()
 
 usage() {
     declare -r script_name=$(basename "$0")
@@ -18,16 +18,17 @@ Options:
        - it can have the special value of \"local\" - integtests in locally-cloned repos will be run
     -k, --include <pipe-delimited string to select the tests that will be run ('egrep -i' match to test name)>
     -x, --exclude <pipe-delimited string to specify tests to be excluded ('egrep -i' match to test name)>
-    -n <number of times to run each individual test, default=1>
-    -N <number of times to run the full set of selected tests, default=1>
-    --stop-on-failure : causes the script to stop when one of the integtests reports a failure
+    --random-subset <count> : randomly picks the specified number of tests from the results of -r/-k/-x
+    --list-only : list the tests that match the requested patterns without running them
     --verbosity <level> : requested level of console messages, in range 1-6, where 1 is least, 6 is DRUNC debug
+    --stop-on-failure : causes the script to stop when one of the integtests reports a failure
+    --tmpdir <dir> : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
     --trigger-full-rc-output <phrase that will trigger the full printout of run control messages>
        - the phrase can be a Python regex, which can be useful in handling colorized text
     --concise-output : suppresses run control and DAQApp messages in order to focus on test results
-       - this is equivalent to \"--verbosity 1\"
-    --tmpdir <dir> : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
-    --list-only : list the tests that match the requested patterns without running them
+       - this is equivalent to \"--verbosity 1\", and this option may be removed at some point in time
+    -n <number of times to run each individual test, default=1>
+    -N <number of times to run the full set of selected tests, default=1>
     --pytest-options <options> : string with one or more dunedaq-specific command-line options to pass to Pytest
        - available options include the following:
          --dunerc-path <path> : Path to DUNE run control. Default is to search in \$PATH
@@ -54,7 +55,7 @@ CaptureOutput() {
     tee -a $1
 }
 
-GETOPT_TEMP=`getopt -o hr:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,verbosity:,trigger-full-rc-output:,list-only,pytest-options: -- "$@"`
+GETOPT_TEMP=`getopt -o hr:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,verbosity:,trigger-full-rc-output:,random-subset:,list-only,pytest-options: -- "$@"`
 if [ $? -ne 0 ]; then
     usage
     exit 1
@@ -66,6 +67,7 @@ let full_set_requested_interations=1
 let stop_on_failure=0
 requested_test_names=
 excluded_test_names=
+let random_subset_count=0
 only_list_tests=""
 PYTEST_COMMAND="pytest -s --tb=short"  # our core pytest command, with DAQ printout included and short pytest traceback
 PYTEST_OPTIONS=""
@@ -80,8 +82,8 @@ while true; do
             if [[ "$2" == "all" ]]; then
                 echo ""
                 echo "Building the list of _all_ integtests..."
-                integtest_list=(`list_available_integtests.sh 2>/dev/null`)
-                if [[ ${#integtest_list[@]} -eq 0 ]]; then
+                initial_integtest_list=(`list_available_integtests.sh 2>/dev/null`)
+                if [[ ${#initial_integtest_list[@]} -eq 0 ]]; then
                     echo ""
                     echo "*** No integtests were found!"
                     echo ""
@@ -90,8 +92,8 @@ while true; do
             elif [[ "$2" == "local" ]]; then
                 echo ""
                 echo "Building the list of _local_ integtests..."
-                integtest_list=(`list_available_integtests.sh local 2>/dev/null`)
-                if [[ ${#integtest_list[@]} -eq 0 ]]; then
+                initial_integtest_list=(`list_available_integtests.sh local 2>/dev/null`)
+                if [[ ${#initial_integtest_list[@]} -eq 0 ]]; then
                     echo ""
                     echo "*** No integtests were found in local repositories!"
                     echo ""
@@ -99,8 +101,8 @@ while true; do
                 fi
             else
                 repo_list_string=`echo $2 | sed 's/|/ /g'`
-                integtest_list=(`list_available_integtests.sh ${repo_list_string} 2>/dev/null`)
-                if [[ ${#integtest_list[@]} -eq 0 ]]; then
+                initial_integtest_list=(`list_available_integtests.sh ${repo_list_string} 2>/dev/null`)
+                if [[ ${#initial_integtest_list[@]} -eq 0 ]]; then
                     echo ""
                     echo "*** No integtests were found in the \"${repo_list_string}\" repo(s)."
                     echo ""
@@ -152,6 +154,10 @@ while true; do
             PYTEST_OPTIONS="$PYTEST_OPTIONS --dunerc-fullprint-watch-string $watch_string"
             shift 2
             ;;
+        --random-subset)
+            let random_subset_count=$2
+            shift 2
+            ;;
         --pytest-options)
             PYTEST_OPTIONS="$PYTEST_OPTIONS $2"
             shift 2
@@ -171,8 +177,8 @@ if [[ "${PYTEST_OPTIONS}" != "" ]]; then
 fi
 
 # run the integtests from the daqsystemtest repo if no repo was specified
-if [[ "${integtest_list}" == "" ]]; then
-    integtest_list=(`list_available_integtests.sh daqsystemtest 2>/dev/null`)
+if [[ "${initial_integtest_list}" == "" ]]; then
+    initial_integtest_list=(`list_available_integtests.sh daqsystemtest 2>/dev/null`)
     echo ""
     echo "Integtests from the _daqsystemtest_ repo will be run..."
 fi
@@ -208,35 +214,41 @@ mkdir -p ${pytest_user_dir}
 ITGRUNNER_LOG_FILE="${pytest_user_dir}/dunedaq_integtest_bundle_${INITIAL_TIMESTAMP}.log"
 CURRENT_PID=$$
 
-if [[ "$only_list_tests" != "" ]]; then
-    echo ""
-    echo "The following tests will be run:"
-fi
-let number_of_individual_tests=0
+# do the first level of test filtering
+filtered_integtest_list=()
 let test_index=0
-for FULL_TEST_NAME in "${integtest_list[@]}"; do
+for FULL_TEST_NAME in "${initial_integtest_list[@]}"; do
     test_name=`basename ${FULL_TEST_NAME}`
     requested_test=`echo ${test_name} | egrep -i ${requested_test_names:-${test_name}}`
     excluded_test=`echo ${test_name} | egrep -i ${excluded_test_names:-nullnullnull}`
     if [[ "${requested_test}" != "" ]] && [[ "${excluded_test}" == "" ]]; then
-        let number_of_individual_tests=${number_of_individual_tests}+1
-        if [[ "$only_list_tests" != "" ]]; then
-            echo "  ${FULL_TEST_NAME}"
-        fi
+        filtered_integtest_list+=("${FULL_TEST_NAME}")
     fi
     let test_index=${test_index}+1
 done
-let total_number_of_tests=${number_of_individual_tests}*${individual_test_requested_iterations}*${full_set_requested_interations}
+
+# reduce the list of tests to a random subset, if requested
+if [[ $random_subset_count -gt 0 ]]; then
+    filtered_integtest_list=($(shuf -n "$random_subset_count" -e "${filtered_integtest_list[@]}"))
+fi
+
 if [[ "$only_list_tests" != "" ]]; then
+    echo ""
+    echo "The following tests will be run:"
+    for FULL_TEST_NAME in "${filtered_integtest_list[@]}"; do
+        echo "  ${FULL_TEST_NAME}"
+    done
     exit 0
 fi
+let number_of_individual_tests=${#filtered_integtest_list[@]}
+let total_number_of_tests=${number_of_individual_tests}*${individual_test_requested_iterations}*${full_set_requested_interations}
 
 # run the tests
 let overall_test_index=0  # this is only used for user feedback
 let full_set_loop_count=0
 while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
     let test_index=0
-    for FULL_TEST_NAME in "${integtest_list[@]}"; do
+    for FULL_TEST_NAME in "${filtered_integtest_list[@]}"; do
         test_repo=`dirname ${FULL_TEST_NAME}`
         test_name=`basename ${FULL_TEST_NAME}`
         CURRENT_TIMESTAMP=`date '+%Y%m%d%H%M%S'`
