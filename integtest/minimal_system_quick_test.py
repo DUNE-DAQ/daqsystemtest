@@ -18,7 +18,6 @@ print = functools.partial(print, flush=True)
 
 # Values that help determine the running conditions
 number_of_data_producers = 2
-data_rate_slowdown_factor = 1  # 10 for ProtoWIB/DuneWIB
 run_duration = 20  # seconds
 readout_window_time_before = 1000
 readout_window_time_after = 1001
@@ -81,7 +80,7 @@ object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 conf_dict = data_classes.drunc_config()
 conf_dict.dro_map_config.n_streams = number_of_data_producers
 conf_dict.op_env = "integtest"
-conf_dict.session = "minimal"
+conf_dict.config_session_name = "minimal"
 conf_dict.tpg_enabled = False
 
 # For testing, allow drunc to manage ConnectivityService (default is False, integrationtest manages Connectivity Service)
@@ -136,17 +135,17 @@ def test_dunerc_success(run_dunerc):
 def test_log_files(run_dunerc):
     # Check that at least some of the expected log files are present
     assert any(
-        f"{run_dunerc.session}_df-01" in str(logname)
+        f"{run_dunerc.daq_session_name}_df-01" in str(logname)
         for logname in run_dunerc.log_files
     )
     assert any(
-        f"{run_dunerc.session}_dfo" in str(logname) for logname in run_dunerc.log_files
+        f"{run_dunerc.daq_session_name}_dfo" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{run_dunerc.session}_mlt" in str(logname) for logname in run_dunerc.log_files
+        f"{run_dunerc.daq_session_name}_mlt" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{run_dunerc.session}_ru" in str(logname) for logname in run_dunerc.log_files
+        f"{run_dunerc.daq_session_name}_ru" in str(logname) for logname in run_dunerc.log_files
     )
 
     if check_for_logfile_errors:
@@ -225,10 +224,9 @@ def test_metric_files(run_dunerc):
     except AttributeError:
         pass
 
-    session_name = run_dunerc.session_name if run_dunerc.session_name else run_dunerc.session
     metric_data = opmon_metric_checks.collate_opmon_data_from_files(run_dunerc.opmon_files)
 
-    metric_key_list = [session_name, "df-01", "df-01-trb", "dfmodules.TRBInfo", "generated_trigger_records"]
+    metric_key_list = [run_dunerc.daq_session_name, "df-01", "df-01-trb", "dfmodules.TRBInfo", "generated_trigger_records"]
     all_ok = True
     # a 20-second run will likely result in 3 metric samples (at 10-second intervals), so a range
     # of 1..5 should always succeed

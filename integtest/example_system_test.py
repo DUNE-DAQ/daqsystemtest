@@ -109,20 +109,20 @@ common_config_obj.config_substitutions.append(
 )
 
 onebyone_local_conf = copy.deepcopy(common_config_obj)
-onebyone_local_conf.session = "local-1x1-config"
+onebyone_local_conf.config_session_name = "local-1x1-config"
 
 twobythree_local_conf = copy.deepcopy(common_config_obj)
-twobythree_local_conf.session = "local-2x3-config"
+twobythree_local_conf.config_session_name = "local-2x3-config"
 
 username=os.environ.get("USER")
 onebyone_ehn1_conf = copy.deepcopy(common_config_obj)
-onebyone_ehn1_conf.session = "ehn1-local-1x1-config"
-onebyone_ehn1_conf.session_name = f"ehn1-local-1x1-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
+onebyone_ehn1_conf.config_session_name = "ehn1-local-1x1-config"
+onebyone_ehn1_conf.daq_session_name = f"ehn1-local-1x1-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
 onebyone_ehn1_conf.connsvc_port = None
 
 twobythree_ehn1_conf = copy.deepcopy(common_config_obj)
-twobythree_ehn1_conf.session = "ehn1-local-2x3-config"
-twobythree_ehn1_conf.session_name = f"ehn1-local-2x3-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
+twobythree_ehn1_conf.config_session_name = "ehn1-local-2x3-config"
+twobythree_ehn1_conf.daq_session_name = f"ehn1-local-2x3-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
 twobythree_ehn1_conf.connsvc_port = None
 
 def host_is_at_ehn1(hostname):
@@ -179,24 +179,23 @@ def test_log_files(run_dunerc):
             f"This computer ({hostname}) is not at EHN1, not running EHN1 sessions"
         )
 
-    session_name = run_dunerc.session_name if run_dunerc.session_name is not None else run_dunerc.session
     if host_is_at_ehn1(hostname) and "EHN1" in current_test:
         log_dir = pathlib.Path("/log")
-        run_dunerc.log_files += list(log_dir.glob(f"log_*_{session_name}*.txt"))
+        run_dunerc.log_files += list(log_dir.glob(f"log_*_{run_dunerc.daq_session_name}*.txt"))
 
     # Check that at least some of the expected log files are present
     assert any(
-        f"{session_name}_df-01" in str(logname)
+        f"{run_dunerc.daq_session_name}_df-01" in str(logname)
         for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_dfo" in str(logname) for logname in run_dunerc.log_files
+        f"{run_dunerc.daq_session_name}_dfo" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_mlt" in str(logname) for logname in run_dunerc.log_files
+        f"{run_dunerc.daq_session_name}_mlt" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_ru" in str(logname) for logname in run_dunerc.log_files
+        f"{run_dunerc.daq_session_name}_ru" in str(logname) for logname in run_dunerc.log_files
     )
 
     if check_for_logfile_errors:
