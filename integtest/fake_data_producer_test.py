@@ -68,7 +68,7 @@ object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 
 conf_dict = data_classes.drunc_config()
 conf_dict.op_env = "integtest"
-conf_dict.session = "fakedata"
+conf_dict.config_session_name = "fakedata"
 conf_dict.use_fakedataprod = True
 conf_dict.dro_map_config.n_streams = number_of_data_producers
 
