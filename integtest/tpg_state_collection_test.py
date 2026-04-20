@@ -21,7 +21,6 @@ number_of_readout_apps = 1
 number_of_dataflow_apps = 2
 pulser_trigger_rate = 1.0  # Hz
 run_duration = 30  # seconds
-data_rate_slowdown_factor = 1
 output_dir = "."
 
 # Default values for validation parameters
@@ -120,20 +119,13 @@ conf_dict = data_classes.drunc_config()
 conf_dict.dro_map_config.n_streams = number_of_data_producers
 conf_dict.dro_map_config.n_apps = number_of_readout_apps
 conf_dict.op_env = "integtest"
-conf_dict.session = "tpstream"
+conf_dict.config_session_name = "tpstream"
 conf_dict.tpg_enabled = True
 conf_dict.n_df_apps = number_of_dataflow_apps
 conf_dict.frame_file = (
     "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"  # WIBEth All Zeros
 )
 
-conf_dict.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_id=conf_dict.session,
-        obj_class="Session",
-        updates={"data_rate_slowdown_factor": data_rate_slowdown_factor},
-    )
-)
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_class="RandomTCMakerConf",
@@ -307,14 +299,13 @@ def test_metric_files(run_dunerc):
     if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.drunc_transitions):
         print("") # Clear potential dot from pytest
 
-    session_name = run_dunerc.session_name if run_dunerc.session_name else run_dunerc.session
     metric_data = opmon_metric_checks.collate_opmon_data_from_files(run_dunerc.opmon_files)
 
     all_ok = True
 
     # *** Check that the pedestal subtraction processor metrics are being produced as expected.
     # DLH-0, 'accum' metrics
-    metric_key_list = [session_name, "ru-det-conn-0", "DLH-0", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "accum"]
+    metric_key_list = [run_dunerc.daq_session_name, "ru-det-conn-0", "DLH-0", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "accum"]
     all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1,
                                                             verbosity_helper=run_dunerc.verbosity_helper)
     all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=1,
@@ -330,14 +321,14 @@ def test_metric_files(run_dunerc):
     # the rate of such fake non-zero signals is not large enough to affect the calculated pedestal.
     # Because of all of that, the pedestal value check in this section can verify that the metric
     # reporting system sees a pedestal value of zero.)
-    metric_key_list = [session_name, "ru-det-conn-0", "DLH-0", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "pedestal"]
+    metric_key_list = [run_dunerc.daq_session_name, "ru-det-conn-0", "DLH-0", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "pedestal"]
     all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1,
                                                             verbosity_helper=run_dunerc.verbosity_helper)
     all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=0, max_value_sum=0,
                                                          verbosity_helper=run_dunerc.verbosity_helper)
 
     # DLH-1, 'accum' metrics
-    metric_key_list = [session_name, "ru-det-conn-0", "DLH-1", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "accum"]
+    metric_key_list = [run_dunerc.daq_session_name, "ru-det-conn-0", "DLH-1", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "accum"]
     all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1,
                                                             verbosity_helper=run_dunerc.verbosity_helper)
     all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=1,
@@ -353,7 +344,7 @@ def test_metric_files(run_dunerc):
     # the rate of such fake non-zero signals is not large enough to affect the calculated pedestal.
     # Because of all of that, the pedestal value check in this section can verify that the metric
     # reporting system sees a pedestal value of zero.)
-    metric_key_list = [session_name, "ru-det-conn-0", "DLH-1", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "pedestal"]
+    metric_key_list = [run_dunerc.daq_session_name, "ru-det-conn-0", "DLH-1", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "pedestal"]
     all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1,
                                                             verbosity_helper=run_dunerc.verbosity_helper)
     all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=0, max_value_sum=0,

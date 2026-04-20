@@ -78,7 +78,7 @@ common_config_obj.config_db = (
 
 # Get default 1x1 config
 onebyone_local_conf = copy.deepcopy(common_config_obj)
-onebyone_local_conf.session = "local-1x1-config"
+onebyone_local_conf.config_session_name = "local-1x1-config"
 
 # Get necessary dal objects
 db = conffwk.Configuration("oksconflibs:" + str(common_config_obj.config_db))
@@ -253,7 +253,7 @@ def test_dunerc_success(run_dunerc, caplog):
 
 # Log files
 def test_log_files(run_dunerc):
-    session_name = run_dunerc.session_name if run_dunerc.session_name is not None else run_dunerc.session
+    session_name = run_dunerc.daq_session_name
 
     log_dir = pathlib.Path("/log")
     run_dunerc.log_files += [
