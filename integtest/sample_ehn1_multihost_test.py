@@ -118,9 +118,11 @@ ignored_logfile_problems = {
 # the software release from CVMFS onto all of those computers (so the startup of
 # DAQ apps such as the ConnectivityServer don't take a long time initially).
 import subprocess
+import socket
 computers_that_are_unreachable = []
+hostname = socket.getfqdn()
 sw_area_root = os.environ.get("DBT_AREA_ROOT")
-if sw_area_root is not None:
+if sw_area_root is not None and ".cern.ch" in hostname:
     print("")
     needed_computer="np04-srv-021"
     print(f"Confirming that we can ssh to {needed_computer}...")
@@ -150,6 +152,8 @@ if sw_area_root is not None:
     retval = proc.returncode
     if retval != 0:
         computers_that_are_unreachable.append(needed_computer)
+elif ".cern.ch" not in hostname:
+    computers_that_are_unreachable = [f"This test is meant to be run at CERN (hostname {hostname} does not contain .cern.ch)"]
 else:
     computers_that_are_unreachable = ["Unable to determine the value of the DBT_AREA_ROOT env var"]
 
