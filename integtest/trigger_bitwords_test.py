@@ -1,7 +1,7 @@
 """
 Integration Test for Trigger Bitword Configurations
 
-Reminder: 
+Reminder:
 Trigger bitwords are used to control which triggers are allowed to be promoted to trigger decisions.
 The bitwords functionality is independent of whatever sources are producing the triggers (TCs).
 
@@ -35,8 +35,14 @@ import string
 import integrationtest.data_classes as data_classes
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
+import integrationtest.resource_validation as resource_validation
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
+
+# tweak the print() statement default behavior so that it always flushes the output.
+import functools
+print = functools.partial(print, flush=True)
 
 # Run setup
 run_duration = 15  # seconds
@@ -44,15 +50,25 @@ check_for_logfile_errors = True
 ignored_logfile_problems = {
     "local-connection-server": [
         "errorlog: -",
-        r"Worker \(pid:\d+\) was sent SIGHUP"
     ],
     "config_mlt": [
         "Trigger is inhibited"
     ],
     "config_dfo": [
         "that was busy with"
+    ],
+    "-controller": [
     ]
 }
+
+# Determine if this computer has enough resources for these tests
+resource_validator = resource_validation.ResourceValidator()
+resource_validator.cpu_count_needs(15, 30)  # 3 for each data source (incl TPG) plus 3 more for everything else
+resource_validator.free_memory_needs(9, 14)  # 30% more than what we observe being used ('free -h')
+actual_output_path = get_pytest_tmpdir()
+resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resource_validator.get_debug_string()
+print(f"{resval_debug_string}")
 
 ### Config setup
 common_config_obj = data_classes.drunc_config()
@@ -64,7 +80,7 @@ common_config_obj.config_db = (
 
 # Get default 1x1 config
 onebyone_local_conf = copy.deepcopy(common_config_obj)
-onebyone_local_conf.session = "local-1x1-config"
+onebyone_local_conf.config_session_name = "local-1x1-config"
 
 # Get necessary dal objects
 db = conffwk.Configuration("oksconflibs:" + str(common_config_obj.config_db))
@@ -78,7 +94,7 @@ tpstream_writer = db.get_dal(class_name="TPStreamWriterApplication", uid="tp-str
 local_conf.disabled.append(tpstream_writer)
 disabled_list = [db.get_dal(class_name=obj.className(), uid=obj.id) for obj in local_conf.disabled]
 onebyone_local_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="Session",
         obj_id="local-1x1-config",
         updates={"disabled": []},
@@ -86,7 +102,7 @@ onebyone_local_conf.config_substitutions.append(
 )
 # Disable TC merging
 onebyone_local_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
@@ -120,7 +136,7 @@ for conf in configs:
 ### Bitwords configs
 # Prescale
 prescale_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
@@ -130,7 +146,7 @@ prescale_bitword_conf.config_substitutions.append(
 
 # Timing
 timing_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
@@ -140,7 +156,7 @@ timing_bitword_conf.config_substitutions.append(
 
 # Supernova
 supernova_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TriggerBitword",
         obj_id="test-bitword",
         updates={
@@ -149,7 +165,7 @@ supernova_bitword_conf.config_substitutions.append(
 )
 supernova_bitword = db.get_dal(class_name="TriggerBitword", uid="test-bitword")
 supernova_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
@@ -159,7 +175,7 @@ supernova_bitword_conf.config_substitutions.append(
 
 # Series
 series_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
@@ -169,7 +185,7 @@ series_bitword_conf.config_substitutions.append(
 
 # Coincidence
 coincidence_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TriggerBitword",
         obj_id="test-bitword",
         updates={
@@ -178,7 +194,7 @@ coincidence_bitword_conf.config_substitutions.append(
 )
 coincidence_bitword = db.get_dal(class_name="TriggerBitword", uid="test-bitword")
 coincidence_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_class="TCDataProcessor",
         obj_id="def-tc-processor",
         updates={
@@ -187,38 +203,32 @@ coincidence_bitword_conf.config_substitutions.append(
             },)
 )
 coincidence_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id="random-tc-generator",
         obj_class="RandomTCMakerConf",
-        updates={"trigger_rate_hz": 40},)
+        updates={"trigger_rate_hz": 40, "candidate_backshift_ts": 0, "candidate_window_before_ts": 62500, "candidate_window_after_ts": 62500},)
 )
 coincidence_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id="def-random-readout",
         obj_class="TCReadoutMap",
         updates={"time_before": 62500, "time_after": 62500},)
 )
 coincidence_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id="fakehsi",
         obj_class="FakeHSIEventGeneratorConf",
         updates={"trigger_rate": 30},)
 )
 coincidence_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
-        obj_id="def-tc-map",
-        obj_class="TCReadoutMap",
-        updates={"time_before": 62500, "time_after": 62500},)
-)
-coincidence_bitword_conf.config_substitutions.append(
-    data_classes.config_substitution(
+    data_classes.attribute_substitution(
         obj_id="def-hsi-tc-map",
         obj_class="TCReadoutMap",
         updates={"time_before": 62500, "time_after": 62500},)
 )
 
 # Finally store configs in map
-confgen_arguments = { 
+confgen_arguments = {
   "no-bit": no_bitword_conf,
   "prescale-bit": prescale_bitword_conf,
   "timing-bit": timing_bitword_conf,
@@ -227,21 +237,22 @@ confgen_arguments = {
   "coincidence-bit": coincidence_bitword_conf
 }
 
-# The commands to run in nanorc, as a list
-nanorc_command_list = "boot conf".split()
-nanorc_command_list += (
-        "start ".split()
-        + "--run-number 101 enable-triggers wait ".split()
-        + [str(run_duration)]
-        + "disable-triggers drain-dataflow wait 2 stop-trigger-sources wait 2 stop wait 2".split()
-    )
-nanorc_command_list += "scrap terminate".split()
+# The commands to run in dunerc, as a list
+dunerc_command_list = "boot conf".split()
+dunerc_command_list += (
+    "start ".split()
+    + "--run-number 101 enable-triggers wait ".split()
+    + [str(run_duration)]
+    + "disable-triggers drain-dataflow wait 2 stop-trigger-sources wait 2 stop wait 2".split()
+)
+dunerc_command_list += "scrap terminate".split()
 
 ### Tests
 # Run control
-def test_nanorc_success(run_nanorc):
+def test_dunerc_success(run_dunerc):
+    # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)-run_nanorc0\].*", current_test)
+    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
     if match_obj:
         current_test = match_obj.group(1)
     banner_line = re.sub(".", "=", current_test)
@@ -249,43 +260,41 @@ def test_nanorc_success(run_nanorc):
     print(current_test)
     print(banner_line)
 
-    # Check that nanorc completed correctly
-    assert run_nanorc.completed_process.returncode == 0
+    # Check that dunerc completed correctly
+    assert run_dunerc.completed_process.returncode == 0
 
 # Log files
-def test_log_files(run_nanorc):
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-
-    session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
+def test_log_files(run_dunerc):
+    session_name = run_dunerc.daq_session_name
 
     log_dir = pathlib.Path("/log")
-    run_nanorc.log_files += [
+    run_dunerc.log_files += [
         f for f in log_dir.glob(f"log_*_{session_name}*.txt") if f.exists()
     ]
 
     # Check that at least some of the expected log files are present
     assert any(
         f"{session_name}_df-01" in str(logname)
-        for logname in run_nanorc.log_files
+        for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_dfo" in str(logname) for logname in run_nanorc.log_files
+        f"{session_name}_dfo" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_mlt" in str(logname) for logname in run_nanorc.log_files
+        f"{session_name}_mlt" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_ru" in str(logname) for logname in run_nanorc.log_files
+        f"{session_name}_ru" in str(logname) for logname in run_dunerc.log_files
     )
 
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
-            run_nanorc.log_files, True, True, ignored_logfile_problems
-        ), f"Errors found in log files: {run_nanorc.log_files}"
+            run_dunerc.log_files, True, True, ignored_logfile_problems
+        ), f"Errors found in log files: {run_dunerc.log_files}"
 
 # Data files
-def test_data_files(run_nanorc):
+def test_data_files(run_dunerc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
 
     # sanity checks
@@ -301,31 +310,31 @@ def test_data_files(run_nanorc):
     }
 
     # Match run to checks
-    match = re.search(r'\[(.+?)-run', current_test)
-    if match:
-        key = match.group(1)
-        if key in datafile_params:
+    # 29-Dec-2025, KAB: modified this block of code to work with the addition of
+    # the process-manager-choice fixture.
+    selected_params = {}
+    for key in datafile_params.keys():
+        if key in current_test:
             selected_params = datafile_params[key]
             print("Selected params for", key, ":", selected_params)
-        else:
-            print(f"Key '{key}' not found in datafile_params.")
-    else:
-        print("Could not extract key from current_test.")
+            break
+    if not selected_params:
+        print(f"\n*** ERROR: unable to determine the datafile_params for test {current_test}.")
 
     ### Run some tests on the output data file
     all_ok = True
 
     ## N of data files
-    all_ok &= len(run_nanorc.data_files) == selected_params["n_data_files"]
+    all_ok &= len(run_dunerc.data_files) == selected_params["n_data_files"]
 
     if all_ok:
         print(f"\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({selected_params['n_data_files']})")
     else:
-        print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {selected_params['n_data_files']}, found {len(run_nanorc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
+        print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {selected_params['n_data_files']}, found {len(run_dunerc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
 
     ## Other test
     if selected_params["n_data_files"] > 0:
-        data_file = data_file_checks.DataFile(run_nanorc.data_files[0])
+        data_file = data_file_checks.DataFile(run_dunerc.data_files[0])
         # TR types
         all_ok &= data_file_checks.check_tr_trigger_types(data_file, selected_params['expected_trigger_types'])
         if all_ok:

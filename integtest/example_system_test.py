@@ -9,8 +9,14 @@ import pathlib
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+import integrationtest.resource_validation as resource_validation
+from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
+
+# tweak the print() statement default behavior so that it always flushes the output.
+import functools
+print = functools.partial(print, flush=True)
 
 # Values that help determine the running conditions
 run_duration = 20  # seconds
@@ -64,11 +70,26 @@ hsi_frag_params = {
                               "default": {"min_size_bytes":  72, "max_size_bytes": 100} }
 }
 ignored_logfile_problems = {
+    "-controller": [
+    ],
     "local-connection-server": [
         "errorlog: -",
-        r"Worker \(pid:\d+\) was sent SIGHUP"
+    ],
+    # 04-Mar-2026, KAB: added the absl::InitializeLog warning message to the ignored list for
+    # all DAQ processes, given that we currently don't have a way suppress it at its source.
+    r".*": [
+        r"WARNING: All log messages before absl::InitializeLog\(\) is called are written to STDERR"
     ]
 }
+
+# Determine if this computer has enough resources for these tests
+resource_validator = resource_validation.ResourceValidator()
+resource_validator.cpu_count_needs(30, 60)  # 3 for each data source (incl TPG) plus 6 more for everything else
+resource_validator.free_memory_needs(15, 24)  # 25% more than what we observe being used ('free -h')
+actual_output_path = get_pytest_tmpdir()
+resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
+resval_debug_string = resource_validator.get_debug_string()
+print(f"{resval_debug_string}")
 
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
@@ -78,23 +99,31 @@ common_config_obj.op_env = "test"
 common_config_obj.config_db = (
     os.path.dirname(__file__) + "/../config/daqsystemtest/example-configs.data.xml"
 )
+common_config_obj.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="TCDataProcessor",     # 12-Nov-2025, KAB: turned off the merging of
+        obj_id="def-tc-processor",       # overlapping TCs so that we get more consistent
+        updates={                        # numbers of TriggerRecords in the output files.
+            "merge_overlapping_tcs": False
+        },)
+)
 
 onebyone_local_conf = copy.deepcopy(common_config_obj)
-onebyone_local_conf.session = "local-1x1-config"
+onebyone_local_conf.config_session_name = "local-1x1-config"
 
 twobythree_local_conf = copy.deepcopy(common_config_obj)
-twobythree_local_conf.session = "local-2x3-config"
+twobythree_local_conf.config_session_name = "local-2x3-config"
 
+username=os.environ.get("USER")
 onebyone_ehn1_conf = copy.deepcopy(common_config_obj)
-onebyone_ehn1_conf.session = "ehn1-local-1x1-config"
-onebyone_ehn1_conf.session_name = f"ehn1-local-1x1-config-{''.join(random.choices(string.ascii_letters, k=8))}"
+onebyone_ehn1_conf.config_session_name = "ehn1-local-1x1-config"
+onebyone_ehn1_conf.daq_session_name = f"ehn1-local-1x1-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
 onebyone_ehn1_conf.connsvc_port = None
 
 twobythree_ehn1_conf = copy.deepcopy(common_config_obj)
-twobythree_ehn1_conf.session = "ehn1-local-2x3-config"
-twobythree_ehn1_conf.session_name = f"ehn1-local-2x3-config-{''.join(random.choices(string.ascii_letters, k=8))}"
+twobythree_ehn1_conf.config_session_name = "ehn1-local-2x3-config"
+twobythree_ehn1_conf.daq_session_name = f"ehn1-local-2x3-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
 twobythree_ehn1_conf.connsvc_port = None
-
 
 def host_is_at_ehn1(hostname):
     return re.match(r"^(np02|np04)-srv-\d{3}$", hostname) or re.match(r"^(np02|np04)-srv-\d{3}.cern.ch$", hostname)
@@ -113,10 +142,9 @@ else:
         "Local 2x3 Conf": twobythree_local_conf,
     }
 
-
-# The commands to run in nanorc, as a list
-nanorc_command_list = (
-    "boot wait 5 conf start --run-number 101 wait 1 enable-triggers wait ".split()
+# The commands to run in dunerc, as a list
+dunerc_command_list = (
+    "boot wait 2 conf start --run-number 101 wait 1 enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop scrap terminate".split()
 )
@@ -124,9 +152,10 @@ nanorc_command_list = (
 # The tests themselves
 
 
-def test_nanorc_success(run_nanorc):
+def test_dunerc_success(run_dunerc):
+    # print the name of the current test
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)-run_nanorc0\].*", current_test)
+    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
     if match_obj:
         current_test = match_obj.group(1)
     banner_line = re.sub(".", "=", current_test)
@@ -139,49 +168,45 @@ def test_nanorc_success(run_nanorc):
             f"This computer ({hostname}) is not at EHN1, not running EHN1 sessions"
         )
 
-    # Check that nanorc completed correctly
-    assert run_nanorc.completed_process.returncode == 0
+    # Check that dunerc completed correctly
+    assert run_dunerc.completed_process.returncode == 0
 
 
-def test_log_files(run_nanorc):
+def test_log_files(run_dunerc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-
     if not host_is_at_ehn1(hostname) and "EHN1" in current_test:
         pytest.skip(
             f"This computer ({hostname}) is not at EHN1, not running EHN1 sessions"
         )
 
-    session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
-
     if host_is_at_ehn1(hostname) and "EHN1" in current_test:
         log_dir = pathlib.Path("/log")
-        run_nanorc.log_files += list(log_dir.glob(f"log_*_{session_name}*.txt"))
+        run_dunerc.log_files += list(log_dir.glob(f"log_*_{run_dunerc.daq_session_name}*.txt"))
 
     # Check that at least some of the expected log files are present
     assert any(
-        f"{session_name}_df-01" in str(logname)
-        for logname in run_nanorc.log_files
+        f"{run_dunerc.daq_session_name}_df-01" in str(logname)
+        for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_dfo" in str(logname) for logname in run_nanorc.log_files
+        f"{run_dunerc.daq_session_name}_dfo" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_mlt" in str(logname) for logname in run_nanorc.log_files
+        f"{run_dunerc.daq_session_name}_mlt" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_ru" in str(logname) for logname in run_nanorc.log_files
+        f"{run_dunerc.daq_session_name}_ru" in str(logname) for logname in run_dunerc.log_files
     )
 
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
-            run_nanorc.log_files, True, True, ignored_logfile_problems
+            run_dunerc.log_files, True, True, ignored_logfile_problems
         )
 
 
-def test_data_files(run_nanorc):
+def test_data_files(run_dunerc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
-
     if not host_is_at_ehn1(hostname) and "EHN1" in current_test:
         pytest.skip(
             f"This computer ({hostname}) is not at EHN1, not running EHN1 sessions"
@@ -203,7 +228,7 @@ def test_data_files(run_nanorc):
     assert expected_file_count != 0,f"Unable to locate test parameters for {current_test}"
 
     # Run some tests on the output data file
-    assert len(run_nanorc.data_files) == expected_file_count, f"Unexpected file count: Actual: {len(run_nanorc.data_files)}, Expected: {expected_file_count}"
+    assert len(run_dunerc.data_files) == expected_file_count, f"Unexpected file count: Actual: {len(run_dunerc.data_files)}, Expected: {expected_file_count}"
 
     local_expected_fragment_count = expected_fragment_count
     wibeth_frag_params["expected_fragment_count"] = local_expected_fragment_count
@@ -233,8 +258,8 @@ def test_data_files(run_nanorc):
 
     all_ok = True
 
-    for idx in range(len(run_nanorc.data_files)):
-        data_file = data_file_checks.DataFile(run_nanorc.data_files[idx])
+    for idx in range(len(run_dunerc.data_files)):
+        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx])
         all_ok &= data_file_checks.sanity_check(data_file)
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(
