@@ -1,19 +1,18 @@
 import pytest
-import os
-import re
 import urllib.request
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
+import integrationtest.basic_checks as basic_checks
 import integrationtest.data_classes as data_classes
 import integrationtest.resource_validation as resource_validation
 from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
+from integrationtest.verbosity_helper import IntegtestVerbosityLevels
+
+import functools
+print = functools.partial(print, flush=True)  # always flush print() output
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
-
-# tweak the print() statement default behavior so that it always flushes the output.
-import functools
-print = functools.partial(print, flush=True)
 
 # Values that help determine the running conditions
 number_of_data_producers = 2
@@ -112,8 +111,6 @@ resource_validator.cpu_count_needs(8, 16)  # 3 for each data source (incl TPG) p
 resource_validator.free_memory_needs(6, 10)  # 20% more than what we observe being used ('free -h')
 actual_output_path = get_pytest_tmpdir()
 resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
-resval_debug_string = resource_validator.get_debug_string()
-print(f"{resval_debug_string}")
 
 object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 
@@ -168,7 +165,7 @@ conf_dict.config_substitutions.append(
     )
 )
 
-confgen_arguments = {"Software_TPG_System": conf_dict}
+confgen_arguments = {"WIBEth_TPG_System": conf_dict}
 
 # The commands to run in dunerc, as a list
 dunerc_command_list = (
@@ -185,26 +182,17 @@ dunerc_command_list = (
 # The tests themselves
 
 
-def test_dunerc_success(run_dunerc):
-    # print the name of the current test
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
-    if match_obj:
-        current_test = match_obj.group(1)
-    banner_line = re.sub(".", "=", current_test)
-    print(banner_line)
-    print(current_test)
-    print(banner_line)
-
-    # Check that dunerc completed correctly
-    assert run_dunerc.completed_process.returncode == 0
+def test_dunerc_success(run_dunerc, caplog):
+    # checks for run control success, problems during pytest setup, etc.
+    basic_checks.basic_checks(run_dunerc, caplog, print_test_name=False)
 
 
 def test_log_files(run_dunerc):
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
-            run_dunerc.log_files, True, True, ignored_logfile_problems
+            run_dunerc.log_files, True, True, ignored_logfile_problems,
+            verbosity_helper=run_dunerc.verbosity_helper
         )
 
 
@@ -240,7 +228,7 @@ def test_data_files(run_dunerc):
 
     all_ok = True
     for idx in range(len(run_dunerc.data_files)):
-        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx])
+        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx], run_dunerc.verbosity_helper)
         all_ok &= data_file_checks.sanity_check(data_file)
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(
@@ -268,7 +256,7 @@ def test_tpstream_files(run_dunerc):
 
     all_ok = True
     for idx in range(len(tpstream_files)):
-        data_file = data_file_checks.DataFile(tpstream_files[idx])
+        data_file = data_file_checks.DataFile(tpstream_files[idx], run_dunerc.verbosity_helper)
         # all_ok &= data_file_checks.sanity_check(data_file) # Sanity check doesn't work for stream files
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(

@@ -28,7 +28,6 @@ import os
 import pathlib
 import pytest
 import random
-import re
 import shutil
 import string
 import tempfile
@@ -36,8 +35,10 @@ import tempfile
 import integrationtest.data_classes as data_classes
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
+import integrationtest.basic_checks as basic_checks
 import integrationtest.resource_validation as resource_validation
 from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
+from integrationtest.verbosity_helper import IntegtestVerbosityLevels
 
 from daqconf.consolidate import copy_configuration
 from pathlib import Path
@@ -47,11 +48,10 @@ def _cleanup_tmpdir():
     if os.path.exists(tmpdirname):
         shutil.rmtree(tmpdirname)
 
-pytest_plugins = "integrationtest.integrationtest_drunc"
-
-# tweak the print() statement default behavior so that it always flushes the output.
 import functools
-print = functools.partial(print, flush=True)
+print = functools.partial(print, flush=True)  # always flush print() output
+
+pytest_plugins = "integrationtest.integrationtest_drunc"
 
 # Run setup
 run_duration = 20  # seconds
@@ -81,8 +81,6 @@ resource_validator.cpu_count_needs(6, 12)  # 3 for ConnSvc threads plus 3 more f
 resource_validator.free_memory_needs(3, 4)  # 50% more than what we observe being used ('free -h')
 actual_output_path = get_pytest_tmpdir()
 resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
-resval_debug_string = resource_validator.get_debug_string()
-print(f"{resval_debug_string}")
 
 ### Config setup
 # Create temp config
@@ -255,19 +253,9 @@ atexit.register(_cleanup_tmpdir)
 
 ### Tests
 # Run control
-def test_dunerc_success(run_dunerc):
-    # print the name of the current test
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
-    if match_obj:
-        current_test = match_obj.group(1)
-    banner_line = re.sub(".", "=", current_test)
-    print(banner_line)
-    print(current_test)
-    print(banner_line)
-
-    # Check that dunerc completed correctly
-    assert run_dunerc.completed_process.returncode == 0
+def test_dunerc_success(run_dunerc, caplog):
+    # checks for run control success, problems during pytest setup, etc.
+    basic_checks.basic_checks(run_dunerc, caplog, print_test_name=True)
 
 # Log files
 def test_log_files(run_dunerc):
@@ -296,7 +284,8 @@ def test_log_files(run_dunerc):
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
-            run_dunerc.log_files, True, True, ignored_logfile_problems
+            run_dunerc.log_files, True, True, ignored_logfile_problems,
+            verbosity_helper=run_dunerc.verbosity_helper
         ), f"Errors found in log files: {run_dunerc.log_files}"
 
 # Data files
@@ -315,26 +304,27 @@ def test_data_files(run_dunerc):
     for key in datafile_params.keys():
         if key in current_test:
             selected_params = datafile_params[key]
-            print("Selected params for", key, ":", selected_params)
+            if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.integtest_debug):
+                print("Selected params for", key, ":", selected_params)
             break
     if not selected_params:
         print(f"\n*** ERROR: unable to determine the datafile_params for test {current_test}.")
 
     ### Run some tests on the output data file
-    all_ok = True
-
-    all_ok &= len(run_dunerc.data_files) == selected_params["n_data_files"]
+    all_ok = len(run_dunerc.data_files) == selected_params["n_data_files"]
     if all_ok:
-        print(f"\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({selected_params['n_data_files']})")
+        if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.drunc_transitions):
+            print(f"\n\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({selected_params['n_data_files']})")
     else:
-        print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {selected_params['n_data_files']}, found {len(run_dunerc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
+        print(f"\n\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {selected_params['n_data_files']}, found {len(run_dunerc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
 
     ## Other test
     # number of SIDs
-    data_file = data_file_checks.DataFile(run_dunerc.data_files[0])
+    data_file = data_file_checks.DataFile(run_dunerc.data_files[0], run_dunerc.verbosity_helper)
     all_ok &= data_file_checks.check_n_unique_sids(data_file, selected_params['n_sids_tp'], selected_params['n_sids_ta'], selected_params['n_sids_tc'] )
     if all_ok:
-        print(f"\N{WHITE HEAVY CHECK MARK} The expected number of unique Source IDs was found ({selected_params['n_sids_tp'], selected_params['n_sids_ta'], selected_params['n_sids_tc']})")
+        if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.drunc_transitions):
+            print(f"\N{WHITE HEAVY CHECK MARK} The expected number of unique Source IDs was found ({selected_params['n_sids_tp'], selected_params['n_sids_ta'], selected_params['n_sids_tc']})")
     else:
         print(f"\N{POLICE CARS REVOLVING LIGHT} The number of unique Source IDs is NOT as expected ({selected_params['n_sids_tp'], selected_params['n_sids_ta'], selected_params['n_sids_tc']})! \N{POLICE CARS REVOLVING LIGHT}")
 
