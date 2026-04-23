@@ -49,7 +49,6 @@ check_for_logfile_errors = True
 expected_event_count = run_duration * (1.0 + 3.0) # 1 from RTCM, 3 from FakeHSI
 ta_prescale = 1000
 expected_event_count_tolerance = expected_event_count / 10.0
-hostname = os.uname().nodename
 
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
@@ -291,6 +290,11 @@ else:
 
 
 def test_dunerc_success(run_dunerc, capsys, caplog):
+    if ".cern.ch" not in hostname:
+        with capsys.disabled():
+            print(f"\n\n\N{LARGE YELLOW CIRCLE} It is not possible to run this test on this computer ({hostname}):")
+            print(f"      {computers_that_are_unreachable}")
+        pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
     if len(computers_that_are_unreachable) > 0:
         with capsys.disabled():
             print(f"\n\n\N{LARGE YELLOW CIRCLE} The following computers are needed for this test but are unreachable from this computer ({hostname}) via ssh:")
