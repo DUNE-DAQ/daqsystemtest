@@ -49,7 +49,6 @@ check_for_logfile_errors = True
 expected_event_count = run_duration * (1.0 + 3.0) # 1 from RTCM, 3 from FakeHSI
 ta_prescale = 1000
 expected_event_count_tolerance = expected_event_count / 10.0
-hostname = os.uname().nodename
 
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
@@ -120,10 +119,12 @@ ignored_logfile_problems = {
 # the software release from CVMFS onto all of those computers (so the startup of
 # DAQ apps such as the ConnectivityServer don't take a long time initially).
 import subprocess
+import socket
 computers_that_are_needed = ["np04-srv-021", "np04-srv-022", "np04-srv-028", "np04-srv-029"]
 computers_that_are_unreachable = []
+hostname = socket.getfqdn()
 sw_area_root = os.environ.get("DBT_AREA_ROOT")
-if sw_area_root is not None:
+if sw_area_root is not None and ".cern.ch" in hostname:
     sw_setup_script = ""
     if os.path.exists(f"{sw_area_root}/env.sh"):
         sw_setup_script = "env.sh"
@@ -140,6 +141,8 @@ if sw_area_root is not None:
                 computers_that_are_unreachable.append(needed_computer)
     else:
         computers_that_are_unreachable = ["Unable to determine which software area setup script to use"]
+elif ".cern.ch" not in hostname:
+    computers_that_are_unreachable = [f"This test is meant to be run at CERN (hostname {hostname} does not contain .cern.ch)"]
 else:
     computers_that_are_unreachable = ["Unable to determine the value of the DBT_AREA_ROOT env var"]
 
@@ -287,6 +290,11 @@ else:
 
 
 def test_dunerc_success(run_dunerc, capsys, caplog):
+    if ".cern.ch" not in hostname:
+        with capsys.disabled():
+            print(f"\n\n\N{LARGE YELLOW CIRCLE} It is not possible to run this test on this computer ({hostname}):")
+            print(f"      {computers_that_are_unreachable}")
+        pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
     if len(computers_that_are_unreachable) > 0:
         with capsys.disabled():
             print(f"\n\n\N{LARGE YELLOW CIRCLE} The following computers are needed for this test but are unreachable from this computer ({hostname}) via ssh:")
