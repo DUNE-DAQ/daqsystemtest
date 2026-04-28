@@ -1,20 +1,19 @@
 import pytest
-import os
-import re
 import urllib.request
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
+import integrationtest.basic_checks as basic_checks
 import integrationtest.data_classes as data_classes
 import integrationtest.opmon_metric_checks as opmon_metric_checks
 import integrationtest.resource_validation as resource_validation
 from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
+from integrationtest.verbosity_helper import IntegtestVerbosityLevels
+
+import functools
+print = functools.partial(print, flush=True)  # always flush print() output
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
-
-# tweak the print() statement default behavior so that it always flushes the output.
-import functools
-print = functools.partial(print, flush=True)
 
 # Values that help determine the running conditions
 number_of_data_producers = 2
@@ -113,8 +112,6 @@ resource_validator.cpu_count_needs(8, 16)  # 3 for each data source (incl TPG) p
 resource_validator.free_memory_needs(6, 10)  # 20% more than what we observe being used ('free -h')
 actual_output_path = get_pytest_tmpdir()
 resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
-resval_debug_string = resource_validator.get_debug_string()
-print(f"{resval_debug_string}")
 
 object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 
@@ -189,7 +186,7 @@ conf_dict.config_substitutions.append(
     )
 )
 
-confgen_arguments = {"Software_TPG_System": conf_dict}
+confgen_arguments = {"WIBEth_TPG_System": conf_dict}
 
 # The commands to run in dunerc, as a list
 dunerc_command_list = (
@@ -206,26 +203,17 @@ dunerc_command_list = (
 # The tests themselves
 
 
-def test_dunerc_success(run_dunerc):
-    # print the name of the current test
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
-    if match_obj:
-        current_test = match_obj.group(1)
-    banner_line = re.sub(".", "=", current_test)
-    print(banner_line)
-    print(current_test)
-    print(banner_line)
-
-    # Check that dunerc completed correctly
-    assert run_dunerc.completed_process.returncode == 0
+def test_dunerc_success(run_dunerc, caplog):
+    # checks for run control success, problems during pytest setup, etc.
+    basic_checks.basic_checks(run_dunerc, caplog, print_test_name=False)
 
 
 def test_log_files(run_dunerc):
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
-            run_dunerc.log_files, True, True, ignored_logfile_problems
+            run_dunerc.log_files, True, True, ignored_logfile_problems,
+            verbosity_helper=run_dunerc.verbosity_helper
         )
 
 
@@ -261,7 +249,7 @@ def test_data_files(run_dunerc):
 
     all_ok = True
     for idx in range(len(run_dunerc.data_files)):
-        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx])
+        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx], run_dunerc.verbosity_helper)
         all_ok &= data_file_checks.sanity_check(data_file)
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(
@@ -289,7 +277,7 @@ def test_tpstream_files(run_dunerc):
 
     all_ok = True
     for idx in range(len(tpstream_files)):
-        data_file = data_file_checks.DataFile(tpstream_files[idx])
+        data_file = data_file_checks.DataFile(tpstream_files[idx], run_dunerc.verbosity_helper)
         # all_ok &= data_file_checks.sanity_check(data_file) # Sanity check doesn't work for stream files
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(
@@ -308,7 +296,8 @@ def test_tpstream_files(run_dunerc):
 # 26-Nov-2025, KAB: added checking of opmon metrics to verify that the ones that are
 # specifically enabled in this test work as expected.
 def test_metric_files(run_dunerc):
-    print("") # Clear potential dot from pytest
+    if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.drunc_transitions):
+        print("") # Clear potential dot from pytest
 
     metric_data = opmon_metric_checks.collate_opmon_data_from_files(run_dunerc.opmon_files)
 
@@ -317,8 +306,10 @@ def test_metric_files(run_dunerc):
     # *** Check that the pedestal subtraction processor metrics are being produced as expected.
     # DLH-0, 'accum' metrics
     metric_key_list = [run_dunerc.daq_session_name, "ru-det-conn-0", "DLH-0", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "accum"]
-    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1)
-    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=1)
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1,
+                                                            verbosity_helper=run_dunerc.verbosity_helper)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=1,
+                                                         verbosity_helper=run_dunerc.verbosity_helper)
 
     # DLH-0, 'pedestal' metrics
     # (In this test, the calculation of the pedestal for each WIB channel [used in TP
@@ -331,13 +322,17 @@ def test_metric_files(run_dunerc):
     # Because of all of that, the pedestal value check in this section can verify that the metric
     # reporting system sees a pedestal value of zero.)
     metric_key_list = [run_dunerc.daq_session_name, "ru-det-conn-0", "DLH-0", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "pedestal"]
-    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1)
-    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=0, max_value_sum=0)
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1,
+                                                            verbosity_helper=run_dunerc.verbosity_helper)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=0, max_value_sum=0,
+                                                         verbosity_helper=run_dunerc.verbosity_helper)
 
     # DLH-1, 'accum' metrics
     metric_key_list = [run_dunerc.daq_session_name, "ru-det-conn-0", "DLH-1", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "accum"]
-    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1)
-    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=1)
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1,
+                                                            verbosity_helper=run_dunerc.verbosity_helper)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=1,
+                                                         verbosity_helper=run_dunerc.verbosity_helper)
 
     # DLH-1, 'pedestal' metrics
     # (In this test, the calculation of the pedestal for each WIB channel [used in TP
@@ -350,7 +345,9 @@ def test_metric_files(run_dunerc):
     # Because of all of that, the pedestal value check in this section can verify that the metric
     # reporting system sees a pedestal value of zero.)
     metric_key_list = [run_dunerc.daq_session_name, "ru-det-conn-0", "DLH-1", "WIBEthFrameProcessor", "def-wib-processor", "datahandlinglibs.TPGProcessorInfo", "*", "pedestal"]
-    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1)
-    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=0, max_value_sum=0)
+    all_ok &= opmon_metric_checks.check_metric_sample_count(metric_data, metric_key_list, min_count=1,
+                                                            verbosity_helper=run_dunerc.verbosity_helper)
+    all_ok &= opmon_metric_checks.check_metric_value_sum(metric_data, metric_key_list, min_value_sum=0, max_value_sum=0,
+                                                         verbosity_helper=run_dunerc.verbosity_helper)
 
     assert all_ok
