@@ -3,11 +3,11 @@
 
 if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]] || [[ "$1" == "-?" ]]; then
     echo
-    echo "Usage: `basename $0` [optional list of repo names|local|all]"
+    echo "Usage: `basename $0` [optional list of repo names]"
     echo "  e.g. `basename $0` daqsystemtest"
     echo "  If no repo name is specified, integtests for all repos are listed."
-    echo "  If a special repo name of \"local\" is specified, only integtests for repos"
-    echo "      in the local software area are listed."
+    echo "  If a special repo name of \"local\" is specified, integtests for repos in the"
+    echo "      local software area are listed."
     echo "  If a special repo name of \"all\" is specified, integtests for all repos are listed."
     echo
     exit
@@ -16,24 +16,36 @@ fi
 echo "" >&2
 repo_list=()
 if [[ $# -ge 1 ]]; then
-    if [[ "$1" == "local" ]]; then
-        echo "Looking for integtests in _local_ repos..." >&2
-        echo "" >&2
-        repo_list=(`list_repos_with_integtests.sh local 2>/dev/null`)
-    elif [[ "$1" == "all" ]]; then
-        echo "Looking for integtests in _all_ repos..." >&2
-        echo "" >&2
-        repo_list=(`list_repos_with_integtests.sh 2>/dev/null`)
-    else
-        echo "Looking for integtests in the _$@_ repo(s)..." >&2
-        echo "" >&2
-        repo_list=("$@")
-    fi
+    for arg in "$@"
+    do
+        # create a string that we'll use to check if a repo is already in the list
+        repo_list_string=$(IFS=\| ; echo "${repo_list[*]}")
+        repo_list_string="|${repo_list_string}|"
+
+        if [[ "$arg" == "local" ]] || [[ "$arg" == "all" ]]; then
+            echo "Looking for integtests in _${arg}_ repos..." >&2
+            echo "" >&2
+            temp_list=(`list_repos_with_integtests.sh ${arg} 2>/dev/null`)
+            for candidate_repo in "${temp_list[@]}"; do
+                if [[ "`echo \"${repo_list_string}\" | grep \"|${candidate_repo}|\"`" == "" ]]; then
+                    repo_list+=("${candidate_repo}")
+                fi
+            done
+        else
+            candidate_repo=$arg
+            if [[ "`echo \"${repo_list_string}\" | grep \"|${candidate_repo}|\"`" == "" ]]; then
+                repo_list+=("${candidate_repo}")
+            fi
+        fi
+    done
 else
     echo "Looking for integtests in _all_ repos..." >&2
     echo "" >&2
     repo_list=(`list_repos_with_integtests.sh 2>/dev/null`)
 fi
+
+echo "Looking for integtests in the _${repo_list[@]}_ repo(s)..." >&2
+echo "" >&2
 
 for repo_name in "${repo_list[@]}"; do
     share_envvar_name="${repo_name^^}_SHARE"  # double caret converts env var to uppercase
