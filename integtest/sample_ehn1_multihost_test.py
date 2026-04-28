@@ -128,7 +128,7 @@ if sw_area_root is not None and ".cern.ch" in hostname:
     sw_setup_script = ""
     if os.path.exists(f"{sw_area_root}/env.sh"):
         sw_setup_script = "env.sh"
-    elif os.path.exists(f"{sw_area_root}/dbt-setup-release-env.sh.sh"):
+    elif os.path.exists(f"{sw_area_root}/dbt-setup-release-env.sh"):
         sw_setup_script = "dbt-setup-release-env.sh"
     if sw_setup_script:
         print("")
