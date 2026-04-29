@@ -16,6 +16,9 @@ Options:
        - it can be a pipe-delimited string with a list of repos, e.g. 'dfmodules|trigger'
        - it can have the special value of \"all\" - integtests in all repos will be run
        - it can have the special value of \"local\" - integtests in locally-cloned repos will be run
+    -R <the list of repositories to be excluded>
+       - this can be the name of a single repo
+       - it can be a pipe-delimited string with a list of repos, e.g. 'dfmodules|trigger'
     -k, --include <pipe-delimited string to select the tests that will be run ('egrep -i' match to test name)>
     -x, --exclude <pipe-delimited string to specify tests to be excluded ('egrep -i' match to test name)>
     --random-subset <count> : randomly picks the specified number of tests from the results of -r/-k/-x
@@ -55,7 +58,7 @@ CaptureOutput() {
     tee -a $1
 }
 
-GETOPT_TEMP=`getopt -o hr:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,verbosity:,trigger-full-rc-output:,random-subset:,list-only,pytest-options: -- "$@"`
+GETOPT_TEMP=`getopt -o hr:R:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,verbosity:,trigger-full-rc-output:,random-subset:,list-only,pytest-options: -- "$@"`
 if [ $? -ne 0 ]; then
     usage
     exit 1
@@ -65,7 +68,8 @@ eval set -- "$GETOPT_TEMP"
 let individual_test_requested_iterations=1
 let full_set_requested_interations=1
 let stop_on_failure=0
-repo_list=()
+requested_repo_list=()
+excluded_repo_names=""
 requested_test_names=""
 excluded_test_names=""
 let random_subset_count=0
@@ -81,7 +85,15 @@ while true; do
             ;;
         -r)
             repo_list_string=`echo $2 | sed 's/|/ /g'`
-            repo_list+=("${repo_list_string}")
+            requested_repo_list+=("${repo_list_string}")
+            shift 2
+            ;;
+        -R)
+            if [[ "${excluded_repo_names}" == "" ]]; then
+                excluded_repo_names="$2"
+            else
+                excluded_repo_names="${excluded_repo_names}|$2"
+            fi
             shift 2
             ;;
         -k|--include)
@@ -158,29 +170,34 @@ if [[ "${PYTEST_OPTIONS}" != "" ]]; then
 fi
 
 # run the integtests from the daqsystemtest repo if no repo was specified
-if [[ "${#repo_list}" -eq 0 ]]; then
+if [[ "${#requested_repo_list}" -eq 0 ]]; then
+    requested_repo_list+=("daqsystemtest")
     echo ""
     echo "Integtests from the _daqsystemtest_ repo will be run..."
 fi
 
-for requested_repo in "${repo_list[@]}"; do
+for requested_repo in "${requested_repo_list[@]}"; do
     if [[ "${requested_repo}" == "all" ]]; then
         echo ""
         echo "Building the list of _all_ integtests..."
         break
     fi
 done
-for requested_repo in "${repo_list[@]}"; do
+for requested_repo in "${requested_repo_list[@]}"; do
     if [[ "${requested_repo}" == "local" ]]; then
         echo ""
         echo "Building the list of _local_ integtests..."
         break
     fi
 done
-initial_integtest_list=(`list_available_integtests.sh ${repo_list[@]} 2>/dev/null`)
+if [[ "${excluded_repo_names}" == "" ]]; then
+    initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} 2>/dev/null`)
+else
+    initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} -x ${excluded_repo_names} 2>/dev/null`)
+fi
 if [[ ${#initial_integtest_list[@]} -eq 0 ]]; then
     echo ""
-    echo "*** No integtests were found in the \"${repo_list[@]}\" repo(s)."
+    echo "*** No integtests were found in the \"${requested_repo_list[@]}\" repo(s) [with \"${excluded_repo_names}\" repos excluded]."
     echo ""
     exit 3
 fi
@@ -274,10 +291,14 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                 if [[ -w "${DBT_AREA_ROOT}" ]]; then
                     ${PYTEST_COMMAND} ${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
                 else
+                    # remove the trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
+                    PYTEST_COMMAND=`echo ${PYTEST_COMMAND} | sed 's/--$//'`
                     ${PYTEST_COMMAND} -p no:cacheprovider --no-summary ${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
                 fi
             else
                 share_envvar_name="${test_repo^^}_SHARE"  # double caret converts env var to uppercase
+                # remove the trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
+                PYTEST_COMMAND=`echo ${PYTEST_COMMAND} | sed 's/--$//'`
                 ${PYTEST_COMMAND} -p no:cacheprovider --no-summary ${!share_envvar_name}/integtest/${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
             fi
             let pytest_return_code=${PIPESTATUS[0]}
