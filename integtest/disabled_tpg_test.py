@@ -1,3 +1,13 @@
+# 01-May-2026, KAB: the goal of this test is to check whether configurations that, A) have
+# most/all of the components of the system that are needed for TriggerPrimitive generation
+# included and B) have all of the configuration parameters that control TPG set to values
+# that enable TPG (except for two), run correctly.  The two parameters that are set to values
+# that disable TPG are the tp_generation_enabled and ta_generation_enabled flags in the ReadoutApp.
+#
+# This situation happens in production occasionally (everything enabled for TPG except a couple
+# of parameters), and this integtest attempts to verify the correct running of the system in
+# situations like that.
+#
 import pytest
 import copy
 import os
