@@ -104,7 +104,7 @@ common_config_obj.config_substitutions.append(
 )
 
 onebyone_local_conf = copy.deepcopy(common_config_obj)
-onebyone_local_conf.session = "local-1x1-config"
+onebyone_local_conf.config_session_name = "local-1x1-config"
 
 confgen_arguments = {
     "Local 1x1 Conf": onebyone_local_conf,
@@ -126,21 +126,19 @@ def test_dunerc_success(run_dunerc, caplog):
 
 
 def test_log_files(run_dunerc):
-    session_name = run_dunerc.session_name if run_dunerc.session_name is not None else run_dunerc.session
-
     # Check that at least some of the expected log files are present
     assert any(
-        f"{session_name}_df-01" in str(logname)
+        f"{run_dunerc.daq_session_name}_df-01" in str(logname)
         for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_dfo" in str(logname) for logname in run_dunerc.log_files
+        f"{run_dunerc.daq_session_name}_dfo" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_mlt" in str(logname) for logname in run_dunerc.log_files
+        f"{run_dunerc.daq_session_name}_mlt" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_ru" in str(logname) for logname in run_dunerc.log_files
+        f"{run_dunerc.daq_session_name}_ru" in str(logname) for logname in run_dunerc.log_files
     )
 
     if check_for_logfile_errors:
