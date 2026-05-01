@@ -49,7 +49,6 @@ check_for_logfile_errors = True
 expected_event_count = run_duration * (1.0 + 3.0) # 1 from RTCM, 3 from FakeHSI
 ta_prescale = 1000
 expected_event_count_tolerance = expected_event_count / 10.0
-hostname = os.uname().nodename
 
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
@@ -120,14 +119,16 @@ ignored_logfile_problems = {
 # the software release from CVMFS onto all of those computers (so the startup of
 # DAQ apps such as the ConnectivityServer don't take a long time initially).
 import subprocess
+import socket
 computers_that_are_needed = ["np04-srv-021", "np04-srv-022", "np04-srv-028", "np04-srv-029"]
 computers_that_are_unreachable = []
+hostname = socket.getfqdn()
 sw_area_root = os.environ.get("DBT_AREA_ROOT")
-if sw_area_root is not None:
+if sw_area_root is not None and ".cern.ch" in hostname:
     sw_setup_script = ""
     if os.path.exists(f"{sw_area_root}/env.sh"):
         sw_setup_script = "env.sh"
-    elif os.path.exists(f"{sw_area_root}/dbt-setup-release-env.sh.sh"):
+    elif os.path.exists(f"{sw_area_root}/dbt-setup-release-env.sh"):
         sw_setup_script = "dbt-setup-release-env.sh"
     if sw_setup_script:
         print("")
@@ -140,6 +141,8 @@ if sw_area_root is not None:
                 computers_that_are_unreachable.append(needed_computer)
     else:
         computers_that_are_unreachable = ["Unable to determine which software area setup script to use"]
+elif ".cern.ch" not in hostname:
+    computers_that_are_unreachable = [f"This test is meant to be run at CERN (hostname {hostname} does not contain .cern.ch)"]
 else:
     computers_that_are_unreachable = ["Unable to determine the value of the DBT_AREA_ROOT env var"]
 
@@ -267,7 +270,7 @@ common_config_obj.config_substitutions.append(
 )
 
 ehn1_multihost_1x1_conf = copy.deepcopy(common_config_obj)
-ehn1_multihost_1x1_conf.session = "local-1x1-config"
+ehn1_multihost_1x1_conf.config_session_name = "local-1x1-config"
 ehn1_multihost_1x1_conf.connsvc_port = 0  # random
 
 confgen_arguments = {"EHN1 MultiHost 1x1 Conf": ehn1_multihost_1x1_conf}
@@ -287,6 +290,11 @@ else:
 
 
 def test_dunerc_success(run_dunerc, capsys, caplog):
+    if ".cern.ch" not in hostname:
+        with capsys.disabled():
+            print(f"\n\n\N{LARGE YELLOW CIRCLE} It is not possible to run this test on this computer ({hostname}):")
+            print(f"      {computers_that_are_unreachable}")
+        pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
     if len(computers_that_are_unreachable) > 0:
         with capsys.disabled():
             print(f"\n\n\N{LARGE YELLOW CIRCLE} The following computers are needed for this test but are unreachable from this computer ({hostname}) via ssh:")
@@ -323,19 +331,18 @@ def test_log_files(run_dunerc):
         pytest.skip("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
 
     # Check that at least some of the expected log files are present
-    session_name = run_dunerc.session_name if run_dunerc.session_name is not None else run_dunerc.session
     assert any(
-        f"{session_name}_df-01" in str(logname)
+        f"{run_dunerc.daq_session_name}_df-01" in str(logname)
         for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_dfo" in str(logname) for logname in run_dunerc.log_files
+        f"{run_dunerc.daq_session_name}_dfo" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_mlt" in str(logname) for logname in run_dunerc.log_files
+        f"{run_dunerc.daq_session_name}_mlt" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_ru" in str(logname) for logname in run_dunerc.log_files
+        f"{run_dunerc.daq_session_name}_ru" in str(logname) for logname in run_dunerc.log_files
     )
 
     if check_for_logfile_errors:
