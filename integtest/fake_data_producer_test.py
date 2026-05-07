@@ -63,10 +63,9 @@ resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than wha
 # file. They're read by the "fixtures" in conftest.py to determine how
 # to run the config generation and dunerc
 
-object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 
-
-conf_dict = data_classes.drunc_config()
+conf_dict = data_classes.integtest_params_for_generated_dunedaq_config()
+conf_dict.object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 conf_dict.op_env = "integtest"
 conf_dict.config_session_name = "fakedata"
 conf_dict.use_fakedataprod = True
