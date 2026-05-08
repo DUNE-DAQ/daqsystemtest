@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="49" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260202T153912"/>
+<info name="" type="" num-of-items="49" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="mroda" last-modified-on="mroda-xpsp" last-modification-time="20260303T155301"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -103,6 +103,7 @@
  <comment creation-time="20250325T145413" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Disabled TP"/>
  <comment creation-time="20250526T125136" created-by="dergonul" created-on="np04-srv-031.cern.ch" author="dergonul" text="Added crt-bern and crt-grenoble"/>
  <comment creation-time="20250805T092423" created-by="dergonul" created-on="np04-srv-028.cern.ch" author="dergonul" text="Emu CRT configs"/>
+ <comment creation-time="20260303T155301" created-by="mroda" created-on="mroda-xpsp" author="mroda" text="draft of RM"/>
 </comments>
 
 
@@ -142,11 +143,13 @@
 </obj>
 
 <obj class="DPDKReceiver" id="ru-1-rcv">
+ <attr name="tag" type="string" val="receiver1"/>
  <rel name="uses" class="NetworkDevice" id="ru_1_readout"/>
  <rel name="configuration" class="DPDKPortConfiguration" id="dpdk_e810_conf"/>
 </obj>
 
 <obj class="DPDKReceiver" id="ru-2-rcv">
+ <attr name="tag" type="string" val="receiver2"/>
  <rel name="uses" class="NetworkDevice" id="ru_2_readout"/>
  <rel name="configuration" class="DPDKPortConfiguration" id="dpdk_e810_conf"/>
 </obj>
@@ -287,6 +290,7 @@
 </obj>
 
 <obj class="NetworkDetectorToDaqConnection" id="conn_apa1">
+ <attr name="tag" type="string" val="APA1"/>
  <rel name="net_senders">
   <ref class="HermesDataSender" id="wib_101_link0"/>
  </rel>
@@ -294,6 +298,7 @@
 </obj>
 
 <obj class="NetworkDetectorToDaqConnection" id="conn_apa2">
+ <attr name="tag" type="string" val="APA2"/>
  <rel name="net_senders">
   <ref class="HermesDataSender" id="wib_201_link0"/>
  </rel>
