@@ -151,7 +151,7 @@
 
 <obj class="ResourceManagerConf" id="resource-manager">
  <attr name="address" type="string" val="localhost"/>
- <attr name="port" type="u16" val="10"/>
+ <attr name="port" type="u16" val="8000"/>
 </obj>
 
  <obj class="Service" id="daqapp_control">
