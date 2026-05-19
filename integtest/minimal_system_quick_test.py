@@ -83,10 +83,12 @@ conf_dict.tpg_enabled = False
 # For testing, specify connectivity service port (default is 0, a random port is chosen for the Connectivity Service)
 #conf_dict.connsvc_port = 12345
 
-substitution = data_classes.attribute_substitution(
-    obj_id="random-tc-generator",
-    obj_class="RandomTCMakerConf",
-    updates={"trigger_rate_hz": 1},
+conf_dict.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_id="random-tc-generator",
+        obj_class="RandomTCMakerConf",
+        updates={"trigger_rate_hz": 1},
+    )
 )
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
@@ -98,7 +100,17 @@ conf_dict.config_substitutions.append(
         },
     )
 )
-conf_dict.config_substitutions.append(substitution)
+conf_dict.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="DFOConf",
+        updates={"busy_threshold": 10, "free_threshold": 9}
+    )
+)
+conf_dict.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="LatencyBuffer", updates={"size": 2000000}
+    )
+)
 
 
 confgen_arguments = {"MinimalSystem": conf_dict}
