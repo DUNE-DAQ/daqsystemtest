@@ -94,10 +94,10 @@ config_src = config_src.resolve()
 copy_configuration(path, [os.path.dirname(__file__) + "/../config/daqsystemtest/example-configs.data.xml"])
 local_db = conffwk.Configuration("oksconflibs:" + tmpdirname + "/example-configs.data.xml")
 
-common_config_obj = data_classes.drunc_config()
+common_config_obj = data_classes.integtest_params_for_predefined_dunedaq_config()
 common_config_obj.op_env = "test"
 common_config_obj.tpg_enabled = False
-common_config_obj.config_db = ( tmpdirname + "/example-configs.data.xml" )
+common_config_obj.predefined_config_db = ( tmpdirname + "/example-configs.data.xml" )
 
 # Get default tpreplay config
 tpreplay_local_conf = copy.deepcopy(common_config_obj)

@@ -69,10 +69,10 @@ actual_output_path = get_pytest_tmpdir()
 resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
 
 ### Config setup
-common_config_obj = data_classes.drunc_config()
+common_config_obj = data_classes.integtest_params_for_predefined_dunedaq_config()
 common_config_obj.op_env = "test"
 common_config_obj.tpg_enabled = False
-common_config_obj.config_db = (
+common_config_obj.predefined_config_db = (
     os.path.dirname(__file__) + "/../config/daqsystemtest/example-configs.data.xml"
 )
 
@@ -81,7 +81,7 @@ onebyone_local_conf = copy.deepcopy(common_config_obj)
 onebyone_local_conf.config_session_name = "local-1x1-config"
 
 # Get necessary dal objects
-db = conffwk.Configuration("oksconflibs:" + str(common_config_obj.config_db))
+db = conffwk.Configuration("oksconflibs:" + str(common_config_obj.predefined_config_db))
 prescale_bitword = db.get_dal(class_name="TriggerBitword", uid="test-bitword")
 timing_bitword = db.get_dal(class_name="TriggerBitword", uid="test-bitword2")
 

@@ -158,9 +158,9 @@ if pytest_tmpdir is not None:
         print(f"*** WARNING: the directory referenced by PYTEST_DEBUG_TEMPROOT ({pytest_tmpdir}) does not exist!")
         print("")
 
-common_config_obj = data_classes.drunc_config()
+common_config_obj = data_classes.integtest_params_for_predefined_dunedaq_config()
 common_config_obj.op_env = "test"
-common_config_obj.config_db = (
+common_config_obj.predefined_config_db = (
     os.path.dirname(__file__) + "/../config/daqsystemtest/example-configs.data.xml"
 )
 common_config_obj.config_substitutions.append(
