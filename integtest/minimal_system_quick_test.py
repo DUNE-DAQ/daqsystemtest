@@ -71,17 +71,15 @@ resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than wha
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 
-# CCM includes FSM, hosts; moduleconfs includes connections
-object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
-
-conf_dict = data_classes.drunc_config()
+conf_dict = data_classes.integtest_params_for_generated_dunedaq_config()
+conf_dict.object_databases = ["config/daqsystemtest/integrationtest-objects.data.xml"]
 conf_dict.dro_map_config.n_streams = number_of_data_producers
 conf_dict.op_env = "integtest"
 conf_dict.config_session_name = "minimal"
 conf_dict.tpg_enabled = False
 
-# For testing, allow drunc to manage ConnectivityService (default is False, integrationtest manages Connectivity Service)
-#conf_dict.drunc_connsvc = True
+# For testing, allow drunc to manage ConnectivityService
+#conf_dict.connsvc_control = ConnSvcControl.RUNCONTROL
 # For testing, specify connectivity service port (default is 0, a random port is chosen for the Connectivity Service)
 #conf_dict.connsvc_port = 12345
 

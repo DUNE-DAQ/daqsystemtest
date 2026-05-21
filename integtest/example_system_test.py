@@ -93,9 +93,9 @@ resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than wha
 # The arguments to pass to the config generator, excluding the json
 # output directory (the test framework handles that)
 
-common_config_obj = data_classes.drunc_config()
+common_config_obj = data_classes.integtest_params_for_predefined_dunedaq_config()
 common_config_obj.op_env = "test"
-common_config_obj.config_db = (
+common_config_obj.predefined_config_db = (
     os.path.dirname(__file__) + "/../config/daqsystemtest/example-configs.data.xml"
 )
 common_config_obj.config_substitutions.append(
