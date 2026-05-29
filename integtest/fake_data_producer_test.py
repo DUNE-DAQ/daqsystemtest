@@ -9,6 +9,7 @@ import integrationtest.log_file_checks as log_file_checks
 import integrationtest.basic_checks as basic_checks
 import integrationtest.data_classes as data_classes
 import integrationtest.resource_validation as resource_validation
+import integrationtest.utility_functions2 as utility_functions
 from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 from integrationtest.verbosity_helper import IntegtestVerbosityLevels
 
@@ -70,28 +71,11 @@ conf_dict.op_env = "integtest"
 conf_dict.config_session_name = "fakedata"
 conf_dict.use_fakedataprod = True
 conf_dict.dro_map_config.n_streams = number_of_data_producers
-
-conf_dict.config_substitutions.append(
-    data_classes.attribute_substitution(
-     obj_id="random-tc-generator",
-     obj_class="RandomTCMakerConf",
-        updates={"trigger_rate_hz": 1},
-    )
-)
+utility_functions.set_RTCM_trigger_params(conf_dict, trigger_rate=1)
 
 doublewindow_conf = copy.deepcopy(conf_dict)
-
-doublewindow_conf.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_class="RandomTCMakerConf",
-        obj_id = "random-tc-generator",
-        updates={
-            "candidate_backshift_ts": 0,
-            "candidate_window_before_ts": 2000,
-            "candidate_window_after_ts": 2001,
-        },
-    )
-)
+utility_functions.set_RTCM_trigger_params(doublewindow_conf, readout_window_backshift_ticks=0,
+                                          readout_window_before_ticks=2000, readout_window_after_ticks=2001)
 
 confgen_arguments = {
     "Baseline_Window_Size": conf_dict,

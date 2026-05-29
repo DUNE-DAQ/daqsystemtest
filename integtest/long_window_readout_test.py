@@ -21,6 +21,7 @@ import integrationtest.log_file_checks as log_file_checks
 import integrationtest.basic_checks as basic_checks
 import integrationtest.data_classes as data_classes
 import integrationtest.resource_validation as resource_validation
+import integrationtest.utility_functions2 as utility_functions
 from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 from integrationtest.verbosity_helper import IntegtestVerbosityLevels
 
@@ -93,6 +94,11 @@ conf_dict.config_session_name = "longwindow"
 conf_dict.tpg_enabled = False
 conf_dict.n_df_apps = number_of_dataflow_apps
 conf_dict.fake_hsi_enabled = False
+utility_functions.set_RTCM_trigger_params(conf_dict,
+                                          trigger_rate=trigger_rate,
+                                          readout_window_backshift_ticks=0,
+                                          readout_window_before_ticks=readout_window_time_before,
+                                          readout_window_after_ticks=readout_window_time_after)
 
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
@@ -100,24 +106,6 @@ conf_dict.config_substitutions.append(
     )
 )
 
-
-conf_dict.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_class="RandomTCMakerConf",
-        updates={"trigger_rate_hz": trigger_rate},
-    )
-)
-conf_dict.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_class="RandomTCMakerConf",
-        obj_id = "random-tc-generator",
-        updates={
-            "candidate_backshift_ts": 0,
-            "candidate_window_before_ts": readout_window_time_before,
-            "candidate_window_after_ts": readout_window_time_after,
-        },
-    )
-)
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_class="DataStoreConf",

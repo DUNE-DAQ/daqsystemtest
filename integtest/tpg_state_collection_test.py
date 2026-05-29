@@ -7,6 +7,7 @@ import integrationtest.basic_checks as basic_checks
 import integrationtest.data_classes as data_classes
 import integrationtest.opmon_metric_checks as opmon_metric_checks
 import integrationtest.resource_validation as resource_validation
+import integrationtest.utility_functions2 as utility_functions
 from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 from integrationtest.verbosity_helper import IntegtestVerbosityLevels
 
@@ -125,13 +126,8 @@ conf_dict.n_df_apps = number_of_dataflow_apps
 conf_dict.frame_file = (
     "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"  # WIBEth All Zeros
 )
+utility_functions.set_RTCM_trigger_params(conf_dict, trigger_rate=pulser_trigger_rate)
 
-conf_dict.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_class="RandomTCMakerConf",
-        updates={"trigger_rate_hz": pulser_trigger_rate},
-    )
-)
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_class="LatencyBuffer", updates={"size": 200000}
