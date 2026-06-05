@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="70" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260202T153912"/>
+<info name="" type="" num-of-items="74" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20260320T111440"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -74,6 +74,7 @@
 
 <comments>
  <comment creation-time="20250526T123756" created-by="dergonul" created-on="np04-srv-031.cern.ch" author="dergonul" text="Added CRT queue rules"/>
+ <comment creation-time="20260320T111440" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Added queue rules for CRT frames"/>
 </comments>
 
 
@@ -258,6 +259,16 @@
  <rel name="descriptor" class="NetworkConnectionDescriptor" id="timesync-publisher"/>
 </obj>
 
+<obj class="QueueConnectionRule" id="crt-bern-sender-input-queue-rule">
+ <attr name="destination_class" type="class" val="DaqModule"/>
+ <rel name="descriptor" class="QueueDescriptor" id="crt-bern-sender-input"/>
+</obj>
+
+<obj class="QueueConnectionRule" id="crt-grenoble-sender-input-queue-rule">
+ <attr name="destination_class" type="class" val="DaqModule"/>
+ <rel name="descriptor" class="QueueDescriptor" id="crt-grenoble-sender-input"/>
+</obj>
+
 <obj class="QueueConnectionRule" id="fa-queue-rule">
  <attr name="destination_class" type="class" val="FragmentAggregatorModule"/>
  <rel name="descriptor" class="QueueDescriptor" id="fa-input"/>
@@ -311,6 +322,20 @@
 <obj class="QueueConnectionRule" id="trigger-record-q-rule">
  <attr name="destination_class" type="class" val="DataWriterModule"/>
  <rel name="descriptor" class="QueueDescriptor" id="trigger-records"/>
+</obj>
+
+<obj class="QueueDescriptor" id="crt-bern-sender-input">
+ <attr name="uid_base" type="string" val="sender_input_"/>
+ <attr name="queue_type" type="enum" val="kFollyMPMCQueue"/>
+ <attr name="capacity" type="u32" val="10000"/>
+ <attr name="data_type" type="string" val="CRTBernFrame"/>
+</obj>
+
+<obj class="QueueDescriptor" id="crt-grenoble-sender-input">
+ <attr name="uid_base" type="string" val="sender_input_"/>
+ <attr name="queue_type" type="enum" val="kFollyMPMCQueue"/>
+ <attr name="capacity" type="u32" val="10000"/>
+ <attr name="data_type" type="string" val="CRTGrenobleFrame"/>
 </obj>
 
 <obj class="QueueDescriptor" id="data-req-queue-desc">
