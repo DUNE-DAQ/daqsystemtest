@@ -194,6 +194,28 @@
  <rel name="opmon_uri" class="OpMonURI" id="local-opmon-uri"/>
 </obj>
 
+<obj class="Session" id="local-1x1-config-pmaas">
+ <attr name="data_request_timeout_ms" type="u32" val="1000"/>
+ <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
+ <attr name="controller_log_level" type="enum" val="INFO"/>
+ <attr name="log_path" type="string" val="/log"/>
+ <rel name="disabled">
+  <ref class="DFApplication" id="df-02"/>
+  <ref class="DFApplication" id="df-03"/>
+  <ref class="ReadoutApplication" id="ru-02"/>
+ </rel>
+ <rel name="connectivity_service" class="ConnectivityService" id="local-connectivity-service-config"/>
+ <rel name="environment">
+  <ref class="VariableSet" id="local-variables"/>
+ </rel>
+ <rel name="segment" class="Segment" id="root-segment"/>
+ <rel name="infrastructure_applications">
+  <ref class="ConnectionService" id="local-connection-server"/>
+ </rel>
+ <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
+ <rel name="opmon_uri" class="OpMonURI" id="local-opmon-uri"/>
+</obj>
+
 <obj class="Session" id="local-2x3-config">
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
