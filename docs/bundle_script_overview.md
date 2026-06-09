@@ -19,29 +19,51 @@ dunedaq_integtest_bundle.sh [option(s)]
 Options:
     -h, --help : prints out usage information
     -r <the list of repositories for which integtests will be run>
-       - this can be the name of a single repo
+       - this can be the name of a single repo; it defaults to "daqsystemtest"
        - it can be a pipe-delimited string with a list of repos, e.g. 'dfmodules|trigger'
        - it can have the special value of "all" - integtests in all repos will be run
        - it can have the special value of "local" - integtests in locally-cloned repos will be run
+    -R <the list of repositories to be excluded>
+       - this can be the name of a single repo
+       - it can be a pipe-delimited string with a list of repos, e.g. 'dfmodules|trigger'
     -k, --include <pipe-delimited string to select the tests that will be run ('egrep -i' match to test name)>
     -x, --exclude <pipe-delimited string to specify tests to be excluded ('egrep -i' match to test name)>
+    --random-subset <count> : randomly picks the specified number of tests from the results of -r/-k/-x
+    --list-only : list the tests that match the requested patterns without running them
+    --verbosity <level> : requested level of console messages, in range 1-6, where 1 is least, 6 is DRUNC debug
+    --stop-on-failure : causes the script to stop when one of the integtests reports a failure
+    --tmpdir <dir> : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
+    --trigger-full-rc-output <phrase that will trigger the full printout of run control messages>
+       - the phrase can be a Python regex, which can be useful in handling colorized text
+    --concise-output : suppresses run control and DAQApp messages in order to focus on test results
+       - this is equivalent to "--verbosity 1", and this option may be removed at some point in time
     -n <number of times to run each individual test, default=1>
     -N <number of times to run the full set of selected tests, default=1>
-    --stop-on-failure : causes the script to stop when one of the integtests reports a failure
-    --concise-output : suppresses run control and DAQApp messages in order to focus on test results
-    --tmpdir : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
-    --list-only : list the tests that match the requested patterns without running them
+    --pytest-options <options> : string with one or more dunedaq-specific command-line options to pass to Pytest
+       - available options include the following:
+         --dunerc-path <path> : Path to DUNE run control. Default is to search in $PATH
+         --skip-resource-checks : Whether to skip the node resource (CPU/Memory) checks for this test
+         --process-manager-type <type> : The run control process manager type to use for this test, e.g. ssh-standalone
+         --dunerc-option <option-name> <option-value> : Repeatable, run control arguments without leading dashes
+             for example, --dunerc-option log-level debug
+       - example: --pytest-options "--skip-resource-checks --process-manager-type ssh-standalone --dunerc-option no-override-logs"
 ```
 
 ### list_available_integtests.sh --help
 
 ```
-Usage: list_available_integtests.sh [optional list of repo names|local|all]
-  e.g. list_available_integtests.sh daqsystemtest
-  If no repo name is specified, integtests for all repos are listed.
-  If a special repo name of "local" is specified, only integtests for repos
-      in the local software area are listed.
-  If a special repo name of "all" is specified, integtests for all repos are listed.
+Usage:
+list_available_integtests.sh [option(s)] [optional list of repo names]
+
+    Example: list_available_integtests.sh daqsystemtest
+    If no repo name is specified, integtests for all repos are listed.
+    If a special repo name of "local" is specified, integtests for repos in the
+        local software area are listed.
+    If a special repo name of "all" is specified, integtests for all repos are listed.
+
+Options:
+    -h, --help : prints out usage information
+    -x, --exclude <pipe-delimited string with names of repos to be excluded ('egrep -i' match to match name)>
 ```
 
 ### list_repos_with_integtests.sh --help 
