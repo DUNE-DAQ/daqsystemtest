@@ -405,7 +405,7 @@ echo ""                                                   | CaptureOutput ${ITGR
 date                                                      | CaptureOutput ${ITGRUNNER_LOG_FILE}
 echo "Log file is: ${ITGRUNNER_LOG_FILE}"                 | CaptureOutput ${ITGRUNNER_LOG_FILE}
 echo ""                                                   | CaptureOutput ${ITGRUNNER_LOG_FILE}
-summary_string="`egrep $'=====|\u2B95' ${ITGRUNNER_LOG_FILE} | egrep ' in |Running'`"
+summary_string="`egrep -a $'=====|\u2B95' ${ITGRUNNER_LOG_FILE} | egrep ' in |Running'`"
 colorized_summary_string="`echo \"${summary_string}\" | sed 's/passed/passed \\\\U2705/' | sed 's/failed/failed \\\\U274c/' | sed 's/\(errors\?\)/\1 \\\\U1F6A8/' | sed 's/no tests ran/no tests ran \\\\U1F6A8/' | sed 's/skipped/skipped \\\\U1f7e1/'`"
 echo -e "${colorized_summary_string}" | CaptureOutput ${ITGRUNNER_LOG_FILE}
 
