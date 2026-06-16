@@ -104,6 +104,9 @@ def test_dunerc_success(run_dunerc, caplog):
     if run_dunerc.daq_session_overall_time > expected_max_time_sec:
         fail_msg = f"The run control session took longer than expected. The overall run time was {round(run_dunerc.daq_session_overall_time,1)} sec, and the typical run time is less than {expected_max_time_sec} sec. Check whether one or more transitions are now taking longer to complete."
         pytest.fail(fail_msg, pytrace=False)
+    else:
+        run_dunerc.verbosity_helper.lvl_print(IntegtestVerbosityLevels.drunc_transitions,
+                                              f"\N{WHITE HEAVY CHECK MARK} The run control session took the expected amount of time (<={expected_max_time_sec} sec)")
 
 
 def test_log_files(run_dunerc):
