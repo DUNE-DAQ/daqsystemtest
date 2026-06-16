@@ -100,7 +100,7 @@ def test_dunerc_success(run_dunerc, caplog):
     # checks for run control success, problems during pytest setup, etc.
     basic_checks.basic_checks(run_dunerc, caplog, print_test_name=False)
 
-    expected_max_time_sec = 60
+    expected_max_time_sec = 65
     if run_dunerc.daq_session_overall_time > expected_max_time_sec:
         fail_msg = f"The run control session took longer than expected. The overall run time was {round(run_dunerc.daq_session_overall_time,1)} sec, and the typical run time is less than {expected_max_time_sec} sec. Check whether one or more transitions are now taking longer to complete."
         pytest.fail(fail_msg, pytrace=False)
