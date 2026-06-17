@@ -63,13 +63,14 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="49" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260202T153912"/>
+<info name="" type="" num-of-items="62" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20260305T122304"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
  <file path="schema/appmodel/application.schema.xml"/>
  <file path="schema/appmodel/fdmodules.schema.xml"/>
  <file path="schema/appmodel/wiec.schema.xml"/>
+ <file path="schema/appmodel/socket.schema.xml"/>
  <file path="config/daqsystemtest/connections.data.xml"/>
  <file path="config/daqsystemtest/moduleconfs.data.xml"/>
  <file path="config/daqsystemtest/hosts.data.xml"/>
@@ -103,10 +104,11 @@
  <comment creation-time="20250325T145413" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Disabled TP"/>
  <comment creation-time="20250526T125136" created-by="dergonul" created-on="np04-srv-031.cern.ch" author="dergonul" text="Added crt-bern and crt-grenoble"/>
  <comment creation-time="20250805T092423" created-by="dergonul" created-on="np04-srv-028.cern.ch" author="dergonul" text="Emu CRT configs"/>
+ <comment creation-time="20260225T104925" created-by="dergonul" created-on="np04-srv-015.cern.ch" author="dergonul" text="Introduced SocketDetectorToDaqConnection"/>
 </comments>
 
 
-<obj class="CRTReaderApplication" id="crt-data-source-01">
+<obj class="CRTFrameBuilderApplication" id="crt-data-source-01">
  <attr name="application_name" type="string" val="daq_application"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
  <rel name="exposes_service">
@@ -117,14 +119,14 @@
   <ref class="ActionPlan" id="crt-readout-start"/>
   <ref class="ActionPlan" id="crt-readout-stop"/>
  </rel>
- <rel name="data_writers">
-  <ref class="SocketWriterConf" id="def-socket-writer-conf"/>
- </rel>
- <rel name="data_reader" class="CRTReaderConf" id="def-emu-crt-receiver-conf"/>
+ <rel name="queue_rules">
+  <ref class="QueueConnectionRule" id="crt-bern-sender-input-queue-rule"/>
+ </rel> 
+ <rel name="detector_frame_builder" class="CRTBernFrameBuilderConf" id="def-crt-bern-frame-builder-conf"/>
+ <rel name="data_writer" class="SocketWriterConf" id="def-socket-writer-conf"/>
  <rel name="detector_connections">
-  <ref class="NetworkDetectorToDaqConnection" id="socket_crt"/>
+  <ref class="SocketDetectorToDaqConnection" id="socket_crt"/>
  </rel>
- <rel name="callback_desc" class="DataMoveCallbackDescriptor" id="crt-bern-raw-input"/>
 </obj>
 
 <obj class="DPDKPortConfiguration" id="dpdk_e810_conf">
@@ -158,12 +160,27 @@
 
 <obj class="DetectorStream" id="stream_1007">
  <attr name="source_id" type="u32" val="1007"/>
- <rel name="geo_id" class="GeoId" id="g_13_1_1_0"/>
+ <rel name="geo_id" class="GeoId" id="g_12_1_1_0"/>
+</obj>
+
+<obj class="DetectorStream" id="stream_1008">
+ <attr name="source_id" type="u32" val="1008"/>
+ <rel name="geo_id" class="GeoId" id="g_12_1_1_1"/>
+</obj>
+
+<obj class="DetectorStream" id="stream_1009">
+ <attr name="source_id" type="u32" val="1009"/>
+ <rel name="geo_id" class="GeoId" id="g_12_2_1_0"/>
 </obj>
 
 <obj class="DetectorStream" id="stream_101">
  <attr name="source_id" type="u32" val="101"/>
  <rel name="geo_id" class="GeoId" id="g_3_1_1_1"/>
+</obj>
+
+<obj class="DetectorStream" id="stream_1010">
+ <attr name="source_id" type="u32" val="1010"/>
+ <rel name="geo_id" class="GeoId" id="g_12_2_1_1"/>
 </obj>
 
 <obj class="DetectorStream" id="stream_102">
@@ -202,10 +219,50 @@
  <attr name="slot_id" type="u32" val="1"/>
 </obj>
 
+<obj class="GeoId" id="g_12_1_1_1">
+ <attr name="detector_id" type="u32" val="12"/>
+ <attr name="crate_id" type="u32" val="1"/>
+ <attr name="slot_id" type="u32" val="1"/>
+ <attr name="stream_id" type="u32" val="1"/>
+</obj>
+
+<obj class="GeoId" id="g_12_2_1_0">
+ <attr name="detector_id" type="u32" val="12"/>
+ <attr name="crate_id" type="u32" val="2"/>
+ <attr name="slot_id" type="u32" val="1"/>
+</obj>
+
+<obj class="GeoId" id="g_12_2_1_1">
+ <attr name="detector_id" type="u32" val="12"/>
+ <attr name="crate_id" type="u32" val="2"/>
+ <attr name="slot_id" type="u32" val="1"/>
+ <attr name="stream_id" type="u32" val="1"/>
+</obj>
+
 <obj class="GeoId" id="g_13_1_1_0">
  <attr name="detector_id" type="u32" val="13"/>
  <attr name="crate_id" type="u32" val="1"/>
  <attr name="slot_id" type="u32" val="1"/>
+</obj>
+
+<obj class="GeoId" id="g_13_1_1_1">
+ <attr name="detector_id" type="u32" val="13"/>
+ <attr name="crate_id" type="u32" val="1"/>
+ <attr name="slot_id" type="u32" val="1"/>
+ <attr name="stream_id" type="u32" val="1"/>
+</obj>
+
+<obj class="GeoId" id="g_13_2_1_0">
+ <attr name="detector_id" type="u32" val="13"/>
+ <attr name="crate_id" type="u32" val="2"/>
+ <attr name="slot_id" type="u32" val="1"/>
+</obj>
+
+<obj class="GeoId" id="g_13_2_1_1">
+ <attr name="detector_id" type="u32" val="13"/>
+ <attr name="crate_id" type="u32" val="2"/>
+ <attr name="slot_id" type="u32" val="1"/>
+ <attr name="stream_id" type="u32" val="1"/>
 </obj>
 
 <obj class="GeoId" id="g_3_1_1_0">
@@ -300,13 +357,6 @@
  <rel name="net_receiver" class="DPDKReceiver" id="ru-2-rcv"/>
 </obj>
 
-<obj class="NetworkDetectorToDaqConnection" id="socket_crt">
- <rel name="net_senders">
-  <ref class="SocketDataSender" id="socket_sender_crt"/>
- </rel>
- <rel name="net_receiver" class="SocketReceiver" id="socket-ru-1-rcv"/>
-</obj>
-
 <obj class="NetworkDevice" id="ru_1_readout">
  <attr name="mac_address" type="string" val="00:00:00:00:00:00"/>
  <attr name="ip_address" type="string">
@@ -330,7 +380,25 @@
 <obj class="NetworkInterface" id="crt_101_asio0">
  <attr name="mac_address" type="string" val="00:00:00:00:00:00"/>
  <attr name="ip_address" type="string">
-  <data val="123.456.101.000"/>
+  <data val="127.0.0.1"/>
+ </attr>
+ <attr name="interface_name" type="string" val="asio0"/>
+ <attr name="network_name" type="enum" val="Control"/>
+</obj>
+
+<obj class="NetworkInterface" id="crt_101_asio1">
+ <attr name="mac_address" type="string" val="00:00:00:00:00:00"/>
+ <attr name="ip_address" type="string">
+  <data val="127.0.0.1"/>
+ </attr>
+ <attr name="interface_name" type="string" val="asio1"/>
+ <attr name="network_name" type="enum" val="Control"/>
+</obj>
+
+<obj class="NetworkInterface" id="socket_ru_1_readout">
+ <attr name="mac_address" type="string" val="00:00:00:00:00:00"/>
+ <attr name="ip_address" type="string">
+  <data val="127.0.0.1"/>
  </attr>
  <attr name="interface_name" type="string" val="asio0"/>
  <attr name="network_name" type="enum" val="Control"/>
@@ -486,7 +554,7 @@
  <rel name="data_reader" class="SocketReaderConf" id="def-socket-reader-conf"/>
  <rel name="fragment_aggregator" class="FragmentAggregatorConf" id="frag-agg-01"/>
  <rel name="detector_connections">
-  <ref class="NetworkDetectorToDaqConnection" id="socket_crt"/>
+  <ref class="SocketDetectorToDaqConnection" id="socket_crt"/>
  </rel>
  <rel name="callback_desc" class="DataMoveCallbackDescriptor" id="crt-bern-raw-input"/>
 </obj>
@@ -504,23 +572,44 @@
 
 <obj class="Segment" id="socket-ru-segment">
  <rel name="applications">
-  <ref class="CRTReaderApplication" id="crt-data-source-01"/>
+  <ref class="CRTFrameBuilderApplication" id="crt-data-source-01"/>
   <ref class="ReadoutApplication" id="socket-ru-01"/>
  </rel>
  <rel name="controller" class="RCApplication" id="socket-ru-controller"/>
 </obj>
 
 <obj class="SocketDataSender" id="socket_sender_crt">
- <attr name="port" type="u32" val="1234"/>
- <attr name="control_host" type="string" val="localhost"/>
+ <attr name="socket_type" type="enum" val="UDP"/>
+ <attr name="local_port" type="u32" val="12345"/>
+ <attr name="remote_port" type="u32" val="20001"/>
  <rel name="streams">
   <ref class="DetectorStream" id="stream_1007"/>
+  <ref class="DetectorStream" id="stream_1008"/>
  </rel>
  <rel name="uses" class="NetworkInterface" id="crt_101_asio0"/>
 </obj>
 
+<obj class="SocketDataSender" id="socket_sender_crt_2">
+ <attr name="socket_type" type="enum" val="TCP"/>
+ <attr name="local_port" type="u32" val="12346"/>
+ <attr name="remote_port" type="u32" val="20002"/>
+ <rel name="streams">
+  <ref class="DetectorStream" id="stream_1009"/>
+  <ref class="DetectorStream" id="stream_1010"/>
+ </rel>
+ <rel name="uses" class="NetworkInterface" id="crt_101_asio1"/>
+</obj>
+
+<obj class="SocketDetectorToDaqConnection" id="socket_crt">
+ <rel name="net_senders">
+  <ref class="SocketDataSender" id="socket_sender_crt"/>
+  <ref class="SocketDataSender" id="socket_sender_crt_2"/>
+ </rel>
+ <rel name="net_receiver" class="SocketReceiver" id="socket-ru-1-rcv"/>
+</obj>
+
 <obj class="SocketReceiver" id="socket-ru-1-rcv">
- <rel name="uses" class="NetworkDevice" id="ru_1_readout"/>
+ <rel name="uses" class="NetworkInterface" id="socket_ru_1_readout"/>
 </obj>
 
 <obj class="SourceIDConf" id="tp-srcid-1000">

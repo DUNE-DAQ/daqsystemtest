@@ -341,11 +341,24 @@ daphne_eth_tpg_conf.config_substitutions.append(
 bern_crt_conf = copy.deepcopy(conf_dict)
 bern_crt_conf.dro_map_config.det_id = 12
 bern_crt_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
+bern_crt_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="RandomTCMakerConf",
+        obj_id="random-tc-generator",
+        updates={"candidate_window_before_ts": 8000, "candidate_window_after_ts": 10},
+    )
+)
 
 grenoble_crt_conf = copy.deepcopy(conf_dict)
 grenoble_crt_conf.dro_map_config.det_id = 13
 grenoble_crt_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
-
+grenoble_crt_conf.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="RandomTCMakerConf",
+        obj_id="random-tc-generator",
+        updates={"candidate_window_before_ts": 8000, "candidate_window_after_ts": 10},
+    )
+)
 
 confgen_arguments = {
     "WIBEth_System": wibeth_conf,
