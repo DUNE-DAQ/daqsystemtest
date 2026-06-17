@@ -809,9 +809,7 @@
  <attr name="prescale" type="u32" val="1"/>
  <attr name="max_samples_over_threshold" type="u32" val="10000"/>
  <attr name="channel_map_name" type="string" val="PD2VDTPCChannelMap"/>
- <attr name="adc_threshold" type="u32" val="400000"/>
- <attr name="window_length" type="u32" val="20000"/>
- <attr name="num_time_bins" type="u32" val="10"/>
+ <attr name="adc_threshold_induction" type="u32" val="12000000"/>
  <attr name="bdt_threshold" type="u32" val="992"/>
 </obj>
 
