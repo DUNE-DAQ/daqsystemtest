@@ -270,7 +270,3 @@ def test_tpstream_files(run_dunerc):
                 data_file, fragment_check_list[jdx]
             )
     assert all_ok
-
-
-def test_cleanup(run_dunerc):
-    utility_functions.remove_hdf5_files_if_requested(run_dunerc, this_test_requests_hdf5_file_removal=False)

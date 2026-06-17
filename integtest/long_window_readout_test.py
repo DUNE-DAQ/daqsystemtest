@@ -93,6 +93,7 @@ conf_dict.config_session_name = "longwindow"
 conf_dict.tpg_enabled = False
 conf_dict.n_df_apps = number_of_dataflow_apps
 conf_dict.fake_hsi_enabled = False
+conf_dict.remove_hdf5_files = True
 
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
@@ -220,7 +221,3 @@ def test_data_files(run_dunerc):
                 data_file, fragment_check_list[jdx]
             )
     assert all_ok, "\N{POLICE CARS REVOLVING LIGHT} One or more data file checks failed! \N{POLICE CARS REVOLVING LIGHT}"
-
-
-def test_cleanup(run_dunerc):
-    utility_functions.remove_hdf5_files_if_requested(run_dunerc, this_test_requests_hdf5_file_removal=True)

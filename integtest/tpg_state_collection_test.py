@@ -351,7 +351,3 @@ def test_metric_files(run_dunerc):
                                                          verbosity_helper=run_dunerc.verbosity_helper)
 
     assert all_ok
-
-
-def test_cleanup(run_dunerc):
-    utility_functions.remove_hdf5_files_if_requested(run_dunerc, this_test_requests_hdf5_file_removal=False)

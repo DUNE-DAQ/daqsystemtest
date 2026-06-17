@@ -342,7 +342,3 @@ def test_data_files(run_dunerc):
             print(f"\N{POLICE CARS REVOLVING LIGHT} The TR type multiplicity is NOT as expected ({selected_params['multi_required']})! \N{POLICE CARS REVOLVING LIGHT}")
 
     assert all_ok, "\N{POLICE CARS REVOLVING LIGHT} One or more data file checks failed! \N{POLICE CARS REVOLVING LIGHT}"
-
-
-def test_cleanup(run_dunerc):
-    utility_functions.remove_hdf5_files_if_requested(run_dunerc, this_test_requests_hdf5_file_removal=False)

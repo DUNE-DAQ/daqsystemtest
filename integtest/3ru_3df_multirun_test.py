@@ -257,7 +257,3 @@ def test_data_files(run_dunerc):
         for kdx in range(len(nontrig_fragment_check_list)):
             all_ok &= data_file_checks.check_fragment_error_flags( data_file, nontrig_fragment_check_list[kdx])
     assert all_ok
-
-
-def test_cleanup(run_dunerc):
-    utility_functions.remove_hdf5_files_if_requested(run_dunerc, this_test_requests_hdf5_file_removal=False)

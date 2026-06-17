@@ -455,12 +455,3 @@ def test_tpstream_files(run_dunerc):
                 data_file, fragment_check_list[jdx]
             )
     assert all_ok
-
-
-def test_cleanup(run_dunerc):
-    if len(computers_that_are_unreachable) > 0:
-        pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
-    if not pytest_tmpdir_looks_reasonable:
-        pytest.skip("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
-
-    utility_functions.remove_hdf5_files_if_requested(run_dunerc, this_test_requests_hdf5_file_removal=False)
