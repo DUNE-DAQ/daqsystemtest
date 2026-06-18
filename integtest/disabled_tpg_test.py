@@ -1,10 +1,16 @@
+# 01-May-2026, KAB: the goal of this test is to check whether configurations that, A) have
+# most/all of the components of the system that are needed for TriggerPrimitive generation
+# included and B) have all of the configuration parameters that control TPG set to values
+# that enable TPG (except for two), run correctly.  The two parameters that are set to values
+# that disable TPG are the tp_generation_enabled and ta_generation_enabled flags in the ReadoutApp.
+#
+# This situation happens in production occasionally (everything enabled for TPG except a couple
+# of parameters), and this integtest attempts to verify the correct running of the system in
+# situations like that.
+#
 import pytest
 import copy
 import os
-import re
-import random
-import string
-import pathlib
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
@@ -25,14 +31,12 @@ run_duration = 20  # seconds
 # Default values for validation parameters
 check_for_logfile_errors = True
 expected_event_count = run_duration * (1.0 + 3.0) # 1 from RTCM, 3 from FakeHSI
-ta_prescale = 1000
 expected_event_count_tolerance = expected_event_count / 10.0
-hostname = os.uname().nodename
 
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
     "fragment_type": "WIBEth",
-    "expected_fragment_count": 0,  # determined later
+    "expected_fragment_count": 4,
     "min_size_bytes": 7272,
     "max_size_bytes": 28872,
 }
@@ -44,23 +48,16 @@ triggercandidate_frag_params = {
     "fragment_type": "Trigger_Candidate",
     "expected_fragment_count": 1,
     "min_size_bytes": 128,
-    "max_size_bytes": 264,
+    "max_size_bytes": 128,
     "debug_mask": 0x0,
-    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes": 208, "max_size_bytes": 264},
-                                "kRandom": {"min_size_bytes": 128, "max_size_bytes": 264},
-                                "default": {"min_size_bytes": 128, "max_size_bytes": 264} }
 }
-# sizes:  72 is for an empty TP fragment
-#        168 is for a fragment with four TPs in it (72+24+24+24+24)
 triggerprimitive_frag_params = {
     "fragment_type_description": "Trigger Primitive",
     "fragment_type": "Trigger_Primitive",
-    "expected_fragment_count": 0,  # determined later
+    "expected_fragment_count": 0,
     "min_size_bytes": 72,
     "max_size_bytes": 168,
 }
-# 03-Jul-2025, KAB: changing the default max size from 72 to 100 to handle cases in which there
-# was a Random or Prescale trigger along with a coincidental HSI event within the readout window.
 hsi_frag_params = {
     "fragment_type_description": "HSI",
     "fragment_type": "Hardware_Signal",
@@ -106,40 +103,22 @@ common_config_obj.config_substitutions.append(
             "merge_overlapping_tcs": False
         },)
 )
+common_config_obj.config_substitutions.append(
+    data_classes.attribute_substitution(
+        obj_class="ReadoutApplication",
+        obj_id="ru-01",
+        updates={
+            "tp_generation_enabled": 0,
+            "ta_generation_enabled": 0,
+        },)
+)
 
 onebyone_local_conf = copy.deepcopy(common_config_obj)
 onebyone_local_conf.config_session_name = "local-1x1-config"
 
-twobythree_local_conf = copy.deepcopy(common_config_obj)
-twobythree_local_conf.config_session_name = "local-2x3-config"
-
-username=os.environ.get("USER")
-onebyone_ehn1_conf = copy.deepcopy(common_config_obj)
-onebyone_ehn1_conf.config_session_name = "ehn1-local-1x1-config"
-onebyone_ehn1_conf.daq_session_name = f"ehn1-local-1x1-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
-onebyone_ehn1_conf.connsvc_port = None
-
-twobythree_ehn1_conf = copy.deepcopy(common_config_obj)
-twobythree_ehn1_conf.config_session_name = "ehn1-local-2x3-config"
-twobythree_ehn1_conf.daq_session_name = f"ehn1-local-2x3-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
-twobythree_ehn1_conf.connsvc_port = None
-
-def host_is_at_ehn1(hostname):
-    return re.match(r"^(np02|np04)-srv-\d{3}$", hostname) or re.match(r"^(np02|np04)-srv-\d{3}.cern.ch$", hostname)
-
-
-if host_is_at_ehn1(hostname):
-    confgen_arguments = {
-        "Local 1x1 Conf": onebyone_local_conf,
-        "Local 2x3 Conf": twobythree_local_conf,
-        "EHN1 1x1 Conf": onebyone_ehn1_conf,
-        "EHN1 2x3 Conf": twobythree_ehn1_conf,
-    }
-else:
-    confgen_arguments = {
-        "Local 1x1 Conf": onebyone_local_conf,
-        "Local 2x3 Conf": twobythree_local_conf,
-    }
+confgen_arguments = {
+    "Local 1x1 Conf": onebyone_local_conf,
+}
 
 # The commands to run in dunerc, as a list
 dunerc_command_list = (
@@ -152,16 +131,11 @@ dunerc_command_list = (
 
 
 def test_dunerc_success(run_dunerc, caplog):
-    # checks for run control success, problems during pytest setup, etc.
+    # check for run control success, problems during pytest setup, etc.
     basic_checks.basic_checks(run_dunerc, caplog, print_test_name=True)
 
 
 def test_log_files(run_dunerc):
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    if host_is_at_ehn1(hostname) and "EHN1" in current_test:
-        log_dir = pathlib.Path("/log")
-        run_dunerc.log_files += list(log_dir.glob(f"log_*_{run_dunerc.daq_session_name}*.txt"))
-
     # Check that at least some of the expected log files are present
     assert any(
         f"{run_dunerc.daq_session_name}_df-01" in str(logname)
@@ -186,59 +160,22 @@ def test_log_files(run_dunerc):
 
 
 def test_data_files(run_dunerc):
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    datafile_params = {
-        "Local 1x1 Conf": {"expected_fragment_count": 4, "expected_file_count": 1},
-        "Local 2x3 Conf": {"expected_fragment_count": 8, "expected_file_count": 3},
-        "EHN1 1x1 Conf": {"expected_fragment_count": 4, "expected_file_count": 1},
-        "EHN1 2x3 Conf": {"expected_fragment_count": 8, "expected_file_count": 3},
-    }
-
-    expected_file_count = 0
-    expected_fragment_count = 0
-    for key in datafile_params.keys():
-        if key in current_test:
-            expected_file_count = datafile_params[key]["expected_file_count"]
-            expected_fragment_count = datafile_params[key]["expected_fragment_count"]
-    assert expected_file_count != 0,f"Unable to locate test parameters for {current_test}"
+    expected_file_count = 1
 
     # Run some tests on the output data file
     assert len(run_dunerc.data_files) == expected_file_count, f"Unexpected file count: Actual: {len(run_dunerc.data_files)}, Expected: {expected_file_count}"
 
-    local_expected_fragment_count = expected_fragment_count
-    wibeth_frag_params["expected_fragment_count"] = local_expected_fragment_count
-    triggerprimitive_frag_params["expected_fragment_count"] = 3 * local_expected_fragment_count / 4
-    local_expected_event_count = expected_event_count
-    local_event_count_tolerance = expected_event_count_tolerance
     fragment_check_list = [triggercandidate_frag_params, hsi_frag_params]
-
-    local_expected_event_count += (
-            (6250.0 / ta_prescale)
-            * expected_fragment_count
-            * run_duration
-            / 100.0
-        )
-    local_event_count_tolerance += (
-            (250.0 / ta_prescale)
-            * expected_fragment_count
-            * run_duration
-            / 100.0
-        )
-
-    local_expected_event_count = local_expected_event_count / expected_file_count
-    local_event_count_tolerance = local_event_count_tolerance / expected_file_count
-
     fragment_check_list.append(wibeth_frag_params)
     fragment_check_list.append(triggerprimitive_frag_params)
 
     all_ok = True
-
     for idx in range(len(run_dunerc.data_files)):
         data_file = data_file_checks.DataFile(run_dunerc.data_files[idx], run_dunerc.verbosity_helper)
         all_ok &= data_file_checks.sanity_check(data_file)
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(
-            data_file, local_expected_event_count, local_event_count_tolerance
+            data_file, expected_event_count, expected_event_count_tolerance
         )
         for jdx in range(len(fragment_check_list)):
             all_ok &= data_file_checks.check_fragment_count(
