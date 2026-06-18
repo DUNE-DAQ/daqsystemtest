@@ -108,6 +108,9 @@ conf_dict.op_env = "integtest"
 conf_dict.config_session_name = "3ru1df"
 conf_dict.tpg_enabled = False
 utility_functions.set_RTCM_trigger_params(conf_dict, trigger_rate=trigger_rate)
+# To verify that the ability to have run control start the Connectivity Service continues to
+# work, we include that option in this integtest.
+conf_dict.connsvc_control = data_classes.ConnSvcControl.RUNCONTROL
 
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
@@ -166,6 +169,13 @@ def test_dunerc_success(run_dunerc, caplog):
 
 
 def test_log_files(run_dunerc):
+    # Check that the ConnSvc log file has the name that run control uses
+    if not any(
+        f"{run_dunerc.daq_session_name}_local-connection-server" in str(logname) for logname in run_dunerc.log_files
+    ):
+        fail_msg = "It appears that something other than run control started the Connectivity Service, based on the name of the ConnSvc log file, and one of the conditions of this integtest is to have RC start the ConnSvc."
+        pytest.fail(fail_msg, pytrace=False)
+
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
