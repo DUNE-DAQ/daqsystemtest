@@ -798,7 +798,7 @@
  <attr name="max_samples_over_threshold" type="u32" val="10000"/>
  <attr name="channel_map_name" type="string" val="PD2VDTPCChannelMap"/>
  <attr name="adc_threshold_induction" type="u32" val="12000000"/>
- <attr name="bdt_threshold" type="u32" val="992"/>
+ <attr name="bdt_threshold" type="u32" val="999"/>
 </obj>
 
 <obj class="TCDataProcessor" id="def-tc-processor">
