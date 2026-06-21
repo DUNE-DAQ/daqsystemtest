@@ -821,7 +821,7 @@
 </obj>
 
 <obj class="TCMakerPrescaleAlgorithm" id="tc-pass-through-algo">
- <attr name="prescale" type="u32" val="1"/>
+ <attr name="prescale" type="u32" val="100"/>
  <attr name="tc_type_name" type="string" val="kPrescale"/>
 </obj>
 
@@ -863,7 +863,7 @@
  <attr name="latency_monitoring" type="bool" val="1"/>
  <attr name="print_tp_info" type="bool" val="0"/>
  <rel name="algorithms">
-  <ref class="TAMakerProtoDUNEBSMWindowAlgorithm" id="ta-maker-pdbsmwindow"/>
+  <ref class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker"/>
  </rel>
 </obj>
 
@@ -873,7 +873,7 @@
  <attr name="latency_monitoring" type="bool" val="0"/>
  <attr name="print_tp_info" type="bool" val="0"/>
  <rel name="algorithms">
-  <ref class="TAMakerProtoDUNEBSMWindowAlgorithm" id="ta-maker-pdbsmwindow"/>
+  <ref class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker"/>
  </rel>
 </obj>
 
