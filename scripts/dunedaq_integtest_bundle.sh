@@ -285,7 +285,10 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
             echo -e "\U0001F535 \033[0;34mStarting test ${overall_test_index} of ${total_number_of_tests}...\033[0m \U0001F535" | CaptureOutput ${ITGRUNNER_LOG_FILE}
 
             echo -e "\u2B95 \033[0;1mRunning ${FULL_TEST_NAME}\033[0m \u2B05" | CaptureOutput ${ITGRUNNER_LOG_FILE}
-            if [[ -e "./${test_name}" ]]; then
+
+            if [[ "`ls ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name} 2>/dev/null`" != "" ]]; then
+                ${PYTEST_COMMAND} ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+            elif [[ -e "./${test_name}" ]]; then
                 ${PYTEST_COMMAND} ./${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
             elif [[ -e "${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name}" ]]; then
                 if [[ -w "${DBT_AREA_ROOT}" ]]; then
