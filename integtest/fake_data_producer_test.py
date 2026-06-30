@@ -70,10 +70,10 @@ conf_dict.op_env = "integtest"
 conf_dict.config_session_name = "fakedata"
 conf_dict.use_fakedataprod = True
 conf_dict.dro_map_config.n_streams = number_of_data_producers
-utility_functions.set_RTCM_trigger_params(conf_dict, trigger_rate=1)
+utility_functions.set_rtcm_trigger_params(conf_dict, trigger_rate=1)
 
 doublewindow_conf = copy.deepcopy(conf_dict)
-utility_functions.set_RTCM_trigger_params(doublewindow_conf, readout_window_backshift_ticks=0,
+utility_functions.set_rtcm_trigger_params(doublewindow_conf, readout_window_backshift_ticks=0,
                                           readout_window_before_ticks=2000, readout_window_after_ticks=2001)
 
 confgen_arguments = {

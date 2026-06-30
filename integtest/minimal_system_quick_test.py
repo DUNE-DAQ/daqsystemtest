@@ -75,7 +75,7 @@ conf_dict.dro_map_config.n_streams = number_of_data_producers
 conf_dict.op_env = "integtest"
 conf_dict.config_session_name = "minimal"
 conf_dict.tpg_enabled = False
-utility_functions.set_RTCM_trigger_params(conf_dict, trigger_rate=1)
+utility_functions.set_rtcm_trigger_params(conf_dict, trigger_rate=1)
 
 # For testing, allow drunc to manage ConnectivityService
 #conf_dict.connsvc_control = ConnSvcControl.RUNCONTROL

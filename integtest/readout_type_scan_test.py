@@ -180,7 +180,7 @@ conf_dict.op_env = "integtest"
 conf_dict.config_session_name = "readout"
 conf_dict.tpg_enabled = False
 conf_dict.frame_file = "asset://?label=ProtoWIB&subsystem=readout"  # ProtoWIB
-utility_functions.set_RTCM_trigger_params(conf_dict, trigger_rate=1)
+utility_functions.set_rtcm_trigger_params(conf_dict, trigger_rate=1)
 
 wib_tpg_conf = copy.deepcopy(conf_dict)
 wib_tpg_conf.tpg_enabled = True
@@ -247,7 +247,7 @@ tde_tpg_conf.config_substitutions.append(
 daphne_stream_conf = copy.deepcopy(conf_dict)
 daphne_stream_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 daphne_stream_conf.frame_file = "asset://?label=DAPHNEStream&subsystem=readout"
-utility_functions.set_RTCM_trigger_params(daphne_stream_conf, readout_window_backshift_ticks=0,
+utility_functions.set_rtcm_trigger_params(daphne_stream_conf, readout_window_backshift_ticks=0,
                                           readout_window_before_ticks=62000, readout_window_after_ticks=500)
 
 daphne_eth_stream_conf = copy.deepcopy(conf_dict)
@@ -256,13 +256,13 @@ daphne_eth_stream_conf.use_fakedataprod = True
 daphne_eth_stream_conf.fake_data_fragment_type = "DAPHNEEthStream"
 # TODO: replace use_fakedataprod with asset file once one exists
 # daphne_eth_stream_conf.frame_file = "asset://?label=DAPHNEEthStream&subsystem=readout"
-utility_functions.set_RTCM_trigger_params(daphne_eth_stream_conf, readout_window_backshift_ticks=0,
+utility_functions.set_rtcm_trigger_params(daphne_eth_stream_conf, readout_window_backshift_ticks=0,
                                           readout_window_before_ticks=62000, readout_window_after_ticks=500)
 
 daphne_conf = copy.deepcopy(conf_dict)
 daphne_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 daphne_conf.frame_file = "asset://?checksum=a8990a9eb3a505d4ded62dfdfa9e2681" # np02vd_run036012_sample_membrane_pds
-utility_functions.set_RTCM_trigger_params(daphne_conf, readout_window_backshift_ticks=0,
+utility_functions.set_rtcm_trigger_params(daphne_conf, readout_window_backshift_ticks=0,
                                           readout_window_before_ticks=62000, readout_window_after_ticks=500)
 
 daphne_tpg_conf = copy.deepcopy(daphne_conf)
@@ -281,7 +281,7 @@ daphne_eth_conf.use_fakedataprod = True
 daphne_eth_conf.fake_data_fragment_type = "DAPHNEEth"
 # TODO: replace use_fakedataprod with asset file once one exists
 # daphne_eth_conf.frame_file = "asset://?label=DAPHNEEth&subsystem=readout"
-utility_functions.set_RTCM_trigger_params(daphne_eth_conf, readout_window_backshift_ticks=0,
+utility_functions.set_rtcm_trigger_params(daphne_eth_conf, readout_window_backshift_ticks=0,
                                           readout_window_before_ticks=62000, readout_window_after_ticks=500)
 
 daphne_eth_tpg_conf = copy.deepcopy(daphne_eth_conf)
@@ -297,24 +297,14 @@ daphne_eth_tpg_conf.config_substitutions.append(
 bern_crt_conf = copy.deepcopy(conf_dict)
 bern_crt_conf.dro_map_config.det_id = 12
 bern_crt_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
-bern_crt_conf.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_class="RandomTCMakerConf",
-        obj_id="random-tc-generator",
-        updates={"candidate_window_before_ts": 8000, "candidate_window_after_ts": 10},
-    )
-)
+utility_functions.set_rtcm_trigger_params(bern_crt_conf, readout_window_before_ticks=8000,
+                                          readout_window_after_ticks=10)
 
 grenoble_crt_conf = copy.deepcopy(conf_dict)
 grenoble_crt_conf.dro_map_config.det_id = 13
 grenoble_crt_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798" # WIBEth All Zeros
-grenoble_crt_conf.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_class="RandomTCMakerConf",
-        obj_id="random-tc-generator",
-        updates={"candidate_window_before_ts": 8000, "candidate_window_after_ts": 10},
-    )
-)
+utility_functions.set_rtcm_trigger_params(grenoble_crt_conf, readout_window_before_ticks=8000,
+                                          readout_window_after_ticks=10)
 
 confgen_arguments = {
     "WIBEth_System": wibeth_conf,

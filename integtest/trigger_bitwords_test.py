@@ -200,7 +200,7 @@ coincidence_bitword_conf.config_substitutions.append(
             "merge_overlapping_tcs": True
             },)
 )
-utility_functions.set_RTCM_trigger_params(coincidence_bitword_conf, trigger_rate=40,
+utility_functions.set_rtcm_trigger_params(coincidence_bitword_conf, trigger_rate=40,
                                           readout_window_backshift_ticks=0, readout_window_before_ticks=62500,
                                           readout_window_after_ticks=62500)
 utility_functions.set_fake_hsi_trigger_params(coincidence_bitword_conf, trigger_rate=30,

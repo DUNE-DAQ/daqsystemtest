@@ -158,7 +158,7 @@ tpreplay_local_conf.config_substitutions.append(
 )
 
 ## update random TC maker
-utility_functions.set_RTCM_trigger_params(tpreplay_local_conf, trigger_rate=0)
+utility_functions.set_rtcm_trigger_params(tpreplay_local_conf, trigger_rate=0)
 
 ## update HSI
 utility_functions.set_fake_hsi_trigger_params(tpreplay_local_conf, trigger_rate=0)
