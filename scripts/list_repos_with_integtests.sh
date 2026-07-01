@@ -4,10 +4,13 @@
 if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]] || [[ "$1" == "-?" ]]; then
     echo
     echo "Usage: `basename $0` [optional \"local\" keyword]"
+    echo
     echo "  Lists the software repositories that have integration tests (integtests) in them."
+    echo
     echo "  For C++ packages, the base release, local install dir, and local sourcecode dir"
     echo "  are searched, unless \"local\" is passed as an argument. In that case, only the"
     echo "  local install and sourcecode directories are searched."
+    echo
     echo "  For Python packages, the \$DBT_AREA_ROOT/.venv area is searched, independent of"
     echo "  whether that area is part of a local software area or a base release. If the"
     echo "  \"local\" flag is specified, an attempt is made to limit the results to packages"
