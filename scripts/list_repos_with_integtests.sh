@@ -59,7 +59,7 @@ fi
 if [[ "`echo $DBT_AREA_ROOT | grep '^/cvmfs'`" == "" ]]; then
     venv_dir_repo_paths=(`ls -1 ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/*/integtest/*_test.py 2>/dev/null`)
     for path in "${venv_dir_repo_paths[@]}"; do
-        repo_name=`echo ${path} | cut -d'/' -f 11`
+        repo_name=`echo ${path} | sed 's,.*site-packages/,,' | sed 's,/integtest.*,,'`
         if [[ -e $DBT_AREA_ROOT/pythoncode/${repo_name} ]]; then
             all_repo_paths=("${all_repo_paths[@]}" "${path}")
         fi
