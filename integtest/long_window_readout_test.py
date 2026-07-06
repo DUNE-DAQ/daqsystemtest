@@ -18,9 +18,9 @@ import copy
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
-import integrationtest.basic_checks as basic_checks
 import integrationtest.data_classes as data_classes
 import integrationtest.resource_validation as resource_validation
+import integrationtest.utility_functions as utility_functions
 from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 from integrationtest.verbosity_helper import IntegtestVerbosityLevels
 
@@ -93,6 +93,7 @@ conf_dict.config_session_name = "longwindow"
 conf_dict.tpg_enabled = False
 conf_dict.n_df_apps = number_of_dataflow_apps
 conf_dict.fake_hsi_enabled = False
+conf_dict.remove_hdf5_files = True
 
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
@@ -179,7 +180,7 @@ dunerc_command_list += "scrap terminate".split()
 
 def test_dunerc_success(run_dunerc, caplog):
     # checks for run control success, problems during pytest setup, etc.
-    basic_checks.basic_checks(run_dunerc, caplog, print_test_name=False)
+    utility_functions.basic_checks(run_dunerc, caplog, print_test_name=False)
 
 
 def test_log_files(run_dunerc):
@@ -220,30 +221,3 @@ def test_data_files(run_dunerc):
                 data_file, fragment_check_list[jdx]
             )
     assert all_ok, "\N{POLICE CARS REVOLVING LIGHT} One or more data file checks failed! \N{POLICE CARS REVOLVING LIGHT}"
-
-
-def test_cleanup(run_dunerc):
-    pathlist_string = ""
-    filelist_string = ""
-    for data_file in run_dunerc.data_files:
-        filelist_string += " " + str(data_file)
-        if str(data_file.parent) not in pathlist_string:
-            pathlist_string += " " + str(data_file.parent)
-
-    if pathlist_string and filelist_string:
-        if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.integtest_debug):
-            print("============================================")
-            print("Listing the hdf5 files before deleting them:")
-            print("============================================")
-
-            os.system(f"df -h {pathlist_string}")
-            print("--------------------")
-            os.system(f"ls -alF {filelist_string}")
-
-        for data_file in run_dunerc.data_files:
-            data_file.unlink()
-
-        if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.integtest_debug):
-            print("--------------------")
-            os.system(f"df -h {pathlist_string}")
-            print("============================================")

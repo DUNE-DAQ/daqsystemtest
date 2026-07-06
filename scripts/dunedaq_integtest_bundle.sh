@@ -285,8 +285,19 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
             echo -e "\U0001F535 \033[0;34mStarting test ${overall_test_index} of ${total_number_of_tests}...\033[0m \U0001F535" | CaptureOutput ${ITGRUNNER_LOG_FILE}
 
             echo -e "\u2B95 \033[0;1mRunning ${FULL_TEST_NAME}\033[0m \u2B05" | CaptureOutput ${ITGRUNNER_LOG_FILE}
-            if [[ -e "./${test_name}" ]]; then
+
+            # First, check if the test is found in the Python virtual environment.
+            # This picks up tests from our Python-only software packages.
+            if [[ "`ls ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name} 2>/dev/null`" != "" ]]; then
+                ${PYTEST_COMMAND} ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+
+            # Next, check if the test exists in the current working directory.
+            # This is a convenience for developers when they are working on an integtest
+            # in a C++ package (the test is found without rebuilding the software).
+            elif [[ -e "./${test_name}" ]]; then
                 ${PYTEST_COMMAND} ./${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+
+            # Next, check if the test exists in the local software area.
             elif [[ -e "${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name}" ]]; then
                 if [[ -w "${DBT_AREA_ROOT}" ]]; then
                     ${PYTEST_COMMAND} ${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
@@ -295,6 +306,9 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                     PYTEST_COMMAND=`echo ${PYTEST_COMMAND} | sed 's/--$//'`
                     ${PYTEST_COMMAND} -p no:cacheprovider --no-summary ${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
                 fi
+
+            # Lastly, we assume that the test can be found in the installed software
+            # area (for C++ packages).
             else
                 share_envvar_name="${test_repo^^}_SHARE"  # double caret converts env var to uppercase
                 # remove the trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
