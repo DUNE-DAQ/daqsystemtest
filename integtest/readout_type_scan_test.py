@@ -226,7 +226,7 @@ tde_tpg_conf.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_class="AVXThresholdProcessor",
         obj_id="tpg-threshold-proc",
-        updates={"plane0": 500, "plane1": 500, "plane2": 500},
+        updates={"plane0": "500", "plane1": "500", "plane2": "500"},
     )
 )
 tde_tpg_conf.config_substitutions.append(

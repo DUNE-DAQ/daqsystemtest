@@ -73,6 +73,7 @@
  <file path="config/daqsystemtest/moduleconfs.data.xml"/>
  <file path="config/daqsystemtest/hosts.data.xml"/>
  <file path="config/daqsystemtest/ccm.data.xml"/>
+ <file path="config/daqsystemtest/fsm.data.xml"/>
 </include>
 
 <comments>
