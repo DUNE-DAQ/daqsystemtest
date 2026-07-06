@@ -94,24 +94,33 @@ echo "" >&2
 
 for repo_name in "${repo_list[@]}"; do
     share_envvar_name="${repo_name^^}_SHARE"  # double caret converts env var to uppercase
+
+    # Here, we list all integtests that exist either in the installed software area (C++ packages),
+    # the local software area, or the Python virtual environment (the .venv subdir).
     # ${!var} returns what var points to
-    if [[ -e "${!share_envvar_name}/integtest" ]] || [[ -e "${DBT_AREA_ROOT}/sourcecode/${repo_name}/integtest" ]]; then
-        integtest_list=(`ls -1 ${!share_envvar_name}/integtest/*_test.py ${DBT_AREA_ROOT}/sourcecode/${repo_name}/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
-        if [[ ${#integtest_list[@]} -gt 0 ]]; then
-            for test_name in "${integtest_list[@]}"; do
-                echo "${repo_name}/${test_name}"
-            done
-        else
-            echo "-> No integtests were found for repository \"${repo_name}\"." >&2
-        fi
+    integtest_list=(`ls -1 ${!share_envvar_name}/integtest/*_test.py ${DBT_AREA_ROOT}/sourcecode/${repo_name}/integtest/*_test.py ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${repo_name}/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
+    if [[ ${#integtest_list[@]} -gt 0 ]]; then
+        for test_name in "${integtest_list[@]}"; do
+            echo "${repo_name}/${test_name}"
+        done
     else
+        echo "-> No integtests were found for repository \"${repo_name}\"." >&2
+
+        # The following logic is simply an attempt to provide a little more information
+        # about *why* the integtest was not found.  It attemts to take into account
+        # differences between C++ packages and Python packages.
         if [[ -e "${DBT_AREA_ROOT}/sourcecode/${repo_name}" ]]; then
             echo "-> No integtest directory was found in ${DBT_AREA_ROOT}/sourcecode/${repo_name}." >&2
         fi
-        if [[ "${!share_envvar_name}" == "" ]]; then
+        if [[ "${!share_envvar_name}" == "" ]] && [[ `pip list | grep "^${repo_name} "` == "" ]]; then
             echo "-> \"${repo_name}\" does not appear to be a valid repository name." >&2
         else
-            echo "-> No integtest directory was found in ${share_envvar_name} (${!share_envvar_name})." >&2
+            if [[ "${!share_envvar_name}" != "" ]]; then
+                echo "-> No integtest directory was found in ${share_envvar_name} (${!share_envvar_name})." >&2
+            fi
+            if [[ `pip list | grep "^${repo_name} "` != "" ]]; then
+                echo "-> No integtest directory was found in ${DBT_AREA_ROOT}/venv for repo \"${repo_name}\"." >&2
+            fi
         fi
     fi
 done
