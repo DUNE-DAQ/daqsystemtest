@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="22" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="eflumerf" last-modified-on="ironvirt9.IRONDOMAIN.local" last-modification-time="20241023T204410"/>
+<info name="" type="" num-of-items="25" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="biery" last-modified-on="daq.fnal.gov" last-modification-time="20260709T141028"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -81,6 +81,7 @@
  <comment creation-time="20240909T081245" created-by="glehmann" created-on="np04-srv-024.cern.ch" author="glehmann" text=" "/>
 </comments>
 
+
 <obj class="DFHWConf" id="dfhw-01">
  <rel name="uses">
   <ref class="StorageDevice" id="storage-01"/>
@@ -91,9 +92,29 @@
  <attr name="template_for" type="class" val="HSIDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="HSIFrame"/>
  <attr name="generate_timesync" type="bool" val="0"/>
+ <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
  <rel name="request_handler" class="RequestHandler" id="hsi-requesthandler-generic"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="hsilatencybuffer-generic"/>
  <rel name="data_processor" class="HSIFrameProcessor" id="def-hsi-processor"/>
+</obj>
+
+<obj class="DelayManagerConf" id="delay-mgr">
+</obj>
+
+<obj class="DelaySpec" id="delay-spec-01">
+ <attr name="delay_name" type="string" val="placeholder"/>
+ <attr name="delay_usec" type="u32" val="100"/>
+</obj>
+
+<obj class="DelaySpec" id="delay-spec-02">
+ <attr name="delay_name" type="string" val="placeholder"/>
+ <attr name="delay_usec" type="u32" val="100"/>
+</obj>
+
+<obj class="DelaySpec" id="delay-spec-03">
+ <attr name="delay_name" type="string" val="placeholder"/>
+ <attr name="delay_usec" type="u32" val="100"/>
 </obj>
 
 <obj class="DetectorConfig" id="dummy-detector">
