@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="31" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="biery" last-modified-on="daq.fnal.gov" last-modification-time="20260608T120000"/>
+<info name="" type="" num-of-items="30" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="biery" last-modified-on="daq.fnal.gov" last-modification-time="20260709T140809"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -210,11 +210,6 @@
  <attr name="value" type="string" val="erstrace,throttle,lstdout,protobufstream(monkafka.cern.ch:30092)"/>
 </obj>
 
-<obj class="Variable" id="local-env-artificial-delay-settings">
- <attr name="name" type="string" val="DUNEDAQ_ARTIFICIAL_DELAYS"/>
- <attr name="value" type="string" val=""/>
-</obj>
-
 <obj class="Variable" id="local-env-connectivity-port">
  <attr name="name" type="string" val="CONNECTION_PORT"/>
  <attr name="value" type="string" val="30005"/>
@@ -271,7 +266,6 @@
   <ref class="Variable" id="local-env-ers-warning"/>
   <ref class="Variable" id="local-env-ers-debug-level"/>
   <ref class="Variable" id="local-env-connectivity-port"/>
-  <ref class="Variable" id="local-env-artificial-delay-settings"/>
  </rel>
 </obj>
 
