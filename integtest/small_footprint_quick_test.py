@@ -1,3 +1,14 @@
+# The goal of this test is to check basic DAQ operation using emulated data while keeping
+# the memory footprint small enough the test could be run in a memory-constrained environment.
+#
+# The test was recently modified to add a check on the overall runtime. This is in response
+# to a change in which some rather long delays were happening in the ZmqSender destructor,
+# and those delays were causing the 'scrap' transition to take ~20 seconds instead of ~2 sec.
+# The check on overall runtime will hopefully alert us if anything that causes extra delay
+# happens again. (For reference, if we want to force the runtime check to fail [as a sanity
+# check], we can temporarily re-introduce a long delay [e.g. 10 sec] in the ZmqSender
+# destructor, as is done in the opmonlib/graceful_termination_test.)
+#
 import pytest
 import urllib.request
 
