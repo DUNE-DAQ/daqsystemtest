@@ -41,14 +41,13 @@ wibeth_frag_params = {
     "max_size_bytes": 28872,
 }
 # sizes: 128 is for one TC with zero TAs inside it (72+56)
-#        208 is for one TC with one TA inside it (72+56+80)
-#        264 is for two TCs with one TA in one of them (72+56+80+56)
+#        184 is for two TCs with zero TAs inside them (72+56+56)
 triggercandidate_frag_params = {
     "fragment_type_description": "Trigger Candidate",
     "fragment_type": "Trigger_Candidate",
     "expected_fragment_count": 1,
     "min_size_bytes": 128,
-    "max_size_bytes": 128,
+    "max_size_bytes": 184,
     "debug_mask": 0x0,
 }
 triggerprimitive_frag_params = {
