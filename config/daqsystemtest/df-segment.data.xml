@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="us-ascii"?>
+<?xml version="1.0" encoding="ASCII"?>
 
 <!-- oks-data version 2.2 -->
 
@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="15" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20250825T202841"/>
+<info name="" type="" num-of-items="15" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260715T204121"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -88,18 +88,15 @@
   <ref class="QueueConnectionRule" id="trigger-record-q-rule"/>
  </rel>
  <rel name="network_rules">
-  <ref class="NetworkConnectionRule" id="td-trb-net-rule"/>
+  <ref class="NetworkConnectionRule" id="td-df-net-rule"/>
   <ref class="NetworkConnectionRule" id="frag-net-rule"/>
   <ref class="NetworkConnectionRule" id="df-token-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-hsi-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
-     <!-- Used for TRMonRequestor
-  <ref class="NetworkConnectionRule" id="trmon-req-net-rule"/>
-  <ref class="NetworkConnectionRule" id="trigger-record-net-rule"/>
-  -->
  </rel>
  <rel name="trb" class="TRBConf" id="trb-01"/>
+ <rel name="dfs" class="DataflowStatusModuleConf" id="dfs-01"/>
  <rel name="data_writers">
   <ref class="DataWriterConf" id="dw-01"/>
  </rel>
@@ -118,18 +115,15 @@
   <ref class="QueueConnectionRule" id="trigger-record-q-rule"/>
  </rel>
  <rel name="network_rules">
-  <ref class="NetworkConnectionRule" id="td-trb-net-rule"/>
+  <ref class="NetworkConnectionRule" id="td-df-net-rule"/>
   <ref class="NetworkConnectionRule" id="frag-net-rule"/>
   <ref class="NetworkConnectionRule" id="df-token-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-hsi-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
-  <!-- Used for TRMonRequestor
-  <ref class="NetworkConnectionRule" id="trmon-req-net-rule"/>
-  <ref class="NetworkConnectionRule" id="trigger-record-net-rule"/>
-  -->
  </rel>
  <rel name="trb" class="TRBConf" id="trb-01"/>
+ <rel name="dfs" class="DataflowStatusModuleConf" id="dfs-01"/>
  <rel name="data_writers">
   <ref class="DataWriterConf" id="dw-01"/>
  </rel>
@@ -148,18 +142,15 @@
   <ref class="QueueConnectionRule" id="trigger-record-q-rule"/>
  </rel>
  <rel name="network_rules">
-  <ref class="NetworkConnectionRule" id="td-trb-net-rule"/>
+  <ref class="NetworkConnectionRule" id="td-df-net-rule"/>
   <ref class="NetworkConnectionRule" id="frag-net-rule"/>
   <ref class="NetworkConnectionRule" id="df-token-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-hsi-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
-     <!-- Used for TRMonRequestor
-  <ref class="NetworkConnectionRule" id="trmon-req-net-rule"/>
-  <ref class="NetworkConnectionRule" id="trigger-record-net-rule"/>
-  -->
  </rel>
  <rel name="trb" class="TRBConf" id="trb-01"/>
+ <rel name="dfs" class="DataflowStatusModuleConf" id="dfs-01"/>
  <rel name="data_writers">
   <ref class="DataWriterConf" id="dw-01"/>
  </rel>

@@ -123,7 +123,7 @@ conf_dict.config_substitutions.append(
 )
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
-        obj_class="DFOConf",
+        obj_class="DataflowStatusModuleConf",
         updates={"busy_threshold": 3, "free_threshold": 2}
     )
 )
