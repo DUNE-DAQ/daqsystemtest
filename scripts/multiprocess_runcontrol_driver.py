@@ -1,3 +1,5 @@
+#!/bin/env python3
+
 import asyncio
 import sys
 import time
@@ -22,6 +24,10 @@ async def interactive_manager(commands):
             name = "pm"
         else:
             name = "shell"
+            time.sleep(2)
+        print()
+        print(f"*** Starting \"{cmd[0]}\" with local process name \"{name}\"...")
+        print()
         proc = await asyncio.create_subprocess_exec(
             *cmd,
             stdin=asyncio.subprocess.PIPE,
@@ -32,10 +38,11 @@ async def interactive_manager(commands):
         
         # 2. Schedule output reading tasks concurrently
         tasks.append(asyncio.create_task(read_stream(proc.stdout, name)))
-        time.sleep(3)
 
-    print(f"Started {len(processes)} processes. Type: '<process_name>:<input>' (e.g., Proc-1:help)")
-    print("Type 'exit' to quit everything.")
+    print()
+    print(f"*** Started {len(processes)} processes. Type: '<process_name>:<input>' (e.g., shell:help)")
+    print("*** Type 'exit' to quit everything.")
+    print()
 
     # 3. Handle interactive user input from the main terminal
     loop = asyncio.get_running_loop()
