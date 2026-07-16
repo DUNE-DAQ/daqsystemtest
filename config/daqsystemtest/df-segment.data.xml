@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="15" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260716T140001"/>
+<info name="" type="" num-of-items="17" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260716T144155"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -187,6 +187,36 @@
  <rel name="dfo" class="DFOConf" id="dfoconf-01"/>
 </obj>
 
+<obj class="DFOApplication" id="dfo-02">
+ <attr name="application_name" type="string" val="daq_application"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="daqapp_control"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="network_rules">
+  <ref class="NetworkConnectionRule" id="td-dfo-net-rule"/>
+  <ref class="NetworkConnectionRule" id="ti-net-rule"/>
+  <ref class="NetworkConnectionRule" id="df-status-net-rule"/>
+ </rel>
+ <rel name="dfo" class="DFOConf" id="dfoconf-01"/>
+</obj>
+
+<obj class="DFOApplication" id="dfo-03">
+ <attr name="application_name" type="string" val="daq_application"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="daqapp_control"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="network_rules">
+  <ref class="NetworkConnectionRule" id="td-dfo-net-rule"/>
+  <ref class="NetworkConnectionRule" id="ti-net-rule"/>
+  <ref class="NetworkConnectionRule" id="df-status-net-rule"/>
+ </rel>
+ <rel name="dfo" class="DFOConf" id="dfoconf-01"/>
+</obj>
+
 <obj class="RCApplication" id="df-controller">
  <attr name="application_name" type="string" val="drunc-controller"/>
  <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
@@ -201,6 +231,8 @@
  <rel name="applications">
   <ref class="TPStreamWriterApplication" id="tp-stream-writer"/>
   <ref class="DFOApplication" id="dfo-01"/>
+  <ref class="DFOApplication" id="dfo-02"/>
+  <ref class="DFOApplication" id="dfo-03"/>
   <ref class="DFApplication" id="df-01"/>
   <ref class="DFApplication" id="df-02"/>
   <ref class="DFApplication" id="df-03"/>

@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="10" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="mrigan" last-modified-on="np04-srv-016.cern.ch" last-modification-time="20251003T122227"/>
+<info name="" type="" num-of-items="11" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260716T144203"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -126,6 +126,8 @@
  <rel name="disabled">
   <ref class="DFApplication" id="df-02"/>
   <ref class="DFApplication" id="df-03"/>
+  <ref class="DFOApplication" id="dfo-02"/>
+  <ref class="DFOApplication" id="dfo-03"/>
   <ref class="ReadoutApplication" id="ru-02"/>
  </rel>
  <rel name="connectivity_service" class="ConnectivityService" id="ehn1-connectivity-service-config"/>
@@ -142,6 +144,10 @@
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <attr name="controller_log_level" type="enum" val="INFO"/>
  <attr name="log_path" type="string" val="/log"/>
+ <rel name="disabled">
+  <ref class="DFOApplication" id="dfo-02"/>
+  <ref class="DFOApplication" id="dfo-03"/>
+ </rel>
  <rel name="connectivity_service" class="ConnectivityService" id="ehn1-connectivity-service-config"/>
  <rel name="environment">
   <ref class="VariableSet" id="ehn1-variables"/>
@@ -156,6 +162,8 @@
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <attr name="controller_log_level" type="enum" val="INFO"/>
  <rel name="disabled">
+  <ref class="DFOApplication" id="dfo-02"/>
+  <ref class="DFOApplication" id="dfo-03"/>
   <ref class="DFApplication" id="df-02"/>
   <ref class="DFApplication" id="df-03"/>
   <ref class="TPStreamWriterApplication" id="tp-stream-writer"/>
@@ -178,6 +186,8 @@
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <attr name="controller_log_level" type="enum" val="INFO"/>
  <rel name="disabled">
+  <ref class="DFOApplication" id="dfo-02"/>
+  <ref class="DFOApplication" id="dfo-03"/>
   <ref class="DFApplication" id="df-02"/>
   <ref class="DFApplication" id="df-03"/>
   <ref class="ReadoutApplication" id="ru-02"/>
@@ -195,6 +205,26 @@
 </obj>
 
 <obj class="Session" id="local-2x3-config">
+ <attr name="data_request_timeout_ms" type="u32" val="1000"/>
+ <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
+ <attr name="controller_log_level" type="enum" val="INFO"/>
+ <rel name="disabled">
+  <ref class="DFOApplication" id="dfo-02"/>
+  <ref class="DFOApplication" id="dfo-03"/>
+ </rel>
+ <rel name="connectivity_service" class="ConnectivityService" id="local-connectivity-service-config"/>
+ <rel name="environment">
+  <ref class="VariableSet" id="local-variables"/>
+ </rel>
+ <rel name="segment" class="Segment" id="root-segment"/>
+ <rel name="infrastructure_applications">
+  <ref class="ConnectionService" id="local-connection-server"/>
+ </rel>
+ <rel name="detector_configuration" class="DetectorConfig" id="dummy-detector"/>
+ <rel name="opmon_uri" class="OpMonURI" id="local-opmon-uri"/>
+</obj>
+
+<obj class="Session" id="local-multidfo-config">
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <attr name="controller_log_level" type="enum" val="INFO"/>
@@ -217,6 +247,8 @@
  <rel name="disabled">
   <ref class="DFApplication" id="df-02"/>
   <ref class="DFApplication" id="df-03"/>
+  <ref class="DFOApplication" id="dfo-02"/>
+  <ref class="DFOApplication" id="dfo-03"/>
   <ref class="TPStreamWriterApplication" id="tp-stream-writer"/>
   <ref class="TriggerApplication" id="tc-maker-1"/>
  </rel>
@@ -239,6 +271,8 @@
  <rel name="disabled">
   <ref class="DFApplication" id="df-02"/>
   <ref class="DFApplication" id="df-03"/>
+  <ref class="DFOApplication" id="dfo-02"/>
+  <ref class="DFOApplication" id="dfo-03"/>
   <ref class="TPStreamWriterApplication" id="tp-stream-writer"/>
  </rel>
  <rel name="connectivity_service" class="ConnectivityService" id="local-connectivity-service-config"/>
