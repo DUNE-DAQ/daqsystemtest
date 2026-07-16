@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="15" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260715T204121"/>
+<info name="" type="" num-of-items="15" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260716T140001"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -86,11 +86,14 @@
  <rel name="source_id" class="SourceIDConf" id="srcid-df-01"/>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="trigger-record-q-rule"/>
+  <ref class="QueueConnectionRule" id="token-q-rule"/>
+  <ref class="QueueConnectionRule" id="trb-td-q-rule"/>
+  <ref class="QueueConnectionRule" id="trb-completion-queue-rule"/>
  </rel>
  <rel name="network_rules">
+  <ref class="NetworkConnectionRule" id="df-status-req-net-rule"/>
   <ref class="NetworkConnectionRule" id="td-df-net-rule"/>
   <ref class="NetworkConnectionRule" id="frag-net-rule"/>
-  <ref class="NetworkConnectionRule" id="df-token-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-hsi-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
@@ -112,12 +115,15 @@
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="srcid-df-02"/>
  <rel name="queue_rules">
+  <ref class="QueueConnectionRule" id="token-q-rule"/>
+  <ref class="QueueConnectionRule" id="trb-td-q-rule"/>
+  <ref class="QueueConnectionRule" id="trb-completion-queue-rule"/>
   <ref class="QueueConnectionRule" id="trigger-record-q-rule"/>
  </rel>
  <rel name="network_rules">
+  <ref class="NetworkConnectionRule" id="df-status-req-net-rule"/>
   <ref class="NetworkConnectionRule" id="td-df-net-rule"/>
   <ref class="NetworkConnectionRule" id="frag-net-rule"/>
-  <ref class="NetworkConnectionRule" id="df-token-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-hsi-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
@@ -140,11 +146,14 @@
  <rel name="source_id" class="SourceIDConf" id="srcid-df-03"/>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="trigger-record-q-rule"/>
+  <ref class="QueueConnectionRule" id="token-q-rule"/>
+  <ref class="QueueConnectionRule" id="trb-td-q-rule"/>
+  <ref class="QueueConnectionRule" id="trb-completion-queue-rule"/>
  </rel>
  <rel name="network_rules">
+  <ref class="NetworkConnectionRule" id="df-status-req-net-rule"/>
   <ref class="NetworkConnectionRule" id="td-df-net-rule"/>
   <ref class="NetworkConnectionRule" id="frag-net-rule"/>
-  <ref class="NetworkConnectionRule" id="df-token-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-hsi-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
@@ -173,7 +182,7 @@
  <rel name="network_rules">
   <ref class="NetworkConnectionRule" id="td-dfo-net-rule"/>
   <ref class="NetworkConnectionRule" id="ti-net-rule"/>
-  <ref class="NetworkConnectionRule" id="df-token-net-rule"/>
+  <ref class="NetworkConnectionRule" id="df-status-net-rule"/>
  </rel>
  <rel name="dfo" class="DFOConf" id="dfoconf-01"/>
 </obj>
