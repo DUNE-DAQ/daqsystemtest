@@ -3,6 +3,7 @@
 import asyncio
 import sys
 import time
+from daqconf.utils import find_free_port
 
 async def read_stream(stream, process_name):
     """Asynchronously reads lines from a stream and prints them immediately."""
@@ -18,13 +19,8 @@ async def interactive_manager(commands):
     tasks = []
 
     # 1. Start all interactive subprocesses
-    for i, cmd in enumerate(commands):
-        #name = f"Proc-{i+1}"
-        if i == 0:
-            name = "pm"
-        else:
-            name = "shell"
-            time.sleep(2)
+    for cmd in commands:
+        name = cmd.pop(0)
         print()
         print(f"*** Starting \"{cmd[0]}\" with local process name \"{name}\"...")
         print()
@@ -38,6 +34,8 @@ async def interactive_manager(commands):
         
         # 2. Schedule output reading tasks concurrently
         tasks.append(asyncio.create_task(read_stream(proc.stdout, name)))
+
+        time.sleep(2)
 
     print()
     print(f"*** Started {len(processes)} processes. Type: '<process_name>:<input>' (e.g., shell:help)")
@@ -93,11 +91,12 @@ async def interactive_manager(commands):
             task.cancel()
 
 if __name__ == "__main__":
-    # Example using interactive Python shells as subprocesses
-    # On Windows, replace with appropriate interactive executables (like ['cmd.exe'])
+    pm_port = find_free_port(50001, 52000)
+
     interactive_cmds = [
-        ["drunc-process-manager", "ssh-standalone", "50520"],  # Launch Interactive Python Instance 1
-        ["drunc-unified-shell", "grpc://localhost:50520", "config/daqsystemtest/example-configs.data.xml", "local-1x1-config", "biery-local-test"]   # Launch Interactive Python Instance 2
+        ["pm", "drunc-process-manager", "ssh-standalone", str(pm_port)],  # Launch Interactive Python Instance 1
+        ["pmshell", "drunc-process-manager-shell", f"grpc://localhost:{pm_port}"],  # Launch Interactive Python Instance 2
+        ["drunc", "drunc-unified-shell", f"grpc://localhost:{pm_port}", "config/daqsystemtest/example-configs.data.xml", "local-1x1-config", "biery-local-test"]   # Launch Interactive Python Instance 3
     ]
     
     try:
