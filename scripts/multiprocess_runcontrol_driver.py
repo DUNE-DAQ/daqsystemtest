@@ -5,18 +5,31 @@ import sys
 import time
 from daqconf.utils import find_free_port
 
-async def read_stream(stream, process_name):
+last_msg_time = 0
+
+async def read_stream(stream, process_name, completion_event):
     """Asynchronously reads lines from a stream and prints them immediately."""
+    global last_msg_time
     while True:
         line = await stream.readline()
         if not line:
             break
+        decoded_line = line.decode().rstrip()
+
+        if "*** COMMAND HAS COMPLETED ***" in decoded_line:
+            #print("=== Setting the completion event ===", flush=True)
+            completion_event.set()
+            continue
+
         # Decode and strip line endings
         print(f"[{process_name}] {line.decode().rstrip()}", flush=True)
+        last_msg_time = time.time()
 
 async def interactive_manager(commands):
     processes = {}
     tasks = []
+    command_completion_event = asyncio.Event()
+    global last_msg_time
 
     # 1. Start all interactive subprocesses
     for cmd in commands:
@@ -33,7 +46,7 @@ async def interactive_manager(commands):
         processes[name] = proc
         
         # 2. Schedule output reading tasks concurrently
-        tasks.append(asyncio.create_task(read_stream(proc.stdout, name)))
+        tasks.append(asyncio.create_task(read_stream(proc.stdout, name, command_completion_event)))
 
         time.sleep(2)
 
@@ -50,6 +63,7 @@ async def interactive_manager(commands):
 
     try:
         while True:
+            print("\nmprc_drvr> ", end="", flush=True)
             user_line = await reader.readline()
             if not user_line:
                 break
@@ -66,9 +80,30 @@ async def interactive_manager(commands):
                 if target in processes:
                     proc = processes[target]
                     if proc.returncode is None:  # Check if still running
+                        cmd_start_time = time.time()
                         proc.stdin.write((msg + "\n").encode())
                         await proc.stdin.drain()
                         print(f"[System] Sent to {target}: {msg}")
+                        if "drunc" in target:
+                            proc.stdin.write(("echo '*** COMMAND HAS COMPLETED ***'\n").encode())
+                            await proc.stdin.drain()
+                            #print(f"[System] Sent to {target}: echo '*** COMMAND HAS COMPLETED ***'")
+                            await command_completion_event.wait()
+                            command_completion_event.clear()
+                        else:
+                            now = time.time()
+                            #print(f"{cmd_start_time} {last_msg_time} {now}", flush=True)
+                            while True:
+                                if last_msg_time <= cmd_start_time:
+                                    if now - cmd_start_time > 5:
+                                        break
+                                else:
+                                    if now - last_msg_time >= 5:
+                                        break
+                                #print(f"{cmd_start_time} {last_msg_time} {now}", flush=True)
+                                await asyncio.sleep(0.25)
+                                now = time.time()
+                            #print(f"{cmd_start_time} {last_msg_time} {now}", flush=True)
                     else:
                         print(f"[System] Error: {target} has already exited.")
                 else:
