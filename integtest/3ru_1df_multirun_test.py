@@ -106,16 +106,11 @@ conf_dict.dro_map_config.n_apps = number_of_readout_apps
 conf_dict.op_env = "integtest"
 conf_dict.config_session_name = "3ru1df"
 conf_dict.tpg_enabled = False
+utility_functions.set_rtcm_trigger_params(conf_dict, trigger_rate=trigger_rate)
 # To verify that the ability to have run control start the Connectivity Service continues to
 # work, we include that option in this integtest.
 conf_dict.connsvc_control = data_classes.ConnSvcControl.RUNCONTROL
 
-conf_dict.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_class="RandomTCMakerConf",
-        updates={"trigger_rate_hz": trigger_rate},
-    )
-)
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_class="LatencyBuffer", updates={"size": 200000}

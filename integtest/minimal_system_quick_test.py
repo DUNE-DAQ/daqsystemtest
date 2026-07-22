@@ -18,8 +18,6 @@ pytest_plugins = "integrationtest.integrationtest_drunc"
 # Values that help determine the running conditions
 number_of_data_producers = 2
 run_duration = 20  # seconds
-readout_window_time_before = 1000
-readout_window_time_after = 1001
 
 # Default values for validation parameters
 expected_number_of_data_files = 1
@@ -77,31 +75,15 @@ conf_dict.dro_map_config.n_streams = number_of_data_producers
 conf_dict.op_env = "integtest"
 conf_dict.config_session_name = "minimal"
 conf_dict.tpg_enabled = False
+utility_functions.set_rtcm_trigger_params(conf_dict, trigger_rate=1)
 
 # For testing, allow drunc to manage ConnectivityService
 #conf_dict.connsvc_control = ConnSvcControl.RUNCONTROL
 # For testing, specify connectivity service port (default is 0, a random port is chosen for the Connectivity Service)
 #conf_dict.connsvc_port = 12345
 
-substitution = data_classes.attribute_substitution(
-    obj_id="random-tc-generator",
-    obj_class="RandomTCMakerConf",
-    updates={"trigger_rate_hz": 1},
-)
-conf_dict.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_class="TCReadoutMap",
-        obj_id = "def-random-readout",
-        updates={
-            "time_before": readout_window_time_before,
-            "time_after": readout_window_time_after,
-        },
-    )
-)
-conf_dict.config_substitutions.append(substitution)
-
-
 confgen_arguments = {"MinimalSystem": conf_dict}
+
 # The commands to run in dunerc, as a list
 dunerc_command_list = (
     "boot conf start --run-number 101 wait 1 enable-triggers wait ".split()

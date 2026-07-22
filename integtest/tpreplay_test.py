@@ -158,24 +158,10 @@ tpreplay_local_conf.config_substitutions.append(
 )
 
 ## update random TC maker
-tpreplay_local_conf.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_id="random-tc-generator",
-        obj_class="RandomTCMakerConf",
-        updates={
-            "trigger_rate_hz": 0
-            },)
-)
+utility_functions.set_rtcm_trigger_params(tpreplay_local_conf, trigger_rate=0)
 
 ## update HSI
-tpreplay_local_conf.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_id="fakehsi",
-        obj_class="FakeHSIEventGeneratorConf",
-        updates={
-            "trigger_rate": 0
-            },)
-)
+utility_functions.set_fake_hsi_trigger_params(tpreplay_local_conf, trigger_rate=0)
 
 # prep NP04 conf
 tpreplay_np04_conf = copy.deepcopy(tpreplay_local_conf)
