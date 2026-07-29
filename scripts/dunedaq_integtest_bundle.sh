@@ -43,6 +43,7 @@ Options:
              for example, --dunerc-option log-level debug
        - example: --pytest-options \"--skip-resource-checks --process-manager-type ssh-standalone --dunerc-option no-override-logs\"
 """
+}
 
 # 29-Dec-2025, KAB: Determine if a non-standard pytest tmpdir has been specified
 # in the linux shell environment in which this script is being run. We need to know
