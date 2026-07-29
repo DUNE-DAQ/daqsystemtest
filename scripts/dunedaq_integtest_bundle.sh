@@ -37,11 +37,12 @@ Options:
          --dunerc-path <path> : Path to DUNE run control. Default is to search in \$PATH
          --skip-resource-checks : Whether to skip the node resource (CPU/Memory) checks for this test
          --process-manager-type <type> : The run control process manager type to use for this test, e.g. ssh-standalone
+         --no-integtest-connsvc : Whether to disable the Connectivity Service for this test
+         --remove-hdf5-files <choice> : 'always' forces files to be removed, 'never' forces files to be kept
          --dunerc-option <option-name> <option-value> : Repeatable, run control arguments without leading dashes
              for example, --dunerc-option log-level debug
        - example: --pytest-options \"--skip-resource-checks --process-manager-type ssh-standalone --dunerc-option no-override-logs\"
 """
-}
 
 # 29-Dec-2025, KAB: Determine if a non-standard pytest tmpdir has been specified
 # in the linux shell environment in which this script is being run. We need to know
