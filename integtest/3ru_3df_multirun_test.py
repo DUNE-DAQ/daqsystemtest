@@ -131,13 +131,8 @@ conf_dict.op_env = "integtest"
 conf_dict.config_session_name = "3ru3df"
 conf_dict.tpg_enabled = False
 conf_dict.n_df_apps = number_of_dataflow_apps
+utility_functions.set_rtcm_trigger_params(conf_dict, trigger_rate=trigger_rate)
 
-conf_dict.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_class="RandomTCMakerConf",
-        updates={"trigger_rate_hz": trigger_rate},
-    )
-)
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_class="LatencyBuffer", updates={"size": 200000}
