@@ -124,13 +124,8 @@ conf_dict.n_df_apps = number_of_dataflow_apps
 conf_dict.frame_file = (
     "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd798"  # WIBEth All Zeros
 )
+utility_functions.set_rtcm_trigger_params(conf_dict, trigger_rate=pulser_trigger_rate)
 
-conf_dict.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_class="RandomTCMakerConf",
-        updates={"trigger_rate_hz": pulser_trigger_rate},
-    )
-)
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_class="LatencyBuffer", updates={"size": 200000}
