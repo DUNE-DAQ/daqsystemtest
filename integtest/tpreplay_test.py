@@ -9,9 +9,9 @@ It does the following:
 1. Creates a temporary configuration DB file (via OKS) for each session.
 2. Populates the config DB with TPStream and SourceID objects.
 3. Customizes runtime configuration through deep config substitutions.
-4. Runs a pre-defined nanorc command sequence (boot → start → stop → terminate).
+4. Runs a pre-defined dunerc command sequence (boot → start → stop → terminate).
 5. Validates:
-    - Nanorc command success
+    - DuneRC command success
     - Presence and correctness of log files
     - Data file contents (number of SIDs, file count)
 
@@ -28,7 +28,6 @@ import os
 import pathlib
 import pytest
 import random
-import re
 import shutil
 import string
 import tempfile
@@ -37,7 +36,9 @@ import integrationtest.data_classes as data_classes
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.resource_validation as resource_validation
+import integrationtest.utility_functions as utility_functions
 from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
+from integrationtest.verbosity_helper import IntegtestVerbosityLevels
 
 from daqconf.consolidate import copy_configuration
 from pathlib import Path
@@ -47,11 +48,10 @@ def _cleanup_tmpdir():
     if os.path.exists(tmpdirname):
         shutil.rmtree(tmpdirname)
 
-pytest_plugins = "integrationtest.integrationtest_drunc"
-
-# tweak the print() statement default behavior so that it always flushes the output.
 import functools
-print = functools.partial(print, flush=True)
+print = functools.partial(print, flush=True)  # always flush print() output
+
+pytest_plugins = "integrationtest.integrationtest_drunc"
 
 # Run setup
 run_duration = 20  # seconds
@@ -81,8 +81,6 @@ resource_validator.cpu_count_needs(6, 12)  # 3 for ConnSvc threads plus 3 more f
 resource_validator.free_memory_needs(3, 4)  # 50% more than what we observe being used ('free -h')
 actual_output_path = get_pytest_tmpdir()
 resource_validator.free_disk_space_needs(actual_output_path, 1)  # more than what we observe
-resval_debug_string = resource_validator.get_debug_string()
-print(f"{resval_debug_string}")
 
 ### Config setup
 # Create temp config
@@ -96,14 +94,14 @@ config_src = config_src.resolve()
 copy_configuration(path, [os.path.dirname(__file__) + "/../config/daqsystemtest/example-configs.data.xml"])
 local_db = conffwk.Configuration("oksconflibs:" + tmpdirname + "/example-configs.data.xml")
 
-common_config_obj = data_classes.drunc_config()
+common_config_obj = data_classes.integtest_params_for_predefined_dunedaq_config()
 common_config_obj.op_env = "test"
 common_config_obj.tpg_enabled = False
-common_config_obj.config_db = ( tmpdirname + "/example-configs.data.xml" )
+common_config_obj.predefined_config_db = ( tmpdirname + "/example-configs.data.xml" )
 
 # Get default tpreplay config
 tpreplay_local_conf = copy.deepcopy(common_config_obj)
-tpreplay_local_conf.session = "local-tpreplay-config"
+tpreplay_local_conf.config_session_name = "local-tpreplay-config"
 
 # Get necessary dal objects
 a_source_id_dal = local_db.get_dal(class_name="SourceIDConf", uid="tpreplay-tp-srcid-100000")
@@ -160,24 +158,10 @@ tpreplay_local_conf.config_substitutions.append(
 )
 
 ## update random TC maker
-tpreplay_local_conf.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_id="random-tc-generator",
-        obj_class="RandomTCMakerConf",
-        updates={
-            "trigger_rate_hz": 0
-            },)
-)
+utility_functions.set_rtcm_trigger_params(tpreplay_local_conf, trigger_rate=0)
 
 ## update HSI
-tpreplay_local_conf.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_id="fakehsi",
-        obj_class="FakeHSIEventGeneratorConf",
-        updates={
-            "trigger_rate": 0
-            },)
-)
+utility_functions.set_fake_hsi_trigger_params(tpreplay_local_conf, trigger_rate=0)
 
 # prep NP04 conf
 tpreplay_np04_conf = copy.deepcopy(tpreplay_local_conf)
@@ -241,66 +225,57 @@ confgen_arguments = {
   "np04-tpreplay": tpreplay_np04_conf
 }
 
-# The commands to run in nanorc, as a list
-nanorc_command_list = "boot conf wait 5".split()
-nanorc_command_list += (
+# The commands to run in dunerc, as a list
+dunerc_command_list = "boot conf wait 5".split()
+dunerc_command_list += (
     "start ".split()
     + "--run-number 101 enable-triggers wait ".split()
     + [str(run_duration)]
     + "disable-triggers drain-dataflow wait 2 stop-trigger-sources wait 2 stop wait 2".split()
 )
-nanorc_command_list += "scrap terminate".split()
+dunerc_command_list += "scrap terminate".split()
 
 atexit.register(_cleanup_tmpdir)
 
 ### Tests
 # Run control
-def test_nanorc_success(run_nanorc):
-    # print the name of the current test
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)-run_.*rc.*\d].*", current_test)
-    if match_obj:
-        current_test = match_obj.group(1)
-    banner_line = re.sub(".", "=", current_test)
-    print(banner_line)
-    print(current_test)
-    print(banner_line)
-
-    # Check that nanorc completed correctly
-    assert run_nanorc.completed_process.returncode == 0
+def test_dunerc_success(run_dunerc, caplog):
+    # checks for run control success, problems during pytest setup, etc.
+    utility_functions.basic_checks(run_dunerc, caplog, print_test_name=True)
 
 # Log files
-def test_log_files(run_nanorc):
-    session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
+def test_log_files(run_dunerc):
+    session_name = run_dunerc.daq_session_name
 
     log_dir = pathlib.Path("/log")
-    run_nanorc.log_files += [
+    run_dunerc.log_files += [
         f for f in log_dir.glob(f"log_*_{session_name}*.txt") if f.exists()
     ]
 
     # Check that at least some of the expected log files are present
     assert any(
         f"{session_name}_df-01" in str(logname)
-        for logname in run_nanorc.log_files
+        for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_dfo" in str(logname) for logname in run_nanorc.log_files
+        f"{session_name}_dfo" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_mlt" in str(logname) for logname in run_nanorc.log_files
+        f"{session_name}_mlt" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_tpreplay" in str(logname) for logname in run_nanorc.log_files
+        f"{session_name}_tpreplay" in str(logname) for logname in run_dunerc.log_files
     )
 
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
-            run_nanorc.log_files, True, True, ignored_logfile_problems
-        ), f"Errors found in log files: {run_nanorc.log_files}"
+            run_dunerc.log_files, True, True, ignored_logfile_problems,
+            verbosity_helper=run_dunerc.verbosity_helper
+        ), f"Errors found in log files: {run_dunerc.log_files}"
 
 # Data files
-def test_data_files(run_nanorc):
+def test_data_files(run_dunerc):
     current_test = os.environ.get("PYTEST_CURRENT_TEST")
 
     datafile_params = {
@@ -315,28 +290,28 @@ def test_data_files(run_nanorc):
     for key in datafile_params.keys():
         if key in current_test:
             selected_params = datafile_params[key]
-            print("Selected params for", key, ":", selected_params)
+            if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.integtest_debug):
+                print("Selected params for", key, ":", selected_params)
             break
     if not selected_params:
         print(f"\n*** ERROR: unable to determine the datafile_params for test {current_test}.")
 
     ### Run some tests on the output data file
-    all_ok = True
-
-    all_ok &= len(run_nanorc.data_files) == selected_params["n_data_files"]
+    all_ok = len(run_dunerc.data_files) == selected_params["n_data_files"]
     if all_ok:
-        print(f"\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({selected_params['n_data_files']})")
+        if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.drunc_transitions):
+            print(f"\n\N{WHITE HEAVY CHECK MARK} The correct number of raw data files was found ({selected_params['n_data_files']})")
     else:
-        print(f"\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {selected_params['n_data_files']}, found {len(run_nanorc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
+        print(f"\n\N{POLICE CARS REVOLVING LIGHT} An incorrect number of raw data files was found, expected {selected_params['n_data_files']}, found {len(run_dunerc.data_files)} \N{POLICE CARS REVOLVING LIGHT}")
 
     ## Other test
     # number of SIDs
-    data_file = data_file_checks.DataFile(run_nanorc.data_files[0])
+    data_file = data_file_checks.DataFile(run_dunerc.data_files[0], run_dunerc.verbosity_helper)
     all_ok &= data_file_checks.check_n_unique_sids(data_file, selected_params['n_sids_tp'], selected_params['n_sids_ta'], selected_params['n_sids_tc'] )
     if all_ok:
-        print(f"\N{WHITE HEAVY CHECK MARK} The expected number of unique Source IDs was found ({selected_params['n_sids_tp'], selected_params['n_sids_ta'], selected_params['n_sids_tc']})")
+        if run_dunerc.verbosity_helper.compare_level(IntegtestVerbosityLevels.drunc_transitions):
+            print(f"\N{WHITE HEAVY CHECK MARK} The expected number of unique Source IDs was found ({selected_params['n_sids_tp'], selected_params['n_sids_ta'], selected_params['n_sids_tc']})")
     else:
         print(f"\N{POLICE CARS REVOLVING LIGHT} The number of unique Source IDs is NOT as expected ({selected_params['n_sids_tp'], selected_params['n_sids_ta'], selected_params['n_sids_tc']})! \N{POLICE CARS REVOLVING LIGHT}")
 
     assert all_ok, "\N{POLICE CARS REVOLVING LIGHT} One or more data file checks failed! \N{POLICE CARS REVOLVING LIGHT}"
-

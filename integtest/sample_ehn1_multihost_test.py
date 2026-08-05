@@ -1,10 +1,9 @@
 # 29-Jan-2026, KAB: Steps to run this test:
 # - Log into any np04-srv-XYZ computer and set up a software area with the
 #     appropriate branch of daqsystemtest.
-# - 'cd $DBT_AREA_ROOT/sourcecode/daqsystemtest/integtest'
 # - 'mkdir -p $HOME/dunedaq/scratch'  # only need to do this once per user account
 # - 'export PYTEST_DEBUG_TEMPROOT=$HOME/dunedaq/scratch'  # once per login/shell
-# - 'pytest -s ./sample_ehn1_multihost_test.py'
+# - 'pytest -s $DBT_AREA_ROOT/sourcecode/daqsystemtest/integtest/sample_ehn1_multihost_test.py'
 #
 # This test currently puts the various DAQ processes on the following computers:
 # - np04-srv-021:  ru-01, ru-controller
@@ -18,24 +17,27 @@
 # on a computer other than "localhost" was also to show that it can be done.
 #
 # To enable the capturing of TRACE messages on all of the computers...
-# - 'export TRACE_FILE=/tmp/pytest-of-${USER}/log/${USER}_dunedaq.trace'  # once per login/shell
 # - 'mkdir -p /tmp/pytest-of-${USER}/log'  # only need to do this once per computer
 # - 'ssh np04-srv-021 "mkdir -p /tmp/pytest-of-${USER}/log"'  # only once per user
 # - 'ssh np04-srv-022 "mkdir -p /tmp/pytest-of-${USER}/log"'  # only once per user
 # - 'ssh np04-srv-028 "mkdir -p /tmp/pytest-of-${USER}/log"'  # only once per user
 # - 'ssh np04-srv-029 "mkdir -p /tmp/pytest-of-${USER}/log"'  # only once per user
-# - 'pytest -s ./sample_ehn1_multihost_test.py'
+# - 'export TRACE_FILE=/tmp/pytest-of-${USER}/log/${USER}_dunedaq.trace'  # once per login/shell
+# - 'pytest -s $DBT_AREA_ROOT/sourcecode/daqsystemtest/integtest/sample_ehn1_multihost_test.py'
 
 import pytest
 import os
 import copy
-import re
 import string
-import pathlib
 
 import integrationtest.data_file_checks as data_file_checks
 import integrationtest.log_file_checks as log_file_checks
 import integrationtest.data_classes as data_classes
+import integrationtest.utility_functions as utility_functions
+from integrationtest.verbosity_helper import IntegtestVerbosityLevels
+
+import functools
+print = functools.partial(print, flush=True)  # always flush print() output
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
@@ -47,7 +49,6 @@ check_for_logfile_errors = True
 expected_event_count = run_duration * (1.0 + 3.0) # 1 from RTCM, 3 from FakeHSI
 ta_prescale = 1000
 expected_event_count_tolerance = expected_event_count / 10.0
-hostname = os.uname().nodename
 
 wibeth_frag_params = {
     "fragment_type_description": "WIBEth",
@@ -118,38 +119,30 @@ ignored_logfile_problems = {
 # the software release from CVMFS onto all of those computers (so the startup of
 # DAQ apps such as the ConnectivityServer don't take a long time initially).
 import subprocess
+import socket
+computers_that_are_needed = ["np04-srv-021", "np04-srv-022", "np04-srv-028", "np04-srv-029"]
 computers_that_are_unreachable = []
+hostname = socket.getfqdn()
 sw_area_root = os.environ.get("DBT_AREA_ROOT")
-if sw_area_root is not None:
-    print("")
-    needed_computer="np04-srv-021"
-    print(f"Confirming that we can ssh to {needed_computer}...")
-    proc = subprocess.Popen(f"ssh {needed_computer} 'cd {sw_area_root}; . ./env.sh'", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    proc.communicate()
-    retval = proc.returncode
-    if retval != 0:
-        computers_that_are_unreachable.append(needed_computer)
-    needed_computer="np04-srv-022"
-    print(f"Confirming that we can ssh to {needed_computer}...")
-    proc = subprocess.Popen(f"ssh {needed_computer} 'cd {sw_area_root}; . ./env.sh'", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    proc.communicate()
-    retval = proc.returncode
-    if retval != 0:
-        computers_that_are_unreachable.append(needed_computer)
-    needed_computer="np04-srv-028"
-    print(f"Confirming that we can ssh to {needed_computer}...")
-    proc = subprocess.Popen(f"ssh {needed_computer} 'cd {sw_area_root}; . ./env.sh'", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    proc.communicate()
-    retval = proc.returncode
-    if retval != 0:
-        computers_that_are_unreachable.append(needed_computer)
-    needed_computer="np04-srv-029"
-    print(f"Confirming that we can ssh to {needed_computer}...")
-    proc = subprocess.Popen(f"ssh {needed_computer} 'cd {sw_area_root}; . ./env.sh'", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    proc.communicate()
-    retval = proc.returncode
-    if retval != 0:
-        computers_that_are_unreachable.append(needed_computer)
+if sw_area_root is not None and ".cern.ch" in hostname:
+    sw_setup_script = ""
+    if os.path.exists(f"{sw_area_root}/env.sh"):
+        sw_setup_script = "env.sh"
+    elif os.path.exists(f"{sw_area_root}/dbt-setup-release-env.sh"):
+        sw_setup_script = "dbt-setup-release-env.sh"
+    if sw_setup_script:
+        print("")
+        for needed_computer in computers_that_are_needed:
+            print(f"Confirming that we can ssh to {needed_computer}...")
+            proc = subprocess.Popen(f"ssh {needed_computer} 'cd {sw_area_root}; . ./{sw_setup_script}'", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            proc.communicate()
+            retval = proc.returncode
+            if retval != 0:
+                computers_that_are_unreachable.append(needed_computer)
+    else:
+        computers_that_are_unreachable = ["Unable to determine which software area setup script to use"]
+elif ".cern.ch" not in hostname:
+    computers_that_are_unreachable = [f"This test is meant to be run at CERN (hostname {hostname} does not contain .cern.ch)"]
 else:
     computers_that_are_unreachable = ["Unable to determine the value of the DBT_AREA_ROOT env var"]
 
@@ -165,9 +158,9 @@ if pytest_tmpdir is not None:
         print(f"*** WARNING: the directory referenced by PYTEST_DEBUG_TEMPROOT ({pytest_tmpdir}) does not exist!")
         print("")
 
-common_config_obj = data_classes.drunc_config()
+common_config_obj = data_classes.integtest_params_for_predefined_dunedaq_config()
 common_config_obj.op_env = "test"
-common_config_obj.config_db = (
+common_config_obj.predefined_config_db = (
     os.path.dirname(__file__) + "/../config/daqsystemtest/example-configs.data.xml"
 )
 common_config_obj.config_substitutions.append(
@@ -277,26 +270,31 @@ common_config_obj.config_substitutions.append(
 )
 
 ehn1_multihost_1x1_conf = copy.deepcopy(common_config_obj)
-ehn1_multihost_1x1_conf.session = "local-1x1-config"
+ehn1_multihost_1x1_conf.config_session_name = "local-1x1-config"
 ehn1_multihost_1x1_conf.connsvc_port = 0  # random
 
 confgen_arguments = {"EHN1 MultiHost 1x1 Conf": ehn1_multihost_1x1_conf}
 
 
-# The commands to run in nanorc, as a list
+# The commands to run in dunerc, as a list
 if len(computers_that_are_unreachable) == 0 and pytest_tmpdir_looks_reasonable:
-    nanorc_command_list = (
+    dunerc_command_list = (
         "boot wait 2 conf start --run-number 101 wait 1 enable-triggers wait ".split()
         + [str(run_duration)]
         + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop scrap terminate".split()
     )
 else:
-    nanorc_command_list = ["wait", "1"]
+    dunerc_command_list = ["wait", "1"]
 
 # The tests themselves
 
 
-def test_nanorc_success(run_nanorc, capsys):
+def test_dunerc_success(run_dunerc, capsys, caplog):
+    if ".cern.ch" not in hostname:
+        with capsys.disabled():
+            print(f"\n\n\N{LARGE YELLOW CIRCLE} It is not possible to run this test on this computer ({hostname}):")
+            print(f"      {computers_that_are_unreachable}")
+        pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
     if len(computers_that_are_unreachable) > 0:
         with capsys.disabled():
             print(f"\n\n\N{LARGE YELLOW CIRCLE} The following computers are needed for this test but are unreachable from this computer ({hostname}) via ssh:")
@@ -305,61 +303,57 @@ def test_nanorc_success(run_nanorc, capsys):
     if not pytest_tmpdir_looks_reasonable:
         with capsys.disabled():
             print("\n\n\N{LARGE YELLOW CIRCLE} The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
+            print("\N{LARGE YELLOW CIRCLE} This is needed for this integtest to run.")
+            print("\N{LARGE YELLOW CIRCLE} Suggested steps: 'mkdir -p $HOME/dunedaq/scratch; export PYTEST_DEBUG_TEMPROOT=$HOME/dunedaq/scratch'")
+            print("\N{LARGE YELLOW CIRCLE} And you may want to consider 'unset PYTEST_DEBUG_TEMPROOT' after running the test.")
+            print("\N{LARGE YELLOW CIRCLE} Please see the comments at the top of this integtest for more information.")
         pytest.skip("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
 
-    with capsys.disabled():
-        print("")
-        print("\n\n\N{LARGE YELLOW CIRCLE} PLEASE NOTE: this script is cleaning up stale _gunicorn_ processes on np04-srv-028...")
-        print("")
-    proc = subprocess.Popen(f"ssh np04-srv-028 killall gunicorn", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    proc.communicate()
-    retval = proc.returncode
-    if retval != 0:
-        print("*** WARNING: the cleanup of stale _gunicorn_ process on np04-srv-028 did not succeed...")
+    # 08-Apr-2026, KAB: maybe gunicorn shutdown is working now?
+    #with capsys.disabled():
+    #    print("")
+    #    print("\n\n\N{LARGE YELLOW CIRCLE} PLEASE NOTE: this script is cleaning up stale _gunicorn_ processes on np04-srv-028...")
+    #    print("")
+    #proc = subprocess.Popen(f"ssh np04-srv-028 killall gunicorn", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    #proc.communicate()
+    #retval = proc.returncode
+    #if retval != 0:
+    #    print("*** WARNING: the cleanup of stale _gunicorn_ process on np04-srv-028 did not succeed...")
 
-    current_test = os.environ.get("PYTEST_CURRENT_TEST")
-    match_obj = re.search(r".*\[(.+)-run_nanorc0\].*", current_test)
-    if match_obj:
-        current_test = match_obj.group(1)
-    banner_line = re.sub(".", "=", current_test)
-    print(banner_line)
-    print(current_test)
-    print(banner_line)
-
-    # Check that nanorc completed correctly
-    assert run_nanorc.completed_process.returncode == 0
+    # check on run control success, problems during pytest setup, etc.
+    utility_functions.basic_checks(run_dunerc, caplog, print_test_name=False)
 
 
-def test_log_files(run_nanorc):
+def test_log_files(run_dunerc):
     if len(computers_that_are_unreachable) > 0:
         pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
     if not pytest_tmpdir_looks_reasonable:
         pytest.skip("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
 
     # Check that at least some of the expected log files are present
-    session_name = run_nanorc.session_name if run_nanorc.session_name is not None else run_nanorc.session
     assert any(
-        f"{session_name}_df-01" in str(logname)
-        for logname in run_nanorc.log_files
+        f"{run_dunerc.daq_session_name}_df-01" in str(logname)
+        for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_dfo" in str(logname) for logname in run_nanorc.log_files
+        f"{run_dunerc.daq_session_name}_dfo" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_mlt" in str(logname) for logname in run_nanorc.log_files
+        f"{run_dunerc.daq_session_name}_mlt" in str(logname) for logname in run_dunerc.log_files
     )
     assert any(
-        f"{session_name}_ru" in str(logname) for logname in run_nanorc.log_files
+        f"{run_dunerc.daq_session_name}_ru" in str(logname) for logname in run_dunerc.log_files
     )
 
     if check_for_logfile_errors:
         # Check that there are no warnings or errors in the log files
         assert log_file_checks.logs_are_error_free(
-            run_nanorc.log_files, True, True, ignored_logfile_problems
+            run_dunerc.log_files, True, True, ignored_logfile_problems,
+            verbosity_helper=run_dunerc.verbosity_helper
         )
 
 
-def test_data_files(run_nanorc):
+def test_data_files(run_dunerc):
     if len(computers_that_are_unreachable) > 0:
         pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
     if not pytest_tmpdir_looks_reasonable:
@@ -379,7 +373,7 @@ def test_data_files(run_nanorc):
     assert expected_file_count != 0,f"Unable to locate test parameters for {current_test}"
 
     # Run some tests on the output data file
-    assert len(run_nanorc.data_files) == expected_file_count, f"Unexpected file count: Actual: {len(run_nanorc.data_files)}, Expected: {expected_file_count}"
+    assert len(run_dunerc.data_files) == expected_file_count, f"Unexpected file count: Actual: {len(run_dunerc.data_files)}, Expected: {expected_file_count}"
 
     local_expected_fragment_count = expected_fragment_count
     wibeth_frag_params["expected_fragment_count"] = local_expected_fragment_count
@@ -409,8 +403,8 @@ def test_data_files(run_nanorc):
 
     all_ok = True
 
-    for idx in range(len(run_nanorc.data_files)):
-        data_file = data_file_checks.DataFile(run_nanorc.data_files[idx])
+    for idx in range(len(run_dunerc.data_files)):
+        data_file = data_file_checks.DataFile(run_dunerc.data_files[idx], run_dunerc.verbosity_helper)
         all_ok &= data_file_checks.sanity_check(data_file)
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(
@@ -427,13 +421,13 @@ def test_data_files(run_nanorc):
     assert all_ok
 
 
-def test_tpstream_files(run_nanorc):
+def test_tpstream_files(run_dunerc):
     if len(computers_that_are_unreachable) > 0:
         pytest.skip(f"One or more needed computers are unreachable ({computers_that_are_unreachable}).")
     if not pytest_tmpdir_looks_reasonable:
         pytest.skip("The PYTEST_DEBUG_TEMPROOT env var has not been set to point to a valid directory.")
 
-    tpstream_files = run_nanorc.tpset_files
+    tpstream_files = run_dunerc.tpset_files
     local_expected_event_count = (
         run_duration + 8
     )  # TPStreamWriterModule is currently configured to write at 1 Hz, addl TimeSlices expected because of wait times in drunc command list
@@ -442,12 +436,12 @@ def test_tpstream_files(run_nanorc):
 
     assert len(tpstream_files) == 1  # one for each run
 
-    print("")
+    #print("")
     all_ok = True
     for idx in range(len(tpstream_files)):
         base_filename = os.path.basename(tpstream_files[idx])
-        print(f"Checking {base_filename}...")
-        data_file = data_file_checks.DataFile(tpstream_files[idx])
+        #print(f"Checking {base_filename}...")
+        data_file = data_file_checks.DataFile(tpstream_files[idx], run_dunerc.verbosity_helper)
         # all_ok &= data_file_checks.sanity_check(data_file) # Sanity check doesn't work for stream files
         all_ok &= data_file_checks.check_file_attributes(data_file)
         all_ok &= data_file_checks.check_event_count(

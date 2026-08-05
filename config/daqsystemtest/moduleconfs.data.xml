@@ -129,9 +129,9 @@
 
 <obj class="AVXThresholdProcessor" id="tpg-threshold-proc">
  <attr name="metric_collect_time_sample_period" type="u64" val="256"/>
- <attr name="plane0" type="u16" val="100"/>
- <attr name="plane1" type="u16" val="100"/>
- <attr name="plane2" type="u16" val="100"/>
+ <attr name="plane0" type="s16" val="100"/>
+ <attr name="plane1" type="s16" val="100"/>
+ <attr name="plane2" type="s16" val="100"/>
 </obj>
 
 <obj class="ActionPlan" id="crt-readout-start">
@@ -139,7 +139,7 @@
  <rel name="command" class="FSMCommand" id="start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
-  <ref class="DaqModulesGroupByType" id="data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="crt-bern-frame-builder-data-source-step"/>
  </rel>
 </obj>
 
@@ -147,7 +147,7 @@
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
  <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
  <rel name="steps">
-  <ref class="DaqModulesGroupByType" id="data-source-step"/>
+  <ref class="DaqModulesGroupByType" id="crt-bern-frame-builder-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
  </rel>
 </obj>
@@ -225,20 +225,12 @@
  </rel>
 </obj>
 
-<obj class="CRTBernReaderConf" id="def-crt-bern-receiver-conf">
- <attr name="template_for" type="class" val="CRTBernReaderModule"/>
- <attr name="emulation_mode" type="bool" val="0"/>
+<obj class="CRTBernFrameBuilderConf" id="def-crt-bern-frame-builder-conf">
+ <attr name="template_for" type="class" val="CRTBernFrameBuilderModule"/>
 </obj>
 
-<obj class="CRTGrenobleReaderConf" id="def-crt-grenoble-receiver-conf">
- <attr name="template_for" type="class" val="CRTGrenobleReaderModule"/>
- <attr name="emulation_mode" type="bool" val="0"/>
-</obj>
-
-<obj class="CRTReaderConf" id="def-emu-crt-receiver-conf">
- <attr name="template_for" type="class" val="FDFakeReaderModule"/>
- <attr name="emulation_mode" type="bool" val="1"/>
- <rel name="emulation_conf" class="StreamEmulationParameters" id="crt-stream-emu"/>
+<obj class="CRTGrenobleFrameBuilderConf" id="def-crt-grenoble-frame-builder-conf">
+ <attr name="template_for" type="class" val="CRTGrenobleFrameBuilderModule"/>
 </obj>
 
 <obj class="DFOConf" id="dfoconf-01">
@@ -267,17 +259,17 @@
  </attr>
 </obj>
 
-<obj class="DaqModulesGroupByType" id="crt-bern-reader-data-source-step">
+<obj class="DaqModulesGroupByType" id="crt-bern-frame-builder-data-source-step">
  <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
-  <data val="CRTBernReaderModule"/>
+  <data val="CRTBernFrameBuilderModule"/>
  </attr>
 </obj>
 
-<obj class="DaqModulesGroupByType" id="crt-grenoble-reader-data-source-step">
+<obj class="DaqModulesGroupByType" id="crt-grenoble-frame-builder-data-source-step">
  <attr name="optional" type="bool" val="0"/>
  <attr name="modules" type="class">
-  <data val="CRTGrenobleReaderModule"/>
+  <data val="CRTGrenobleFrameBuilderModule"/>
  </attr>
 </obj>
 
@@ -745,14 +737,10 @@
 <obj class="SocketReaderConf" id="def-socket-reader-conf">
  <attr name="template_for" type="class" val="SocketReaderModule"/>
  <attr name="emulation_mode" type="bool" val="0"/>
- <attr name="socket_type" type="enum" val="UDP"/>
- <attr name="local_ip" type="string" val="127.0.0.1"/>
 </obj>
 
 <obj class="SocketWriterConf" id="def-socket-writer-conf">
  <attr name="template_for" type="class" val="SocketWriterModule"/>
- <attr name="socket_type" type="enum" val="UDP"/>
- <attr name="remote_ip" type="string" val="127.0.0.1"/>
 </obj>
 
 <obj class="StreamEmulationParameters" id="crt-stream-emu">
@@ -815,7 +803,6 @@
  <attr name="buffer_timeout" type="u32" val="1"/>
  <attr name="td_readout_limit" type="u32" val="1000000"/>
  <rel name="tc_readout_map">
-  <ref class="TCReadoutMap" id="def-tc-map"/>
   <ref class="TCReadoutMap" id="def-hsi-tc-map"/>
  </rel>
 </obj>
@@ -839,12 +826,6 @@
 <obj class="TCReadoutMap" id="def-random-readout">
  <attr name="tc_type_name" type="string" val="kRandom"/>
  <attr name="time_before" type="u32" val="1000"/>
- <attr name="time_after" type="u32" val="1001"/>
-</obj>
-
-<obj class="TCReadoutMap" id="def-tc-map">
- <attr name="tc_type_name" type="string" val="kTiming"/>
- <attr name="time_before" type="u32" val="3000"/>
  <attr name="time_after" type="u32" val="1001"/>
 </obj>
 
