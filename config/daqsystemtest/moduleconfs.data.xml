@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="99" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260715T203737"/>
+<info name="" type="" num-of-items="99" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260805T125106"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -532,7 +532,7 @@
 
 <obj class="DataflowStatusModuleConf" id="dfs-01">
  <attr name="trigger_type_mask" type="u64" val="18446744073709551615"/>
- <attr name="busy_threshold" type="s32" val="4"/>
+ <attr name="busy_threshold" type="s32" val="5"/>
  <attr name="free_threshold" type="s32" val="3"/>
  <attr name="heartbeat_interval_ms" type="u32" val="250"/>
  <attr name="stop_timeout_ms" type="u32" val="1000"/>
