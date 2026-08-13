@@ -129,9 +129,9 @@
 
 <obj class="AVXThresholdProcessor" id="tpg-threshold-proc">
  <attr name="metric_collect_time_sample_period" type="u64" val="256"/>
- <attr name="plane0" type="u16" val="100"/>
- <attr name="plane1" type="u16" val="100"/>
- <attr name="plane2" type="u16" val="100"/>
+ <attr name="plane0" type="s16" val="100"/>
+ <attr name="plane1" type="s16" val="100"/>
+ <attr name="plane2" type="s16" val="100"/>
 </obj>
 
 <obj class="ActionPlan" id="crt-readout-start">

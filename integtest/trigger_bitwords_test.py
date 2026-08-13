@@ -200,30 +200,12 @@ coincidence_bitword_conf.config_substitutions.append(
             "merge_overlapping_tcs": True
             },)
 )
-coincidence_bitword_conf.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_id="random-tc-generator",
-        obj_class="RandomTCMakerConf",
-        updates={"trigger_rate_hz": 40, "candidate_backshift_ts": 0, "candidate_window_before_ts": 62500, "candidate_window_after_ts": 62500},)
-)
-coincidence_bitword_conf.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_id="def-random-readout",
-        obj_class="TCReadoutMap",
-        updates={"time_before": 62500, "time_after": 62500},)
-)
-coincidence_bitword_conf.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_id="fakehsi",
-        obj_class="FakeHSIEventGeneratorConf",
-        updates={"trigger_rate": 30},)
-)
-coincidence_bitword_conf.config_substitutions.append(
-    data_classes.attribute_substitution(
-        obj_id="def-hsi-tc-map",
-        obj_class="TCReadoutMap",
-        updates={"time_before": 62500, "time_after": 62500},)
-)
+utility_functions.set_rtcm_trigger_params(coincidence_bitword_conf, trigger_rate=40,
+                                          readout_window_backshift_ticks=0, readout_window_before_ticks=62500,
+                                          readout_window_after_ticks=62500)
+utility_functions.set_fake_hsi_trigger_params(coincidence_bitword_conf, trigger_rate=30,
+                                              readout_window_before_ticks=62500,
+                                              readout_window_after_ticks=62500)
 
 # Finally store configs in map
 confgen_arguments = {
