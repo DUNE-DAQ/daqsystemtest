@@ -145,8 +145,10 @@ daphne_triggerprimitive_frag_params = {
     "fragment_type_description": "Trigger Primitive",
     "fragment_type": "Trigger_Primitive",
     "expected_fragment_count": 1,  # number of readout apps
-    "min_size_bytes": 96,
+    "min_size_bytes": 72,
     "max_size_bytes": 4392,
+    "frag_sizes_by_TC_type": {"kPrescale": {"min_size_bytes":  96, "max_size_bytes": 4392},
+                                "default": {"min_size_bytes":  72, "max_size_bytes": 4392} }
 }
 tdeeth_triggerprimitive_frag_params = {
     "fragment_type_description": "Trigger Primitive",
