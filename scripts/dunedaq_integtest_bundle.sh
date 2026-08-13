@@ -35,6 +35,8 @@ Options:
          --dunerc-path <path> : Path to DUNE run control. Default is to search in \$PATH
          --skip-resource-checks : Whether to skip the node resource (CPU/Memory) checks for this test
          --process-manager-type <type> : The run control process manager type to use for this test, e.g. ssh-standalone
+         --no-integtest-connsvc : Whether to disable the Connectivity Service for this test
+         --remove-hdf5-files <choice> : 'always' forces files to be removed, 'never' forces files to be kept
          --dunerc-option <option-name> <option-value> : Repeatable, run control arguments without leading dashes
              for example, --dunerc-option log-level debug
        - example: --pytest-options \"--skip-resource-checks --process-manager-type ssh-standalone --dunerc-option no-override-logs\"
@@ -242,6 +244,44 @@ done
 # reduce the list of tests to a random subset, if requested
 if [[ $random_subset_count -gt 0 ]]; then
     filtered_integtest_list=($(shuf -n "$random_subset_count" -e "${filtered_integtest_list[@]}"))
+fi
+
+# check if any tests remain; provide hints to the user if not
+if [[ ${#filtered_integtest_list[@]} -eq 0 ]]; then
+    matching_integtest_list=()
+    if  [[ "${requested_test_names}" != "" ]]; then
+        echo "...Looking for integtests..."
+        full_integtest_list=(`list_available_integtests.sh 2>/dev/null`)
+        for repo_test in "${full_integtest_list[@]}"; do
+            test_name=`basename ${repo_test}`
+            match_string=`echo ${test_name} | egrep ${requested_test_names}`
+            if [[ "${match_string}" != "" ]]; then
+                matching_integtest_list+=(${repo_test})
+            fi
+        done
+    fi
+    echo ""
+    echo "*** No integtests were found that matched the specified command-line options."
+    if [[ ${#matching_integtest_list[@]} -gt 0 ]]; then
+        sleep 1
+        repo_name=`dirname ${matching_integtest_list[0]}`
+        test_name=`basename ${matching_integtest_list[0]}`
+        echo ""
+        echo "*** Consider adding '-r ${repo_name}' to the option list to pick up the '${test_name}' test."
+        if [[ ${#matching_integtest_list[@]} -gt 1 ]]; then
+            for match in "${matching_integtest_list[@]:1}"; do
+                repo_name=`dirname ${match}`
+                test_name=`basename ${match}`
+                echo "*** And/or '-r ${repo_name}' to pick up the '${test_name}' test."
+            done
+            echo "*** Or '-r all' to pick up all of these tests."
+        fi
+    fi
+    sleep 1
+    echo ""
+    echo "*** 'list_available_integtests.sh' will list all available tests."
+    echo ""
+    exit 5
 fi
 
 if [[ "$only_list_tests" != "" ]]; then
