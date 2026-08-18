@@ -136,24 +136,34 @@ def test_data_files(run_dunerc):
     fragment_check_list.append(wibeth_frag_params)
     nontrig_fragment_check_list = [hsi_frag_params, wibeth_frag_params]
 
+    fail_msg = ""
     for idx in range(len(run_dunerc.data_files)):
         data_file = data_file_checks.DataFile(run_dunerc.data_files[idx], run_dunerc.verbosity_helper)
-        all_ok &= data_file_checks.sanity_check(data_file)
-        all_ok &= data_file_checks.check_file_attributes(data_file)
-        all_ok &= data_file_checks.check_event_count(
+        if not data_file_checks.sanity_check(data_file):
+            fail_msg += f"Sanity check failed. "
+        if not data_file_checks.check_file_attributes(data_file):
+            fail_msg += f"Data file attribute check failed. "
+        if not data_file_checks.check_event_count(
             data_file, expected_event_count, expected_event_count_tolerance
-        )
+        ):
+            fail_msg += f"Event count check failed. "
         for jdx in range(len(fragment_check_list)):
-            all_ok &= data_file_checks.check_fragment_count(
+            fragment_type = fragment_check_list[jdx]["fragment_type"]
+            if not data_file_checks.check_fragment_count(
                 data_file, fragment_check_list[jdx]
-            )
-            all_ok &= data_file_checks.check_fragment_sizes(
+            ):
+                fail_msg += f"{fragment_type} Fragment count check failed. "
+            if not data_file_checks.check_fragment_sizes(
                 data_file, fragment_check_list[jdx]
-            )
+            ):
+                fail_msg += f"{fragment_type} Fragment size check failed. "
         for kdx in range(len(nontrig_fragment_check_list)):
-            all_ok &= data_file_checks.check_fragment_error_flags( data_file, nontrig_fragment_check_list[kdx])
+            fragment_type = nontrig_fragment_check_list[kdx]["fragment_type"]
+            if not data_file_checks.check_fragment_error_flags( data_file, nontrig_fragment_check_list[kdx]):
+                fail_msg += f"{fragment_type} Fragment error flag check failed. "
 
-    assert all_ok
+    if fail_msg != "":
+        pytest.fail(fail_msg, pytrace=False)
 
 
 # 26-Nov-2025, KAB: added some sample opmon metric checks, for demonstration purposes
