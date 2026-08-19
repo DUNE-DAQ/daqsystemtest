@@ -138,7 +138,8 @@ while true; do
             PYTEST_OPTIONS="$PYTEST_OPTIONS --integtest-verbosity $2"
             let level=$2
             if [[ $level -ge 6 ]]; then
-                PYTEST_OPTIONS="$PYTEST_OPTIONS --dunerc-option log-level debug"
+                # enable printout of Pytest 'skip' reasons and turn on drunc debugging
+                PYTEST_OPTIONS="$PYTEST_OPTIONS -rs --dunerc-option log-level debug"
             fi
             shift 2
             ;;
