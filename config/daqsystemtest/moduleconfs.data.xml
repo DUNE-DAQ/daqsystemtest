@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="96" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20251105T144619"/>
+<info name="" type="" num-of-items="97" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20251105T144619"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -791,6 +791,14 @@
 <obj class="TAMakerPrescaleAlgorithm" id="dummy-ta-maker">
  <attr name="prescale" type="u32" val="1000"/>
  <attr name="max_samples_over_threshold" type="u32" val="10000"/>
+</obj>
+
+<obj class="TAMakerProtoDUNEBSMWindowAlgorithm" id="ta-maker-pdbsmwindow">
+ <attr name="prescale" type="u32" val="1"/>
+ <attr name="max_samples_over_threshold" type="u32" val="10000"/>
+ <attr name="channel_map_name" type="string" val="PD2VDTPCChannelMap"/>
+ <attr name="adc_threshold_induction" type="u32" val="12000000"/>
+ <attr name="bdt_threshold" type="float" val="0.999"/>
 </obj>
 
 <obj class="TCDataProcessor" id="def-tc-processor">
