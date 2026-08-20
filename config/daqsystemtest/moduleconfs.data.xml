@@ -236,7 +236,7 @@
 <obj class="DFOConf" id="dfoconf-01">
  <attr name="general_queue_timeout_ms" type="u32" val="100"/>
  <attr name="stop_timeout_ms" type="u32" val="100"/>
- <attr name="request_reply_wait_ms" type="u32" val="100"/>
+ <attr name="request_reply_wait_ms" type="u32" val="500"/>
  <attr name="td_send_retries" type="s32" val="5"/>
  <attr name="reallocate_building_triggers_on_timeout" type="bool" val="0"/>
  <attr name="reallocate_writing_triggers_on_timeout" type="bool" val="0"/>
