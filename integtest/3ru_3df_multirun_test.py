@@ -176,7 +176,7 @@ dunerc_command_list += (
     + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
 )
 dunerc_command_list += (
-    "start --run-number 103 wait 1 enable-triggers wait ".split()
+    "start-run --run-number 103 wait ".split()
     + [str(run_duration)]
     + "disable-triggers wait 1 drain-dataflow wait 2 stop-trigger-sources wait 1 stop wait 2".split()
 )
