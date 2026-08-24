@@ -427,6 +427,16 @@
  <attr name="data_type" type="string" val="PDSStreamFrame"/>
 </obj>
 
+<obj class="DataMoveCallbackDescriptor" id="pds-eth-raw-input">
+ <attr name="uid_base" type="string" val="raw_input_"/>
+ <attr name="data_type" type="string" val="DAPHNEEthFrame"/>
+</obj>
+
+<obj class="DataMoveCallbackDescriptor" id="pds-eth-stream-raw-input">
+ <attr name="uid_base" type="string" val="raw_input_"/>
+ <attr name="data_type" type="string" val="DAPHNEEthStreamFrame"/>
+</obj>
+
 <obj class="DataMoveCallbackDescriptor" id="tde-raw-input">
  <attr name="uid_base" type="string" val="raw_input_"/>
  <attr name="data_type" type="string" val="TDEEthFrame"/>
