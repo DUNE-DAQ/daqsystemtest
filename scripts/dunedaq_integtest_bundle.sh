@@ -26,8 +26,6 @@ Options:
     --verbosity <level> : requested level of console messages, in range 1-6, where 1 is least, 6 is DRUNC debug
     --stop-on-failure : causes the script to stop when one of the integtests reports a failure
     --tmpdir <dir> : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
-    --trigger-full-rc-output <phrase that will trigger the full printout of run control messages>
-       - the phrase can be a Python regex, which can be useful in handling colorized text
     --concise-output : suppresses run control and DAQApp messages in order to focus on test results
        - this is equivalent to \"--verbosity 1\", and this option may be removed at some point in time
     -n <number of times to run each individual test, default=1>
@@ -60,7 +58,7 @@ CaptureOutput() {
     tee -a $1
 }
 
-GETOPT_TEMP=`getopt -o hr:R:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,verbosity:,trigger-full-rc-output:,random-subset:,list-only,pytest-options: -- "$@"`
+GETOPT_TEMP=`getopt -o hr:R:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,verbosity:,random-subset:,list-only,pytest-options: -- "$@"`
 if [ $? -ne 0 ]; then
     usage
     exit 1
@@ -143,11 +141,6 @@ while true; do
                 # enable printout of Pytest 'skip' reasons and turn on drunc debugging
                 PYTEST_OPTIONS="$PYTEST_OPTIONS -rs --dunerc-option log-level debug"
             fi
-            shift 2
-            ;;
-        --trigger-full-rc-output)
-            watch_string=`echo "$2" | sed 's/ /_SPC_/g'`
-            PYTEST_OPTIONS="$PYTEST_OPTIONS --dunerc-fullprint-watch-string $watch_string"
             shift 2
             ;;
         --random-subset)
