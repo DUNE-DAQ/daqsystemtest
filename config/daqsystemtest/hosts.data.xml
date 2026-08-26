@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="7" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20230320T153246" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T153633"/>
+<info name="" type="" num-of-items="21" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20230320T153246" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260826T141519"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -77,6 +77,12 @@
  <comment creation-time="20240208T093240" created-by="eflumerf" created-on="ironvirt9.mshome.net" author="eflumerf" text="format"/>
 </comments>
 
+
+<obj class="PhysicalHost" id="127.0.0.2">
+ <rel name="contains">
+  <ref class="ProcessingResource" id="localhost_cpus"/>
+ </rel>
+</obj>
 
 <obj class="PhysicalHost" id="localhost">
  <rel name="contains">
@@ -184,6 +190,13 @@
   <ref class="ProcessingResource" id="localhost_cpus"/>
  </rel>
  <rel name="runs_on" class="PhysicalHost" id="localhost"/>
+</obj>
+
+<obj class="VirtualHost" id="vlocalhost2">
+ <rel name="uses">
+  <ref class="ProcessingResource" id="localhost_cpus"/>
+ </rel>
+ <rel name="runs_on" class="PhysicalHost" id="127.0.0.2"/>
 </obj>
 
 <obj class="VirtualHost" id="vnp04-srv-021">

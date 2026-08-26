@@ -12,6 +12,7 @@ from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 from integrationtest.verbosity_helper import IntegtestVerbosityLevels
 
 import functools
+
 print = functools.partial(print, flush=True)  # always flush print() output
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
@@ -118,8 +119,17 @@ conf_dict.config_substitutions.append(
 )
 conf_dict.config_substitutions.append(
     data_classes.attribute_substitution(
-        obj_class="DFOConf",
-        updates={"busy_threshold": 3, "free_threshold": 2}
+        obj_class="DFOConf", updates={"busy_threshold": 3, "free_threshold": 2}
+    )
+)
+
+conf_dict.config_substitutions.append(
+    data_classes.relationship_substitution(
+        obj_class="ReadoutApplication",
+        obj_id="ru-det-conn-1",
+        rel_name="runs_on",
+        replacement_object_class="VirtualHost",
+        replacement_object_id="vlocalhost2",
     )
 )
 
@@ -161,6 +171,7 @@ dunerc_command_list += (
 dunerc_command_list += "scrap terminate".split()
 
 # The tests themselves
+
 
 def test_dunerc_success(run_dunerc, caplog):
     # checks for run control success, problems during pytest setup, etc.
