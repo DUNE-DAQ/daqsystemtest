@@ -78,11 +78,6 @@
 </comments>
 
 
-<obj class="PhysicalHost" id="127.0.0.2">
- <rel name="contains">
-  <ref class="ProcessingResource" id="localhost_cpus"/>
- </rel>
-</obj>
 
 <obj class="PhysicalHost" id="localhost">
  <rel name="contains">
@@ -190,13 +185,6 @@
   <ref class="ProcessingResource" id="localhost_cpus"/>
  </rel>
  <rel name="runs_on" class="PhysicalHost" id="localhost"/>
-</obj>
-
-<obj class="VirtualHost" id="vlocalhost2">
- <rel name="uses">
-  <ref class="ProcessingResource" id="localhost_cpus"/>
- </rel>
- <rel name="runs_on" class="PhysicalHost" id="127.0.0.2"/>
 </obj>
 
 <obj class="VirtualHost" id="vnp04-srv-021">

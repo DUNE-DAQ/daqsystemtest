@@ -124,12 +124,12 @@ conf_dict.config_substitutions.append(
 )
 
 conf_dict.config_substitutions.append(
-    data_classes.relationship_substitution(
+    data_classes.list_element_addition(
         obj_class="ReadoutApplication",
         obj_id="ru-det-conn-1",
-        rel_name="runs_on",
-        replacement_object_class="VirtualHost",
-        replacement_object_id="vlocalhost2",
+        rel_name="connection_overrides",
+        additional_object_class="ConnectionOverride",
+        additional_object_id="alternate-localhost-ip",
     )
 )
 

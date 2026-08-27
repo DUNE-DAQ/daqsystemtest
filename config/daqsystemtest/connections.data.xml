@@ -78,6 +78,13 @@
 </comments>
 
 
+
+	<obj class="ConnectionOverride" id="alternate-localhost-ip">
+		<attr name="connection_id_regex" type="string" val=".*"/>
+		<attr name="override_type" type="enum" val="output_hostname"/>
+		<attr name="override_value" type="string" val="127.0.0.2"/>
+	</obj>
+
 <obj class="NetworkConnectionDescriptor" id="data-req-net-input">
  <attr name="uid_base" type="string" val="data_requests_for_"/>
  <attr name="connection_type" type="enum" val="kSendRecv"/>
