@@ -13,6 +13,15 @@ from integrationtest.verbosity_helper import IntegtestVerbosityLevels
 import functools
 print = functools.partial(print, flush=True)  # always flush print() output
 
+# ----- Skips the test if tpglibs was built with state monitoring disabled -----
+import tpglibs
+if not getattr(tpglibs, "state_monitoring_enabled", True):
+    pytest.skip(
+        "Skipping tpg_state_collection_test. tpglibs was built with state monitoring off.",
+        allow_module_level=True,
+    )
+# ----- Skips the test if tpglibs was built with state monitoring disabled -----
+
 pytest_plugins = "integrationtest.integrationtest_drunc"
 
 # Values that help determine the running conditions
