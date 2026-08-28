@@ -90,7 +90,7 @@ requested_test_names=""
 excluded_test_names=""
 let random_subset_count=0
 only_list_tests=""
-PYTEST_COMMAND=(pytest -s --tb=short)  # our core pytest command, with DAQ printout included and short pytest traceback
+PYTEST_BASE_COMMAND=(pytest -s --tb=short)  # our core pytest command, with DAQ printout included and short pytest traceback
 PYTEST_OPTIONS=()
 
 while true; do
@@ -168,7 +168,7 @@ while true; do
             ;;
         --stop-on-failure)
             let stop_on_failure=1
-            PYTEST_COMMAND+=(-x)  # add the -x option to our pytest command to have it exit on first error
+            PYTEST_BASE_COMMAND+=(-x)  # add the -x option to our pytest command to have it exit on first error
             shift
             ;;
         --concise-output)
@@ -225,7 +225,7 @@ while true; do
     esac
 done
 if [[ "${#PYTEST_OPTIONS[@]}" -gt 0 ]]; then
-    PYTEST_COMMAND+=("${PYTEST_OPTIONS[@]}" "--")  # Add the requested options to the pytest command
+    PYTEST_BASE_COMMAND+=("${PYTEST_OPTIONS[@]}" "--")  # Add the requested options to the pytest command
 fi
 
 # run the integtests from the daqsystemtest repo if no repo was specified
@@ -382,6 +382,7 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
             echo -e "\U0001F535 \033[0;34mStarting test ${overall_test_index} of ${total_number_of_tests}...\033[0m \U0001F535" | CaptureOutput ${ITGRUNNER_LOG_FILE}
 
             echo -e "\u2B95 \033[0;1mRunning ${FULL_TEST_NAME}\033[0m \u2B05" | CaptureOutput ${ITGRUNNER_LOG_FILE}
+            PYTEST_COMMAND=("${PYTEST_BASE_COMMAND[@]}")
 
             # First, check if the test is found in the Python virtual environment.
             # This picks up tests from our Python-only software packages.
