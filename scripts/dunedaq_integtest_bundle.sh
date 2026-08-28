@@ -43,6 +43,22 @@ Options:
 """
 }
 
+invalid_arg() {
+    declare -r script_name=$(basename "$0")
+    echo ""
+    echo "*** ERROR: Option '$1' requires an argument, but received '$2'"
+    echo ">>> Reminder: running '${script_name} --help' will list the supported options"
+    echo ""
+}
+
+invalid_numeric_arg() {
+    declare -r script_name=$(basename "$0")
+    echo ""
+    echo "*** ERROR: Option '$1' requires a numeric argument, but received '$2'"
+    echo ">>> Reminder: running '${script_name} --help' will list the supported options"
+    echo ""
+}
+
 # 29-Dec-2025, KAB: Determine if a non-standard pytest tmpdir has been specified
 # in the linux shell environment in which this script is being run. We need to know
 # this value in order to direct functionality in this script to the right place.
@@ -58,7 +74,7 @@ CaptureOutput() {
     tee -a $1
 }
 
-GETOPT_TEMP=`getopt -o hr:R:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,verbosity:,random-subset:,list-only,pytest-options: -- "$@"`
+GETOPT_TEMP=$(getopt -o hr:R:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,verbosity:,random-subset:,list-only,pytest-options: -n "$0" -- "$@")
 if [ $? -ne 0 ]; then
     usage
     exit 1
@@ -74,8 +90,8 @@ requested_test_names=""
 excluded_test_names=""
 let random_subset_count=0
 only_list_tests=""
-PYTEST_COMMAND="pytest -s --tb=short"  # our core pytest command, with DAQ printout included and short pytest traceback
-PYTEST_OPTIONS=""
+PYTEST_COMMAND=(pytest -s --tb=short)  # our core pytest command, with DAQ printout included and short pytest traceback
+PYTEST_OPTIONS=()
 
 while true; do
     case "$1" in
@@ -84,11 +100,21 @@ while true; do
             exit 0
             ;;
         -r)
+            # check that a valid value was passed to this option
+            if [[ "$2" =~ ^- ]]; then
+                invalid_arg $1 $2
+                exit 1
+            fi
             repo_list_string=`echo $2 | sed 's/|/ /g'`
             requested_repo_list+=("${repo_list_string}")
             shift 2
             ;;
         -R)
+            # check that a valid value was passed to this option
+            if [[ "$2" =~ ^- ]]; then
+                invalid_arg $1 $2
+                exit 1
+            fi
             if [[ "${excluded_repo_names}" == "" ]]; then
                 excluded_repo_names="$2"
             else
@@ -97,6 +123,11 @@ while true; do
             shift 2
             ;;
         -k|--include)
+            # check that a valid value was passed to this option
+            if [[ "$2" =~ ^- ]]; then
+                invalid_arg $1 $2
+                exit 1
+            fi
             if [[ "${requested_test_names}" == "" ]]; then
                 requested_test_names="$2"
             else
@@ -105,6 +136,11 @@ while true; do
             shift 2
             ;;
         -x|--exclude)
+            # check that a valid value was passed to this option
+            if [[ "$2" =~ ^- ]]; then
+                invalid_arg $1 $2
+                exit 1
+            fi
             if [[ "${excluded_test_names}" == "" ]]; then
                 excluded_test_names=$2
             else
@@ -113,42 +149,69 @@ while true; do
             shift 2
             ;;
         -n)
+            # check that a valid value was passed to this option
+            if [[ "$2" =~ ^- ]] || ! [[ $2 =~ ^[0-9]+$ ]]; then
+                invalid_numeric_arg $1 $2
+                exit 1
+            fi
             let individual_test_requested_iterations=$2
             shift 2
             ;;
         -N)
+            # check that a valid value was passed to this option
+            if [[ "$2" =~ ^- ]] || ! [[ $2 =~ ^[0-9]+$ ]]; then
+                invalid_numeric_arg $1 $2
+                exit 1
+            fi
             let full_set_requested_interations=$2
             shift 2
             ;;
         --stop-on-failure)
             let stop_on_failure=1
-            PYTEST_COMMAND="${PYTEST_COMMAND} -x"  # add the -x option to our pytest command to have it exit on first error
+            PYTEST_COMMAND+=(-x)  # add the -x option to our pytest command to have it exit on first error
             shift
             ;;
         --concise-output)
-            PYTEST_OPTIONS="$PYTEST_OPTIONS --integtest-verbosity 1"
+            PYTEST_OPTIONS+=(--integtest-verbosity 1)
             shift
             ;;
         --tmpdir)
+            # check that a valid value was passed to this option
+            if [[ "$2" =~ ^- ]]; then
+                invalid_arg $1 $2
+                exit 1
+            fi
             tmpdir_root=$2
             export PYTEST_DEBUG_TEMPROOT=${tmpdir_root}
             shift 2
             ;;
         --verbosity)
-            PYTEST_OPTIONS="$PYTEST_OPTIONS --integtest-verbosity $2"
+            # check that a valid value was passed to this option
+            if [[ "$2" =~ ^- ]] || ! [[ $2 =~ ^[0-9]+$ ]]; then
+                invalid_numeric_arg $1 $2
+                exit 1
+            fi
+            PYTEST_OPTIONS+=(--integtest-verbosity $2)
             let level=$2
             if [[ $level -ge 6 ]]; then
                 # enable printout of Pytest 'skip' reasons and turn on drunc debugging
-                PYTEST_OPTIONS="$PYTEST_OPTIONS -rs --dunerc-option log-level debug"
+                PYTEST_OPTIONS+=(-rs --dunerc-option log-level debug)
             fi
             shift 2
             ;;
         --random-subset)
+            # check that a valid value was passed to this option
+            if [[ "$2" =~ ^- ]] || ! [[ $2 =~ ^[0-9]+$ ]]; then
+                invalid_numeric_arg $1 $2
+                exit 1
+            fi
             let random_subset_count=$2
             shift 2
             ;;
         --pytest-options)
-            PYTEST_OPTIONS="$PYTEST_OPTIONS $2"
+            # use xargs to correctly parse substrings with spaces
+            IFS=$'\n' read -rd '' -a the_list < <(xargs -n1 <<< "$2")
+            PYTEST_OPTIONS+=("${the_list[@]}")
             shift 2
             ;;
         --list-only)
@@ -161,8 +224,8 @@ while true; do
             ;;
     esac
 done
-if [[ "${PYTEST_OPTIONS}" != "" ]]; then
-    PYTEST_COMMAND="${PYTEST_COMMAND} ${PYTEST_OPTIONS} --"  # Add the requested options to the pytest command
+if [[ "${#PYTEST_OPTIONS[@]}" -gt 0 ]]; then
+    PYTEST_COMMAND+=("${PYTEST_OPTIONS[@]}" "--")  # Add the requested options to the pytest command
 fi
 
 # run the integtests from the daqsystemtest repo if no repo was specified
@@ -323,31 +386,40 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
             # First, check if the test is found in the Python virtual environment.
             # This picks up tests from our Python-only software packages.
             if [[ "`ls ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name} 2>/dev/null`" != "" ]]; then
-                ${PYTEST_COMMAND} ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+                PYTEST_COMMAND+=(${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name})
+                "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
 
             # Next, check if the test exists in the current working directory.
             # This is a convenience for developers when they are working on an integtest
             # in a C++ package (the test is found without rebuilding the software).
             elif [[ -e "./${test_name}" ]]; then
-                ${PYTEST_COMMAND} ./${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+                PYTEST_COMMAND+=(./${test_name})
+                "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
 
             # Next, check if the test exists in the local software area.
             elif [[ -e "${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name}" ]]; then
                 if [[ -w "${DBT_AREA_ROOT}" ]]; then
-                    ${PYTEST_COMMAND} ${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+                    PYTEST_COMMAND+=(${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name})
+                    "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
                 else
-                    # remove the trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
-                    PYTEST_COMMAND=`echo ${PYTEST_COMMAND} | sed 's/--$//'`
-                    ${PYTEST_COMMAND} -p no:cacheprovider --no-summary ${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+                    # remove any trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
+                    if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
+                        unset 'PYTEST_COMMAND[-1]'
+                    fi
+                    PYTEST_COMMAND+=(-p no:cacheprovider --no-summary ${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name})
+                    "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
                 fi
 
             # Lastly, we assume that the test can be found in the installed software
             # area (for C++ packages).
             else
                 share_envvar_name="${test_repo^^}_SHARE"  # double caret converts env var to uppercase
-                # remove the trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
-                PYTEST_COMMAND=`echo ${PYTEST_COMMAND} | sed 's/--$//'`
-                ${PYTEST_COMMAND} -p no:cacheprovider --no-summary ${!share_envvar_name}/integtest/${test_name} | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+                # remove any trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
+                if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
+                    unset 'PYTEST_COMMAND[-1]'
+                fi
+                PYTEST_COMMAND+=(-p no:cacheprovider --no-summary ${!share_envvar_name}/integtest/${test_name})
+                "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
             fi
             let pytest_return_code=${PIPESTATUS[0]}
 
