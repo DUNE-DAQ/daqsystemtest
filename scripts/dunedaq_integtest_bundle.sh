@@ -354,7 +354,8 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
             let individual_loop_count=${individual_loop_count}+1
 
             # check if the test failed
-            if [[ ${pytest_return_code} -ne 0 ]]; then
+            # - return code 0 is success, 5 is "No tests were collected"
+            if [[ ${pytest_return_code} -ne 0 ]] && [[ ${pytest_return_code} -ne 5 ]]; then
                 # 15-Dec-2025, KAB: if the test failed for a reason other than it
                 # couldn't be found, make a copy of the pytest directory. This allows
                 # testers to take a look at the results within a reasonable time frame.
