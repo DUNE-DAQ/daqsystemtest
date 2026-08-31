@@ -283,7 +283,7 @@ daphne_eth_conf.dro_map_config.det_id = 2  # det_id = 2 for HD_PDS
 #daphne_eth_conf.fake_data_fragment_type = "DAPHNEEth"
 # TODO: replace use_fakedataprod with asset file once one exists
 # daphne_eth_conf.frame_file = "asset://?label=DAPHNEEth&subsystem=readout"
-daphne_eth_conf.frame_file = "local_asset_DAPHNEEth.bin"
+daphne_eth_conf.frame_file = "asset://?name=asset_DAPHNEEth_link_0.bin"
 utility_functions.set_rtcm_trigger_params(daphne_eth_conf, readout_window_backshift_ticks=0,
                                           readout_window_before_ticks=62000, readout_window_after_ticks=500)
 
