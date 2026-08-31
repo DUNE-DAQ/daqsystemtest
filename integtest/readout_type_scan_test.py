@@ -309,6 +309,17 @@ grenoble_crt_conf.frame_file = "asset://?checksum=dd156b4895f1b06a06b6ff38e37bd7
 utility_functions.set_rtcm_trigger_params(grenoble_crt_conf, readout_window_before_ticks=8000,
                                           readout_window_after_ticks=10)
 
+# CRT frames carry 32 channels, but the emulator pattern generator draws channel
+# numbers in 0-63. Disable the pattern generator for CRT readout.
+for crt_conf in (bern_crt_conf, grenoble_crt_conf):
+    crt_conf.config_substitutions.append(
+        data_classes.attribute_substitution(
+            obj_class="StreamEmulationParameters",
+            obj_id="stream-emu",
+            updates={"generate_periodic_adc_pattern": 0},
+        )
+    )
+
 confgen_arguments = {
     "WIBEth_System": wibeth_conf,
     "WIBEth_TPG_System": wib_tpg_conf,
