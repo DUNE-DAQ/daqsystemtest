@@ -3,6 +3,7 @@
 
 initial_integtest_list=()
 
+# function to display usage hints
 usage() {
     declare -r script_name=$(basename "$0")
     echo """
@@ -43,7 +44,8 @@ Options:
 """
 }
 
-invalid_arg() {
+# function to report a problem with an invalid option value
+invalid_option_value() {
     declare -r script_name=$(basename "$0")
     echo ""
     echo "*** ERROR: Option '$1' requires an argument, but received '$2'"
@@ -51,7 +53,8 @@ invalid_arg() {
     echo ""
 }
 
-invalid_numeric_arg() {
+# function to report a problem with an invalid numeric option value
+invalid_numeric_option_value() {
     declare -r script_name=$(basename "$0")
     echo ""
     echo "*** ERROR: Option '$1' requires a numeric argument, but received '$2'"
@@ -102,7 +105,7 @@ while true; do
         -r)
             # check that a valid value was passed to this option
             if [[ "$2" =~ ^- ]]; then
-                invalid_arg $1 $2
+                invalid_option_value $1 $2
                 exit 1
             fi
             repo_list_string=`echo $2 | sed 's/|/ /g'`
@@ -112,7 +115,7 @@ while true; do
         -R)
             # check that a valid value was passed to this option
             if [[ "$2" =~ ^- ]]; then
-                invalid_arg $1 $2
+                invalid_option_value $1 $2
                 exit 1
             fi
             if [[ "${excluded_repo_names}" == "" ]]; then
@@ -125,7 +128,7 @@ while true; do
         -k|--include)
             # check that a valid value was passed to this option
             if [[ "$2" =~ ^- ]]; then
-                invalid_arg $1 $2
+                invalid_option_value $1 $2
                 exit 1
             fi
             if [[ "${requested_test_names}" == "" ]]; then
@@ -138,7 +141,7 @@ while true; do
         -x|--exclude)
             # check that a valid value was passed to this option
             if [[ "$2" =~ ^- ]]; then
-                invalid_arg $1 $2
+                invalid_option_value $1 $2
                 exit 1
             fi
             if [[ "${excluded_test_names}" == "" ]]; then
@@ -151,7 +154,7 @@ while true; do
         -n)
             # check that a valid value was passed to this option
             if [[ "$2" =~ ^- ]] || ! [[ $2 =~ ^[0-9]+$ ]]; then
-                invalid_numeric_arg $1 $2
+                invalid_numeric_option_value $1 $2
                 exit 1
             fi
             let individual_test_requested_iterations=$2
@@ -160,7 +163,7 @@ while true; do
         -N)
             # check that a valid value was passed to this option
             if [[ "$2" =~ ^- ]] || ! [[ $2 =~ ^[0-9]+$ ]]; then
-                invalid_numeric_arg $1 $2
+                invalid_numeric_option_value $1 $2
                 exit 1
             fi
             let full_set_requested_interations=$2
@@ -178,7 +181,7 @@ while true; do
         --tmpdir)
             # check that a valid value was passed to this option
             if [[ "$2" =~ ^- ]]; then
-                invalid_arg $1 $2
+                invalid_option_value $1 $2
                 exit 1
             fi
             tmpdir_root=$2
@@ -188,7 +191,7 @@ while true; do
         --verbosity)
             # check that a valid value was passed to this option
             if [[ "$2" =~ ^- ]] || ! [[ $2 =~ ^[0-9]+$ ]]; then
-                invalid_numeric_arg $1 $2
+                invalid_numeric_option_value $1 $2
                 exit 1
             fi
             PYTEST_OPTIONS+=(--integtest-verbosity $2)
@@ -202,7 +205,7 @@ while true; do
         --random-subset)
             # check that a valid value was passed to this option
             if [[ "$2" =~ ^- ]] || ! [[ $2 =~ ^[0-9]+$ ]]; then
-                invalid_numeric_arg $1 $2
+                invalid_numeric_option_value $1 $2
                 exit 1
             fi
             let random_subset_count=$2
