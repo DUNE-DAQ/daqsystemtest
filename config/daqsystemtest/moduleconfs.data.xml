@@ -236,9 +236,12 @@
 <obj class="DFOConf" id="dfoconf-01">
  <attr name="general_queue_timeout_ms" type="u32" val="100"/>
  <attr name="stop_timeout_ms" type="u32" val="100"/>
+ <attr name="request_reply_wait_ms" type="u32" val="500"/>
  <attr name="td_send_retries" type="s32" val="5"/>
- <attr name="busy_threshold" type="s32" val="4"/>
- <attr name="free_threshold" type="s32" val="3"/>
+ <attr name="reallocate_building_triggers_on_timeout" type="bool" val="0"/>
+ <attr name="reallocate_writing_triggers_on_timeout" type="bool" val="0"/>
+ <attr name="status_watchdog_interval_ms" type="u32" val="1000"/>
+ <attr name="dataflow_status_timeout_ms" type="u32" val="5000"/>
 </obj>
 
 <obj class="DPDKReaderConf" id="def-emu-nic-receiver-conf">
@@ -525,6 +528,17 @@
  <attr name="max_write_retry_time_ms" type="s32" val="1000"/>
  <attr name="write_retry_time_increase_factor" type="s32" val="2"/>
  <rel name="data_store_params" class="DataStoreConf" id="default_tr_mon_conf"/>
+</obj>
+
+<obj class="DataflowStatusModuleConf" id="dfs-01">
+ <attr name="trigger_type_mask" type="u64" val="18446744073709551615"/>
+ <attr name="busy_threshold" type="s32" val="5"/>
+ <attr name="free_threshold" type="s32" val="3"/>
+ <attr name="heartbeat_interval_ms" type="u32" val="250"/>
+ <attr name="stop_timeout_ms" type="u32" val="1000"/>
+ <attr name="td_queue_timeout_ms" type="u32" val="1000"/>
+ <attr name="snapshot_history_size" type="u32" val="100"/>
+ <attr name="completed_trigger_history_size" type="u32" val="100"/>
 </obj>
 
 <obj class="FilenameParams" id="default">
@@ -899,6 +913,7 @@
  <attr name="tr_queue_timeout" type="u32" val="100"/>
  <attr name="request_queue_timeout" type="u32" val="100"/>
  <attr name="trigger_record_timeout_ms" type="u32" val="2858"/>
+ <attr name="trb_complete_timeout" type="u32" val="1000"/>
  <attr name="maximum_open_trigger_records" type="u32" val="100"/>
 </obj>
 

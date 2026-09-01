@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="us-ascii"?>
+<?xml version="1.0" encoding="ASCII"?>
 
 <!-- oks-data version 2.2 -->
 
@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="15" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20250825T202841"/>
+<info name="" type="" num-of-items="17" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260716T144155"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -86,20 +86,20 @@
  <rel name="source_id" class="SourceIDConf" id="srcid-df-01"/>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="trigger-record-q-rule"/>
+  <ref class="QueueConnectionRule" id="token-q-rule"/>
+  <ref class="QueueConnectionRule" id="trb-td-q-rule"/>
+  <ref class="QueueConnectionRule" id="trb-completion-queue-rule"/>
  </rel>
  <rel name="network_rules">
-  <ref class="NetworkConnectionRule" id="td-trb-net-rule"/>
+  <ref class="NetworkConnectionRule" id="df-status-req-net-rule"/>
+  <ref class="NetworkConnectionRule" id="td-df-net-rule"/>
   <ref class="NetworkConnectionRule" id="frag-net-rule"/>
-  <ref class="NetworkConnectionRule" id="df-token-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-hsi-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
-     <!-- Used for TRMonRequestor
-  <ref class="NetworkConnectionRule" id="trmon-req-net-rule"/>
-  <ref class="NetworkConnectionRule" id="trigger-record-net-rule"/>
-  -->
  </rel>
  <rel name="trb" class="TRBConf" id="trb-01"/>
+ <rel name="dfs" class="DataflowStatusModuleConf" id="dfs-01"/>
  <rel name="data_writers">
   <ref class="DataWriterConf" id="dw-01"/>
  </rel>
@@ -115,21 +115,21 @@
  <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
  <rel name="source_id" class="SourceIDConf" id="srcid-df-02"/>
  <rel name="queue_rules">
+  <ref class="QueueConnectionRule" id="token-q-rule"/>
+  <ref class="QueueConnectionRule" id="trb-td-q-rule"/>
+  <ref class="QueueConnectionRule" id="trb-completion-queue-rule"/>
   <ref class="QueueConnectionRule" id="trigger-record-q-rule"/>
  </rel>
  <rel name="network_rules">
-  <ref class="NetworkConnectionRule" id="td-trb-net-rule"/>
+  <ref class="NetworkConnectionRule" id="df-status-req-net-rule"/>
+  <ref class="NetworkConnectionRule" id="td-df-net-rule"/>
   <ref class="NetworkConnectionRule" id="frag-net-rule"/>
-  <ref class="NetworkConnectionRule" id="df-token-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-hsi-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
-  <!-- Used for TRMonRequestor
-  <ref class="NetworkConnectionRule" id="trmon-req-net-rule"/>
-  <ref class="NetworkConnectionRule" id="trigger-record-net-rule"/>
-  -->
  </rel>
  <rel name="trb" class="TRBConf" id="trb-01"/>
+ <rel name="dfs" class="DataflowStatusModuleConf" id="dfs-01"/>
  <rel name="data_writers">
   <ref class="DataWriterConf" id="dw-01"/>
  </rel>
@@ -146,20 +146,20 @@
  <rel name="source_id" class="SourceIDConf" id="srcid-df-03"/>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="trigger-record-q-rule"/>
+  <ref class="QueueConnectionRule" id="token-q-rule"/>
+  <ref class="QueueConnectionRule" id="trb-td-q-rule"/>
+  <ref class="QueueConnectionRule" id="trb-completion-queue-rule"/>
  </rel>
  <rel name="network_rules">
-  <ref class="NetworkConnectionRule" id="td-trb-net-rule"/>
+  <ref class="NetworkConnectionRule" id="df-status-req-net-rule"/>
+  <ref class="NetworkConnectionRule" id="td-df-net-rule"/>
   <ref class="NetworkConnectionRule" id="frag-net-rule"/>
-  <ref class="NetworkConnectionRule" id="df-token-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-hsi-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-readout-net-rule"/>
   <ref class="NetworkConnectionRule" id="data-req-trig-net-rule"/>
-     <!-- Used for TRMonRequestor
-  <ref class="NetworkConnectionRule" id="trmon-req-net-rule"/>
-  <ref class="NetworkConnectionRule" id="trigger-record-net-rule"/>
-  -->
  </rel>
  <rel name="trb" class="TRBConf" id="trb-01"/>
+ <rel name="dfs" class="DataflowStatusModuleConf" id="dfs-01"/>
  <rel name="data_writers">
   <ref class="DataWriterConf" id="dw-01"/>
  </rel>
@@ -182,7 +182,37 @@
  <rel name="network_rules">
   <ref class="NetworkConnectionRule" id="td-dfo-net-rule"/>
   <ref class="NetworkConnectionRule" id="ti-net-rule"/>
-  <ref class="NetworkConnectionRule" id="df-token-net-rule"/>
+  <ref class="NetworkConnectionRule" id="df-status-net-rule"/>
+ </rel>
+ <rel name="dfo" class="DFOConf" id="dfoconf-01"/>
+</obj>
+
+<obj class="DFOApplication" id="dfo-02">
+ <attr name="application_name" type="string" val="daq_application"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="daqapp_control"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="network_rules">
+  <ref class="NetworkConnectionRule" id="td-dfo-net-rule"/>
+  <ref class="NetworkConnectionRule" id="ti-net-rule"/>
+  <ref class="NetworkConnectionRule" id="df-status-net-rule"/>
+ </rel>
+ <rel name="dfo" class="DFOConf" id="dfoconf-01"/>
+</obj>
+
+<obj class="DFOApplication" id="dfo-03">
+ <attr name="application_name" type="string" val="daq_application"/>
+ <rel name="runs_on" class="VirtualHost" id="vlocalhost"/>
+ <rel name="exposes_service">
+  <ref class="Service" id="daqapp_control"/>
+ </rel>
+ <rel name="opmon_conf" class="OpMonConf" id="slow-all-monitoring"/>
+ <rel name="network_rules">
+  <ref class="NetworkConnectionRule" id="td-dfo-net-rule"/>
+  <ref class="NetworkConnectionRule" id="ti-net-rule"/>
+  <ref class="NetworkConnectionRule" id="df-status-net-rule"/>
  </rel>
  <rel name="dfo" class="DFOConf" id="dfoconf-01"/>
 </obj>
@@ -201,6 +231,8 @@
  <rel name="applications">
   <ref class="TPStreamWriterApplication" id="tp-stream-writer"/>
   <ref class="DFOApplication" id="dfo-01"/>
+  <ref class="DFOApplication" id="dfo-02"/>
+  <ref class="DFOApplication" id="dfo-03"/>
   <ref class="DFApplication" id="df-01"/>
   <ref class="DFApplication" id="df-02"/>
   <ref class="DFApplication" id="df-03"/>

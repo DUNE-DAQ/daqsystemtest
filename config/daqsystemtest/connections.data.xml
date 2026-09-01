@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="74" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20260320T111440"/>
+<info name="" type="" num-of-items="84" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105549" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260715T203737"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -78,11 +78,55 @@
 </comments>
 
 
+<obj class="DataMoveCallbackDescriptor" id="crt-bern-raw-input">
+ <attr name="uid_base" type="string" val="raw_input_"/>
+ <attr name="data_type" type="string" val="CRTBernFrame"/>
+</obj>
+
+<obj class="DataMoveCallbackDescriptor" id="crt-grenoble-raw-input">
+ <attr name="uid_base" type="string" val="raw_input_"/>
+ <attr name="data_type" type="string" val="CRTGrenobleFrame"/>
+</obj>
+
+<obj class="DataMoveCallbackDescriptor" id="pds-raw-input">
+ <attr name="uid_base" type="string" val="raw_input_"/>
+ <attr name="data_type" type="string" val="PDSFrame"/>
+</obj>
+
+<obj class="DataMoveCallbackDescriptor" id="pds-stream-raw-input">
+ <attr name="uid_base" type="string" val="raw_input_"/>
+ <attr name="data_type" type="string" val="PDSStreamFrame"/>
+</obj>
+
+<obj class="DataMoveCallbackDescriptor" id="tde-raw-input">
+ <attr name="uid_base" type="string" val="raw_input_"/>
+ <attr name="data_type" type="string" val="TDEEthFrame"/>
+</obj>
+
+<obj class="DataMoveCallbackDescriptor" id="wib-eth-raw-input">
+ <attr name="uid_base" type="string" val="raw_input_"/>
+ <attr name="data_type" type="string" val="WIBEthFrame"/>
+</obj>
+
 <obj class="NetworkConnectionDescriptor" id="data-req-net-input">
  <attr name="uid_base" type="string" val="data_requests_for_"/>
  <attr name="connection_type" type="enum" val="kSendRecv"/>
  <attr name="data_type" type="string" val="DataRequest"/>
  <rel name="associated_service" class="Service" id="dataRequests"/>
+</obj>
+
+<obj class="NetworkConnectionDescriptor" id="dataflow-status-requests">
+ <attr name="uid_base" type="string" val="dataflow_status_request_"/>
+ <attr name="connection_type" type="enum" val="kSendRecv"/>
+ <attr name="data_type" type="string" val="DataflowStatusRequest"/>
+ <rel name="associated_service" class="Service" id="dataflowStatusRequests"/>
+</obj>
+
+<obj class="NetworkConnectionDescriptor" id="dataflow-statuses">
+ <attr name="uid_base" type="string" val="dataflow_status_"/>
+ <attr name="connection_type" type="enum" val="kSendRecv"/>
+ <attr name="data_type" type="string" val="DataflowStatus"/>
+ <rel name="associated_service" class="Service" id="dataflowStatuses"/>
 </obj>
 
 <obj class="NetworkConnectionDescriptor" id="df-tokens">
@@ -184,6 +228,16 @@
  <rel name="descriptor" class="NetworkConnectionDescriptor" id="data-req-net-input"/>
 </obj>
 
+<obj class="NetworkConnectionRule" id="df-status-net-rule">
+ <attr name="endpoint_class" type="class" val="DFOModule"/>
+ <rel name="descriptor" class="NetworkConnectionDescriptor" id="dataflow-statuses"/>
+</obj>
+
+<obj class="NetworkConnectionRule" id="df-status-req-net-rule">
+ <attr name="endpoint_class" type="class" val="DataflowStatusModule"/>
+ <rel name="descriptor" class="NetworkConnectionDescriptor" id="dataflow-status-requests"/>
+</obj>
+
 <obj class="NetworkConnectionRule" id="df-token-net-rule">
  <attr name="endpoint_class" type="class" val="DFOModule"/>
  <rel name="descriptor" class="NetworkConnectionDescriptor" id="df-tokens"/>
@@ -209,14 +263,14 @@
  <rel name="descriptor" class="NetworkConnectionDescriptor" id="tc-publisher"/>
 </obj>
 
+<obj class="NetworkConnectionRule" id="td-df-net-rule">
+ <attr name="endpoint_class" type="class" val="DataflowStatusModule"/>
+ <rel name="descriptor" class="NetworkConnectionDescriptor" id="trigger-decisions"/>
+</obj>
+
 <obj class="NetworkConnectionRule" id="td-dfo-net-rule">
  <attr name="endpoint_class" type="class" val="DFOModule"/>
  <rel name="descriptor" class="NetworkConnectionDescriptor" id="trigger-decisions-mlt-dfo"/>
-</obj>
-
-<obj class="NetworkConnectionRule" id="td-trb-net-rule">
- <attr name="endpoint_class" type="class" val="TRBModule"/>
- <rel name="descriptor" class="NetworkConnectionDescriptor" id="trigger-decisions"/>
 </obj>
 
 <obj class="NetworkConnectionRule" id="ti-net-rule">
@@ -304,6 +358,11 @@
  <rel name="descriptor" class="QueueDescriptor" id="td-input"/>
 </obj>
 
+<obj class="QueueConnectionRule" id="token-q-rule">
+ <attr name="destination_class" type="class" val="DataflowStatusModule"/>
+ <rel name="descriptor" class="QueueDescriptor" id="df-tokens-q"/>
+</obj>
+
 <obj class="QueueConnectionRule" id="tp-queue-rule">
  <attr name="destination_class" type="class" val="TriggerDataHandlerModule"/>
  <rel name="descriptor" class="QueueDescriptor" id="tp-input"/>
@@ -312,6 +371,16 @@
 <obj class="QueueConnectionRule" id="tpreplay-tp-queue-rule">
  <attr name="destination_class" type="class" val="TriggerDataHandlerModule"/>
  <rel name="descriptor" class="QueueDescriptor" id="tp-input"/>
+</obj>
+
+<obj class="QueueConnectionRule" id="trb-completion-queue-rule">
+ <attr name="destination_class" type="class" val="DataflowStatusModule"/>
+ <rel name="descriptor" class="QueueDescriptor" id="trb-completion-queue"/>
+</obj>
+
+<obj class="QueueConnectionRule" id="trb-td-q-rule">
+ <attr name="destination_class" type="class" val="TRBModule"/>
+ <rel name="descriptor" class="QueueDescriptor" id="td-input"/>
 </obj>
 
 <obj class="QueueConnectionRule" id="trigger-decision-token-q-rule">
@@ -347,7 +416,7 @@
 
 <obj class="QueueDescriptor" id="df-tokens-q">
  <attr name="uid_base" type="string" val="dataflow_token_"/>
- <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
+ <attr name="queue_type" type="enum" val="kFollyMPMCQueue"/>
  <attr name="capacity" type="u32" val="11"/>
  <attr name="data_type" type="string" val="TriggerDecisionToken"/>
 </obj>
@@ -394,6 +463,13 @@
  <attr name="data_type" type="string" val="TriggerPrimitiveVector"/>
 </obj>
 
+<obj class="QueueDescriptor" id="trb-completion-queue">
+ <attr name="uid_base" type="string" val="trb_completion_"/>
+ <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
+ <attr name="capacity" type="u32" val="1000"/>
+ <attr name="data_type" type="string" val="TRBCompletion"/>
+</obj>
+
 <obj class="QueueDescriptor" id="trigger-records">
  <attr name="uid_base" type="string" val="trigger_records_"/>
  <attr name="queue_type" type="enum" val="kFollySPSCQueue"/>
@@ -407,36 +483,6 @@
  <attr name="publish_timeout" type="u32" val="2"/>
 </obj>
 
-<obj class="DataMoveCallbackDescriptor" id="crt-bern-raw-input">
- <attr name="uid_base" type="string" val="raw_input_"/>
- <attr name="data_type" type="string" val="CRTBernFrame"/>
-</obj>
-
-<obj class="DataMoveCallbackDescriptor" id="crt-grenoble-raw-input">
- <attr name="uid_base" type="string" val="raw_input_"/>
- <attr name="data_type" type="string" val="CRTGrenobleFrame"/>
-</obj>
-
-<obj class="DataMoveCallbackDescriptor" id="pds-raw-input">
- <attr name="uid_base" type="string" val="raw_input_"/>
- <attr name="data_type" type="string" val="PDSFrame"/>
-</obj>
-
-<obj class="DataMoveCallbackDescriptor" id="pds-stream-raw-input">
- <attr name="uid_base" type="string" val="raw_input_"/>
- <attr name="data_type" type="string" val="PDSStreamFrame"/>
-</obj>
-
-<obj class="DataMoveCallbackDescriptor" id="tde-raw-input">
- <attr name="uid_base" type="string" val="raw_input_"/>
- <attr name="data_type" type="string" val="TDEEthFrame"/>
-</obj>
-
-<obj class="DataMoveCallbackDescriptor" id="wib-eth-raw-input">
- <attr name="uid_base" type="string" val="raw_input_"/>
- <attr name="data_type" type="string" val="WIBEthFrame"/>
-</obj>
-
 <obj class="Service" id="HSIEvents">
  <attr name="protocol" type="string" val="tcp"/>
  <attr name="port" type="u16" val="0"/>
@@ -448,6 +494,16 @@
 </obj>
 
 <obj class="Service" id="dataRequests">
+ <attr name="protocol" type="string" val="tcp"/>
+ <attr name="port" type="u16" val="0"/>
+</obj>
+
+<obj class="Service" id="dataflowStatusRequests">
+ <attr name="protocol" type="string" val="tcp"/>
+ <attr name="port" type="u16" val="0"/>
+</obj>
+
+<obj class="Service" id="dataflowStatuses">
  <attr name="protocol" type="string" val="tcp"/>
  <attr name="port" type="u16" val="0"/>
 </obj>
