@@ -380,9 +380,31 @@
  <rel name="data_processor" class="PDSRawDataProcessor" id="def-pds-processor"/>
 </obj>
 
+<obj class="DataHandlerConf" id="def-pds-eth-link-handler">
+ <attr name="template_for" type="class" val="FDDataHandlerModule"/>
+ <attr name="input_data_type" type="string" val="DAPHNEEthFrame"/>
+ <attr name="generate_timesync" type="bool" val="1"/>
+ <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
+ <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
+ <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
+ <rel name="data_processor" class="PDSRawDataProcessor" id="def-pds-processor"/>
+</obj>
+
 <obj class="DataHandlerConf" id="def-pds-stream-link-handler">
  <attr name="template_for" type="class" val="FDDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="PDSStreamFrame"/>
+ <attr name="generate_timesync" type="bool" val="1"/>
+ <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
+ <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
+ <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
+ <rel name="data_processor" class="DataProcessor" id="def-base-processor"/>
+</obj>
+
+<obj class="DataHandlerConf" id="def-pds-eth-stream-link-handler">
+ <attr name="template_for" type="class" val="FDDataHandlerModule"/>
+ <attr name="input_data_type" type="string" val="DAPHNEEthStreamFrame"/>
  <attr name="generate_timesync" type="bool" val="1"/>
  <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
  <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
@@ -745,7 +767,7 @@
 
 <obj class="StreamEmulationParameters" id="crt-stream-emu">
  <attr name="data_file_name" type="string" val="/cvmfs/dunedaq.opensciencegrid.org/assets/files/d/d/1/wibeth_output_all_zeros.bin"/>
- <attr name="input_file_size_limit" type="u32" val="5777280"/>
+ <attr name="input_file_size_limit" type="u32" val="101146232"/>
  <attr name="set_t0" type="bool" val="1"/>
  <attr name="random_population_size" type="u32" val="100000"/>
  <attr name="frame_error_rate_hz" type="float" val="0"/>
@@ -755,7 +777,7 @@
 
 <obj class="StreamEmulationParameters" id="stream-emu">
  <attr name="data_file_name" type="string" val="/cvmfs/dunedaq.opensciencegrid.org/assets/files/d/d/1/wibeth_output_all_zeros.bin"/>
- <attr name="input_file_size_limit" type="u32" val="5777280"/>
+ <attr name="input_file_size_limit" type="u32" val="101146232"/>
  <attr name="set_t0" type="bool" val="1"/>
  <attr name="random_population_size" type="u32" val="100000"/>
  <attr name="frame_error_rate_hz" type="float" val="0"/>
