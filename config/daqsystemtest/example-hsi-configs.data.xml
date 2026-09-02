@@ -109,7 +109,7 @@
   <ref class="Variable" id="local-env-ers-error"/>
   <ref class="Variable" id="local-env-ers-fatal"/>
  </rel>
- <rel name="disabled">
+ <rel name="excluded">
   <ref class="DFApplication" id="df-02"/>
   <ref class="DFApplication" id="df-03"/>
   <ref class="ReadoutApplication" id="ru-02"/>
