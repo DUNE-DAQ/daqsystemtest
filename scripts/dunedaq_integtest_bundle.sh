@@ -26,6 +26,7 @@ Options:
     --verbosity <level> : requested level of console messages, in range 1-6, where 1 is least, 6 is DRUNC debug
     --stop-on-failure : causes the script to stop when one of the integtests reports a failure
     --tmpdir <dir> : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
+    --junit-xml <file>: causes pytest to emit a junit xml file with the chosen name
     --concise-output : suppresses run control and DAQApp messages in order to focus on test results
        - this is equivalent to \"--verbosity 1\", and this option may be removed at some point in time
     -n <number of times to run each individual test, default=1>
@@ -41,6 +42,40 @@ Options:
              for example, --dunerc-option log-level debug
        - example: --pytest-options \"--skip-resource-checks --process-manager-type ssh-standalone --dunerc-option no-override-logs\"
 """
+}
+
+HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+SUITE_DIR="${HERE}/test_suites"
+
+load_test_suite() {
+    local suite="${1}"
+    local suite_file="${SUITE_DIR}/${suite}.txt"
+    local tmp_repo_list=()
+    local tmp_test_names=()
+
+    # Core tests are defined in ./test_suites/core.txt
+    # "Extended" tests are defined as all non-core tests
+    if [[ "$suite" == "extended" ]]; then
+        suite_file="${HERE}/test_suites/core.txt"
+    fi
+
+    while IFS="" read -r line || [ -n "$line" ]; do
+        if [[ -z "$line" ]]; then continue; fi
+
+        repo="$(echo $line | cut -d ':' -f 1)"
+        test="$(echo $line | cut -d ':' -f 2)"
+
+        tmp_repo_list+=("$repo")
+        tmp_test_names+=" $test"
+    done < "${suite_file}"
+
+    if [[ "$suite" == "extended" ]]; then
+        requested_repo_list+=("all")
+        excluded_test_names="$(echo ${tmp_test_names[@]} | tr ' ' '|')"
+    else
+        requested_repo_list="${tmp_repo_list[@]}"
+        requested_test_names="$(echo ${tmp_test_names[@]} | tr ' ' '|')"
+    fi
 }
 
 # 29-Dec-2025, KAB: Determine if a non-standard pytest tmpdir has been specified
@@ -151,6 +186,10 @@ while true; do
             PYTEST_OPTIONS="$PYTEST_OPTIONS $2"
             shift 2
             ;;
+        --junit-xml)
+            PYTEST_OPTIONS="$PYTEST_OPTIONS --junit-xml $2"
+            shift 2
+            ;;
         --list-only)
             only_list_tests="yes"
             shift
@@ -172,20 +211,16 @@ if [[ "${#requested_repo_list}" -eq 0 ]]; then
     echo "Integtests from the _daqsystemtest_ repo will be run..."
 fi
 
-for requested_repo in "${requested_repo_list[@]}"; do
-    if [[ "${requested_repo}" == "all" ]]; then
-        echo ""
-        echo "Building the list of _all_ integtests..."
-        break
-    fi
-done
-for requested_repo in "${requested_repo_list[@]}"; do
-    if [[ "${requested_repo}" == "local" ]]; then
-        echo ""
-        echo "Building the list of _local_ integtests..."
-        break
-    fi
-done
+if [[ "${requested_repo_list}" == "all" || "${requested_repo_list}" == "local" ]]; then
+    echo ""
+    echo "Building the list of _${requested_repo_list}_ integtests..."
+elif [[ -r "${SUITE_DIR}/${requested_repo_list}.txt" || "${requested_repo_list}" == "extended" ]]; then
+    echo ""
+    echo "Loading test suite _${requested_repo_list}_"
+
+    load_test_suite "${requested_repo_list}"
+fi
+
 if [[ "${excluded_repo_names}" == "" ]]; then
     initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} 2>/dev/null`)
 else

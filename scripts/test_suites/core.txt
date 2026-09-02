@@ -1,0 +1,13 @@
+listrev:listrev_test
+daqsystemtest:3ru_1df_multirun_test
+daqsystemtest:3ru_3df_multirun_test
+daqsystemtest:disabled_tpg_test
+daqsystemtest:example_system_test
+daqsystemtest:fake_data_producer_test
+daqsystemtest:long_window_readout_test
+daqsystemtest:minimal_system_quick_test
+daqsystemtest:readout_type_scan_test
+daqsystemtest:small_footprint_quick_test
+daqsystemtest:tpreplay_test
+daqsystemtest:tpstream_writing_test
+
