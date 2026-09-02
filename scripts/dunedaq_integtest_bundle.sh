@@ -16,6 +16,7 @@ Options:
        - it can be a pipe-delimited string with a list of repos, e.g. 'dfmodules|trigger'
        - it can have the special value of \"all\" - integtests in all repos will be run
        - it can have the special value of \"local\" - integtests in locally-cloned repos will be run
+       - it can be the name of a test suite defined in test_suites/, e.g., 'core'
     -R <the list of repositories to be excluded>
        - this can be the name of a single repo
        - it can be a pipe-delimited string with a list of repos, e.g. 'dfmodules|trigger'
