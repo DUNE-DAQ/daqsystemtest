@@ -1,6 +1,7 @@
 #!/bin/bash
 # 19-Dec-2025, KAB
 
+# function to display usage hints
 usage() {
     declare -r script_name=$(basename "$0")
     echo """
@@ -17,6 +18,24 @@ Options:
     -h, --help : prints out usage information
     -x, --exclude <pipe-delimited string with names of repos to be excluded ('egrep -i' match to match name)>
 """
+}
+
+# function to check for a specific string in a list
+string_in_list() {
+    # get the search string from the first argument
+    local search_string="$1"
+    shift
+
+    # read the remaining positional arguments into a local array
+    local local_arr=( "$@" )
+
+    # check for the presence of the search string
+    for item in "${local_arr[@]}"; do
+        if [[ "${item}" == "${search_string}" ]]; then
+            return 0
+        fi
+    done
+    return 1
 }
 
 GETOPT_TEMP=`getopt -o hx: --long help,exclude: -- "$@"`
@@ -56,22 +75,18 @@ repo_list=()
 if [[ $# -ge 1 ]]; then
     for arg in "$@"
     do
-        # create a string that we'll use to check if a repo is already in the list
-        repo_list_string=$(IFS=\| ; echo "${repo_list[*]}")
-        repo_list_string="|${repo_list_string}|"
-
         if [[ "$arg" == "local" ]] || [[ "$arg" == "all" ]]; then
             echo "Looking for integtests in _${arg}_ repos..." >&2
             echo "" >&2
             temp_list=(`list_repos_with_integtests.sh ${arg} 2>/dev/null`)
             for candidate_repo in "${temp_list[@]}"; do
-                if [[ "`echo \"${repo_list_string}\" | grep \"|${candidate_repo}|\"`" == "" ]]; then
+                if ! string_in_list "$candidate_repo" "${repo_list[@]}"; then
                     repo_list+=("${candidate_repo}")
                 fi
            done
         else
             candidate_repo=$arg
-            if [[ "`echo \"${repo_list_string}\" | grep \"|${candidate_repo}|\"`" == "" ]]; then
+            if ! string_in_list "$candidate_repo" "${repo_list[@]}"; then
                 repo_list+=("${candidate_repo}")
             fi
         fi
