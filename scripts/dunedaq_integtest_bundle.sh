@@ -128,7 +128,10 @@ while true; do
             fi
             # split a pipe-delimited string into individual elements, if needed
             IFS='|' read -ra tmp_list <<< "$2"
-            requested_repo_list+=("${tmp_list[@]}")
+            for repo in "${tmp_list[@]}"; do
+                read -rd '' trimmed <<< "$repo"
+                requested_repo_list+=("${trimmed}")
+            done
             shift 2
             ;;
         -R)
