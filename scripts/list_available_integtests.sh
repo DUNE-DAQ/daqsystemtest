@@ -48,6 +48,9 @@ while true; do
     esac
 done
 
+# remove any spurious spaces from the excluded repo names (these will be used in an 'egrep' expression)
+excluded_repo_names=`echo ${excluded_repo_names} | sed 's/\s//g'`
+
 echo "" >&2
 repo_list=()
 if [[ $# -ge 1 ]]; then

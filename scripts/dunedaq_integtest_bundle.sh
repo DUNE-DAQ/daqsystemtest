@@ -249,9 +249,16 @@ while true; do
             ;;
     esac
 done
+
+# assemgle the basic elements for the pytest command that we will use
 if [[ "${#PYTEST_OPTIONS[@]}" -gt 0 ]]; then
     PYTEST_BASE_COMMAND+=("${PYTEST_OPTIONS[@]}" "--")  # Add the requested options to the pytest command
 fi
+
+# remove any spurious spaces from test and repo name strings (these will be used in 'egrep' expressions)
+requested_test_names=`echo ${requested_test_names} | sed 's/\s//g'`
+excluded_test_names=`echo ${excluded_test_names} | sed 's/\s//g'`
+excluded_repo_names=`echo ${excluded_repo_names} | sed 's/\s//g'`
 
 # run the integtests from the daqsystemtest repo if no repo was specified
 if [[ "${#requested_repo_list}" -eq 0 ]]; then
@@ -275,7 +282,7 @@ fi
 if [[ "${excluded_repo_names}" == "" ]]; then
     initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} 2>/dev/null`)
 else
-    initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} -x ${excluded_repo_names} 2>/dev/null`)
+    initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} -x "${excluded_repo_names}" 2>/dev/null`)
 fi
 if [[ ${#initial_integtest_list[@]} -eq 0 ]]; then
     echo ""
