@@ -46,7 +46,6 @@ Options:
 """
 }
 
-<<<<<<< HEAD
 HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 SUITE_DIR="${HERE}/test_suites"
 
@@ -79,7 +78,8 @@ load_test_suite() {
         requested_repo_list="${tmp_repo_list[@]}"
         requested_test_names="$(echo ${tmp_test_names[@]} | tr ' ' '|')"
     fi
-=======
+}
+
 # function to report a problem with an invalid option value
 invalid_option_value() {
     declare -r script_name=$(basename "$0")
@@ -96,7 +96,6 @@ invalid_numeric_option_value() {
     echo "*** ERROR: Option '$1' requires a numeric argument, but received '$2'"
     echo ">>> Reminder: running '${script_name} --help' will list the supported options"
     echo ""
->>>>>>> 47603620dfe49f7fa5b63aa5067e6404762745c3
 }
 
 # 29-Dec-2025, KAB: Determine if a non-standard pytest tmpdir has been specified
