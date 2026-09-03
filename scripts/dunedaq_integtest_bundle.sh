@@ -62,6 +62,24 @@ invalid_numeric_option_value() {
     echo ""
 }
 
+# function to check for a specific string in a list
+string_in_list() {
+    # get the search string from the first argument
+    local search_string="$1"
+    shift
+
+    # read the remaining positional arguments into a local array
+    local local_arr=( "$@" )
+
+    # check for the presence of the search string
+    for item in "${local_arr[@]}"; do
+        if [[ "${item}" == "${search_string}" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
 # 29-Dec-2025, KAB: Determine if a non-standard pytest tmpdir has been specified
 # in the linux shell environment in which this script is being run. We need to know
 # this value in order to direct functionality in this script to the right place.
@@ -108,8 +126,9 @@ while true; do
                 invalid_option_value $1 $2
                 exit 1
             fi
-            repo_list_string=`echo $2 | sed 's/|/ /g'`
-            requested_repo_list+=("${repo_list_string}")
+            # split a pipe-delimited string into individual elements, if needed
+            IFS='|' read -ra tmp_list <<< "$2"
+            requested_repo_list+=("${tmp_list[@]}")
             shift 2
             ;;
         -R)
@@ -238,20 +257,18 @@ if [[ "${#requested_repo_list}" -eq 0 ]]; then
     echo "Integtests from the _daqsystemtest_ repo will be run..."
 fi
 
-for requested_repo in "${requested_repo_list[@]}"; do
-    if [[ "${requested_repo}" == "all" ]]; then
-        echo ""
-        echo "Building the list of _all_ integtests..."
-        break
-    fi
-done
-for requested_repo in "${requested_repo_list[@]}"; do
-    if [[ "${requested_repo}" == "local" ]]; then
+# provide feedback to the user when a group of tests will be run
+if string_in_list "all" "${requested_repo_list[@]}"; then
+    echo ""
+    echo "Building the list of _all_ integtests..."
+else
+    if string_in_list "local" "${requested_repo_list[@]}"; then
         echo ""
         echo "Building the list of _local_ integtests..."
-        break
     fi
-done
+fi
+
+# determine the list of tests
 if [[ "${excluded_repo_names}" == "" ]]; then
     initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} 2>/dev/null`)
 else
