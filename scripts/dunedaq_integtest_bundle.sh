@@ -30,11 +30,11 @@ Options:
     --verbosity <level> : requested level of console messages, in range 1-6, where 1 is least, 6 is DRUNC debug
     --stop-on-failure : causes the script to stop when one of the integtests reports a failure
     --tmpdir <dir> : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
-    --junit-xml : causes pytest to emit a junit xml file named <repo>_<test_name>_results.xml
     --concise-output : suppresses run control and DAQApp messages in order to focus on test results
        - this is equivalent to \"--verbosity 1\", and this option may be removed at some point in time
     -n <number of times to run each individual test, default=1>
     -N <number of times to run the full set of selected tests, default=1>
+    --junit-xml : causes pytest to emit a junit xml file named <repo>_<test_name>_results.xml
     --pytest-options <options> : string with one or more dunedaq-specific command-line options to pass to Pytest
        - available options include the following:
          --dunerc-path <path> : Path to DUNE run control. Default is to search in \$PATH
@@ -94,21 +94,31 @@ append_pipe_delimited() {
 load_test_suite() {
     local suite="${1}"
     local suite_file="${SUITE_DIR}/${suite}.txt"
-    local tmp_repo_list=()
-    local tmp_test_names=()
+    local repo=""
+    local test=""
+    local line=""
 
     # Core tests are defined in ./test_suites/core.txt
     # "Extended" tests are defined as all non-core tests
     if [[ "$suite" == "extended" ]]; then
-        suite_file="${HERE}/test_suites/core.txt"
+        suite_file="${SUITE_DIR}/core.txt"
         requested_repo_list=("all")
     fi
 
     while IFS="" read -r line || [ -n "$line" ]; do
         if [[ -z "$line" ]]; then continue; fi
 
-        repo="$(echo $line | cut -d ':' -f 1)"
-        test="$(echo $line | cut -d ':' -f 2)"
+        if [[ ! "$line" =~ ^[a-zA-Z-]+:[0-9a-zA-Z_-]+$ ]]; then
+            printf 'WARNING: %s\n' \
+                "skipping malformed entry in ${suite_file}:" \
+                "  ${line}" \
+                "expected <repo_name>:<test_name>, with no trailing '.py' an no other whitespace
+                " >&2
+            continue
+        fi
+
+        repo="$(echo "$line" | cut -d ':' -f 1)"
+        test="$(echo "$line" | cut -d ':' -f 2)"
 
         if ! string_in_list "$repo" "${requested_repo_list[@]}" && [[ "${suite}" != "extended" ]]; then
             requested_repo_list+=("$repo")
@@ -189,11 +199,7 @@ while true; do
                 invalid_option_value $1 $2
                 exit 1
             fi
-            if [[ "${excluded_repo_names}" == "" ]]; then
-                excluded_repo_names="$2"
-            else
-                excluded_repo_names="${excluded_repo_names}|$2"
-            fi
+            append_pipe_delimited excluded_repo_names "$2"
             shift 2
             ;;
         -k|--include)
@@ -239,6 +245,10 @@ while true; do
             fi
             let full_set_requested_interations=$2
             shift 2
+            ;;
+        --junit-xml)
+            write_junit_xml="true"
+            shift
             ;;
         --stop-on-failure)
             let stop_on_failure=1
@@ -287,14 +297,6 @@ while true; do
             IFS=$'\n' read -rd '' -a the_list < <(xargs -n1 <<< "$2")
             PYTEST_OPTIONS+=("${the_list[@]}")
             shift 2
-            ;;
-        --junit-xml)
-            if [[ "$2" != -* ]]; then
-                echo "ERROR: --junit-xml does not take an argument"
-                exit 1
-            fi
-            write_junit_xml="true"
-            shift
             ;;
         --list-only)
             only_list_tests="yes"
@@ -480,7 +482,10 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
             PYTEST_COMMAND=("${PYTEST_BASE_COMMAND[@]}")
 
             if [[ "$write_junit_xml" == "true" ]]; then
-                PYTEST_COMMAND+=("--junit-xml=${test_repo}_${test_name%.py}_results.xml")
+                if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
+                    unset 'PYTEST_COMMAND[-1]'
+                fi
+                PYTEST_COMMAND+=("--junit-xml=${test_repo}_${test_name%.py}_results.xml" "--")
             fi
 
             # First, check if the test is found in the Python virtual environment.
