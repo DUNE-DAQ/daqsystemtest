@@ -88,14 +88,14 @@ timing_bitword = db.get_dal(class_name="TriggerBitword", uid="test-bitword2")
 # Prep to turn off tp-stream-writer
 local_conf = db.get_dal(class_name="Session", uid="local-1x1-config")
 tpstream_writer = db.get_dal(class_name="TPStreamWriterApplication", uid="tp-stream-writer")
-# Append the TPStreamWriter to the disabled list
-local_conf.disabled.append(tpstream_writer)
-disabled_list = [db.get_dal(class_name=obj.className(), uid=obj.id) for obj in local_conf.disabled]
+# Append the TPStreamWriter to the excluded list
+local_conf.excluded.append(tpstream_writer)
+excluded_list = [db.get_dal(class_name=obj.className(), uid=obj.id) for obj in local_conf.excluded]
 onebyone_local_conf.config_substitutions.append(
     data_classes.attribute_substitution(
         obj_class="Session",
         obj_id="local-1x1-config",
-        updates={"disabled": []},
+        updates={"excluded": []},
     )
 )
 # Disable TC merging
@@ -125,11 +125,11 @@ configs = [
     series_bitword_conf,
     coincidence_bitword_conf]
 
-# Actually disable tp-stream-writer
+# Actually exclude tp-stream-writer
 for conf in configs:
     for sub in conf.config_substitutions:
         if sub.obj_id == "local-1x1-config":
-            sub.updates["disabled"] = disabled_list
+            sub.updates["excluded"] = excluded_list
 
 ### Bitwords configs
 # Prescale
