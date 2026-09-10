@@ -101,11 +101,6 @@
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <attr name="controller_log_level" type="enum" val="INFO"/>
- <rel name="disabled">
-  <ref class="DFApplication" id="df-02"/>
-  <ref class="DFApplication" id="df-03"/>
-  <ref class="ReadoutApplication" id="ru-02"/>
- </rel>
  <rel name="connectivity_service" class="ConnectivityService" id="local-connectivity-service-config"/>
  <rel name="environment">
   <ref class="Variable" id="local-env-ers-verb"/>
@@ -113,6 +108,11 @@
   <ref class="Variable" id="local-env-ers-warning"/>
   <ref class="Variable" id="local-env-ers-error"/>
   <ref class="Variable" id="local-env-ers-fatal"/>
+ </rel>
+ <rel name="excluded">
+  <ref class="DFApplication" id="df-02"/>
+  <ref class="DFApplication" id="df-03"/>
+  <ref class="ReadoutApplication" id="ru-02"/>
  </rel>
  <rel name="segment" class="Segment" id="root-segment"/>
  <rel name="infrastructure_applications">

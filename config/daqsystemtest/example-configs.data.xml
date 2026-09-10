@@ -123,7 +123,7 @@
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <attr name="controller_log_level" type="enum" val="INFO"/>
  <attr name="log_path" type="string" val="/log"/>
- <rel name="disabled">
+ <rel name="excluded">
   <ref class="DFApplication" id="df-02"/>
   <ref class="DFApplication" id="df-03"/>
   <ref class="DFOApplication" id="dfo-02"/>
@@ -161,9 +161,9 @@
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <attr name="controller_log_level" type="enum" val="INFO"/>
- <rel name="disabled">
-  <ref class="DFOApplication" id="dfo-02"/>
+ <rel name="excluded">
   <ref class="DFOApplication" id="dfo-03"/>
+  <ref class="DFOApplication" id="dfo-02"/>
   <ref class="DFApplication" id="df-02"/>
   <ref class="DFApplication" id="df-03"/>
   <ref class="TPStreamWriterApplication" id="tp-stream-writer"/>
@@ -185,7 +185,7 @@
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <attr name="controller_log_level" type="enum" val="INFO"/>
- <rel name="disabled">
+ <rel name="excluded">
   <ref class="DFOApplication" id="dfo-02"/>
   <ref class="DFOApplication" id="dfo-03"/>
   <ref class="DFApplication" id="df-02"/>
@@ -208,7 +208,7 @@
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <attr name="controller_log_level" type="enum" val="INFO"/>
- <rel name="disabled">
+ <rel name="excluded">
   <ref class="DFOApplication" id="dfo-02"/>
   <ref class="DFOApplication" id="dfo-03"/>
  </rel>
@@ -244,7 +244,7 @@
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <attr name="controller_log_level" type="enum" val="INFO"/>
- <rel name="disabled">
+ <rel name="excluded">
   <ref class="DFApplication" id="df-02"/>
   <ref class="DFApplication" id="df-03"/>
   <ref class="DFOApplication" id="dfo-02"/>
@@ -268,7 +268,7 @@
  <attr name="data_request_timeout_ms" type="u32" val="1000"/>
  <attr name="data_rate_slowdown_factor" type="u32" val="1"/>
  <attr name="controller_log_level" type="enum" val="INFO"/>
- <rel name="disabled">
+ <rel name="excluded">
   <ref class="DFApplication" id="df-02"/>
   <ref class="DFApplication" id="df-03"/>
   <ref class="DFOApplication" id="dfo-02"/>
