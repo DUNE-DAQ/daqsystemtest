@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="62" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="dergonul" last-modified-on="np04-srv-015.cern.ch" last-modification-time="20260305T122304"/>
+<info name="" type="" num-of-items="61" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105615" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260910T145939"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -123,7 +123,7 @@
  </rel>
  <rel name="queue_rules">
   <ref class="QueueConnectionRule" id="crt-bern-sender-input-queue-rule"/>
- </rel> 
+ </rel>
  <rel name="detector_frame_builder" class="CRTBernFrameBuilderConf" id="def-crt-bern-frame-builder-conf"/>
  <rel name="data_writer" class="SocketWriterConf" id="def-socket-writer-conf"/>
  <rel name="detector_connections">
