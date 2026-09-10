@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="7" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20230320T153246" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20240917T153633"/>
+<info name="" type="" num-of-items="19" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20230320T153246" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260910T143415"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -77,48 +77,6 @@
  <comment creation-time="20240208T093240" created-by="eflumerf" created-on="ironvirt9.mshome.net" author="eflumerf" text="format"/>
 </comments>
 
-
-<obj class="PhysicalHost" id="localhost">
- <rel name="contains">
-  <ref class="HostCores" id="localhost_cpus"/>
- </rel>
-</obj>
-
-<obj class="PhysicalHost" id="np04-srv-021">
- <rel name="contains">
-  <ref class="HostCores" id="np04-srv-021_cpus"/>
- </rel>
-</obj>
-
-<obj class="PhysicalHost" id="np04-srv-022">
- <rel name="contains">
-  <ref class="HostCores" id="np04-srv-022_cpus"/>
- </rel>
-</obj>
-
-<obj class="PhysicalHost" id="np04-srv-028">
- <rel name="contains">
-  <ref class="HostCores" id="np04-srv-028_cpus"/>
- </rel>
-</obj>
-
-<obj class="PhysicalHost" id="np04-srv-029">
- <rel name="contains">
-  <ref class="HostCores" id="np04-srv-029_cpus"/>
- </rel>
-</obj>
-
-<obj class="PhysicalHost" id="monkafka.cern.ch">
- <rel name="contains">
-  <ref class="HostCores" id="localhost_cpus"/>
- </rel>
-</obj>
-
-<obj class="PhysicalHost" id="pocket-host">
- <rel name="contains">
-  <ref class="HostCores" id="localhost_cpus"/>
- </rel>
-</obj>
 
 <obj class="HostCores" id="localhost_cpus">
  <attr name="cpu_cores" type="u16">
@@ -163,6 +121,48 @@
   <data val="2"/>
   <data val="3"/>
  </attr>
+</obj>
+
+<obj class="PhysicalHost" id="localhost">
+ <rel name="contains">
+  <ref class="HostCores" id="localhost_cpus"/>
+ </rel>
+</obj>
+
+<obj class="PhysicalHost" id="monkafka.cern.ch">
+ <rel name="contains">
+  <ref class="HostCores" id="localhost_cpus"/>
+ </rel>
+</obj>
+
+<obj class="PhysicalHost" id="np04-srv-021">
+ <rel name="contains">
+  <ref class="HostCores" id="np04-srv-021_cpus"/>
+ </rel>
+</obj>
+
+<obj class="PhysicalHost" id="np04-srv-022">
+ <rel name="contains">
+  <ref class="HostCores" id="np04-srv-022_cpus"/>
+ </rel>
+</obj>
+
+<obj class="PhysicalHost" id="np04-srv-028">
+ <rel name="contains">
+  <ref class="HostCores" id="np04-srv-028_cpus"/>
+ </rel>
+</obj>
+
+<obj class="PhysicalHost" id="np04-srv-029">
+ <rel name="contains">
+  <ref class="HostCores" id="np04-srv-029_cpus"/>
+ </rel>
+</obj>
+
+<obj class="PhysicalHost" id="pocket-host">
+ <rel name="contains">
+  <ref class="HostCores" id="localhost_cpus"/>
+ </rel>
 </obj>
 
 <obj class="VirtualHost" id="kafka-cern-vhost">
