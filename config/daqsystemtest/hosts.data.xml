@@ -80,47 +80,47 @@
 
 <obj class="PhysicalHost" id="localhost">
  <rel name="contains">
-  <ref class="ProcessingResource" id="localhost_cpus"/>
+  <ref class="HostCores" id="localhost_cpus"/>
  </rel>
 </obj>
 
 <obj class="PhysicalHost" id="np04-srv-021">
  <rel name="contains">
-  <ref class="ProcessingResource" id="np04-srv-021_cpus"/>
+  <ref class="HostCores" id="np04-srv-021_cpus"/>
  </rel>
 </obj>
 
 <obj class="PhysicalHost" id="np04-srv-022">
  <rel name="contains">
-  <ref class="ProcessingResource" id="np04-srv-022_cpus"/>
+  <ref class="HostCores" id="np04-srv-022_cpus"/>
  </rel>
 </obj>
 
 <obj class="PhysicalHost" id="np04-srv-028">
  <rel name="contains">
-  <ref class="ProcessingResource" id="np04-srv-028_cpus"/>
+  <ref class="HostCores" id="np04-srv-028_cpus"/>
  </rel>
 </obj>
 
 <obj class="PhysicalHost" id="np04-srv-029">
  <rel name="contains">
-  <ref class="ProcessingResource" id="np04-srv-029_cpus"/>
+  <ref class="HostCores" id="np04-srv-029_cpus"/>
  </rel>
 </obj>
 
 <obj class="PhysicalHost" id="monkafka.cern.ch">
  <rel name="contains">
-  <ref class="ProcessingResource" id="localhost_cpus"/>
+  <ref class="HostCores" id="localhost_cpus"/>
  </rel>
 </obj>
 
 <obj class="PhysicalHost" id="pocket-host">
  <rel name="contains">
-  <ref class="ProcessingResource" id="localhost_cpus"/>
+  <ref class="HostCores" id="localhost_cpus"/>
  </rel>
 </obj>
 
-<obj class="ProcessingResource" id="localhost_cpus">
+<obj class="HostCores" id="localhost_cpus">
  <attr name="cpu_cores" type="u16">
   <data val="0"/>
   <data val="1"/>
@@ -129,7 +129,7 @@
  </attr>
 </obj>
 
-<obj class="ProcessingResource" id="np04-srv-021_cpus">
+<obj class="HostCores" id="np04-srv-021_cpus">
  <attr name="cpu_cores" type="u16">
   <data val="0"/>
   <data val="1"/>
@@ -138,7 +138,7 @@
  </attr>
 </obj>
 
-<obj class="ProcessingResource" id="np04-srv-022_cpus">
+<obj class="HostCores" id="np04-srv-022_cpus">
  <attr name="cpu_cores" type="u16">
   <data val="0"/>
   <data val="1"/>
@@ -147,7 +147,7 @@
  </attr>
 </obj>
 
-<obj class="ProcessingResource" id="np04-srv-028_cpus">
+<obj class="HostCores" id="np04-srv-028_cpus">
  <attr name="cpu_cores" type="u16">
   <data val="0"/>
   <data val="1"/>
@@ -156,7 +156,7 @@
  </attr>
 </obj>
 
-<obj class="ProcessingResource" id="np04-srv-029_cpus">
+<obj class="HostCores" id="np04-srv-029_cpus">
  <attr name="cpu_cores" type="u16">
   <data val="0"/>
   <data val="1"/>
@@ -167,49 +167,49 @@
 
 <obj class="VirtualHost" id="kafka-cern-vhost">
  <rel name="uses">
-  <ref class="ProcessingResource" id="localhost_cpus"/>
+  <ref class="HostCores" id="localhost_cpus"/>
  </rel>
  <rel name="runs_on" class="PhysicalHost" id="monkafka.cern.ch"/>
 </obj>
 
 <obj class="VirtualHost" id="kafka-pocket-vhost">
  <rel name="uses">
-  <ref class="ProcessingResource" id="localhost_cpus"/>
+  <ref class="HostCores" id="localhost_cpus"/>
  </rel>
  <rel name="runs_on" class="PhysicalHost" id="pocket-host"/>
 </obj>
 
 <obj class="VirtualHost" id="vlocalhost">
  <rel name="uses">
-  <ref class="ProcessingResource" id="localhost_cpus"/>
+  <ref class="HostCores" id="localhost_cpus"/>
  </rel>
  <rel name="runs_on" class="PhysicalHost" id="localhost"/>
 </obj>
 
 <obj class="VirtualHost" id="vnp04-srv-021">
  <rel name="uses">
-  <ref class="ProcessingResource" id="np04-srv-021_cpus"/>
+  <ref class="HostCores" id="np04-srv-021_cpus"/>
  </rel>
  <rel name="runs_on" class="PhysicalHost" id="np04-srv-021"/>
 </obj>
 
 <obj class="VirtualHost" id="vnp04-srv-022">
  <rel name="uses">
-  <ref class="ProcessingResource" id="np04-srv-022_cpus"/>
+  <ref class="HostCores" id="np04-srv-022_cpus"/>
  </rel>
  <rel name="runs_on" class="PhysicalHost" id="np04-srv-022"/>
 </obj>
 
 <obj class="VirtualHost" id="vnp04-srv-028">
  <rel name="uses">
-  <ref class="ProcessingResource" id="np04-srv-028_cpus"/>
+  <ref class="HostCores" id="np04-srv-028_cpus"/>
  </rel>
  <rel name="runs_on" class="PhysicalHost" id="np04-srv-028"/>
 </obj>
 
 <obj class="VirtualHost" id="vnp04-srv-029">
  <rel name="uses">
-  <ref class="ProcessingResource" id="np04-srv-029_cpus"/>
+  <ref class="HostCores" id="np04-srv-029_cpus"/>
  </rel>
  <rel name="runs_on" class="PhysicalHost" id="np04-srv-029"/>
 </obj>
