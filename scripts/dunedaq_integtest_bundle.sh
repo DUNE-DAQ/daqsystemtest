@@ -109,7 +109,7 @@ load_test_suite() {
         if [[ -z "$line" ]]; then continue; fi
 
         if [[ ! "$line" =~ ^[a-zA-Z-]+:[0-9a-zA-Z_-]+$ ]]; then
-            printf 'WARNING: %s\n' \
+            printf '\U1f7e1 WARNING: %s\n' \
                 "skipping malformed entry in ${suite_file}:" \
                 "  ${line}" \
                 "expected <repo_name>:<test_name>, with no trailing '.py' an no other whitespace
@@ -322,14 +322,14 @@ excluded_repo_names=`echo ${excluded_repo_names} | sed 's/\s//g'`
 if [[ -n "$test_suite" ]]; then
     if [[ -n "${requested_repo_list[@]}" || -n "$excluded_repo_names" || -n "$requested_test_names" || -n "$excluded_test_names" ]]; then
         echo ""
-        echo "WARNING: Combining a test suite with -r, -R, -k, and/or -x can lead to unintended consequences"
-        echo "WARNING: Consider defining your own test suite following the example(s) in $SUITE_DIR"
-        echo ""
+        echo -e "\U1f7e1 WARNING: Combining a test suite with -r, -R, -k, and/or -x can lead to unintended consequences"
+        echo -e "\U1f7e1 WARNING: Consider defining your own test suite following the example(s) in $SUITE_DIR"
     fi
 fi
 
 # if a test suite name is provided, load those tests first
 if [[ -n "$test_suite" ]]; then
+    echo ""
     echo "Building the list of integtests from the _${test_suite}_ suite..."
     load_test_suite "$test_suite"
 fi
