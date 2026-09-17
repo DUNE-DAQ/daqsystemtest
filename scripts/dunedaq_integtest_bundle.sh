@@ -53,7 +53,7 @@ Options:
 invalid_option_value() {
     declare -r script_name=$(basename "$0")
     echo ""
-    echo "*** ERROR: Option '$1' requires an argument, but received '$2'"
+    echo -e "\U0001F534 ERROR: Option '$1' requires an argument, but received '$2'"
     echo ">>> Reminder: running '${script_name} --help' will list the supported options"
     echo ""
 }
@@ -62,7 +62,7 @@ invalid_option_value() {
 invalid_numeric_option_value() {
     declare -r script_name=$(basename "$0")
     echo ""
-    echo "*** ERROR: Option '$1' requires a numeric argument, but received '$2'"
+    echo -e "\U0001F534 ERROR: Option '$1' requires a numeric argument, but received '$2'"
     echo ">>> Reminder: running '${script_name} --help' will list the supported options"
     echo ""
 }
@@ -222,7 +222,8 @@ while true; do
             ;;
         -s|--test-suite)
             if [[ ! -r "${SUITE_DIR}/${2}.txt" && "${2}" != "extended" ]]; then
-                echo "ERROR: No test suite named ${2} found in ${SUITE_DIR}; exiting..."
+                echo
+                echo -e "\U0001F534 ERROR: No test suite named ${2} found in ${SUITE_DIR}; exiting..."
                 exit 1
             fi
             test_suite="$2"
@@ -381,13 +382,13 @@ INITIAL_TIMESTAMP=`date '+%Y%m%d%H%M%S'`
 # 30-Dec-2025, KAB: check that the specified tmpdir exists and is writeable
 if [[ ! -d ${tmpdir_root} ]]; then
     echo ""
-    echo "*** ERROR: directory \"${tmpdir_root}\" does not exist."
+    echo -e "\U0001F534 ERROR: directory \"${tmpdir_root}\" does not exist."
     echo ""
     exit 1
 fi
 if [[ ! -w ${tmpdir_root} ]]; then
     echo ""
-    echo "*** ERROR: directory \"${tmpdir_root}\" is not writeable in the current environment."
+    echo -e "\U0001F534 ERROR: directory \"${tmpdir_root}\" is not writeable in the current environment."
     echo ""
     exit 1
 fi
