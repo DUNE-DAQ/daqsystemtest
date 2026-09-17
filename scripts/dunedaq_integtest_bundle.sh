@@ -22,6 +22,9 @@ Options:
        - it can be a pipe-delimited string with a list of repos, e.g. 'dfmodules|trigger'
     -k, --include <pipe-delimited string to select the tests that will be run ('egrep -i' match to test name)>
     -x, --exclude <pipe-delimited string to specify tests to be excluded ('egrep -i' match to test name)>
+    -s, --test-suite <test_suite_name>
+        - should match a test suite defined in test_suites/, e.g., 'core'
+        - the special value 'extended' will run all tests excluding those contained in 'core'
     --random-subset <count> : randomly picks the specified number of tests from the results of -r/-k/-x
     --list-only : list the tests that match the requested patterns without running them
     --verbosity <level> : requested level of console messages, in range 1-6, where 1 is least, 6 is DRUNC debug
@@ -31,6 +34,7 @@ Options:
        - this is equivalent to \"--verbosity 1\", and this option may be removed at some point in time
     -n <number of times to run each individual test, default=1>
     -N <number of times to run the full set of selected tests, default=1>
+    --junit-xml : causes pytest to emit a junit xml file named <repo>_<test_name>_results.xml
     --pytest-options <options> : string with one or more dunedaq-specific command-line options to pass to Pytest
        - available options include the following:
          --dunerc-path <path> : Path to DUNE run control. Default is to search in \$PATH
@@ -43,6 +47,7 @@ Options:
        - example: --pytest-options \"--skip-resource-checks --process-manager-type ssh-standalone --dunerc-option no-override-logs\"
 """
 }
+
 
 # function to report a problem with an invalid option value
 invalid_option_value() {
@@ -62,6 +67,72 @@ invalid_numeric_option_value() {
     echo ""
 }
 
+# function to check for a specific string in a list
+string_in_list() {
+    # get the search string from the first argument
+    local search_string="$1"
+    shift
+
+    # read the remaining positional arguments into a local array
+    local local_arr=( "$@" )
+
+    # check for the presence of the search string
+    for item in "${local_arr[@]}"; do
+        if [[ "${item}" == "${search_string}" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+# append a value to a (potentially empty) pipe-delimited string variable
+append_pipe_delimited() {
+    local -n _target=$1
+    _target="${_target:+${_target}|}$2"
+}
+
+load_test_suite() {
+    local suite="${1}"
+    local suite_file="${SUITE_DIR}/${suite}.txt"
+    local repo=""
+    local test=""
+    local line=""
+
+    # Core tests are defined in ./test_suites/core.txt
+    # "Extended" tests are defined as all non-core tests
+    if [[ "$suite" == "extended" ]]; then
+        suite_file="${SUITE_DIR}/core.txt"
+        requested_repo_list=("all")
+    fi
+
+    while IFS="" read -r line || [ -n "$line" ]; do
+        if [[ -z "$line" ]]; then continue; fi
+
+        if [[ ! "$line" =~ ^[a-zA-Z-]+:[0-9a-zA-Z_-]+$ ]]; then
+            printf 'WARNING: %s\n' \
+                "skipping malformed entry in ${suite_file}:" \
+                "  ${line}" \
+                "expected <repo_name>:<test_name>, with no trailing '.py' an no other whitespace
+                " >&2
+            continue
+        fi
+
+        repo="$(echo "$line" | cut -d ':' -f 1)"
+        test="$(echo "$line" | cut -d ':' -f 2)"
+
+        if ! string_in_list "$repo" "${requested_repo_list[@]}" && [[ "${suite}" != "extended" ]]; then
+            requested_repo_list+=("$repo")
+        fi
+
+        if [[ "$suite" == "extended" ]]; then
+            append_pipe_delimited excluded_test_names "$test"
+        else
+            append_pipe_delimited requested_test_names "$test"
+        fi
+
+    done < "${suite_file}"
+}
+
 # 29-Dec-2025, KAB: Determine if a non-standard pytest tmpdir has been specified
 # in the linux shell environment in which this script is being run. We need to know
 # this value in order to direct functionality in this script to the right place.
@@ -77,12 +148,15 @@ CaptureOutput() {
     tee -a $1
 }
 
-GETOPT_TEMP=$(getopt -o hr:R:k:x:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,tmpdir:,verbosity:,random-subset:,list-only,pytest-options: -n "$0" -- "$@")
+GETOPT_TEMP=$(getopt -o hr:R:k:x:s:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,test-suite:,tmpdir:,verbosity:,random-subset:,list-only,pytest-options:,junit-xml -n "$0" -- "$@")
 if [ $? -ne 0 ]; then
     usage
     exit 1
 fi
 eval set -- "$GETOPT_TEMP"
+
+HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+SUITE_DIR="${HERE}/test_suites"
 
 let individual_test_requested_iterations=1
 let full_set_requested_interations=1
@@ -91,6 +165,8 @@ requested_repo_list=()
 excluded_repo_names=""
 requested_test_names=""
 excluded_test_names=""
+test_suite=""
+write_junit_xml="false"
 let random_subset_count=0
 only_list_tests=""
 PYTEST_BASE_COMMAND=(pytest -s --tb=short)  # our core pytest command, with DAQ printout included and short pytest traceback
@@ -108,8 +184,13 @@ while true; do
                 invalid_option_value $1 $2
                 exit 1
             fi
-            repo_list_string=`echo $2 | sed 's/|/ /g'`
-            requested_repo_list+=("${repo_list_string}")
+            # split a pipe-delimited string into individual elements, if needed
+            IFS='|' read -ra tmp_list <<< "$2"
+            for repo in "${tmp_list[@]}"; do
+                read -rd '' trimmed <<< "$repo"
+                requested_repo_list+=("${trimmed}")
+            done
+
             shift 2
             ;;
         -R)
@@ -118,11 +199,7 @@ while true; do
                 invalid_option_value $1 $2
                 exit 1
             fi
-            if [[ "${excluded_repo_names}" == "" ]]; then
-                excluded_repo_names="$2"
-            else
-                excluded_repo_names="${excluded_repo_names}|$2"
-            fi
+            append_pipe_delimited excluded_repo_names "$2"
             shift 2
             ;;
         -k|--include)
@@ -131,11 +208,7 @@ while true; do
                 invalid_option_value $1 $2
                 exit 1
             fi
-            if [[ "${requested_test_names}" == "" ]]; then
-                requested_test_names="$2"
-            else
-                requested_test_names="${requested_test_names}|$2"
-            fi
+            append_pipe_delimited requested_test_names "$2"
             shift 2
             ;;
         -x|--exclude)
@@ -144,11 +217,15 @@ while true; do
                 invalid_option_value $1 $2
                 exit 1
             fi
-            if [[ "${excluded_test_names}" == "" ]]; then
-                excluded_test_names=$2
-            else
-                excluded_test_names="${excluded_test_names}|$2"
+            append_pipe_delimited excluded_test_names "$2"
+            shift 2
+            ;;
+        -s|--test-suite)
+            if [[ ! -r "${SUITE_DIR}/${2}.txt" && "${2}" != "extended" ]]; then
+                echo "ERROR: No test suite named ${2} found in ${SUITE_DIR}; exiting..."
+                exit 1
             fi
+            test_suite="$2"
             shift 2
             ;;
         -n)
@@ -168,6 +245,10 @@ while true; do
             fi
             let full_set_requested_interations=$2
             shift 2
+            ;;
+        --junit-xml)
+            write_junit_xml="true"
+            shift
             ;;
         --stop-on-failure)
             let stop_on_failure=1
@@ -231,6 +312,21 @@ if [[ "${#PYTEST_OPTIONS[@]}" -gt 0 ]]; then
     PYTEST_BASE_COMMAND+=("${PYTEST_OPTIONS[@]}" "--")  # Add the requested options to the pytest command
 fi
 
+if [[ -n "$test_suite" ]]; then
+    if [[ -n "${requested_repo_list[@]}" || -n "$excluded_repo_names" || -n "$requested_test_names" || -n "$excluded_test_names" ]]; then
+        echo ""
+        echo "WARNING: Combining a test suite with -r, -R, -k, and/or -x can lead to unintended consequences"
+        echo "WARNING: Consider defining your own test suite following the example(s) in $SUITE_DIR"
+        echo ""
+    fi
+fi
+
+# if a test suite name is provided, load those tests first
+if [[ -n "$test_suite" ]]; then
+    echo "Building the list of integtests from the _${test_suite}_ suite..."
+    load_test_suite "$test_suite"
+fi
+
 # run the integtests from the daqsystemtest repo if no repo was specified
 if [[ "${#requested_repo_list}" -eq 0 ]]; then
     requested_repo_list+=("daqsystemtest")
@@ -238,20 +334,18 @@ if [[ "${#requested_repo_list}" -eq 0 ]]; then
     echo "Integtests from the _daqsystemtest_ repo will be run..."
 fi
 
-for requested_repo in "${requested_repo_list[@]}"; do
-    if [[ "${requested_repo}" == "all" ]]; then
-        echo ""
-        echo "Building the list of _all_ integtests..."
-        break
-    fi
-done
-for requested_repo in "${requested_repo_list[@]}"; do
-    if [[ "${requested_repo}" == "local" ]]; then
+# provide feedback to the user when a group of tests will be run
+if string_in_list "all" "${requested_repo_list[@]}" && [[ "${test_suite}" != "extended" ]]; then
+    echo ""
+    echo "Building the list of _all_ integtests..."
+else
+    if string_in_list "local" "${requested_repo_list[@]}"; then
         echo ""
         echo "Building the list of _local_ integtests..."
-        break
     fi
-done
+fi
+
+# determine the list of tests
 if [[ "${excluded_repo_names}" == "" ]]; then
     initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} 2>/dev/null`)
 else
@@ -386,6 +480,13 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
 
             echo -e "\u2B95 \033[0;1mRunning ${FULL_TEST_NAME}\033[0m \u2B05" | CaptureOutput ${ITGRUNNER_LOG_FILE}
             PYTEST_COMMAND=("${PYTEST_BASE_COMMAND[@]}")
+
+            if [[ "$write_junit_xml" == "true" ]]; then
+                if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
+                    unset 'PYTEST_COMMAND[-1]'
+                fi
+                PYTEST_COMMAND+=("--junit-xml=${test_repo}_${test_name%.py}_results.xml" "--")
+            fi
 
             # First, check if the test is found in the Python virtual environment.
             # This picks up tests from our Python-only software packages.
