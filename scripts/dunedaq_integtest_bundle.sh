@@ -325,6 +325,7 @@ if [[ -n "$test_suite" ]]; then
         echo ""
         echo -e "\U1f7e1 WARNING: Combining a test suite with -r, -R, -k, and/or -x can lead to unintended consequences"
         echo -e "\U1f7e1 WARNING: Consider defining your own test suite following the example(s) in $SUITE_DIR"
+        echo ""
     fi
 fi
 
