@@ -505,9 +505,9 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
             # is under the $DBT_AREA_ROOT/.venv directory, independent of whether that env var
             # points to a directory in a local software area or a base release.
 
-            # First, check if the test is found in the Python virtual environment.
+            # First, check if the test is found in the Python virtual environment located
+            # underneath the directory referenced by DBT_AREA_ROOT.
             # This picks up tests from our Python-only software packages.
-            # ** add note **
             if [[ "`ls ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name} 2>/dev/null`" != "" ]]; then
                 PYTEST_COMMAND+=(${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name})
                 "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
@@ -528,11 +528,13 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                 fi
 
             else
-                # Next, check if the test exists in the base release sourcecode area
+                # look up the location of the base release, to be used in the next set of lookups
                 if [[ "${base_rel_dir}" == "" ]]; then
                     dbt_info_output=`dbt-info release`
                     base_rel_dir=`echo "${dbt_info_output}" | grep 'Release dir' | awk '{print $3}'`
                 fi
+
+                # Next, check if the test exists in the base release sourcecode area
                 if [[ -e "${base_rel_dir}/sourcecode/${test_repo}/integtest/${test_name}" ]]; then
                     # remove any trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
                     if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
@@ -540,14 +542,27 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                     fi
                     PYTEST_COMMAND+=(-p no:cacheprovider --no-summary ${base_rel_dir}/sourcecode/${test_repo}/integtest/${test_name})
                     "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+
+                # Next, check if the test is found in the Python virtual environment located in
+                # the base release.  This check is needed when developers create a local software
+                # area with the 'dbt-create -q' option (and a local .venv is *not* created).
+                # This picks up tests from our Python-only software packages.
+                elif [[ "`ls ${base_rel_dir}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name} 2>/dev/null`" != "" ]]; then
+                    # remove any trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
+                    if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
+                        unset 'PYTEST_COMMAND[-1]'
+                    fi
+                    PYTEST_COMMAND+=(-p no:cacheprovider --no-summary ${base_rel_dir}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name})
+                    "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+
                 elif [[ -e "${DBT_AREA_ROOT}/pythoncode/${test_repo}/src/${test_repo}/integtest/${test_name}" ]]; then
                     echo ""
-                    echo -e "\U1f7e1 WARNING: The ${test_name} test was not found in the Python virtual environment (.venv dir)."
+                    echo -e "\U1f7e1 WARNING: ${test_name} was not found in the Python virtual environment (.venv dir)."
                     echo -e "\U1f7e1 WARNING: This can happen when the Python package is installed with the '-e' option."
                     echo -e "\U1f7e1 WARNING: Please try installing the ${test_repo} package without the '-e' option."
                 else
                     echo ""
-                    echo -e "\U0001F534 ERROR: Unable to find the ${test_name} test in the ${test_repo} repo."
+                    echo -e "\U0001F534 ERROR: Unable to find ${test_name} in the ${test_repo} repo."
                     echo -e "\U0001F534 ERROR: This should not have happened. Please contact daqsystemtest developers."
                 fi
             fi
