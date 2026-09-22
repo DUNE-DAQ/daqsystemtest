@@ -85,7 +85,7 @@ list_baserel_cpp_tests() {
     return 1
 }
 
-# function to find integtests in base release Python repos
+# function to find integtests in local or base release Python virtual environment
 base_rel_dir=""
 list_venv_py_tests() {
     if [[ "${base_rel_dir}" == "" ]]; then
