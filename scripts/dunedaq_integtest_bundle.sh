@@ -561,8 +561,9 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                 elif [[ -e "${DBT_AREA_ROOT}/pythoncode/${test_repo}/src/${test_repo}/integtest/${test_name}" ]]; then
                     echo ""
                     echo -e "\U1f7e1 WARNING: ${test_name} was not found in the Python virtual environment (.venv dir)."
-                    echo -e "\U1f7e1 WARNING: This can happen when the Python package is installed with the '-e' option."
-                    echo -e "\U1f7e1 WARNING: Please try installing the ${test_repo} package without the '-e' option."
+                    echo -e "\U1f7e1 WARNING: This can happen when the Python package has not recently been installed,"
+                    echo -e "\U1f7e1 WARNING: or when it has been installed with the '-e' option. Please try installing"
+                    echo -e "\U1f7e1 WARNING: the ${test_repo} package without the '-e' option (e.g. 'pip install .')."
 
                 # If we get here, something went wrong, so we tell the user about that.
                 else
