@@ -330,7 +330,7 @@ while true; do
     esac
 done
 
-# assemgle the basic elements for the pytest command that we will use
+# assemble the basic elements for the pytest command that we will use
 if [[ "${#PYTEST_OPTIONS[@]}" -gt 0 ]]; then
     PYTEST_BASE_COMMAND+=("${PYTEST_OPTIONS[@]}" "--")  # Add the requested options to the pytest command
 fi
