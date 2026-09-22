@@ -501,10 +501,9 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
             # In the following "if" statements, we trust that the DBT_AREA_ROOT env var is
             # appropriately set in all types of software setups, whether the user created a local
             # software area or they set up a base release without creating a local software area.
-
-            # We also trust that the correct place to look for integtests in Python packages
-            # is under the $DBT_AREA_ROOT/.venv directory, independent of whether that env var
-            # points to a directory in a local software area or a base release.
+            # Of course, that isn't the whole story.  If the user has created a local software area,
+            # we still may need to check the base release directory for repos that haven't been
+            # locally cloned, and to do that, we need to determine where the base release is located.
 
             # First, check if the test is found in the Python virtual environment located
             # underneath the directory referenced by DBT_AREA_ROOT.
