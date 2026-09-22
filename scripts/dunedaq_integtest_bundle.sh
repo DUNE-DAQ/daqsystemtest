@@ -34,6 +34,8 @@ Options:
        - this is equivalent to \"--verbosity 1\", and this option may be removed at some point in time
     -n <number of times to run each individual test, default=1>
     -N <number of times to run the full set of selected tests, default=1>
+    --log-retention-count <number of pytest log directories to keep>. This overrides the number from daqsystemtest/pytest.ini
+    --log-retention-policy <all|failed|none>. pytest log directory retention policy. pytest default is 'all'
     --junit-xml : causes pytest to emit a junit xml file named <repo>_<test_name>_results.xml
     --pytest-options <options> : string with one or more dunedaq-specific command-line options to pass to Pytest
        - available options include the following:
@@ -148,7 +150,7 @@ CaptureOutput() {
     tee -a $1
 }
 
-GETOPT_TEMP=$(getopt -o hr:R:k:x:s:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,test-suite:,tmpdir:,verbosity:,random-subset:,list-only,pytest-options:,junit-xml -n "$0" -- "$@")
+GETOPT_TEMP=$(getopt -o hr:R:k:x:s:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,test-suite:,tmpdir:,verbosity:,random-subset:,list-only,pytest-options:,log-retention-count:,log-retention-policy:,junit-xml -n "$0" -- "$@")
 if [ $? -ne 0 ]; then
     usage
     exit 1
@@ -166,6 +168,8 @@ excluded_repo_names=""
 requested_test_names=""
 excluded_test_names=""
 test_suite=""
+log_retention_count_arg=""
+log_retention_policy_arg=""
 write_junit_xml="false"
 let random_subset_count=0
 only_list_tests=""
@@ -251,6 +255,22 @@ while true; do
             write_junit_xml="true"
             shift
             ;;
+        --log-retention-count)
+            if [[ "$2" =~ ^- ]] || ! [[ $2 =~ ^[0-9]+$ ]]; then
+                invalid_numeric_option_value $1 $2
+                exit 1
+            fi
+            PYTEST_BASE_COMMAND+=(-o "tmp_path_retention_count=$2")
+            shift 2
+            ;;
+        --log-retention-policy)
+            if [[ ! "$2" =~ ^(all|failed|none)$ ]]; then
+                invalid_option_value $1 $2
+                exit 1
+            fi
+            PYTEST_BASE_COMMAND+=(-o "tmp_path_retention_policy=$2")
+            shift 2
+            ;;
         --stop-on-failure)
             let stop_on_failure=1
             PYTEST_BASE_COMMAND+=(-x)  # add the -x option to our pytest command to have it exit on first error
@@ -310,7 +330,7 @@ while true; do
     esac
 done
 
-# assemgle the basic elements for the pytest command that we will use
+# assemble the basic elements for the pytest command that we will use
 if [[ "${#PYTEST_OPTIONS[@]}" -gt 0 ]]; then
     PYTEST_BASE_COMMAND+=("${PYTEST_OPTIONS[@]}" "--")  # Add the requested options to the pytest command
 fi
