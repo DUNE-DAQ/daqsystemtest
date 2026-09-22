@@ -34,8 +34,8 @@ Options:
        - this is equivalent to \"--verbosity 1\", and this option may be removed at some point in time
     -n <number of times to run each individual test, default=1>
     -N <number of times to run the full set of selected tests, default=1>
-    --log-retention-count <number of pytest-N log directories to keep>. This overrides the pytest default of 3
-    --log-retention-policy <all|failed|none>. pytest-N log directory retention policy. pytest default is 'all'
+    --log-retention-count <number of pytest log directories to keep>. This overrides the number from daqsystemtest/pytest.ini
+    --log-retention-policy <all|failed|none>. pytest log directory retention policy. pytest default is 'all'
     --junit-xml : causes pytest to emit a junit xml file named <repo>_<test_name>_results.xml
     --pytest-options <options> : string with one or more dunedaq-specific command-line options to pass to Pytest
        - available options include the following:
