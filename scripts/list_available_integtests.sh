@@ -87,14 +87,18 @@ list_baserel_cpp_tests() {
 
 # function to find integtests in base release Python repos
 base_rel_dir=""
-list_baserel_py_tests() {
+list_venv_py_tests() {
     if [[ "${base_rel_dir}" == "" ]]; then
         dbt_info_output=`dbt-info release`
         base_rel_dir=`echo "${dbt_info_output}" | grep 'Release dir' | awk '{print $3}'`
     fi
 
     local repo_name="$1"
-    tmp_list=(`ls -1d ${base_rel_dir}/sourcecode/${repo_name}/src/*/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
+    if [[ -e ${DBT_AREA_ROOT}/.venv ]]; then
+        tmp_list=(`ls -1d ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${repo_name}/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
+    else
+        tmp_list=(`ls -1d ${base_rel_dir}/.venv/lib/python*/site-packages/${repo_name}/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
+    fi
     if [[ ${#tmp_list[@]} -gt 0 ]]; then
         integtest_list=(${tmp_list[@]})
         return 0
@@ -183,7 +187,7 @@ for repo_name in "${repo_list[@]}"; do
     if list_local_sourcecode_tests ${repo_name} || \
             list_local_pythoncode_tests ${repo_name} || \
             list_baserel_cpp_tests ${repo_name} || \
-            list_baserel_py_tests ${repo_name}; then
+            list_venv_py_tests ${repo_name}; then
         for test_name in "${integtest_list[@]}"; do
             echo "${repo_name}/${test_name}"
         done

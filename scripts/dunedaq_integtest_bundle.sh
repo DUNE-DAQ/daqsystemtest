@@ -555,11 +555,16 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                     PYTEST_COMMAND+=(-p no:cacheprovider --no-summary ${base_rel_dir}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name})
                     "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
 
+                # If the test is found in a locally-cloned Python repo, and it hasn't been found in any
+                # of the lookups above, then the package must have been installed with the "-e" option,
+                # and we inform the user about that.
                 elif [[ -e "${DBT_AREA_ROOT}/pythoncode/${test_repo}/src/${test_repo}/integtest/${test_name}" ]]; then
                     echo ""
                     echo -e "\U1f7e1 WARNING: ${test_name} was not found in the Python virtual environment (.venv dir)."
                     echo -e "\U1f7e1 WARNING: This can happen when the Python package is installed with the '-e' option."
                     echo -e "\U1f7e1 WARNING: Please try installing the ${test_repo} package without the '-e' option."
+
+                # If we get here, something went wrong, so we tell the user about that.
                 else
                     echo ""
                     echo -e "\U0001F534 ERROR: Unable to find ${test_name} in the ${test_repo} repo."
