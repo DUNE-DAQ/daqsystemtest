@@ -69,6 +69,15 @@ invalid_numeric_option_value() {
     echo ""
 }
 
+# function to report one or more unexpected command-line arguments
+unexpected_command_arguments() {
+    declare -r script_name=$(basename "$0")
+    echo ""
+    echo -e "\U0001F534 ERROR: ${script_name} received unexpected command-line argument(s): $@"
+    echo ">>> Reminder: running '${script_name} --help' will list the supported options"
+    echo ""
+}
+
 # function to check for a specific string in a list
 string_in_list() {
     # get the search string from the first argument
@@ -329,6 +338,13 @@ while true; do
             ;;
     esac
 done
+
+# if any command-line arguments remain after all of the 'getopt' processing, that is
+# a problem (since we don't expect any), so we let the user know.
+if [ $# -ne 0 ]; then
+    unexpected_command_arguments "$@"
+    exit 1
+fi
 
 # assemble the basic elements for the pytest command that we will use
 if [[ "${#PYTEST_OPTIONS[@]}" -gt 0 ]]; then
