@@ -26,8 +26,8 @@ on:
         description: "Enter 'pull_request' (without quotes) to compare linting results to previous linting results."
       target_branch:
         type: string
-        default: 'develop'
-        description: "Target branch for comparison."
+        default: ''
+        description: "Branch this change targets (e.g. develop, patch/*, etc.). Affects the release image and whether matching feature branches are cloned. Leave blank to use the current branch."
 
 jobs:
   build_develop_dispatch:
