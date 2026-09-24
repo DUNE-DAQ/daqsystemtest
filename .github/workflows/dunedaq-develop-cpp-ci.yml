@@ -35,4 +35,4 @@ jobs:
     uses: DUNE-DAQ/.github/.github/workflows/dunedaq-develop-cpp-ci.yml@amogan/issue27_correlated_branches
     with:
       caller_event_name: ${{ inputs.caller_event_name || github.event_name }}
-      target_branch: ${{ inputs.target_branch }}
+      target_branch: ${{ inputs.target_branch || '' }}
