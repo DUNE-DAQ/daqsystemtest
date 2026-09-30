@@ -175,6 +175,7 @@ let random_subset_count=0
 only_list_tests=""
 PYTEST_BASE_COMMAND=(pytest -s --tb=short)  # our core pytest command, with DAQ printout included and short pytest traceback
 PYTEST_OPTIONS=()
+BASEREL_PYTEST_SUMMARY_CHOICE="--no-summary"
 
 while true; do
     case "$1" in
@@ -301,6 +302,7 @@ while true; do
             if [[ $level -ge 6 ]]; then
                 # enable printout of Pytest 'skip' reasons and turn on drunc debugging
                 PYTEST_OPTIONS+=(-rs --dunerc-option log-level debug)
+                BASEREL_PYTEST_SUMMARY_CHOICE=""
             fi
             shift 2
             ;;
@@ -543,7 +545,7 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                     if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
                         unset 'PYTEST_COMMAND[-1]'
                     fi
-                    PYTEST_COMMAND+=(-p no:cacheprovider --no-summary ${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name})
+                    PYTEST_COMMAND+=(-p no:cacheprovider ${BASEREL_PYTEST_SUMMARY_CHOICE} ${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name})
                     "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
                 fi
 
@@ -560,8 +562,18 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                     if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
                         unset 'PYTEST_COMMAND[-1]'
                     fi
-                    PYTEST_COMMAND+=(-p no:cacheprovider --no-summary ${base_rel_dir}/sourcecode/${test_repo}/integtest/${test_name})
+                    PYTEST_COMMAND+=(-p no:cacheprovider ${BASEREL_PYTEST_SUMMARY_CHOICE} ${base_rel_dir}/sourcecode/${test_repo}/integtest/${test_name})
                     "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+
+                # If the test is found in a locally-cloned Python repo, and it hasn't been found in any
+                # of the Python package lookup(s)s above, then the package must not have been installed,
+                # or was installed with the "-e" option, and we inform the user about that.
+                elif [[ -e "${DBT_AREA_ROOT}/pythoncode/${test_repo}/src/${test_repo}/integtest/${test_name}" ]]; then
+                    echo ""
+                    echo -e "\U1f7e1 WARNING: ${test_name} was not found in the Python virtual environment (.venv dir)."
+                    echo -e "\U1f7e1 WARNING: This can happen when the Python package has not recently been installed,"
+                    echo -e "\U1f7e1 WARNING: or when it has been installed with the '-e' option. Please try installing"
+                    echo -e "\U1f7e1 WARNING: the ${test_repo} package without the '-e' option (e.g. 'pip install .')."
 
                 # Next, check if the test is found in the Python virtual environment located in
                 # the base release.  This check is needed when developers create a local software
@@ -572,18 +584,9 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                     if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
                         unset 'PYTEST_COMMAND[-1]'
                     fi
-                    PYTEST_COMMAND+=(-p no:cacheprovider --no-summary ${base_rel_dir}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name})
+                    PYTEST_COMMAND+=(-p no:cacheprovider ${BASEREL_PYTEST_SUMMARY_CHOICE} ${base_rel_dir}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name})
+                    echo "KAB ${PYTEST_COMMAND[@]}"
                     "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-
-                # If the test is found in a locally-cloned Python repo, and it hasn't been found in any
-                # of the lookups above, then the package must have been installed with the "-e" option,
-                # and we inform the user about that.
-                elif [[ -e "${DBT_AREA_ROOT}/pythoncode/${test_repo}/src/${test_repo}/integtest/${test_name}" ]]; then
-                    echo ""
-                    echo -e "\U1f7e1 WARNING: ${test_name} was not found in the Python virtual environment (.venv dir)."
-                    echo -e "\U1f7e1 WARNING: This can happen when the Python package has not recently been installed,"
-                    echo -e "\U1f7e1 WARNING: or when it has been installed with the '-e' option. Please try installing"
-                    echo -e "\U1f7e1 WARNING: the ${test_repo} package without the '-e' option (e.g. 'pip install .')."
 
                 # If we get here, something went wrong, so we tell the user about that.
                 else
