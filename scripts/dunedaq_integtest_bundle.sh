@@ -585,7 +585,6 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                         unset 'PYTEST_COMMAND[-1]'
                     fi
                     PYTEST_COMMAND+=(-p no:cacheprovider ${BASEREL_PYTEST_SUMMARY_CHOICE} ${base_rel_dir}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name})
-                    echo "KAB ${PYTEST_COMMAND[@]}"
                     "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
 
                 # If we get here, something went wrong, so we tell the user about that.
