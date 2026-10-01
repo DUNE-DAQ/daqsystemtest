@@ -116,12 +116,12 @@ twobythree_local_conf.config_session_name = "local-2x3-config"
 username=os.environ.get("USER")
 onebyone_ehn1_conf = copy.deepcopy(common_config_obj)
 onebyone_ehn1_conf.config_session_name = "ehn1-local-1x1-config"
-onebyone_ehn1_conf.daq_session_name = f"ehn1-local-1x1-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
+onebyone_ehn1_conf.daq_session_name = f"ehn1-local-1x1-config-{username}-{''.join(random.choices(string.ascii_lowercase, k=4))}"
 onebyone_ehn1_conf.connsvc_port = None
 
 twobythree_ehn1_conf = copy.deepcopy(common_config_obj)
 twobythree_ehn1_conf.config_session_name = "ehn1-local-2x3-config"
-twobythree_ehn1_conf.daq_session_name = f"ehn1-local-2x3-config-{username}-{''.join(random.choices(string.ascii_letters, k=4))}"
+twobythree_ehn1_conf.daq_session_name = f"ehn1-local-2x3-config-{username}-{''.join(random.choices(string.ascii_lowercase, k=4))}"
 twobythree_ehn1_conf.connsvc_port = None
 
 def host_is_at_ehn1(hostname):
