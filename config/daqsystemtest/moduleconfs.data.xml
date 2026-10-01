@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="97" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20251105T144619"/>
+<info name="" type="" num-of-items="102" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260909T163348"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -236,9 +236,12 @@
 <obj class="DFOConf" id="dfoconf-01">
  <attr name="general_queue_timeout_ms" type="u32" val="100"/>
  <attr name="stop_timeout_ms" type="u32" val="100"/>
+ <attr name="request_reply_wait_ms" type="u32" val="500"/>
  <attr name="td_send_retries" type="s32" val="5"/>
- <attr name="busy_threshold" type="s32" val="4"/>
- <attr name="free_threshold" type="s32" val="3"/>
+ <attr name="reallocate_building_triggers_on_timeout" type="bool" val="0"/>
+ <attr name="reallocate_writing_triggers_on_timeout" type="bool" val="0"/>
+ <attr name="status_watchdog_interval_ms" type="u32" val="1000"/>
+ <attr name="dataflow_status_timeout_ms" type="u32" val="5000"/>
 </obj>
 
 <obj class="DPDKReaderConf" id="def-emu-nic-receiver-conf">
@@ -369,17 +372,6 @@
  <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
 </obj>
 
-<obj class="DataHandlerConf" id="def-pds-link-handler">
- <attr name="template_for" type="class" val="FDDataHandlerModule"/>
- <attr name="input_data_type" type="string" val="PDSFrame"/>
- <attr name="generate_timesync" type="bool" val="1"/>
- <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
- <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
- <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
- <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
- <rel name="data_processor" class="PDSRawDataProcessor" id="def-pds-processor"/>
-</obj>
-
 <obj class="DataHandlerConf" id="def-pds-eth-link-handler">
  <attr name="template_for" type="class" val="FDDataHandlerModule"/>
  <attr name="input_data_type" type="string" val="DAPHNEEthFrame"/>
@@ -391,9 +383,9 @@
  <rel name="data_processor" class="PDSRawDataProcessor" id="def-pds-processor"/>
 </obj>
 
-<obj class="DataHandlerConf" id="def-pds-stream-link-handler">
+<obj class="DataHandlerConf" id="def-pds-eth-stream-link-handler">
  <attr name="template_for" type="class" val="FDDataHandlerModule"/>
- <attr name="input_data_type" type="string" val="PDSStreamFrame"/>
+ <attr name="input_data_type" type="string" val="DAPHNEEthStreamFrame"/>
  <attr name="generate_timesync" type="bool" val="1"/>
  <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
  <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
@@ -402,9 +394,20 @@
  <rel name="data_processor" class="DataProcessor" id="def-base-processor"/>
 </obj>
 
-<obj class="DataHandlerConf" id="def-pds-eth-stream-link-handler">
+<obj class="DataHandlerConf" id="def-pds-link-handler">
  <attr name="template_for" type="class" val="FDDataHandlerModule"/>
- <attr name="input_data_type" type="string" val="DAPHNEEthStreamFrame"/>
+ <attr name="input_data_type" type="string" val="PDSFrame"/>
+ <attr name="generate_timesync" type="bool" val="1"/>
+ <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
+ <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
+ <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
+ <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
+ <rel name="data_processor" class="PDSRawDataProcessor" id="def-pds-processor"/>
+</obj>
+
+<obj class="DataHandlerConf" id="def-pds-stream-link-handler">
+ <attr name="template_for" type="class" val="FDDataHandlerModule"/>
+ <attr name="input_data_type" type="string" val="PDSStreamFrame"/>
  <attr name="generate_timesync" type="bool" val="1"/>
  <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
  <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
@@ -547,6 +550,17 @@
  <attr name="max_write_retry_time_ms" type="s32" val="1000"/>
  <attr name="write_retry_time_increase_factor" type="s32" val="2"/>
  <rel name="data_store_params" class="DataStoreConf" id="default_tr_mon_conf"/>
+</obj>
+
+<obj class="DataflowStatusModuleConf" id="dfs-01">
+ <attr name="trigger_type_mask" type="u64" val="18446744073709551615"/>
+ <attr name="busy_threshold" type="s32" val="5"/>
+ <attr name="free_threshold" type="s32" val="3"/>
+ <attr name="heartbeat_interval_ms" type="u32" val="250"/>
+ <attr name="stop_timeout_ms" type="u32" val="1000"/>
+ <attr name="td_queue_timeout_ms" type="u32" val="1000"/>
+ <attr name="snapshot_history_size" type="u32" val="100"/>
+ <attr name="completed_trigger_history_size" type="u32" val="100"/>
 </obj>
 
 <obj class="FilenameParams" id="default">
@@ -921,6 +935,7 @@
  <attr name="tr_queue_timeout" type="u32" val="100"/>
  <attr name="request_queue_timeout" type="u32" val="100"/>
  <attr name="trigger_record_timeout_ms" type="u32" val="2858"/>
+ <attr name="trb_complete_timeout" type="u32" val="1000"/>
  <attr name="maximum_open_trigger_records" type="u32" val="100"/>
 </obj>
 
