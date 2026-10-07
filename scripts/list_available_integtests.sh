@@ -1,5 +1,4 @@
 #!/bin/bash
-# 19-Dec-2025, KAB
 
 # function to display usage hints
 usage() {
@@ -19,6 +18,9 @@ Options:
     -x, --exclude <pipe-delimited string with names of repos to be excluded ('egrep -i' match to match name)>
 """
 }
+
+# global variable(s)
+base_rel_dir=""
 
 # function to check for a specific string in a list
 string_in_list() {
@@ -69,7 +71,6 @@ list_local_pythoncode_tests() {
 }
 
 # function to find integtests in base release C++ repos
-base_rel_dir=""
 list_baserel_cpp_tests() {
     if [[ "${base_rel_dir}" == "" ]]; then
         dbt_info_output=`dbt-info release`
@@ -86,7 +87,6 @@ list_baserel_cpp_tests() {
 }
 
 # function to find integtests in local or base release Python virtual environment
-base_rel_dir=""
 list_venv_py_tests() {
     if [[ "${base_rel_dir}" == "" ]]; then
         dbt_info_output=`dbt-info release`
@@ -94,11 +94,18 @@ list_venv_py_tests() {
     fi
 
     local repo_name="$1"
+
+    # local or base release, depending on environment setup
     if [[ -e ${DBT_AREA_ROOT}/.venv ]]; then
         tmp_list=(`ls -1d ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${repo_name}/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
-    else
-        tmp_list=(`ls -1d ${base_rel_dir}/.venv/lib/python*/site-packages/${repo_name}/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
+        if [[ ${#tmp_list[@]} -gt 0 ]]; then
+            integtest_list=(${tmp_list[@]})
+            return 0
+        fi
     fi
+
+    # base release, always checked, for completeness
+    tmp_list=(`ls -1d ${base_rel_dir}/.venv/lib/python*/site-packages/${repo_name}/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
     if [[ ${#tmp_list[@]} -gt 0 ]]; then
         integtest_list=(${tmp_list[@]})
         return 0
@@ -194,14 +201,28 @@ for repo_name in "${repo_list[@]}"; do
     else
         echo "-> No integtests were found for repository \"${repo_name}\"." >&2
 
+        if [[ "${base_rel_dir}" == "" ]]; then
+            dbt_info_output=`dbt-info release`
+            base_rel_dir=`echo "${dbt_info_output}" | grep 'Release dir' | awk '{print $3}'`
+        fi
+
         # The following logic is simply an attempt to provide a little more information
         # about *why* the integtest was not found.  It attemts to take into account
         # differences between C++ packages and Python packages.
-        if [[ -e "${DBT_AREA_ROOT}/sourcecode/${repo_name}" ]]; then
+        if [[ -e "${DBT_AREA_ROOT}/sourcecode/${repo_name}" ]] && \
+               [[ ! -e "${DBT_AREA_ROOT}/sourcecode/${repo_name}/integtest" ]]; then
             echo "-> No integtest directory was found in ${DBT_AREA_ROOT}/sourcecode/${repo_name}." >&2
-        elif [[ -e "${DBT_AREA_ROOT}/pythoncode/${repo_name}" ]]; then
+        elif [[ -e "${DBT_AREA_ROOT}/pythoncode/${repo_name}" ]] && \
+                 [[ ! -e "${DBT_AREA_ROOT}/pythoncode/${repo_name}/integtest" ]]; then
             echo "-> No integtest directory was found in ${DBT_AREA_ROOT}/pythoncode/${repo_name}/src/${repo_name}." >&2
-        elif [[ -e "${base_rel_dir}/sourcecode/${repo_name}" ]]; then
+        elif [[ "`ls -1d ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${repo_name} 2>/dev/null`" != "" ]] && \
+                 [[ "`ls -1d ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${repo_name}/integtest 2>/dev/null`" == "" ]]; then
+            echo "-> No integtest directory was found in ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${repo_name}." >&2
+        elif [[ "`ls -1d ${base_rel_dir}/.venv/lib/python*/site-packages/${repo_name} 2>/dev/null`" != "" ]] && \
+                 [[ "`ls -1d ${base_rel_dir}/.venv/lib/python*/site-packages/${repo_name}/integtest 2>/dev/null`" = "" ]]; then
+            echo "-> No integtest directory was found in ${base_rel_dir}/.venv/lib/python*/site-packages/${repo_name}." >&2
+        elif [[ -e "${base_rel_dir}/sourcecode/${repo_name}" ]] && \
+                 [[ ! -e "${base_rel_dir}/sourcecode/${repo_name}/integtest" ]]; then
             echo "-> No integtest directory was found in ${base_rel_dir}/sourcecode/${repo_name}." >&2
         fi
     fi

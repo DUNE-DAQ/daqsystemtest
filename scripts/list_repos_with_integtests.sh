@@ -19,10 +19,18 @@ if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]] || [[ "$1" == "-?" ]]; then
     exit
 fi
 
+# check if a software environment has been set up
+if [[ "$DBT_AREA_ROOT" == "" ]]; then
+    echo
+    echo "Please set up a valid DUNE-DAQ software area before running this script."
+    exit
+fi
+
 # initialization
 all_integtest_paths=()
+source $DAQSYSTEMTEST_SHARE/../bin/dst_set_useful_env_vars.sh
 
-# provide feedback to the user
+# let the user know what is happening
 echo "" >&2
 if [[ $# -eq 0 ]] || [[ "$1" != "local" ]]; then
     echo "Looking for _all_ repositories with integtests in them..." >&2
@@ -32,33 +40,37 @@ fi
 echo "" >&2
 
 # look in a local software area first
-if [[ "$DBT_AREA_ROOT" != "" ]] && [[ "`echo $DBT_AREA_ROOT | grep '^/cvmfs'`" == "" ]]; then
-
-    # add in the paths of the C++ integtests
-    sourcecode_dir_repo_paths=(`ls -1 ${DBT_AREA_ROOT}/sourcecode/*/integtest/*_test.py 2>/dev/null`)
+# -> C++ repositories
+if [[ "${DST_LOCAL_CPP_SOURCE_DIR}" != "" ]]; then
+    sourcecode_dir_repo_paths=(`ls -1 ${DST_LOCAL_CPP_SOURCE_DIR}/*/integtest/*_test.py 2>/dev/null`)
     all_integtest_paths+=("${sourcecode_dir_repo_paths[@]}")
-
-    # add in the paths of the Python integtests
-    pythoncode_dir_repo_paths=(`ls -1 ${DBT_AREA_ROOT}/pythoncode/*/src/*/integtest/*_test.py 2>/dev/null`)
+fi
+# -> Python repositories
+if [[ "${DST_LOCAL_PYTHON_SOURCE_DIR}" != "" ]]; then
+    pythoncode_dir_repo_paths=(`ls -1 ${DST_LOCAL_PYTHON_SOURCE_DIR}/*/src/*/integtest/*_test.py 2>/dev/null`)
     all_integtest_paths+=("${pythoncode_dir_repo_paths[@]}")
 fi
 
-# include repos in the base release, unless the user has specified "local"
+# include additional areas, unless the user has specified "local"
 if [[ $# -eq 0 ]] || [[ "$1" != "local" ]]; then
-    dbt_info_output=`dbt-info release`
-    base_rel_dir=`echo "${dbt_info_output}" | grep 'Release dir' | awk '{print $3}'`
 
-    # add in the paths of the C++ integtests in the base release
-    base_rel_cpp_repos=(`ls -1d ${base_rel_dir}/sourcecode/*/integtest/*_test.py 2>/dev/null`)
-    all_integtest_paths+=("${base_rel_cpp_repos[@]}")
-
-    # add in the paths of the Python integtests from the current virtual environment
-    if [[ -e ${DBT_AREA_ROOT}/.venv ]]; then
-        venv_py_repos=(`ls -1d ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/*/integtest/*_test.py 2>/dev/null`)
-    else
-        venv_py_repos=(`ls -1d ${base_rel_dir}/.venv/lib/python*/site-packages/*/integtest/*_test.py 2>/dev/null`)
+    # include a local Python virtual environment, if it exists
+    if [[ "${DST_LOCAL_PYTHON_VENV_DIR}" != "" ]]; then
+        venv_py_repos=(`ls -1d ${DST_LOCAL_PYTHON_VENV_DIR}/*/integtest/*_test.py 2>/dev/null`)
+        all_integtest_paths+=("${venv_py_repos[@]}")
     fi
-    all_integtest_paths+=("${venv_py_repos[@]}")
+    
+    # add in the paths of the C++ integtests in the base release
+    if [[ "${DST_BASEREL_CPP_SOURCE_DIR}" != "" ]]; then
+        base_rel_cpp_repos=(`ls -1d ${DST_BASEREL_CPP_SOURCE_DIR}/*/integtest/*_test.py 2>/dev/null`)
+        all_integtest_paths+=("${base_rel_cpp_repos[@]}")
+    fi
+
+    # add in the paths of the Python integtests in the base release virtual environment
+    if [[ "${DST_BASEREL_PYTHON_VENV_DIR}" != "" ]]; then
+        venv_py_repos=(`ls -1d ${DST_BASEREL_PYTHON_VENV_DIR}/*/integtest/*_test.py 2>/dev/null`)
+        all_integtest_paths+=("${venv_py_repos[@]}")
+    fi
 fi
 
 repos_with_integtests=(`echo "${all_integtest_paths[@]}" | sed 's,/share,,g' | xargs -r -n 1 dirname | xargs -r -n 1 dirname | xargs -r -n 1 basename | cut -d'-' -f1 | sort -u`)

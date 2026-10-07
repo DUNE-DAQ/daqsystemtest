@@ -490,7 +490,7 @@ let number_of_individual_tests=${#filtered_integtest_list[@]}
 let total_number_of_tests=${number_of_individual_tests}*${individual_test_requested_iterations}*${full_set_requested_interations}
 
 # run the tests
-base_rel_dir=""
+source $DAQSYSTEMTEST_SHARE/../bin/dst_set_useful_env_vars.sh
 let overall_test_index=0  # this is only used for user feedback
 let full_set_loop_count=0
 while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
@@ -520,77 +520,58 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                 PYTEST_COMMAND+=("--junit-xml=${test_repo}_${test_name%.py}_results.xml" "--")
             fi
 
-            # In the following "if" statements, we trust that the DBT_AREA_ROOT env var is
-            # appropriately set in all types of software setups, whether the user created a local
-            # software area or they set up a base release without creating a local software area.
-            # Of course, that isn't the whole story.  If the user has created a local software area,
-            # we still may need to check the base release directory for repos that haven't been
-            # locally cloned, and to do that, we need to determine where the base release is located.
+            # determine the repository type, to help determine where to look for the test
+            repo_type="`get_repo_type.sh ${test_repo}`"
 
-            # First, check if the test is found in the Python virtual environment located
-            # underneath the directory referenced by DBT_AREA_ROOT.
-            # This picks up tests from our Python-only software packages.
-            if [[ "`ls ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name} 2>/dev/null`" != "" ]]; then
-                PYTEST_COMMAND+=(${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name})
-                "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+            # handle tests in Python repositories
+            if [[ "${repo_type}" == "Python" ]]; then
 
-            # Next, check if the test exists in the "sourcecode" subdirectory, either in
-            # a local software area or a base release.
-            elif [[ -e "${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name}" ]]; then
-                if [[ -w "${DBT_AREA_ROOT}" ]]; then
-                    PYTEST_COMMAND+=(${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name})
-                    "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-                else
+                if [[ "${DST_LOCAL_PYTHON_VENV_DIR}" != "" ]]; then
+                    if [[ -e "${DST_LOCAL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name}" ]]; then
+                        PYTEST_COMMAND+=(${DST_LOCAL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name})
+                        "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+                    else
+                        echo ""
+                        echo -e "\U1f7e1 WARNING: ${test_name} was not found in the local Python virtual environment (.venv dir)."
+                        echo -e "\U1f7e1 WARNING: This can happen when the Python package needs to be (re?)installed locally, or when"
+                        echo -e "\U1f7e1 WARNING: it has been installed with the '-e' option. Please try re-installing the ${test_repo}"
+                        echo -e "\U1f7e1 WARNING: package without the '-e' option (e.g. 'pip install .') or re-running 'dbt-build'."
+                    fi
+
+                elif [[ "${DST_BASEREL_PYTHON_VENV_DIR}" != "" ]] && \
+                         [[ -e "${DST_BASEREL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name}" ]]; then
                     # remove any trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
                     if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
                         unset 'PYTEST_COMMAND[-1]'
                     fi
-                    PYTEST_COMMAND+=(-p no:cacheprovider ${BASEREL_PYTEST_SUMMARY_CHOICE} ${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name})
-                    "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-                fi
-
-            else
-                # look up the location of the base release, to be used in the next set of lookups
-                if [[ "${base_rel_dir}" == "" ]]; then
-                    dbt_info_output=`dbt-info release`
-                    base_rel_dir=`echo "${dbt_info_output}" | grep 'Release dir' | awk '{print $3}'`
-                fi
-
-                # Next, check if the test exists in the base release sourcecode area
-                if [[ -e "${base_rel_dir}/sourcecode/${test_repo}/integtest/${test_name}" ]]; then
-                    # remove any trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
-                    if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
-                        unset 'PYTEST_COMMAND[-1]'
-                    fi
-                    PYTEST_COMMAND+=(-p no:cacheprovider ${BASEREL_PYTEST_SUMMARY_CHOICE} ${base_rel_dir}/sourcecode/${test_repo}/integtest/${test_name})
+                    PYTEST_COMMAND+=(-p no:cacheprovider ${BASEREL_PYTEST_SUMMARY_CHOICE} ${DST_BASEREL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name})
                     "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
 
-                # If the test is found in a locally-cloned Python repo, and it hasn't been found in any
-                # of the Python package lookup(s)s above, then the package must not have been installed,
-                # or was installed with the "-e" option, and we inform the user about that.
-                elif [[ -e "${DBT_AREA_ROOT}/pythoncode/${test_repo}/src/${test_repo}/integtest/${test_name}" ]]; then
-                    echo ""
-                    echo -e "\U1f7e1 WARNING: ${test_name} was not found in the Python virtual environment (.venv dir)."
-                    echo -e "\U1f7e1 WARNING: This can happen when the Python package has not recently been installed,"
-                    echo -e "\U1f7e1 WARNING: or when it has been installed with the '-e' option. Please try installing"
-                    echo -e "\U1f7e1 WARNING: the ${test_repo} package without the '-e' option (e.g. 'pip install .')."
-
-                # Next, check if the test is found in the Python virtual environment located in
-                # the base release.  This check is needed when developers create a local software
-                # area with the 'dbt-create -q' option (and a local .venv is *not* created).
-                # This picks up tests from our Python-only software packages.
-                elif [[ "`ls ${base_rel_dir}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name} 2>/dev/null`" != "" ]]; then
-                    # remove any trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
-                    if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
-                        unset 'PYTEST_COMMAND[-1]'
-                    fi
-                    PYTEST_COMMAND+=(-p no:cacheprovider ${BASEREL_PYTEST_SUMMARY_CHOICE} ${base_rel_dir}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name})
-                    "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-
-                # If we get here, something went wrong, so we tell the user about that.
                 else
                     echo ""
-                    echo -e "\U0001F534 ERROR: Unable to find ${test_name} in the ${test_repo} repo."
+                    echo -e "\U0001F534 ERROR: Unable to find ${test_name} in the ${test_repo} (Python) repo."
+                    echo -e "\U0001F534 ERROR: This should not have happened. Please contact daqsystemtest developers."
+                fi
+
+            # handle tests in C++ repositories
+            elif [[ "${repo_type}" == "CPP" ]]; then
+
+                if [[ "${DST_LOCAL_CPP_SOURCE_DIR}" != "" ]] && \
+                   [[ -e "${DST_LOCAL_CPP_SOURCE_DIR}/${test_repo}/integtest/${test_name}" ]]; then
+                    PYTEST_COMMAND+=(${DST_LOCAL_CPP_SOURCE_DIR}/${test_repo}/integtest/${test_name})
+                    "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+                elif [[ "${DST_BASEREL_CPP_SOURCE_DIR}" != "" ]] && \
+                     [[ -e "${DST_BASEREL_CPP_SOURCE_DIR}/${test_repo}/integtest/${test_name}" ]]; then
+                    # remove any trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
+                    if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
+                        unset 'PYTEST_COMMAND[-1]'
+                    fi
+                    PYTEST_COMMAND+=(-p no:cacheprovider ${BASEREL_PYTEST_SUMMARY_CHOICE} ${DST_BASEREL_CPP_SOURCE_DIR}/${test_repo}/integtest/${test_name})
+                    "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+
+                else
+                    echo ""
+                    echo -e "\U0001F534 ERROR: Unable to find ${test_name} in the ${test_repo} (C++) repo."
                     echo -e "\U0001F534 ERROR: This should not have happened. Please contact daqsystemtest developers."
                 fi
             fi
