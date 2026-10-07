@@ -539,7 +539,7 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                     fi
 
                 elif [[ "${DST_BASEREL_PYTHON_VENV_DIR}" != "" ]] && \
-                         [[ -e "${DST_BASEREL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name}" ]]; then
+                     [[ -e "${DST_BASEREL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name}" ]]; then
                     # remove any trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
                     if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
                         unset 'PYTEST_COMMAND[-1]'
@@ -574,6 +574,11 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                     echo -e "\U0001F534 ERROR: Unable to find ${test_name} in the ${test_repo} (C++) repo."
                     echo -e "\U0001F534 ERROR: This should not have happened. Please contact daqsystemtest developers."
                 fi
+
+            else
+                echo ""
+                echo -e "\U0001F534 ERROR: Unexpected repo type for the '${test_repo}' repo: \"${repo_type}\"."
+                echo -e "\U0001F534 ERROR: This should not have happened. Please contact daqsystemtest developers."
             fi
             let pytest_return_code=${PIPESTATUS[0]}
 

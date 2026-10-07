@@ -32,8 +32,8 @@ elif [[ "${DST_DETSPEC_BASEREL_SPACK_DIR}" != "" ]] && \
 elif [[ "${DST_LOCAL_PYTHON_VENV_DIR}" != "" ]] && \
      [[ -e ${DST_LOCAL_PYTHON_VENV_DIR}/${repo_name} ]]; then
     echo "Python"
-elif [[ "${DST_PYTHON_PYTHON_VENV_DIR}" != "" ]] && \
-     [[ -e ${DST_PYTHON_PYTHON_VENV_DIR}/${repo_name} ]]; then
+elif [[ "${DST_BASEREL_PYTHON_VENV_DIR}" != "" ]] && \
+     [[ -e ${DST_BASEREL_PYTHON_VENV_DIR}/${repo_name} ]]; then
     echo "Python"
 else
     echo "Unknown"
