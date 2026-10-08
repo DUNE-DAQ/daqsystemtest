@@ -532,10 +532,10 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                         "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
                     else
                         echo ""
-                        echo -e "\U1f7e1 WARNING: ${test_name} was not found in the local Python virtual environment (.venv dir)."
-                        echo -e "\U1f7e1 WARNING: This can happen when the Python package needs to be (re?)installed locally, or when"
-                        echo -e "\U1f7e1 WARNING: it has been installed with the '-e' option. Please try re-installing the ${test_repo}"
-                        echo -e "\U1f7e1 WARNING: package without the '-e' option (e.g. 'pip install .') or re-running 'dbt-build'."
+                        echo -e "\U1f7e1 WARNING: ${test_name} was not found in the local Python virtual environment (.venv dir)." | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                        echo -e "\U1f7e1 WARNING: This can happen when the Python package needs to be (re?)installed locally, or when" | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                        echo -e "\U1f7e1 WARNING: it has been installed with the '-e' option. Please try re-installing the ${test_repo}" | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                        echo -e "\U1f7e1 WARNING: package without the '-e' option (e.g. 'pip install .') or re-running 'dbt-build'." | CaptureOutput ${ITGRUNNER_LOG_FILE}
                     fi
 
                 elif [[ "${DST_BASEREL_PYTHON_VENV_DIR}" != "" ]] && \
@@ -549,8 +549,8 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
 
                 else
                     echo ""
-                    echo -e "\U0001F534 ERROR: Unable to find ${test_name} in the ${test_repo} (Python) repo."
-                    echo -e "\U0001F534 ERROR: This should not have happened. Please contact daqsystemtest developers."
+                    echo -e "\U0001F534 ERROR: Unable to find ${test_name} in the ${test_repo} (Python) repo." | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                    echo -e "\U0001F534 ERROR: This should not have happened. Please contact daqsystemtest developers." | CaptureOutput ${ITGRUNNER_LOG_FILE}
                 fi
 
             # handle tests in C++ repositories
@@ -571,14 +571,14 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
 
                 else
                     echo ""
-                    echo -e "\U0001F534 ERROR: Unable to find ${test_name} in the ${test_repo} (C++) repo."
-                    echo -e "\U0001F534 ERROR: This should not have happened. Please contact daqsystemtest developers."
+                    echo -e "\U0001F534 ERROR: Unable to find ${test_name} in the ${test_repo} (C++) repo." | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                    echo -e "\U0001F534 ERROR: This should not have happened. Please contact daqsystemtest developers." | CaptureOutput ${ITGRUNNER_LOG_FILE}
                 fi
 
             else
                 echo ""
-                echo -e "\U0001F534 ERROR: Unexpected repo type for the '${test_repo}' repo: \"${repo_type}\"."
-                echo -e "\U0001F534 ERROR: This should not have happened. Please contact daqsystemtest developers."
+                echo -e "\U0001F534 ERROR: Unexpected repo type for the '${test_repo}' repo: \"${repo_type}\"." | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                echo -e "\U0001F534 ERROR: This should not have happened. Please contact daqsystemtest developers." | CaptureOutput ${ITGRUNNER_LOG_FILE}
             fi
             let pytest_return_code=${PIPESTATUS[0]}
 
@@ -685,7 +685,7 @@ echo ""                                                   | CaptureOutput ${ITGR
 date                                                      | CaptureOutput ${ITGRUNNER_LOG_FILE}
 echo "Log file is: ${ITGRUNNER_LOG_FILE}"                 | CaptureOutput ${ITGRUNNER_LOG_FILE}
 echo ""                                                   | CaptureOutput ${ITGRUNNER_LOG_FILE}
-summary_string="`egrep $'=====|\u2B95' ${ITGRUNNER_LOG_FILE} | egrep ' in |Running'`"
+summary_string="`egrep $'=====|\u2B95|\U1f7e1 WARNING|\U0001F534 ERROR' ${ITGRUNNER_LOG_FILE} | egrep ' in |Running|WARNING|ERROR'`"
 colorized_summary_string="`echo \"${summary_string}\" | sed 's/passed/passed \\\\U2705/' | sed 's/failed/failed \\\\U274c/' | sed 's/\(errors\?\)/\1 \\\\U1F6A8/' | sed 's/no tests ran/no tests ran \\\\U1F6A8/' | sed 's/skipped/skipped \\\\U1f7e1/'`"
 echo -e "${colorized_summary_string}" | CaptureOutput ${ITGRUNNER_LOG_FILE}
 
