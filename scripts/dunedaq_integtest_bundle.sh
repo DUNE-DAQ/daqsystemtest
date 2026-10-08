@@ -175,6 +175,7 @@ let random_subset_count=0
 only_list_tests=""
 PYTEST_BASE_COMMAND=(pytest -s --tb=short)  # our core pytest command, with DAQ printout included and short pytest traceback
 PYTEST_OPTIONS=()
+BASEREL_PYTEST_SUMMARY_CHOICE="--no-summary"
 
 while true; do
     case "$1" in
@@ -301,6 +302,7 @@ while true; do
             if [[ $level -ge 6 ]]; then
                 # enable printout of Pytest 'skip' reasons and turn on drunc debugging
                 PYTEST_OPTIONS+=(-rs --dunerc-option log-level debug)
+                BASEREL_PYTEST_SUMMARY_CHOICE=""
             fi
             shift 2
             ;;
@@ -488,6 +490,7 @@ let number_of_individual_tests=${#filtered_integtest_list[@]}
 let total_number_of_tests=${number_of_individual_tests}*${individual_test_requested_iterations}*${full_set_requested_interations}
 
 # run the tests
+source $DAQSYSTEMTEST_SHARE/../bin/dst_set_useful_env_vars.sh
 let overall_test_index=0  # this is only used for user feedback
 let full_set_loop_count=0
 while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
@@ -517,43 +520,65 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                 PYTEST_COMMAND+=("--junit-xml=${test_repo}_${test_name%.py}_results.xml" "--")
             fi
 
-            # First, check if the test is found in the Python virtual environment.
-            # This picks up tests from our Python-only software packages.
-            if [[ "`ls ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name} 2>/dev/null`" != "" ]]; then
-                PYTEST_COMMAND+=(${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${test_repo}/integtest/${test_name})
-                "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+            # determine the repository type, to help determine where to look for the test
+            repo_type="`get_repo_type.sh ${test_repo}`"
 
-            # Next, check if the test exists in the current working directory.
-            # This is a convenience for developers when they are working on an integtest
-            # in a C++ package (the test is found without rebuilding the software).
-            elif [[ -e "./${test_name}" ]]; then
-                PYTEST_COMMAND+=(./${test_name})
-                "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+            # handle tests in Python repositories
+            if [[ "${repo_type}" == "Python" ]]; then
 
-            # Next, check if the test exists in the local software area.
-            elif [[ -e "${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name}" ]]; then
-                if [[ -w "${DBT_AREA_ROOT}" ]]; then
-                    PYTEST_COMMAND+=(${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name})
-                    "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-                else
+                if [[ "${DST_LOCAL_PYTHON_VENV_DIR}" != "" ]]; then
+                    if [[ -e "${DST_LOCAL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name}" ]]; then
+                        PYTEST_COMMAND+=(${DST_LOCAL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name})
+                        "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+                    else
+                        echo ""
+                        echo -e "\U1f7e1 WARNING: ${test_name} was not found in the local Python virtual environment (.venv dir)." | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                        echo -e "\U1f7e1 WARNING: This can happen when the Python package needs to be (re?)installed locally, or when" | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                        echo -e "\U1f7e1 WARNING: it has been installed with the '-e' option. Please try re-installing the ${test_repo}" | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                        echo -e "\U1f7e1 WARNING: package without the '-e' option (e.g. 'pip install .') or re-running 'dbt-build'." | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                    fi
+
+                elif [[ "${DST_BASEREL_PYTHON_VENV_DIR}" != "" ]] && \
+                     [[ -e "${DST_BASEREL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name}" ]]; then
                     # remove any trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
                     if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
                         unset 'PYTEST_COMMAND[-1]'
                     fi
-                    PYTEST_COMMAND+=(-p no:cacheprovider --no-summary ${DBT_AREA_ROOT}/sourcecode/${test_repo}/integtest/${test_name})
+                    PYTEST_COMMAND+=(-p no:cacheprovider ${BASEREL_PYTEST_SUMMARY_CHOICE} ${DST_BASEREL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name})
                     "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+
+                else
+                    echo ""
+                    echo -e "\U0001F534 ERROR: Unable to find ${test_name} in the ${test_repo} (Python) repo." | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                    echo -e "\U0001F534 ERROR: This should not have happened. Please contact daqsystemtest developers." | CaptureOutput ${ITGRUNNER_LOG_FILE}
                 fi
 
-            # Lastly, we assume that the test can be found in the installed software
-            # area (for C++ packages).
-            else
-                share_envvar_name="${test_repo^^}_SHARE"  # double caret converts env var to uppercase
-                # remove any trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
-                if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
-                    unset 'PYTEST_COMMAND[-1]'
+            # handle tests in C++ repositories
+            elif [[ "${repo_type}" == "CPP" ]]; then
+
+                if [[ "${DST_LOCAL_CPP_SOURCE_DIR}" != "" ]] && \
+                   [[ -e "${DST_LOCAL_CPP_SOURCE_DIR}/${test_repo}/integtest/${test_name}" ]]; then
+                    PYTEST_COMMAND+=(${DST_LOCAL_CPP_SOURCE_DIR}/${test_repo}/integtest/${test_name})
+                    "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+                elif [[ "${DST_BASEREL_CPP_SOURCE_DIR}" != "" ]] && \
+                     [[ -e "${DST_BASEREL_CPP_SOURCE_DIR}/${test_repo}/integtest/${test_name}" ]]; then
+                    # remove any trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
+                    if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
+                        unset 'PYTEST_COMMAND[-1]'
+                    fi
+                    PYTEST_COMMAND+=(-p no:cacheprovider ${BASEREL_PYTEST_SUMMARY_CHOICE} ${DST_BASEREL_CPP_SOURCE_DIR}/${test_repo}/integtest/${test_name})
+                    "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+
+                else
+                    echo ""
+                    echo -e "\U0001F534 ERROR: Unable to find ${test_name} in the ${test_repo} (C++) repo." | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                    echo -e "\U0001F534 ERROR: This should not have happened. Please contact daqsystemtest developers." | CaptureOutput ${ITGRUNNER_LOG_FILE}
                 fi
-                PYTEST_COMMAND+=(-p no:cacheprovider --no-summary ${!share_envvar_name}/integtest/${test_name})
-                "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
+
+            else
+                echo ""
+                echo -e "\U0001F534 ERROR: Unexpected repo type for the '${test_repo}' repo: \"${repo_type}\"." | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                echo -e "\U0001F534 ERROR: This should not have happened. Please contact daqsystemtest developers." | CaptureOutput ${ITGRUNNER_LOG_FILE}
             fi
             let pytest_return_code=${PIPESTATUS[0]}
 
@@ -660,7 +685,7 @@ echo ""                                                   | CaptureOutput ${ITGR
 date                                                      | CaptureOutput ${ITGRUNNER_LOG_FILE}
 echo "Log file is: ${ITGRUNNER_LOG_FILE}"                 | CaptureOutput ${ITGRUNNER_LOG_FILE}
 echo ""                                                   | CaptureOutput ${ITGRUNNER_LOG_FILE}
-summary_string="`egrep $'=====|\u2B95' ${ITGRUNNER_LOG_FILE} | egrep ' in |Running'`"
+summary_string="`egrep $'=====|\u2B95|\U1f7e1 WARNING|\U0001F534 ERROR' ${ITGRUNNER_LOG_FILE} | egrep ' in |Running|WARNING|ERROR'`"
 colorized_summary_string="`echo \"${summary_string}\" | sed 's/passed/passed \\\\U2705/' | sed 's/failed/failed \\\\U274c/' | sed 's/\(errors\?\)/\1 \\\\U1F6A8/' | sed 's/no tests ran/no tests ran \\\\U1F6A8/' | sed 's/skipped/skipped \\\\U1f7e1/'`"
 echo -e "${colorized_summary_string}" | CaptureOutput ${ITGRUNNER_LOG_FILE}
 
