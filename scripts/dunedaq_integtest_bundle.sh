@@ -29,6 +29,7 @@ Options:
     --list-only : list the tests that match the requested patterns without running them
     --verbosity <level> : requested level of console messages, in range 1-6, where 1 is least, 6 is DRUNC debug
     --stop-on-failure : causes the script to stop when one of the integtests reports a failure
+    --raise-failure : causes the script to exit non-zero when one or more of the integtests reports a failure
     --tmpdir <dir> : specifies a root directory to use for test output, e.g. a directory instead of '/tmp'
     --concise-output : suppresses run control and DAQApp messages in order to focus on test results
        - this is equivalent to \"--verbosity 1\", and this option may be removed at some point in time
@@ -150,7 +151,7 @@ CaptureOutput() {
     tee -a $1
 }
 
-GETOPT_TEMP=$(getopt -o hr:R:k:x:s:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,test-suite:,tmpdir:,verbosity:,random-subset:,list-only,pytest-options:,log-retention-count:,log-retention-policy:,junit-xml -n "$0" -- "$@")
+GETOPT_TEMP=$(getopt -o hr:R:k:x:s:n:N: --long help,stop-on-failure,raise-failure,concise-output,include:,exclude:,test-suite:,tmpdir:,verbosity:,random-subset:,list-only,pytest-options:,log-retention-count:,log-retention-policy:,junit-xml -n "$0" -- "$@")
 if [ $? -ne 0 ]; then
     usage
     exit 1
@@ -163,6 +164,7 @@ SUITE_DIR="${HERE}/test_suites"
 let individual_test_requested_iterations=1
 let full_set_requested_interations=1
 let stop_on_failure=0
+let raise_failure=0
 requested_repo_list=()
 excluded_repo_names=""
 requested_test_names=""
@@ -274,6 +276,10 @@ while true; do
         --stop-on-failure)
             let stop_on_failure=1
             PYTEST_BASE_COMMAND+=(-x)  # add the -x option to our pytest command to have it exit on first error
+            shift
+            ;;
+        --raise-failure)
+            let raise_failure=1
             shift
             ;;
         --concise-output)
@@ -677,4 +683,10 @@ if [[ "${numad_grep_output}" != "" ]]; then
     echo "*** context switch can disrupt the stable running of the DAQ processes."          | CaptureOutput ${ITGRUNNER_LOG_FILE}
     echo "********************************************************************************" | CaptureOutput ${ITGRUNNER_LOG_FILE}
 fi
+
+if [[ ${raise_failure} -gt 0 ]]; then
+    exit ${pytest_return_code}
+fi
+
 echo ""
+
