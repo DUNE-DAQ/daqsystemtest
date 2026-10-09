@@ -685,7 +685,7 @@ if [[ "${numad_grep_output}" != "" ]]; then
 fi
 
 if [[ ${raise_failure} -gt 0 ]]; then
-    exit ${pytest_return_code}
+    exit 1
 fi
 
 echo ""
