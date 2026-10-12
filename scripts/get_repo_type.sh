@@ -21,7 +21,7 @@ fi
 source dst_set_integtest_env_vars.sh
 
 if [[ "${DST_LOCAL_SPACK_INSTALL_DIR}" != "" ]] && \
-       [[ -e "${DST_LOCAL_SPACK_INSTALL_DIR}/${repo_name}" ]]; then
+   [[ -e "${DST_LOCAL_SPACK_INSTALL_DIR}/${repo_name}" ]]; then
     echo "CPP"
 elif [[ "${DST_CORE_BASEREL_SPACK_DIR}" != "" ]] && \
      [[ "`ls -1d ${DST_CORE_BASEREL_SPACK_DIR}/${repo_name}* 2>/dev/null | head -1`" != "" ]]; then

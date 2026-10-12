@@ -527,7 +527,16 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
             if [[ "${repo_type}" == "Python" ]]; then
 
                 if [[ "${DST_LOCAL_PYTHON_VENV_DIR}" != "" ]]; then
-                    if [[ -e "${DST_LOCAL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name}" ]]; then
+                    if [[ -e "${DST_LOCAL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name}" ]] && \
+                       [[ -e "${DST_LOCAL_PYTHON_SOURCE_DIR}/${test_repo}/src/${test_repo}/integtest/${test_name}" ]] && \
+                       [[ "`diff ${DST_LOCAL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name} ${DST_LOCAL_PYTHON_SOURCE_DIR}/${test_repo}/src/${test_repo}/integtest/${test_name}`" != "" ]]; then
+                        echo ""
+                        echo -e "\U1f7e1 WARNING: The version of ${test_name} in" | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                        echo -e "\U1f7e1 WARNING: ${DST_LOCAL_PYTHON_SOURCE_DIR}/${test_repo}/src/${test_repo}/integtest" | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                        echo -e "\U1f7e1 WARNING: does not match the version found in the local Python virtual environment (.venv dir)." | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                        echo -e "\U1f7e1 WARNING: This can happen when the Python package needs to be (re?)installed locally." | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                        echo -e "\U1f7e1 WARNING: Please try re-installing ${test_repo} (e.g. 'pip install .') or re-running 'dbt-build'." | CaptureOutput ${ITGRUNNER_LOG_FILE}
+                    elif [[ -e "${DST_LOCAL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name}" ]]; then
                         PYTEST_COMMAND+=(${DST_LOCAL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name})
                         "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
                     else
@@ -603,8 +612,8 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                             script_pid=`jq -r .bundle_script_process_id ${info_file}`
                             individual_test_start_time=`jq -r .individual_test_start_time ${info_file}`
                             if [[ ${script_start_time} -eq ${INITIAL_TIMESTAMP} ]] && \
-                                   [[ ${script_pid} -eq ${CURRENT_PID} ]] && \
-                                   [[ ${individual_test_start_time} -eq ${CURRENT_TIMESTAMP} ]]; then
+                               [[ ${script_pid} -eq ${CURRENT_PID} ]] && \
+                               [[ ${individual_test_start_time} -eq ${CURRENT_TIMESTAMP} ]]; then
                                 current_pytest_rundir=$info_file
                                 break
                             fi
