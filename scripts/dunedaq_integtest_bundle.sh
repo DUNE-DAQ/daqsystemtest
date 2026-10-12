@@ -377,6 +377,7 @@ else
 fi
 
 # determine the list of tests
+source $DAQSYSTEMTEST_SHARE/../bin/dst_set_useful_env_vars.sh
 if [[ "${excluded_repo_names}" == "" ]]; then
     initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} 2>/dev/null`)
 else
@@ -490,7 +491,6 @@ let number_of_individual_tests=${#filtered_integtest_list[@]}
 let total_number_of_tests=${number_of_individual_tests}*${individual_test_requested_iterations}*${full_set_requested_interations}
 
 # run the tests
-source $DAQSYSTEMTEST_SHARE/../bin/dst_set_useful_env_vars.sh
 let overall_test_index=0  # this is only used for user feedback
 let full_set_loop_count=0
 while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do

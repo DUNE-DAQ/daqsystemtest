@@ -19,8 +19,8 @@ Options:
 """
 }
 
-# global variable(s)
-base_rel_dir=""
+# initialization
+source $DAQSYSTEMTEST_SHARE/../bin/dst_set_useful_env_vars.sh
 
 # function to check for a specific string in a list
 string_in_list() {
@@ -42,12 +42,11 @@ string_in_list() {
 
 # function to find integtests in a local sourcecode area
 list_local_sourcecode_tests() {
-    # check if a local software area exists; return empty list if not
-    if [[ "$DBT_AREA_ROOT" == "" ]] || [[ "`echo $DBT_AREA_ROOT | grep '^/cvmfs'`" != "" ]]; then
+    if [[ "$DST_LOCAL_CPP_SOURCE_DIR" == "" ]]; then
         return 1
     fi
     local repo_name="$1"
-    tmp_list=(`ls -1 ${DBT_AREA_ROOT}/sourcecode/${repo_name}/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
+    tmp_list=(`ls -1 ${DST_LOCAL_CPP_SOURCE_DIR}/${repo_name}/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
     if [[ ${#tmp_list[@]} -gt 0 ]]; then
         integtest_list=(${tmp_list[@]})
         return 0
@@ -57,12 +56,11 @@ list_local_sourcecode_tests() {
 
 # function to find integtests in a local pythoncode area
 list_local_pythoncode_tests() {
-    # check if a local software area exists; return empty list if not
-    if [[ "$DBT_AREA_ROOT" == "" ]] || [[ "`echo $DBT_AREA_ROOT | grep '^/cvmfs'`" != "" ]]; then
+    if [[ "$DST_LOCAL_PYTHON_SOURCE_DIR" == "" ]]; then
         return 1
     fi
     local repo_name="$1"
-    tmp_list=(`ls -1 ${DBT_AREA_ROOT}/pythoncode/${repo_name}/src/${repo_name}/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
+    tmp_list=(`ls -1 ${DST_LOCAL_PYTHON_SOURCE_DIR}/${repo_name}/src/${repo_name}/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
     if [[ ${#tmp_list[@]} -gt 0 ]]; then
         integtest_list=(${tmp_list[@]})
         return 0
@@ -72,13 +70,11 @@ list_local_pythoncode_tests() {
 
 # function to find integtests in base release C++ repos
 list_baserel_cpp_tests() {
-    if [[ "${base_rel_dir}" == "" ]]; then
-        dbt_info_output=`dbt-info release`
-        base_rel_dir=`echo "${dbt_info_output}" | grep 'Release dir' | awk '{print $3}'`
+    if [[ "$DST_BASEREL_CPP_SOURCE_DIR" == "" ]]; then
+        return 1
     fi
-
     local repo_name="$1"
-    tmp_list=(`ls -1d ${base_rel_dir}/sourcecode/${repo_name}/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
+    tmp_list=(`ls -1d ${DST_BASEREL_CPP_SOURCE_DIR}/${repo_name}/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
     if [[ ${#tmp_list[@]} -gt 0 ]]; then
         integtest_list=(${tmp_list[@]})
         return 0
@@ -86,26 +82,27 @@ list_baserel_cpp_tests() {
     return 1
 }
 
-# function to find integtests in local or base release Python virtual environment
-list_venv_py_tests() {
-    if [[ "${base_rel_dir}" == "" ]]; then
-        dbt_info_output=`dbt-info release`
-        base_rel_dir=`echo "${dbt_info_output}" | grep 'Release dir' | awk '{print $3}'`
+# function to find integtests in local Python virtual environment
+list_local_venv_py_tests() {
+    if [[ "$DST_LOCAL_PYTHON_VENV_DIR" == "" ]]; then
+        return 1
     fi
-
     local repo_name="$1"
-
-    # local or base release, depending on environment setup
-    if [[ -e ${DBT_AREA_ROOT}/.venv ]]; then
-        tmp_list=(`ls -1d ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${repo_name}/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
-        if [[ ${#tmp_list[@]} -gt 0 ]]; then
-            integtest_list=(${tmp_list[@]})
-            return 0
-        fi
+    tmp_list=(`ls -1d ${DST_LOCAL_PYTHON_VENV_DIR}/${repo_name}/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
+    if [[ ${#tmp_list[@]} -gt 0 ]]; then
+        integtest_list=(${tmp_list[@]})
+        return 0
     fi
+    return 1
+}
 
-    # base release, always checked, for completeness
-    tmp_list=(`ls -1d ${base_rel_dir}/.venv/lib/python*/site-packages/${repo_name}/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
+# function to find integtests in base release Python virtual environment
+list_baserel_venv_py_tests() {
+    if [[ "$DST_BASEREL_PYTHON_VENV_DIR" == "" ]]; then
+        return 1
+    fi
+    local repo_name="$1"
+    tmp_list=(`ls -1d ${DST_BASEREL_PYTHON_VENV_DIR}/${repo_name}/integtest/*_test.py 2>/dev/null | xargs -r -n 1 basename | sort -u`)
     if [[ ${#tmp_list[@]} -gt 0 ]]; then
         integtest_list=(${tmp_list[@]})
         return 0
@@ -193,37 +190,33 @@ for repo_name in "${repo_list[@]}"; do
     integtest_list=()
     if list_local_sourcecode_tests ${repo_name} || \
             list_local_pythoncode_tests ${repo_name} || \
+            list_local_venv_py_tests ${repo_name} || \
             list_baserel_cpp_tests ${repo_name} || \
-            list_venv_py_tests ${repo_name}; then
+            list_baserel_venv_py_tests ${repo_name}; then
         for test_name in "${integtest_list[@]}"; do
             echo "${repo_name}/${test_name}"
         done
     else
         echo "-> No integtests were found for repository \"${repo_name}\"." >&2
 
-        if [[ "${base_rel_dir}" == "" ]]; then
-            dbt_info_output=`dbt-info release`
-            base_rel_dir=`echo "${dbt_info_output}" | grep 'Release dir' | awk '{print $3}'`
-        fi
-
         # The following logic is simply an attempt to provide a little more information
-        # about *why* the integtest was not found.  It attemts to take into account
+        # about *why* the integtest was not found.  It tries to take into account
         # differences between C++ packages and Python packages.
-        if [[ -e "${DBT_AREA_ROOT}/sourcecode/${repo_name}" ]] && \
-               [[ ! -e "${DBT_AREA_ROOT}/sourcecode/${repo_name}/integtest" ]]; then
-            echo "-> No integtest directory was found in ${DBT_AREA_ROOT}/sourcecode/${repo_name}." >&2
-        elif [[ -e "${DBT_AREA_ROOT}/pythoncode/${repo_name}" ]] && \
-                 [[ ! -e "${DBT_AREA_ROOT}/pythoncode/${repo_name}/integtest" ]]; then
-            echo "-> No integtest directory was found in ${DBT_AREA_ROOT}/pythoncode/${repo_name}/src/${repo_name}." >&2
-        elif [[ "`ls -1d ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${repo_name} 2>/dev/null`" != "" ]] && \
-                 [[ "`ls -1d ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${repo_name}/integtest 2>/dev/null`" == "" ]]; then
-            echo "-> No integtest directory was found in ${DBT_AREA_ROOT}/.venv/lib/python*/site-packages/${repo_name}." >&2
-        elif [[ "`ls -1d ${base_rel_dir}/.venv/lib/python*/site-packages/${repo_name} 2>/dev/null`" != "" ]] && \
-                 [[ "`ls -1d ${base_rel_dir}/.venv/lib/python*/site-packages/${repo_name}/integtest 2>/dev/null`" = "" ]]; then
-            echo "-> No integtest directory was found in ${base_rel_dir}/.venv/lib/python*/site-packages/${repo_name}." >&2
-        elif [[ -e "${base_rel_dir}/sourcecode/${repo_name}" ]] && \
-                 [[ ! -e "${base_rel_dir}/sourcecode/${repo_name}/integtest" ]]; then
-            echo "-> No integtest directory was found in ${base_rel_dir}/sourcecode/${repo_name}." >&2
+        if [[ -e "${DST_LOCAL_CPP_SOURCE_DIR}/${repo_name}" ]] && \
+               [[ ! -e "${DST_LOCAL_CPP_SOURCE_DIR}/${repo_name}/integtest" ]]; then
+            echo "-> No integtest directory was found in ${DST_LOCAL_CPP_SOURCE_DIR}/${repo_name}." >&2
+        elif [[ -e "${DST_LOCAL_PYTHON_SOURCE_DIR}/${repo_name}" ]] && \
+                 [[ ! -e "${DST_LOCAL_PYTHON_SOURCE_DIR}/${repo_name}/src/${repo_name}/integtest" ]]; then
+            echo "-> No integtest directory was found in ${DST_LOCAL_PYTHON_SOURCE_DIR}/${repo_name}/src/${repo_name}." >&2
+        elif [[ -e "${DST_LOCAL_PYTHON_VENV_DIR}/${repo_name}" ]] && \
+                 [[ ! -e "${DST_LOCAL_PYTHON_VENV_DIR}/${repo_name}/integtest" ]]; then
+            echo "-> No integtest directory was found in ${DST_LOCAL_PYTHON_VENV_DIR}/${repo_name}." >&2
+        elif [[ -e "${DST_BASEREL_PYTHON_VENV_DIR}/${repo_name}" ]] && \
+                 [[ ! -e "${DST_BASEREL_PYTHON_VENV_DIR}/${repo_name}/integtest" ]]; then
+            echo "-> No integtest directory was found in ${DST_BASEREL_PYTHON_VENV_DIR}/${repo_name}." >&2
+        elif [[ -e "${DST_BASEREL_CPP_SOURCE_DIR}/${repo_name}" ]] && \
+               [[ ! -e "${DST_BASEREL_CPP_SOURCE_DIR}/${repo_name}/integtest" ]]; then
+            echo "-> No integtest directory was found in ${DST_BASEREL_CPP_SOURCE_DIR}/${repo_name}." >&2
         fi
     fi
 done
