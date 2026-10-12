@@ -28,7 +28,7 @@ fi
 
 # initialization
 all_integtest_paths=()
-source $DAQSYSTEMTEST_SHARE/../bin/dst_set_integtest_env_vars.sh
+source dst_set_integtest_env_vars.sh
 
 # let the user know what is happening
 echo "" >&2

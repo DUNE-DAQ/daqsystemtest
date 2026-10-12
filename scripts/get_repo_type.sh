@@ -18,7 +18,7 @@ if [[ "$DBT_AREA_ROOT" == "" ]]; then
     exit
 fi
 
-source $DAQSYSTEMTEST_SHARE/../bin/dst_set_integtest_env_vars.sh
+source dst_set_integtest_env_vars.sh
 
 if [[ "${DST_LOCAL_SPACK_INSTALL_DIR}" != "" ]] && \
        [[ -e "${DST_LOCAL_SPACK_INSTALL_DIR}/${repo_name}" ]]; then

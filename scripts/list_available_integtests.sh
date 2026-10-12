@@ -20,7 +20,7 @@ Options:
 }
 
 # initialization
-source $DAQSYSTEMTEST_SHARE/../bin/dst_set_integtest_env_vars.sh
+source dst_set_integtest_env_vars.sh
 
 # function to check for a specific string in a list
 string_in_list() {

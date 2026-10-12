@@ -377,7 +377,7 @@ else
 fi
 
 # determine the list of tests
-source $DAQSYSTEMTEST_SHARE/../bin/dst_set_integtest_env_vars.sh
+source dst_set_integtest_env_vars.sh
 if [[ "${excluded_repo_names}" == "" ]]; then
     initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} 2>/dev/null`)
 else
