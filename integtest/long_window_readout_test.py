@@ -149,14 +149,14 @@ dunerc_command_list = "boot conf".split()
 dunerc_command_list += (
     "start --trigger-rate ".split()
     + [str(trigger_rate)]
-    + "--run-number 101 wait 15 enable-triggers wait ".split()
+    + "--run-number 101 wait 15 enable-triggers wait --progress-steps 5".split()
     + [str(run_duration)]
     + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop wait 2".split()
 )
 dunerc_command_list += (
     "start --trigger-rate ".split()
     + [str(trigger_rate)]
-    + "--run-number 102 wait 15 enable-triggers wait ".split()
+    + "--run-number 102 wait 15 enable-triggers wait --progress-steps 5".split()
     + [str(run_duration)]
     + "disable-triggers wait 2 drain-dataflow wait 2 stop-trigger-sources stop wait 2".split()
 )
