@@ -163,6 +163,7 @@ SUITE_DIR="${HERE}/test_suites"
 let individual_test_requested_iterations=1
 let full_set_requested_interations=1
 let stop_on_failure=0
+exit_nonzero=""
 requested_repo_list=()
 excluded_repo_names=""
 requested_test_names=""
@@ -570,6 +571,9 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                 # This code makes use of a bread-crumb file that is created by the
                 # integrationtest infrastructure.
                 if [[ ${pytest_return_code} -ne 4 ]]; then
+                    if [[ -z "$exit_nonzero" ]]; then
+                        exit_nonzero="true"
+                    fi
                     if [[ "`which jq 2>/dev/null`" != "" ]]; then
                         current_pytest_rundir=""
                         mapfile -t bundle_info_files < <(find "${pytest_user_dir}" -type f -name "bundle_script_info.json" -printf '%T@ %p\n' | grep -v 'failed-' | sort -nr | awk '{print $2}')
@@ -677,4 +681,10 @@ if [[ "${numad_grep_output}" != "" ]]; then
     echo "*** context switch can disrupt the stable running of the DAQ processes."          | CaptureOutput ${ITGRUNNER_LOG_FILE}
     echo "********************************************************************************" | CaptureOutput ${ITGRUNNER_LOG_FILE}
 fi
+
+if [[ "${exit_nonzero}" == "true" ]]; then
+    exit 1
+fi
+
 echo ""
+
