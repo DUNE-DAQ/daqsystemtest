@@ -631,13 +631,25 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                                     echo -e "\U1F535 Copying the files from failed test ${pytest_tmpdir} to ${new_dir}. \U1F535"
                                     echo -e "\U1F535 Please note that copied directories from failed tests typically get cleaned up after 26 hours, \U1F535"
                                     echo -e "\U1F535 or when 10 newer failures happen, whichever comes first. \U1F535"
-                                    cp -pR "${pytest_tmpdir}" "${new_dir}"
+                                    # 15-Oct-2026, KAB: added use of rsync with a size limit to avoid
+                                    # copying large files (e.g. large HDF5 data files)
+                                    if [[ "`which rsync 2>/dev/null`" != "" ]]; then
+                                        rsync -a --max-size=200m "${pytest_tmpdir}/" "${new_dir}"
+                                    else
+                                        cp -pR "${pytest_tmpdir}" "${new_dir}"
+                                    fi
                                     if [[ $? == 0 ]]; then
                                         was_successfully_copied="yes"
                                         # 18-Dec-2025, KAB: added the removal of the "current" symbolic links
                                         # from inside the copied directory (since they get broken in the copying)
                                         rm -f "${new_dir}/configcurrent"
                                         rm -f "${new_dir}/runcurrent"
+                                        # 15-Oct-2026, KAB: set permissions so that others can see files from failed tests
+					echo "Changing permissions ${new_dir}"
+                                        chmod go+rx ${new_dir}
+                                        chmod go+rx ${new_dir}/run*
+                                        chmod go+rx ${new_dir}/config*
+                                        chmod go+rx ${new_dir}/..
                                     fi
                                 fi
                             fi
@@ -695,7 +707,7 @@ date                                                      | CaptureOutput ${ITGR
 echo "Log file is: ${ITGRUNNER_LOG_FILE}"                 | CaptureOutput ${ITGRUNNER_LOG_FILE}
 echo ""                                                   | CaptureOutput ${ITGRUNNER_LOG_FILE}
 summary_string="`egrep $'=====|\u2B95|\U1f7e1 WARNING|\U0001F534 ERROR' ${ITGRUNNER_LOG_FILE} | egrep ' in |Running|WARNING|ERROR'`"
-colorized_summary_string="`echo \"${summary_string}\" | sed 's/passed/passed \\\\U2705/' | sed 's/failed/failed \\\\U274c/' | sed 's/\(errors\?\)/\1 \\\\U1F6A8/' | sed 's/no tests ran/no tests ran \\\\U1F6A8/' | sed 's/skipped/skipped \\\\U1f7e1/'`"
+colorized_summary_string="`echo \"${summary_string}\" | sed 's/passed/passed \\\\U2705/' | sed 's/failed/failed \\\\U274c/' | sed 's/warning/warning \\\\U274c/' | sed 's/\(errors\?\)/\1 \\\\U1F6A8/' | sed 's/no tests ran/no tests ran \\\\U1F6A8/' | sed 's/skipped/skipped \\\\U1f7e1/'`"
 echo -e "${colorized_summary_string}" | CaptureOutput ${ITGRUNNER_LOG_FILE}
 
 # check again if the numad daemon is running
