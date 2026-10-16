@@ -665,7 +665,6 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                                         rm -f "${new_dir}/configcurrent"
                                         rm -f "${new_dir}/runcurrent"
                                         # 15-Oct-2026, KAB: set permissions so that others can see files from failed tests
-					echo "Changing permissions ${new_dir}"
                                         chmod go+rx ${new_dir}
                                         chmod go+rx ${new_dir}/run*
                                         chmod go+rx ${new_dir}/config*
