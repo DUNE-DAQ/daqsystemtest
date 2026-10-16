@@ -1,9 +1,19 @@
-# 29-Jan-2026, KAB: Steps to run this test:
+# Steps to run this test:
 # - Log into any np04-srv-XYZ computer and set up a software area with the
 #     appropriate branch of daqsystemtest.
 # - 'mkdir -p $HOME/dunedaq/scratch'  # only need to do this once per user account
 # - 'export PYTEST_DEBUG_TEMPROOT=$HOME/dunedaq/scratch'  # once per login/shell
 # - 'pytest -s $DBT_AREA_ROOT/sourcecode/daqsystemtest/integtest/sample_ehn1_multihost_test.py'
+#
+# This integtest can be run on any computer, inside or outside the NP04 DAQ cluster, but it
+# will only fully work from inside the NP04 DAQ cluster when certain special conditions are met.
+# On other computers, or when the special conditions are not available, it will be skipped.
+#
+# The primary special condition is that the log files from all of the DAQ processes are output
+# to a single shared directory. The default output directory for pytest log files is under "/tmp",
+# and since that disk location is unique to each computer, it can not be used for this integtest.
+# The steps listed above tell Pytest to use an NFS/shared directory for the log files, and this
+# allows the test to proceed.
 #
 # This test currently puts the various DAQ processes on the following computers:
 # - np04-srv-021:  ru-01, ru-controller
