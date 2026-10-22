@@ -12,6 +12,7 @@ from integrationtest.get_pytest_tmpdir import get_pytest_tmpdir
 from integrationtest.verbosity_helper import IntegtestVerbosityLevels
 
 import functools
+
 print = functools.partial(print, flush=True)  # always flush print() output
 
 pytest_plugins = "integrationtest.integrationtest_drunc"
@@ -123,6 +124,16 @@ conf_dict.config_substitutions.append(
     )
 )
 
+conf_dict.config_substitutions.append(
+    data_classes.list_element_addition(
+        obj_class="ReadoutApplication",
+        obj_id="ru-det-conn-1",
+        rel_name="connection_overrides",
+        additional_object_class="ConnectionOverride",
+        additional_object_id="alternate-localhost-ip",
+    )
+)
+
 swtpg_conf = copy.deepcopy(conf_dict)
 swtpg_conf.tpg_enabled = True
 swtpg_conf.frame_file = (
@@ -161,6 +172,7 @@ dunerc_command_list += (
 dunerc_command_list += "scrap terminate".split()
 
 # The tests themselves
+
 
 def test_dunerc_success(run_dunerc, caplog):
     # checks for run control success, problems during pytest setup, etc.
