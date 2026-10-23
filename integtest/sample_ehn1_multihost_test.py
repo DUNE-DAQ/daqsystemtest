@@ -76,10 +76,10 @@ wibeth_tpset_params = {
     "min_size_bytes": 72,
     "max_size_bytes": 120000,
     "debug_mask": 0x0,
-    "frag_sizes_by_record_ordinal": {  "first": {"min_size_bytes":     96, "max_size_bytes": 240000},
-                                      "second": {"min_size_bytes":     96, "max_size_bytes": 240000},
-                                        "last": {"min_size_bytes":     96, "max_size_bytes": 240000},
-                                     "default": {"min_size_bytes": 170000, "max_size_bytes": 230000} }
+    "frag_sizes_by_record_ordinal": {  "first": {"min_size_bytes":     96, "max_size_bytes": 242000},
+                                      "second": {"min_size_bytes":     96, "max_size_bytes": 242000},
+                                        "last": {"min_size_bytes":     96, "max_size_bytes": 242000},
+                                     "default": {"min_size_bytes": 180000, "max_size_bytes": 242000} }
 }
 # sizes: 128 is for one TC with zero TAs inside it (72+56)
 #        208 is for one TC with one TA inside it (72+56+80)
