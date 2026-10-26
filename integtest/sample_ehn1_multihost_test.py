@@ -127,12 +127,15 @@ ignored_logfile_problems = {
 pytest_tmpdir_looks_reasonable = False
 pytest_tmpdir = os.environ.get("PYTEST_DEBUG_TEMPROOT")
 if pytest_tmpdir is not None:
-    if os.path.isdir(pytest_tmpdir):
+    if os.path.isdir(pytest_tmpdir) and os.access(pytest_tmpdir, os.W_OK):
         pytest_tmpdir_looks_reasonable = True
     else:
         print("")
         print("")
-        print(f"*** WARNING: the directory referenced by PYTEST_DEBUG_TEMPROOT ({pytest_tmpdir}) does not exist!")
+        if not os.path.isdir(pytest_tmpdir):
+            print(f"*** WARNING: the directory referenced by PYTEST_DEBUG_TEMPROOT ({pytest_tmpdir}) does not exist!")
+        else:
+            print(f"*** WARNING: the directory referenced by PYTEST_DEBUG_TEMPROOT ({pytest_tmpdir}) is not writeable!")
         print("")
 
 # Set up the software environment on each of the 4 computers needed for this test.
