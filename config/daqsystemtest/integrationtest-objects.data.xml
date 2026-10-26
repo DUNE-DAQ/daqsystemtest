@@ -203,7 +203,7 @@
  <attr name="tp_accumulation_interval" type="u64" val="62500000"/>
  <attr name="tp_accumulation_inactivity_time_before_write_sec" type="float" val="1"/>
  <attr name="warn_user_when_tardy_tps_are_discarded" type="bool" val="1"/>
- <rel name="data_store_params" class="DataStoreConf" id="default_tp_store_conf"/>
+ <rel name="data_store_params" class="HDF5DataStoreConf" id="default_tp_store_conf"/>
 </obj>
 
 </oks-data>
