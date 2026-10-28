@@ -90,7 +90,7 @@
 <obj class="FSMPostTransition" id="post_start_test">
 </obj>
 
-<obj class="FSMPostTransition" id="pre_change_rate">
+<obj class="FSMPreTransition" id="pre_change_rate">
  <attr name="mandatory" type="string">
   <data val="trigger-rate-specifier"/>
  </attr>
