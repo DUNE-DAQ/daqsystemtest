@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="36" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="mroda" last-modified-on="mroda-xpsp" last-modification-time="20261022T144721"/>
+<info name="" type="" num-of-items="46" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="mroda" last-modified-on="mroda-xpsp" last-modification-time="20261028T162444"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -72,6 +72,8 @@
 <comments>
  <comment creation-time="20240208T094131" created-by="eflumerf" created-on="ironvirt9.mshome.net" author="eflumerf" text="reformat"/>
  <comment creation-time="20261022T143134" created-by="mroda" created-on="mroda-xpsp" author="mroda" text="initial changes"/>
+ <comment creation-time="20261028T154520" created-by="mroda" created-on="mroda-xpsp" author="mroda" text="fix sequences"/>
+ <comment creation-time="20261028T162444" created-by="mroda" created-on="mroda-xpsp" author="mroda" text="full configuration with new schema"/>
 </comments>
 
 
@@ -85,6 +87,9 @@
  <attr name="mandatory" type="string">
   <data val="elisa-logbook"/>
  </attr>
+ <rel name="actions">
+  <ref class="FSMaction" id="elisa-logbook"/>
+ </rel>
 </obj>
 
 <obj class="FSMPostTransition" id="post_start_test">
@@ -94,6 +99,9 @@
  <attr name="mandatory" type="string">
   <data val="trigger-rate-specifier"/>
  </attr>
+ <rel name="actions">
+  <ref class="FSMaction" id="trigger-rate-specifier"/>
+ </rel>
 </obj>
 
 <obj class="FSMPreTransition" id="pre_start_prod">
@@ -101,12 +109,20 @@
   <data val="usvc-provided-run-number"/>
   <data val="db-run-registry"/>
  </attr>
+ <rel name="actions">
+  <ref class="FSMaction" id="usvc-provided-run-number"/>
+  <ref class="FSMaction" id="db-run-registry"/>
+ </rel>
 </obj>
 
 <obj class="FSMPreTransition" id="pre_start_test">
  <attr name="mandatory" type="string">
   <data val="user-provided-run-number"/>
  </attr>
+ <rel name="actions">
+  <ref class="FSMaction" id="user-provided-run-number"/>
+  <ref class="FSMaction" id="file-run-registry"/>
+ </rel>
 </obj>
 
 <obj class="FSMaction" id="db-run-registry">
@@ -167,10 +183,10 @@
  <attr name="initial_state" type="string" val="initial"/>
  <rel name="transitions">
   <ref class="FSMtransition" id="conf"/>
-  <ref class="FSMtransition" id="start"/>
+  <ref class="FSMtransition" id="generic_start"/>
   <ref class="FSMtransition" id="enable_triggers"/>
   <ref class="FSMtransition" id="disable_triggers"/>
-  <ref class="FSMtransition" id="drain_dataflow"/>
+  <ref class="FSMtransition" id="generic_drain_dataflow"/>
   <ref class="FSMtransition" id="stop_trigger_sources"/>
   <ref class="FSMtransition" id="stop"/>
   <ref class="FSMtransition" id="scrap"/>
@@ -197,19 +213,19 @@
  <attr name="initial_state" type="string" val="initial"/>
  <rel name="transitions">
   <ref class="FSMtransition" id="conf"/>
-  <ref class="FSMtransition" id="start"/>
+  <ref class="FSMtransition" id="start_prod"/>
   <ref class="FSMtransition" id="enable_triggers"/>
   <ref class="FSMtransition" id="disable_triggers"/>
-  <ref class="FSMtransition" id="drain_dataflow"/>
+  <ref class="FSMtransition" id="drain_dataflow_prod"/>
   <ref class="FSMtransition" id="stop_trigger_sources"/>
   <ref class="FSMtransition" id="stop"/>
   <ref class="FSMtransition" id="scrap"/>
   <ref class="FSMtransition" id="change_rate"/>
  </rel>
  <rel name="command_sequences">
-  <ref class="FSMsequence" id="shutdown"/>
-  <ref class="FSMsequence" id="start_run"/>
-  <ref class="FSMsequence" id="stop_run"/>
+  <ref class="FSMsequence" id="shutdown_prod"/>
+  <ref class="FSMsequence" id="start_run_prod"/>
+  <ref class="FSMsequence" id="stop_run_prod"/>
  </rel>
 </obj>
 
@@ -227,19 +243,19 @@
  <attr name="initial_state" type="string" val="initial"/>
  <rel name="transitions">
   <ref class="FSMtransition" id="conf"/>
-  <ref class="FSMtransition" id="start"/>
+  <ref class="FSMtransition" id="start_test"/>
   <ref class="FSMtransition" id="enable_triggers"/>
   <ref class="FSMtransition" id="disable_triggers"/>
-  <ref class="FSMtransition" id="drain_dataflow"/>
+  <ref class="FSMtransition" id="drain_dataflow_test"/>
   <ref class="FSMtransition" id="stop_trigger_sources"/>
   <ref class="FSMtransition" id="stop"/>
   <ref class="FSMtransition" id="scrap"/>
   <ref class="FSMtransition" id="change_rate"/>
  </rel>
  <rel name="command_sequences">
-  <ref class="FSMsequence" id="shutdown"/>
-  <ref class="FSMsequence" id="start_run"/>
-  <ref class="FSMsequence" id="stop_run"/>
+  <ref class="FSMsequence" id="shutdown_test"/>
+  <ref class="FSMsequence" id="start_run_test"/>
+  <ref class="FSMsequence" id="stop_run_test"/>
  </rel>
 </obj>
 
@@ -247,7 +263,29 @@
  <attr name="name" type="string" val="shutdown"/>
  <rel name="sequence">
   <ref class="FSMtransition" id="disable_triggers"/>
-  <ref class="FSMtransition" id="drain_dataflow"/>
+  <ref class="FSMtransition" id="generic_drain_dataflow"/>
+  <ref class="FSMtransition" id="stop_trigger_sources"/>
+  <ref class="FSMtransition" id="stop"/>
+  <ref class="FSMtransition" id="scrap"/>
+ </rel>
+</obj>
+
+<obj class="FSMsequence" id="shutdown_prod">
+ <attr name="name" type="string" val="shutdown"/>
+ <rel name="sequence">
+  <ref class="FSMtransition" id="disable_triggers"/>
+  <ref class="FSMtransition" id="drain_dataflow_prod"/>
+  <ref class="FSMtransition" id="stop_trigger_sources"/>
+  <ref class="FSMtransition" id="stop"/>
+  <ref class="FSMtransition" id="scrap"/>
+ </rel>
+</obj>
+
+<obj class="FSMsequence" id="shutdown_test">
+ <attr name="name" type="string" val="shutdown"/>
+ <rel name="sequence">
+  <ref class="FSMtransition" id="disable_triggers"/>
+  <ref class="FSMtransition" id="drain_dataflow_test"/>
   <ref class="FSMtransition" id="stop_trigger_sources"/>
   <ref class="FSMtransition" id="stop"/>
   <ref class="FSMtransition" id="scrap"/>
@@ -258,7 +296,25 @@
  <attr name="name" type="string" val="start_run"/>
  <rel name="sequence">
   <ref class="FSMtransition" id="conf"/>
-  <ref class="FSMtransition" id="start"/>
+  <ref class="FSMtransition" id="generic_start"/>
+  <ref class="FSMtransition" id="enable_triggers"/>
+ </rel>
+</obj>
+
+<obj class="FSMsequence" id="start_run_prod">
+ <attr name="name" type="string" val="start_run"/>
+ <rel name="sequence">
+  <ref class="FSMtransition" id="conf"/>
+  <ref class="FSMtransition" id="start_prod"/>
+  <ref class="FSMtransition" id="enable_triggers"/>
+ </rel>
+</obj>
+
+<obj class="FSMsequence" id="start_run_test">
+ <attr name="name" type="string" val="start_run"/>
+ <rel name="sequence">
+  <ref class="FSMtransition" id="conf"/>
+  <ref class="FSMtransition" id="start_test"/>
   <ref class="FSMtransition" id="enable_triggers"/>
  </rel>
 </obj>
@@ -267,7 +323,27 @@
  <attr name="name" type="string" val="stop_run"/>
  <rel name="sequence">
   <ref class="FSMtransition" id="disable_triggers"/>
-  <ref class="FSMtransition" id="drain_dataflow"/>
+  <ref class="FSMtransition" id="generic_drain_dataflow"/>
+  <ref class="FSMtransition" id="stop_trigger_sources"/>
+  <ref class="FSMtransition" id="stop"/>
+ </rel>
+</obj>
+
+<obj class="FSMsequence" id="stop_run_prod">
+ <attr name="name" type="string" val="stop_run"/>
+ <rel name="sequence">
+  <ref class="FSMtransition" id="disable_triggers"/>
+  <ref class="FSMtransition" id="drain_dataflow_prod"/>
+  <ref class="FSMtransition" id="stop_trigger_sources"/>
+  <ref class="FSMtransition" id="stop"/>
+ </rel>
+</obj>
+
+<obj class="FSMsequence" id="stop_run_test">
+ <attr name="name" type="string" val="stop_run"/>
+ <rel name="sequence">
+  <ref class="FSMtransition" id="disable_triggers"/>
+  <ref class="FSMtransition" id="drain_dataflow_test"/>
   <ref class="FSMtransition" id="stop_trigger_sources"/>
   <ref class="FSMtransition" id="stop"/>
  </rel>
@@ -277,6 +353,7 @@
  <attr name="source" type="string" val="ready|running"/>
  <attr name="cmd" type="string" val="change_rate"/>
  <attr name="reload_configuration" type="bool" val="0"/>
+ <rel name="pre_transition" class="FSMPreTransition" id="pre_change_rate"/>
 </obj>
 
 <obj class="FSMtransition" id="conf">
@@ -293,17 +370,40 @@
  <attr name="reload_configuration" type="bool" val="0"/>
 </obj>
 
-<obj class="FSMtransition" id="drain_dataflow">
+<obj class="FSMtransition" id="drain_dataflow_prod">
  <attr name="source" type="string" val="ready"/>
  <attr name="dest" type="string" val="dataflow_drained"/>
  <attr name="cmd" type="string" val="drain_dataflow"/>
  <attr name="reload_configuration" type="bool" val="0"/>
+ <rel name="post_transition" class="FSMPostTransition" id="post_drain_dataflow_prod"/>
+</obj>
+
+<obj class="FSMtransition" id="drain_dataflow_test">
+ <attr name="source" type="string" val="ready"/>
+ <attr name="dest" type="string" val="dataflow_drained"/>
+ <attr name="cmd" type="string" val="drain_dataflow"/>
+ <attr name="reload_configuration" type="bool" val="0"/>
+ <rel name="post_transition" class="FSMPostTransition" id="post_drain_dataflow_test"/>
 </obj>
 
 <obj class="FSMtransition" id="enable_triggers">
  <attr name="source" type="string" val="ready"/>
  <attr name="dest" type="string" val="running"/>
  <attr name="cmd" type="string" val="enable_triggers"/>
+ <attr name="reload_configuration" type="bool" val="0"/>
+</obj>
+
+<obj class="FSMtransition" id="generic_drain_dataflow">
+ <attr name="source" type="string" val="ready"/>
+ <attr name="dest" type="string" val="dataflow_drained"/>
+ <attr name="cmd" type="string" val="drain_dataflow"/>
+ <attr name="reload_configuration" type="bool" val="0"/>
+</obj>
+
+<obj class="FSMtransition" id="generic_start">
+ <attr name="source" type="string" val="configured"/>
+ <attr name="dest" type="string" val="ready"/>
+ <attr name="cmd" type="string" val="start"/>
  <attr name="reload_configuration" type="bool" val="0"/>
 </obj>
 
@@ -314,11 +414,22 @@
  <attr name="reload_configuration" type="bool" val="0"/>
 </obj>
 
-<obj class="FSMtransition" id="start">
+<obj class="FSMtransition" id="start_prod">
  <attr name="source" type="string" val="configured"/>
  <attr name="dest" type="string" val="ready"/>
  <attr name="cmd" type="string" val="start"/>
  <attr name="reload_configuration" type="bool" val="0"/>
+ <rel name="pre_transition" class="FSMPreTransition" id="pre_start_prod"/>
+ <rel name="post_transition" class="FSMPostTransition" id="post_start_prod"/>
+</obj>
+
+<obj class="FSMtransition" id="start_test">
+ <attr name="source" type="string" val="configured"/>
+ <attr name="dest" type="string" val="ready"/>
+ <attr name="cmd" type="string" val="start"/>
+ <attr name="reload_configuration" type="bool" val="0"/>
+ <rel name="pre_transition" class="FSMPreTransition" id="pre_start_test"/>
+ <rel name="post_transition" class="FSMPostTransition" id="post_start_test"/>
 </obj>
 
 <obj class="FSMtransition" id="stop">

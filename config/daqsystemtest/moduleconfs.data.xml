@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="102" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="eflumerf" last-modified-on="ironvirt9.mshome.net" last-modification-time="20260909T163348"/>
+<info name="" type="" num-of-items="102" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T105629" last-modified-by="mroda" last-modified-on="mroda-xpsp" last-modification-time="20261028T135550"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -136,7 +136,7 @@
 
 <obj class="ActionPlan" id="crt-readout-start">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMtransition" id="start"/>
+ <rel name="command" class="FSMtransition" id="generic_start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="crt-bern-frame-builder-data-source-step"/>
@@ -154,7 +154,7 @@
 
 <obj class="ActionPlan" id="readout-start">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMtransition" id="start"/>
+ <rel name="command" class="FSMtransition" id="generic_start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
   <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
@@ -176,7 +176,7 @@
 
 <obj class="ActionPlan" id="snb-readout-start">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMtransition" id="start"/>
+ <rel name="command" class="FSMtransition" id="generic_start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
   <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
@@ -198,7 +198,7 @@
 
 <obj class="ActionPlan" id="socket-readout-start">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMtransition" id="start"/>
+ <rel name="command" class="FSMtransition" id="generic_start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
@@ -218,7 +218,7 @@
 
 <obj class="ActionPlan" id="tc-maker-start">
  <attr name="execution_policy" type="enum" val="modules-in-series"/>
- <rel name="command" class="FSMtransition" id="start"/>
+ <rel name="command" class="FSMtransition" id="generic_start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="ta-handler-step"/>
   <ref class="DaqModulesGroupByType" id="subscriber-step"/>
