@@ -136,7 +136,7 @@
 
 <obj class="ActionPlan" id="crt-readout-start">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="command" class="FSMtransition" id="start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="crt-bern-frame-builder-data-source-step"/>
@@ -145,7 +145,7 @@
 
 <obj class="ActionPlan" id="crt-readout-stop">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
+ <rel name="command" class="FSMtransition" id="stop_trigger_sources"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="crt-bern-frame-builder-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="socket-writer-data-source-step"/>
@@ -154,7 +154,7 @@
 
 <obj class="ActionPlan" id="readout-start">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="command" class="FSMtransition" id="start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
   <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
@@ -165,7 +165,7 @@
 
 <obj class="ActionPlan" id="readout-stop">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
+ <rel name="command" class="FSMtransition" id="stop_trigger_sources"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="data-source-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
@@ -176,7 +176,7 @@
 
 <obj class="ActionPlan" id="snb-readout-start">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="command" class="FSMtransition" id="start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
   <ref class="DaqModulesGroupByType" id="optional-tp-handler-step"/>
@@ -187,7 +187,7 @@
 
 <obj class="ActionPlan" id="snb-readout-stop">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
+ <rel name="command" class="FSMtransition" id="stop_trigger_sources"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="snb-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="snb-dlh-step"/>
@@ -198,7 +198,7 @@
 
 <obj class="ActionPlan" id="socket-readout-start">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="command" class="FSMtransition" id="start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="aggregator-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
@@ -208,7 +208,7 @@
 
 <obj class="ActionPlan" id="socket-readout-stop">
  <attr name="execution_policy" type="enum" val="modules-in-parallel"/>
- <rel name="command" class="FSMCommand" id="stop_trigger_sources"/>
+ <rel name="command" class="FSMtransition" id="stop_trigger_sources"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="socket-reader-data-source-step"/>
   <ref class="DaqModulesGroupByType" id="dlh-step"/>
@@ -218,7 +218,7 @@
 
 <obj class="ActionPlan" id="tc-maker-start">
  <attr name="execution_policy" type="enum" val="modules-in-series"/>
- <rel name="command" class="FSMCommand" id="start"/>
+ <rel name="command" class="FSMtransition" id="start"/>
  <rel name="steps">
   <ref class="DaqModulesGroupByType" id="ta-handler-step"/>
   <ref class="DaqModulesGroupByType" id="subscriber-step"/>
