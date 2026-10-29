@@ -78,6 +78,12 @@
 </comments>
 
 
+<obj class="ConnectionOverride" id="alternate-localhost-ip">
+ <attr name="connection_id_regex" type="string" val=".*"/>
+ <attr name="override_type" type="enum" val="output_hostname"/>
+ <attr name="override_value" type="string" val="127.0.0.2"/>
+</obj>
+
 <obj class="DataMoveCallbackDescriptor" id="crt-bern-raw-input">
  <attr name="uid_base" type="string" val="raw_input_"/>
  <attr name="data_type" type="string" val="CRTBernFrame"/>
