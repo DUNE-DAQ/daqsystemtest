@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="46" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="mroda" last-modified-on="mroda-xpsp" last-modification-time="20261028T162444"/>
+<info name="" type="" num-of-items="46" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="mroda" last-modified-on="mroda-xpsp" last-modification-time="20261030T113214"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -74,13 +74,21 @@
  <comment creation-time="20261022T143134" created-by="mroda" created-on="mroda-xpsp" author="mroda" text="initial changes"/>
  <comment creation-time="20261028T154520" created-by="mroda" created-on="mroda-xpsp" author="mroda" text="fix sequences"/>
  <comment creation-time="20261028T162444" created-by="mroda" created-on="mroda-xpsp" author="mroda" text="full configuration with new schema"/>
+ <comment creation-time="20261030T113214" created-by="mroda" created-on="mroda-xpsp" author="mroda" text="correct fsm according to previous"/>
 </comments>
 
 
 <obj class="FSMPostTransition" id="post_drain_dataflow_prod">
+ <rel name="actions">
+  <ref class="FSMaction" id="db-run-registry"/>
+  <ref class="FSMaction" id="elisa-logbook"/>
+ </rel>
 </obj>
 
 <obj class="FSMPostTransition" id="post_drain_dataflow_test">
+ <rel name="actions">
+  <ref class="FSMaction" id="file-logbook"/>
+ </rel>
 </obj>
 
 <obj class="FSMPostTransition" id="post_start_prod">
@@ -93,6 +101,9 @@
 </obj>
 
 <obj class="FSMPostTransition" id="post_start_test">
+ <rel name="actions">
+  <ref class="FSMaction" id="file-logbook"/>
+ </rel>
 </obj>
 
 <obj class="FSMPreTransition" id="pre_change_rate">
