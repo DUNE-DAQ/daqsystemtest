@@ -133,9 +133,15 @@ if pytest_tmpdir is not None:
         print("")
         print("")
         if not os.path.isdir(pytest_tmpdir):
-            print(f"*** WARNING: the directory referenced by PYTEST_DEBUG_TEMPROOT ({pytest_tmpdir}) does not exist!")
+            print(f"\N{LARGE RED CIRCLE} ERROR: the directory referenced by PYTEST_DEBUG_TEMPROOT ({pytest_tmpdir}) does not exist!")
+            print("")
+            pytest.skip(f"The directory referenced by PYTEST_DEBUG_TEMPROOT ({pytest_tmpdir}) does not exist.",
+                        allow_module_level=True)
         else:
-            print(f"*** WARNING: the directory referenced by PYTEST_DEBUG_TEMPROOT ({pytest_tmpdir}) is not writeable!")
+            print(f"\N{LARGE RED CIRCLE} ERROR: the directory referenced by PYTEST_DEBUG_TEMPROOT ({pytest_tmpdir}) is not writeable!")
+            print("")
+            pytest.skip(f"The directory referenced by PYTEST_DEBUG_TEMPROOT ({pytest_tmpdir}) is not writeable.",
+                        allow_module_level=True)
         print("")
 
 # Set up the software environment on each of the 4 computers needed for this test.
