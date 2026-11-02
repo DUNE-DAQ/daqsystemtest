@@ -12,19 +12,24 @@ Usage:
 
 Options:
     -h, --help : prints out usage information
-    -r <the list of repositories for which integtests will be run>
-       - this can be the name of a single repo; it defaults to \"daqsystemtest\"
+    -s, --test-suite <list of test suites that will be run>
+       - this can be the name of a single suite, e.g. \"core\"
+       - it can be a pipe-delimited string with a list of test suite names, e.g. 'core|other'
+       - each test suite name should match a suite defined in test_suites/, e.g., 'core'
+       - the special value 'extended' will run all tests excluding those contained in 'core'
+    -r <list of repositories for which integtests will be run>
+       - this can be the name of a single repo, e.g. \"daqsystemtest\"
        - it can be a pipe-delimited string with a list of repos, e.g. 'dfmodules|trigger'
        - it can have the special value of \"all\" - integtests in all repos will be run
        - it can have the special value of \"local\" - integtests in locally-cloned repos will be run
-    -R <the list of repositories to be excluded>
+    -R <list of repositories to be excluded>
        - this can be the name of a single repo
        - it can be a pipe-delimited string with a list of repos, e.g. 'dfmodules|trigger'
     -k, --include <pipe-delimited string to select the tests that will be run ('egrep -i' match to test name)>
     -x, --exclude <pipe-delimited string to specify tests to be excluded ('egrep -i' match to test name)>
-    -s, --test-suite <test_suite_name>
-        - should match a test suite defined in test_suites/, e.g., 'core'
-        - the special value 'extended' will run all tests excluding those contained in 'core'
+    -S <list of test suites to be excluded>
+       - this can be the name of a single suite
+       - it can be a pipe-delimited string with a list of suites, e.g. 'core|other'
     --random-subset <count> : randomly picks the specified number of tests from the results of -r/-k/-x
     --list-only : list the tests that match the requested patterns without running them
     --verbosity <level> : requested level of console messages, in range 1-6, where 1 is least, 6 is DRUNC debug
@@ -47,6 +52,13 @@ Options:
          --dunerc-option <option-name> <option-value> : Repeatable, run control arguments without leading dashes
              for example, --dunerc-option log-level debug
        - example: --pytest-options \"--skip-resource-checks --process-manager-type ssh-standalone --dunerc-option no-override-logs\"
+
+  For determining the initial set of tests that might be run, test suites have higher
+  priority than requested repositories. If both are specified, the test suites are used
+  to create the initial list of tests, and the requested repo list is used to filter
+  that list. If only test suite(s) are specified, or only requested repos are specified,
+  then whichever one is specified will be used to determine the initial list of tests.
+  All of the -R, -k, -x, and -S options are then used to filter out unwanted tests.
 """
 }
 
@@ -102,6 +114,89 @@ append_pipe_delimited() {
     _target="${_target:+${_target}|}$2"
 }
 
+# Adds elements to a specified list, unless they are already present.
+# Usage:  add_unique_elements_to_list target_list new_item_list
+# Note the absence of "$" and "[@]" for the list names.  This is
+# because this function expects references to the lists.
+# The function returns 1 if invalid arguments were provided, zero otherwise.
+add_unique_elements_to_list() {
+    if [[ $# -ne 2 ]]; then return 1; fi
+    local -n target_list_ref=$1
+    local -n new_item_list_ref=$2
+    for new_item in "${new_item_list_ref[@]}"; do
+        if ! string_in_list "$new_item" "${target_list_ref[@]}"; then
+            target_list_ref+=("$new_item")
+        fi
+    done
+    return 0
+}
+
+# Removes elements from a specified list.
+# Usage:  remove_elements_from_list target_list unwanted_item_list
+# Note the absence of "$" and "[@]" for the list names.  This is
+# because this function expects references to the lists.
+# The function returns 1 if invalid arguments were provided, zero otherwise.
+remove_elements_from_list() {
+    if [[ $# -ne 2 ]]; then return 1; fi
+    local -n target_list_ref=$1
+    local -n unwanted_item_list_ref=$2
+    for unwanted_item in "${unwanted_item_list_ref[@]}"; do
+        for idx in "${!target_list_ref[@]}"; do
+            if [[ "${target_list_ref[$idx]}" == "${unwanted_item}" ]]; then
+                unset 'target_list_ref[idx]'
+            fi
+        done
+    done
+    # re-index the array to remove gaps
+    target_list_ref=("${target_list_ref[@]}")
+    return 0
+}
+
+remove_tests_by_repo() {
+    if [[ $# -ne 2 ]]; then return 1; fi
+    local -n target_list_ref=$1
+    local -n unwanted_repo_list_ref=$2
+    for unwanted_repo in "${unwanted_repo_list_ref[@]}"; do
+        for idx in "${!target_list_ref[@]}"; do
+            if [[ "${target_list_ref[$idx]}" == "${unwanted_item}" ]]; then
+                unset 'target_list_ref[idx]'
+            fi
+        done
+    done
+    # re-index the array to remove gaps
+    target_list_ref=("${target_list_ref[@]}")
+    return 0
+}
+
+#remove_tests_by_keyword() {
+#}
+
+#filter_tests_by_keyword() {
+#x}
+
+# **************************************************
+# run some self-tests of list modification functions
+# **************************************************
+list1=(a b c d)
+list2=(b c d e f)
+add_unique_elements_to_list list1 list2
+if [[ "${#list1[@]}" -ne 6 ]] || [[ "${list1[0]}" != "a" ]] || [[ "${list1[-1]}" != "f" ]]; then
+    echo ""
+    echo -e "\U1f7e1 WARNING: A self-check of the 'add_unique_elements_to_list' function failed."
+    echo -e "\U1f7e1 WARNING: The expected results of the test are 'a b c d e f', but the actual results were '${list1[@]}'."
+    echo ""
+fi
+
+list2=(a d f)
+remove_elements_from_list list1 list2
+if [[ "${#list1[@]}" -ne 3 ]] || [[ "${list1[0]}" != "b" ]] || [[ "${list1[-1]}" != "e" ]]; then
+    echo ""
+    echo -e "\U1f7e1 WARNING: A self-check of the 'remove_elements_from_list' function failed."
+    echo -e "\U1f7e1 WARNING: The expected results of the test are 'b c e', but the actual results were '${list1[@]}'."
+    echo ""
+fi
+exit
+
 load_test_suite() {
     local suite="${1}"
     local suite_file="${SUITE_DIR}/${suite}.txt"
@@ -123,7 +218,7 @@ load_test_suite() {
             printf '\U1f7e1 WARNING: %s\n' \
                 "skipping malformed entry in ${suite_file}:" \
                 "  ${line}" \
-                "expected <repo_name>:<test_name>, with no trailing '.py' an no other whitespace
+                "expected <repo_name>:<test_name>, with no trailing '.py' and no other whitespace
                 " >&2
             continue
         fi
@@ -159,7 +254,7 @@ CaptureOutput() {
     tee -a $1
 }
 
-GETOPT_TEMP=$(getopt -o hr:R:k:x:s:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,test-suite:,tmpdir:,verbosity:,random-subset:,list-only,pytest-options:,log-retention-count:,log-retention-policy:,junit-xml -n "$0" -- "$@")
+GETOPT_TEMP=$(getopt -o hs:r:R:k:x:S:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,test-suite:,tmpdir:,verbosity:,random-subset:,list-only,pytest-options:,log-retention-count:,log-retention-policy:,junit-xml -n "$0" -- "$@")
 if [ $? -ne 0 ]; then
     usage
     exit 1
@@ -173,11 +268,11 @@ let individual_test_requested_iterations=1
 let full_set_requested_interations=1
 let stop_on_failure=0
 exit_nonzero=""
+requested_suite_list=()
 requested_repo_list=()
 excluded_repo_names=""
 requested_test_names=""
 excluded_test_names=""
-test_suite=""
 log_retention_count_arg=""
 log_retention_policy_arg=""
 write_junit_xml="false"
@@ -205,7 +300,6 @@ while true; do
                 read -rd '' trimmed <<< "$repo"
                 requested_repo_list+=("${trimmed}")
             done
-
             shift 2
             ;;
         -R)
@@ -236,12 +330,22 @@ while true; do
             shift 2
             ;;
         -s|--test-suite)
-            if [[ ! -r "${SUITE_DIR}/${2}.txt" && "${2}" != "extended" ]]; then
-                echo
-                echo -e "\U0001F534 ERROR: No test suite named ${2} found in ${SUITE_DIR}; exiting..."
+            # check that a valid value was passed to this option
+            if [[ "$2" =~ ^- ]]; then
+                invalid_option_value $1 $2
                 exit 1
             fi
-            test_suite="$2"
+            # split a pipe-delimited string into individual elements, if needed
+            IFS='|' read -ra tmp_list <<< "$2"
+            for test_suite in "${tmp_list[@]}"; do
+                read -rd '' trimmed <<< "$test_suite"
+                if [[ ! -r "${SUITE_DIR}/${trimmed}.txt" && "${trimmed}" != "extended" ]]; then
+                    echo
+                    echo -e "\U0001F534 ERROR: No test suite named ${trimmed} found in ${SUITE_DIR}; exiting..."
+                    exit 1
+                fi
+                requested_suite_list+=("${trimmed}")
+            done
             shift 2
             ;;
         -n)
@@ -359,47 +463,50 @@ requested_test_names=`echo ${requested_test_names} | sed 's/\s//g'`
 excluded_test_names=`echo ${excluded_test_names} | sed 's/\s//g'`
 excluded_repo_names=`echo ${excluded_repo_names} | sed 's/\s//g'`
 
-if [[ -n "$test_suite" ]]; then
-    if [[ -n "${requested_repo_list[@]}" || -n "$excluded_repo_names" || -n "$requested_test_names" || -n "$excluded_test_names" ]]; then
+#if [[ -n "$test_suite" ]]; then
+#    if [[ -n "${requested_repo_list[@]}" || -n "$excluded_repo_names" || -n "$requested_test_names" || -n "$excluded_test_names" ]]#; then
+#        echo ""
+#        echo -e "\U1f7e1 WARNING: Combining a test suite with -r, -R, -k, and/or -x can lead to unintended consequences"
+#        echo -e "\U1f7e1 WARNING: Consider defining your own test suite following the example(s) in $SUITE_DIR"
+#        echo ""
+#    fi
+#fi
+
+# if no test suites and no requested repos were provided, we default to the 'core' test suite
+if [[ "${#requested_suite_list}" -eq 0 ]] && if [[ "${#requested_repo_list}" -eq 0 ]]; then
+    requested_suite_list+=("core")
+fi
+
+# if one or more test suite names were provided, load those tests first
+if [[ "${#requested_suite_list}" -gt 0 ]]; then
+    echo ""
+    echo "Building the list of integtests from the _${requested_suite_list[@]}_ suite(s)..."
+    for test_suite in "${requested_suite_list[@]}"; do
+        load_test_suite "$test_suite"
+    done
+fi
+
+# if one or more repo names were provided, also load those
+if [[ "${#requested_repo_list}" -gt 0 ]]; then
+
+    if string_in_list "all" "${requested_repo_list[@]}" && [[ "${test_suite}" != "extended" ]]; then
         echo ""
-        echo -e "\U1f7e1 WARNING: Combining a test suite with -r, -R, -k, and/or -x can lead to unintended consequences"
-        echo -e "\U1f7e1 WARNING: Consider defining your own test suite following the example(s) in $SUITE_DIR"
-        echo ""
+        echo "Building the list of _all_ integtests..."
+    else
+        if string_in_list "local" "${requested_repo_list[@]}"; then
+            echo ""
+            echo "Building the list of _local_ integtests..."
+        fi
+    fi
+
+    source dst_set_integtest_env_vars.sh
+    if [[ "${excluded_repo_names}" == "" ]]; then
+        initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} 2>/dev/null`)
+    else
+        initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} -x "${excluded_repo_names}" 2>/dev/null`)
     fi
 fi
 
-# if a test suite name is provided, load those tests first
-if [[ -n "$test_suite" ]]; then
-    echo ""
-    echo "Building the list of integtests from the _${test_suite}_ suite..."
-    load_test_suite "$test_suite"
-fi
-
-# run the integtests from the daqsystemtest repo if no repo was specified
-if [[ "${#requested_repo_list}" -eq 0 ]]; then
-    requested_repo_list+=("daqsystemtest")
-    echo ""
-    echo "Integtests from the _daqsystemtest_ repo will be run..."
-fi
-
-# provide feedback to the user when a group of tests will be run
-if string_in_list "all" "${requested_repo_list[@]}" && [[ "${test_suite}" != "extended" ]]; then
-    echo ""
-    echo "Building the list of _all_ integtests..."
-else
-    if string_in_list "local" "${requested_repo_list[@]}"; then
-        echo ""
-        echo "Building the list of _local_ integtests..."
-    fi
-fi
-
-# determine the list of tests
-source dst_set_integtest_env_vars.sh
-if [[ "${excluded_repo_names}" == "" ]]; then
-    initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} 2>/dev/null`)
-else
-    initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} -x "${excluded_repo_names}" 2>/dev/null`)
-fi
 if [[ ${#initial_integtest_list[@]} -eq 0 ]]; then
     echo ""
     echo "*** No integtests were found in the \"${requested_repo_list[@]}\" repo(s) [with \"${excluded_repo_names}\" repos excluded]."
@@ -440,6 +547,7 @@ CURRENT_PID=$$
 
 # do the first level of test filtering
 filtered_integtest_list=()
+requested_repo_names="|".join(requested_repo_list)
 let test_index=0
 for FULL_TEST_NAME in "${initial_integtest_list[@]}"; do
     test_name=`basename ${FULL_TEST_NAME}`
