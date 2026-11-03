@@ -198,7 +198,7 @@ def test_data_files(run_dunerc):
     high_number_of_files = expected_number_of_data_files
     fragment_check_list = [triggercandidate_frag_params, hsi_frag_params]
     local_expected_event_count += (
-        250
+        260
         * number_of_data_producers
         * number_of_readout_apps
         * run_duration

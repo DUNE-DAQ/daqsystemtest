@@ -189,7 +189,7 @@ def test_data_files(run_dunerc):
     fragment_check_list = [triggercandidate_frag_params, hsi_frag_params, wibeth_frag_params]
     if run_dunerc.confgen_config.tpg_enabled:
         local_expected_event_count += (
-            (6250 / ta_prescale)
+            (6450 / ta_prescale)
             * number_of_data_producers
             * number_of_readout_apps
             * run_duration
