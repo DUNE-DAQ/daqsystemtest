@@ -367,7 +367,7 @@
  <attr name="generate_timesync" type="bool" val="1"/>
  <attr name="post_processing_delay_min_wait" type="u64" val="1"/>
  <attr name="post_processing_delay_max_wait" type="u64" val="5"/>
- <rel name="request_handler" class="RequestHandler" id="def-data-request-handler"/>
+ <rel name="request_handler" class="RequestHandler" id="def-data-request-handler-rec"/>
  <rel name="latency_buffer" class="LatencyBuffer" id="def-latency-buf"/>
  <rel name="data_processor" class="TPCRawDataProcessor" id="def-wib-processor"/>
 </obj>
@@ -501,6 +501,13 @@
 <obj class="DataReaderConf" id="tpset-subscriber-1">
  <attr name="template_for" type="class" val="DataSubscriberModule"/>
  <attr name="emulation_mode" type="bool" val="0"/>
+</obj>
+
+<obj class="DataRecorderConf" id="data-recorder-wibeth">
+ <attr name="output_file" type="string" val="/tmp/"/>
+ <attr name="streaming_buffer_size" type="u32" val="8388608"/>
+ <attr name="compression_algorithm" type="string" val="None"/>
+ <attr name="use_o_direct" type="bool" val="1"/>
 </obj>
 
 <obj class="DataStoreConf" id="default">
@@ -734,6 +741,16 @@
  <attr name="pop_size_pct" type="float" val="0.1"/>
  <attr name="warn_on_timeout" type="bool" val="1"/>
  <attr name="warn_on_empty_buffer" type="bool" val="1"/>
+</obj>
+
+<obj class="RequestHandler" id="def-data-request-handler-rec">
+ <attr name="handler_threads" type="u16" val="2"/>
+ <attr name="request_timeout" type="u32" val="10000"/>
+ <attr name="pop_limit_pct" type="float" val="0.8"/>
+ <attr name="pop_size_pct" type="float" val="0.1"/>
+ <attr name="warn_on_timeout" type="bool" val="1"/>
+ <attr name="warn_on_empty_buffer" type="bool" val="1"/>
+ <rel name="data_recorder" class="DataRecorderConf" id="data-recorder-wibeth"/>
 </obj>
 
 <obj class="RequestHandler" id="def-ta-request-handler">
