@@ -23,7 +23,7 @@ string_in_list() {
 }
 
 # Adds elements to a specified list, unless they are already present.
-# Usage:  add_unique_elements_to_list target_list new_item_list
+# Usage:  add_unique_elements_to_list target_list list_of_new_items
 # Note the absence of "$" and "[@]" for the list names.  This is
 # because this function expects references to the lists.
 # The function returns 1 if invalid arguments were provided, zero otherwise.
@@ -41,7 +41,7 @@ add_unique_elements_to_list() {
 }
 
 # Removes elements from a specified list.
-# Usage:  remove_elements_from_list target_list unwanted_item_list
+# Usage:  remove_elements_from_list target_list list_of_unwanted_items
 # Note the absence of "$" and "[@]" for the list names.  This is
 # because this function expects references to the lists.
 # The function returns 1 if invalid arguments were provided, zero otherwise.
@@ -62,6 +62,11 @@ remove_elements_from_list() {
     return 0
 }
 
+# Removes tests from a list of tests based on a list of unwanted repositories.
+# Usage:  remove_tests_by_repo target_list list_of_unwanted_repos
+# Note the absence of "$" and "[@]" for the list names.  This is
+# because this function expects references to the lists.
+# The function returns 1 if invalid arguments were provided, zero otherwise.
 remove_tests_by_repo() {
     if [[ $# -ne 2 ]]; then return 1; fi
     local -n target_list_ref=$1
@@ -80,10 +85,17 @@ remove_tests_by_repo() {
     return 0
 }
 
+# Removes tests from a list of tests based on a pipe-delimited string
+# of unwanted substrings and matches to the test names.
+# Usage:  remove_tests_with_egrep target_list egrep_search_string
+# Note the absence of "$" and "[@]" for the list names.  This is
+# because this function expects references to the lists.
+# The function returns 1 if invalid arguments were provided, zero otherwise.
 remove_tests_with_egrep() {
     if [[ $# -ne 2 ]]; then return 1; fi
     local -n target_list_ref=$1
     local -n egrep_search_string_ref=$2
+    if [[ -z "${egrep_search_string_ref}" ]]; then return 1; fi
     local idx
     for idx in "${!target_list_ref[@]}"; do
         local test_name="`basename ${target_list_ref[$idx]}`"
@@ -96,10 +108,17 @@ remove_tests_with_egrep() {
     return 0
 }
 
+# Keeps tests from a list of tests based on a pipe-delimited string
+# of desired substrings and matches to the test names.
+# Usage:  filter_tests_with_egrep target_list egrep_search_string
+# Note the absence of "$" and "[@]" for the list names.  This is
+# because this function expects references to the lists.
+# The function returns 1 if invalid arguments were provided, zero otherwise.
 filter_tests_with_egrep() {
     if [[ $# -ne 2 ]]; then return 1; fi
     local -n target_list_ref=$1
     local -n egrep_search_string_ref=$2
+    if [[ -z "${egrep_search_string_ref}" ]]; then return 1; fi
     local idx
     for idx in "${!target_list_ref[@]}"; do
         local test_name="`basename ${target_list_ref[$idx]}`"
@@ -112,13 +131,32 @@ filter_tests_with_egrep() {
     return 0
 }
 
+# **********************************************
+# run self-tests of the functions defined above
+# **********************************************
+
+# only run the self-tests the first time that this file is sourced
 if [[ "${dst_tmp_list1}" != "" ]]; then
     return
 fi
+echo "CCCDDD" >&2
 
-# **************************************
-# run some self-tests of these functions
-# **************************************
+# check add_unique_elements_to_list()
+dst_tmp_list1=(a b c d)
+dst_tmp_str="b"
+dst_tmp_listb=($dst_tmp_str)
+add_unique_elements_to_list dst_tmp_list1 dst_tmp_listb
+dst_tmp_str="q"
+dst_tmp_listb=($dst_tmp_str)
+add_unique_elements_to_list dst_tmp_list1 dst_tmp_listb
+if [[ "${#dst_tmp_list1[@]}" -ne 5 ]] || [[ "${dst_tmp_list1[0]}" != "a" ]] || [[ "${dst_tmp_list1[-1]}" != "q" ]]; then
+    echo ""
+    echo -e "\U1f7e1 WARNING: A self-check of the 'add_unique_elements_to_list' function failed."
+    echo -e "\U1f7e1 WARNING: The (5) expected results of the test are 'a b c d q', but the (${#dst_tmp_list1[@]}) actual results were '${dst_tmp_list1[@]}'."
+    echo ""
+fi
+
+# check add_unique_elements_to_list() more
 dst_tmp_list1=(a b c d)
 dst_tmp_list2=(b c d e f)
 add_unique_elements_to_list dst_tmp_list1 dst_tmp_list2
@@ -129,6 +167,7 @@ if [[ "${#dst_tmp_list1[@]}" -ne 6 ]] || [[ "${dst_tmp_list1[0]}" != "a" ]] || [
     echo ""
 fi
 
+# check remove_elements_from_list()
 dst_tmp_list2=(a d f)
 remove_elements_from_list dst_tmp_list1 dst_tmp_list2
 if [[ "${#dst_tmp_list1[@]}" -ne 3 ]] || [[ "${dst_tmp_list1[0]}" != "b" ]] || [[ "${dst_tmp_list1[-1]}" != "e" ]]; then
@@ -138,6 +177,7 @@ if [[ "${#dst_tmp_list1[@]}" -ne 3 ]] || [[ "${dst_tmp_list1[0]}" != "b" ]] || [
     echo ""
 fi
 
+# check remove_tests_by_repo()
 dst_tmp_list_of_tests=(crtmodules/crt_frame_builder_test.py daqsystemtest/minimal_system_quick_test.py daqsystemtest/small_footprint_quick_test.py dfmodules/disabled_output_test.py dfmodules/offline_prod_run_test.py drunc/basic_multiapp_test.py drunc/failure_mode_fsm_cmd_timeout_nest_app_test.py drunc/pmaas_test.py listrev/listrev_test.py trigger/change_rate_test.py)
 dst_tmp_repo_list=(dfmodules crtmodules)
 remove_tests_by_repo dst_tmp_list_of_tests dst_tmp_repo_list
@@ -150,6 +190,7 @@ if [[ "${#dst_tmp_list_of_tests[@]}" -ne 7 ]] \
     echo ""
 fi
 
+# check remove_tests_with egrep()
 dst_tmp_list_of_tests=(crtmodules/crt_frame_builder_test.py daqsystemtest/minimal_system_quick_test.py daqsystemtest/small_footprint_quick_test.py dfmodules/disabled_output_test.py dfmodules/offline_prod_run_test.py drunc/basic_multiapp_test.py drunc/failure_mode_fsm_cmd_timeout_nest_app_test.py drunc/pmaas_test.py listrev/listrev_test.py trigger/change_rate_test.py)
 dst_tmp_egrep_string="ui|aa|ff"
 remove_tests_with_egrep dst_tmp_list_of_tests dst_tmp_egrep_string
@@ -162,6 +203,7 @@ if [[ "${#dst_tmp_list_of_tests[@]}" -ne 5 ]] \
     echo ""
 fi
 
+# check filter_tests_with egrep()
 dst_tmp_list_of_tests=(crtmodules/crt_frame_builder_test.py daqsystemtest/minimal_system_quick_test.py daqsystemtest/small_footprint_quick_test.py dfmodules/disabled_output_test.py dfmodules/offline_prod_run_test.py drunc/basic_multiapp_test.py drunc/failure_mode_fsm_cmd_timeout_nest_app_test.py drunc/pmaas_test.py listrev/listrev_test.py trigger/change_rate_test.py)
 dst_tmp_egrep_string="ui|aa|ff"
 filter_tests_with_egrep dst_tmp_list_of_tests dst_tmp_egrep_string

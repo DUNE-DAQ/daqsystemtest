@@ -114,102 +114,14 @@ append_pipe_delimited() {
     _target="${_target:+${_target}|}$2"
 }
 
-# Adds elements to a specified list, unless they are already present.
-# Usage:  add_unique_elements_to_list target_list new_item_list
-# Note the absence of "$" and "[@]" for the list names.  This is
-# because this function expects references to the lists.
-# The function returns 1 if invalid arguments were provided, zero otherwise.
-add_unique_elements_to_list() {
-    if [[ $# -ne 2 ]]; then return 1; fi
-    local -n target_list_ref=$1
-    local -n new_item_list_ref=$2
-    for new_item in "${new_item_list_ref[@]}"; do
-        if ! string_in_list "$new_item" "${target_list_ref[@]}"; then
-            target_list_ref+=("$new_item")
-        fi
-    done
-    return 0
-}
+# functions that help manipulate lists of tests
+source dst_functions_for_integtest_lists.sh
 
-# Removes elements from a specified list.
-# Usage:  remove_elements_from_list target_list unwanted_item_list
-# Note the absence of "$" and "[@]" for the list names.  This is
-# because this function expects references to the lists.
-# The function returns 1 if invalid arguments were provided, zero otherwise.
-remove_elements_from_list() {
-    if [[ $# -ne 2 ]]; then return 1; fi
-    local -n target_list_ref=$1
-    local -n unwanted_item_list_ref=$2
-    for unwanted_item in "${unwanted_item_list_ref[@]}"; do
-        for idx in "${!target_list_ref[@]}"; do
-            if [[ "${target_list_ref[$idx]}" == "${unwanted_item}" ]]; then
-                unset 'target_list_ref[idx]'
-            fi
-        done
-    done
-    # re-index the array to remove gaps
-    target_list_ref=("${target_list_ref[@]}")
-    return 0
-}
-
-remove_tests_by_repo() {
-    if [[ $# -ne 2 ]]; then return 1; fi
-    local -n target_list_ref=$1
-    local -n unwanted_repo_list_ref=$2
-    for unwanted_repo in "${unwanted_repo_list_ref[@]}"; do
-        for idx in "${!target_list_ref[@]}"; do
-            if [[ "${target_list_ref[$idx]}" == "${unwanted_item}" ]]; then
-                unset 'target_list_ref[idx]'
-            fi
-        done
-    done
-    # re-index the array to remove gaps
-    target_list_ref=("${target_list_ref[@]}")
-    return 0
-}
-
-#remove_tests_by_keyword() {
-#}
-
-#filter_tests_by_keyword() {
-#x}
-
-# **************************************************
-# run some self-tests of list modification functions
-# **************************************************
-list1=(a b c d)
-list2=(b c d e f)
-add_unique_elements_to_list list1 list2
-if [[ "${#list1[@]}" -ne 6 ]] || [[ "${list1[0]}" != "a" ]] || [[ "${list1[-1]}" != "f" ]]; then
-    echo ""
-    echo -e "\U1f7e1 WARNING: A self-check of the 'add_unique_elements_to_list' function failed."
-    echo -e "\U1f7e1 WARNING: The expected results of the test are 'a b c d e f', but the actual results were '${list1[@]}'."
-    echo ""
-fi
-
-list2=(a d f)
-remove_elements_from_list list1 list2
-if [[ "${#list1[@]}" -ne 3 ]] || [[ "${list1[0]}" != "b" ]] || [[ "${list1[-1]}" != "e" ]]; then
-    echo ""
-    echo -e "\U1f7e1 WARNING: A self-check of the 'remove_elements_from_list' function failed."
-    echo -e "\U1f7e1 WARNING: The expected results of the test are 'b c e', but the actual results were '${list1[@]}'."
-    echo ""
-fi
-exit
-
+# look up a specified suite of tests
 load_test_suite() {
     local suite="${1}"
     local suite_file="${SUITE_DIR}/${suite}.txt"
-    local repo=""
-    local test=""
     local line=""
-
-    # Core tests are defined in ./test_suites/core.txt
-    # "Extended" tests are defined as all non-core tests
-    if [[ "$suite" == "extended" ]]; then
-        suite_file="${SUITE_DIR}/core.txt"
-        requested_repo_list=("all")
-    fi
 
     while IFS="" read -r line || [ -n "$line" ]; do
         if [[ -z "$line" ]]; then continue; fi
@@ -223,18 +135,8 @@ load_test_suite() {
             continue
         fi
 
-        repo="$(echo "$line" | cut -d ':' -f 1)"
-        test="$(echo "$line" | cut -d ':' -f 2)"
-
-        if ! string_in_list "$repo" "${requested_repo_list[@]}" && [[ "${suite}" != "extended" ]]; then
-            requested_repo_list+=("$repo")
-        fi
-
-        if [[ "$suite" == "extended" ]]; then
-            append_pipe_delimited excluded_test_names "$test"
-        else
-            append_pipe_delimited requested_test_names "$test"
-        fi
+        tmp_list=(`echo ${line} | sed 's,:,/,'`.py)
+        add_unique_elements_to_list initial_integtest_list tmp_list
 
     done < "${suite_file}"
 }
@@ -463,17 +365,8 @@ requested_test_names=`echo ${requested_test_names} | sed 's/\s//g'`
 excluded_test_names=`echo ${excluded_test_names} | sed 's/\s//g'`
 excluded_repo_names=`echo ${excluded_repo_names} | sed 's/\s//g'`
 
-#if [[ -n "$test_suite" ]]; then
-#    if [[ -n "${requested_repo_list[@]}" || -n "$excluded_repo_names" || -n "$requested_test_names" || -n "$excluded_test_names" ]]#; then
-#        echo ""
-#        echo -e "\U1f7e1 WARNING: Combining a test suite with -r, -R, -k, and/or -x can lead to unintended consequences"
-#        echo -e "\U1f7e1 WARNING: Consider defining your own test suite following the example(s) in $SUITE_DIR"
-#        echo ""
-#    fi
-#fi
-
 # if no test suites and no requested repos were provided, we default to the 'core' test suite
-if [[ "${#requested_suite_list}" -eq 0 ]] && if [[ "${#requested_repo_list}" -eq 0 ]]; then
+if [[ "${#requested_suite_list}" -eq 0 ]] && [[ "${#requested_repo_list}" -eq 0 ]]; then
     requested_suite_list+=("core")
 fi
 
@@ -501,10 +394,11 @@ if [[ "${#requested_repo_list}" -gt 0 ]]; then
 
     source dst_set_integtest_env_vars.sh
     if [[ "${excluded_repo_names}" == "" ]]; then
-        initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} 2>/dev/null`)
+        tmp_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} 2>/dev/null`)
     else
-        initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} -x "${excluded_repo_names}" 2>/dev/null`)
+        tmp_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} -x "${excluded_repo_names}" 2>/dev/null`)
     fi
+    add_unique_elements_to_list initial_integtest_list tmp_integtest_list
 fi
 
 if [[ ${#initial_integtest_list[@]} -eq 0 ]]; then
@@ -546,18 +440,17 @@ ITGRUNNER_LOG_FILE="${pytest_user_dir}/dunedaq_integtest_bundle_${INITIAL_TIMEST
 CURRENT_PID=$$
 
 # do the first level of test filtering
-filtered_integtest_list=()
-requested_repo_names="|".join(requested_repo_list)
-let test_index=0
-for FULL_TEST_NAME in "${initial_integtest_list[@]}"; do
-    test_name=`basename ${FULL_TEST_NAME}`
-    requested_test=`echo ${test_name} | egrep -i ${requested_test_names:-${test_name}}`
-    excluded_test=`echo ${test_name} | egrep -i ${excluded_test_names:-nullnullnull}`
-    if [[ "${requested_test}" != "" ]] && [[ "${excluded_test}" == "" ]]; then
-        filtered_integtest_list+=("${FULL_TEST_NAME}")
-    fi
-    let test_index=${test_index}+1
-done
+filtered_integtest_list=(${initial_integtest_list[@]})
+if [[ -n "${excluded_repo_names}" ]]; then
+    IFS='|' read -ra excluded_repo_list <<< "$excluded_repo_names"
+    remove_tests_by_repo filtered_integtest_list excluded_repo_list
+fi
+if [[ -n "${excluded_test_names}" ]]; then
+    remove_tests_with_egrep filtered_integtest_list excluded_test_names
+fi
+if [[ -n "${requested_test_names}" ]]; then
+    filter_tests_with_egrep filtered_integtest_list requested_test_names
+fi
 
 # reduce the list of tests to a random subset, if requested
 if [[ $random_subset_count -gt 0 ]]; then
@@ -646,6 +539,7 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
             fi
 
             # determine the repository type, to help determine where to look for the test
+            source dst_set_integtest_env_vars.sh
             repo_type="`get_repo_type.sh ${test_repo}`"
 
             # handle tests in Python repositories
