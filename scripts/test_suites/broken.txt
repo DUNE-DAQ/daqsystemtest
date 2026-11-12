@@ -1,1 +1,2 @@
+dfmodules:dfo_protocol_test
 hsilibs:iceberg_real_hsi_test

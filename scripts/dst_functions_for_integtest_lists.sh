@@ -99,7 +99,7 @@ remove_tests_with_egrep() {
     local idx
     for idx in "${!target_list_ref[@]}"; do
         local test_name="`basename ${target_list_ref[$idx]}`"
-        if [[ "`echo ${test_name} | egrep -i ${egrep_search_string_ref:-nullnullnull}`" != "" ]]; then
+        if [[ -n "`echo ${test_name} | egrep -i ${egrep_search_string_ref:-nullnullnull}`" ]]; then
             unset 'target_list_ref[idx]'
         fi
     done
@@ -122,7 +122,7 @@ filter_tests_with_egrep() {
     local idx
     for idx in "${!target_list_ref[@]}"; do
         local test_name="`basename ${target_list_ref[$idx]}`"
-        if [[ "`echo ${test_name} | egrep -i ${egrep_search_string_ref:-nullnullnull}`" == "" ]]; then
+        if [[ -z "`echo ${test_name} | egrep -i ${egrep_search_string_ref:-nullnullnull}`" ]]; then
             unset 'target_list_ref[idx]'
         fi
     done
@@ -136,7 +136,7 @@ filter_tests_with_egrep() {
 # **********************************************
 
 # only run the self-tests the first time that this file is sourced
-if [[ "${dst_tmp_list1}" != "" ]]; then
+if [[ -n "${dst_tmp_list1}" ]]; then
     return
 fi
 echo "CCCDDD" >&2
