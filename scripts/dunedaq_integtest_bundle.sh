@@ -53,12 +53,9 @@ Options:
              for example, --dunerc-option log-level debug
        - example: --pytest-options \"--skip-resource-checks --process-manager-type ssh-standalone --dunerc-option no-override-logs\"
 
-  For determining the initial set of tests that might be run, test suites have higher
-  priority than requested repositories. If both are specified, the test suites are used
-  to create the initial list of tests, and the requested repo list is used to filter
-  that list. If only test suite(s) are specified, or only requested repos are specified,
-  then whichever one is specified will be used to determine the initial list of tests.
-  All of the -R, -k, -x, and -S options are then used to filter out unwanted tests.
+  For determining the initial set of tests that should be run, both test suites (-s) and requested
+  repositories (-r) are supported. If both are specified, the super-set of the requested tests is
+  determined. Then, the -R, -k, -x, and -S options are used to filter desired and unwanted tests.
 """
 }
 

@@ -16,7 +16,6 @@ if [[ "${DST_DAR_COPY}" != "" ]] && \
     return
 fi
 export DST_DAR_COPY="${DBT_AREA_ROOT}"
-echo "AAABBB" >&2
 
 # default all of the env vars that we might set to empty strings
 export DST_LOCAL_CPP_SOURCE_DIR=""

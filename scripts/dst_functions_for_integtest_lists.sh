@@ -139,7 +139,6 @@ filter_tests_with_egrep() {
 if [[ -n "${dst_tmp_list1}" ]]; then
     return
 fi
-echo "CCCDDD" >&2
 
 # check add_unique_elements_to_list()
 dst_tmp_list1=(a b c d)
