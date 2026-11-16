@@ -16,7 +16,7 @@ Options:
        - this can be the name of a single suite, e.g. \"core\"
        - it can be a pipe-delimited string with a list of test suite names, e.g. 'core|other'
        - each test suite name should match a suite defined in test_suites/, e.g., 'core'
-       - the special value 'extended' will run all tests excluding those contained in 'core'
+       - the special value 'extended' will run all tests excluding those in the 'core' and 'broken' suites
     -r <list of repositories for which integtests will be run>
        - this can be the name of a single repo, e.g. \"daqsystemtest\"
        - it can be a pipe-delimited string with a list of repos, e.g. 'dfmodules|trigger'
