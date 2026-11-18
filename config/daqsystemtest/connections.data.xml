@@ -469,7 +469,7 @@
 <obj class="QueueDescriptor" id="tp-input">
  <attr name="uid_base" type="string" val="tp_input_"/>
  <attr name="queue_type" type="enum" val="kFollyMPMCQueue"/>
- <attr name="capacity" type="u32" val="10000"/>
+ <attr name="capacity" type="u32" val="100000"/>
  <attr name="data_type" type="string" val="TriggerPrimitiveVector"/>
 </obj>
 
