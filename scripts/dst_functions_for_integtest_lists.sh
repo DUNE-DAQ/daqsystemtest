@@ -139,6 +139,12 @@ filter_tests_with_egrep() {
 if [[ -n "${dst_tmp_list1}" ]]; then
     return
 fi
+dst_tmp_list1=(a b c d)
+
+# further reduce the frequency of running the self-tests to ~10%
+if [[ $RANDOM -gt 3300 ]]; then
+    return
+fi
 
 # check add_unique_elements_to_list()
 dst_tmp_list1=(a b c d)

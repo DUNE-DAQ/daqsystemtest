@@ -59,7 +59,6 @@ Options:
 """
 }
 
-
 # function to report a problem with an invalid option value
 invalid_option_value() {
     declare -r script_name=$(basename "$0")
@@ -87,55 +86,10 @@ unexpected_command_arguments() {
     echo ""
 }
 
-# function to check for a specific string in a list
-string_in_list() {
-    # get the search string from the first argument
-    local search_string="$1"
-    shift
-
-    # read the remaining positional arguments into a local array
-    local local_arr=( "$@" )
-
-    # check for the presence of the search string
-    for item in "${local_arr[@]}"; do
-        if [[ "${item}" == "${search_string}" ]]; then
-            return 0
-        fi
-    done
-    return 1
-}
-
 # append a value to a (potentially empty) pipe-delimited string variable
 append_pipe_delimited() {
     local -n _target=$1
     _target="${_target:+${_target}|}$2"
-}
-
-# functions that help manipulate lists of tests
-source dst_functions_for_integtest_lists.sh
-
-# look up a specified suite of tests
-fetch_test_suite() {
-    local -n target_list_ref=$1
-    local suite="${2}"
-    local suite_file="${SUITE_DIR}/${suite}.txt"
-    local line=""
-
-    while IFS="" read -r line || [ -n "$line" ]; do
-        if [[ -z "$line" ]]; then continue; fi
-
-        if [[ ! "$line" =~ ^[a-zA-Z-]+:[0-9a-zA-Z_-]+$ ]]; then
-            printf '\U1f7e1 WARNING: %s\n' \
-                "skipping malformed entry in ${suite_file}:" \
-                "  ${line}" \
-                "expected <repo_name>:<test_name>, with no trailing '.py' and no other whitespace
-                " >&2
-            continue
-        fi
-
-        target_list_ref+=(`echo ${line} | sed 's,:,/,'`.py)
-
-    done < "${suite_file}"
 }
 
 # 29-Dec-2025, KAB: Determine if a non-standard pytest tmpdir has been specified
@@ -143,15 +97,6 @@ fetch_test_suite() {
 # this value in order to direct functionality in this script to the right place.
 # A user-specified command-line value for the tmpdir over-rides the value determined here.
 tmpdir_root=`dst_get_pytest_tmpdir`
-
-# Removes the ANSI characters associated with formatting, including color coding and font styling
-CaptureOutputNoANSI() {
-    tee -a >(sed -u 's/\x1b\[[0-9;]*m//g' >> "$1")
-}
-# Captures the output to the specified file, without changing the output
-CaptureOutput() {
-    tee -a $1
-}
 
 GETOPT_TEMP=$(getopt -o hs:r:R:k:x:S:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,test-suite:,tmpdir:,verbosity:,random-subset:,list-only,pytest-options:,log-retention-count:,log-retention-policy:,junit-xml -n "$0" -- "$@")
 if [ $? -ne 0 ]; then
@@ -379,23 +324,75 @@ if [ $# -ne 0 ]; then
     exit 1
 fi
 
-# assemble the basic elements for the pytest command that we will use
-if [[ "${#PYTEST_OPTIONS[@]}" -gt 0 ]]; then
-    PYTEST_BASE_COMMAND+=("${PYTEST_OPTIONS[@]}" "--")  # Add the requested options to the pytest command
-fi
-
 # remove any spurious spaces from test and repo name strings (these will be used in 'egrep' expressions)
 requested_test_names=`echo ${requested_test_names} | sed 's/\s//g'`
 excluded_test_names=`echo ${excluded_test_names} | sed 's/\s//g'`
 excluded_repo_names=`echo ${excluded_repo_names} | sed 's/\s//g'`
 
+# update the pytest command that we will use, if needed
+if [[ "${#PYTEST_OPTIONS[@]}" -gt 0 ]]; then
+    PYTEST_BASE_COMMAND+=("${PYTEST_OPTIONS[@]}" "--")  # Add the requested options to the pytest command
+fi
+
 # if no test suites and no requested repos were provided, we default to the 'core' test suite
-if [[ "${#requested_suite_list}" -eq 0 ]] && [[ "${#requested_repo_list}" -eq 0 ]]; then
+if [[ "${#requested_suite_list[@]}" -eq 0 ]] && [[ "${#requested_repo_list[@]}" -eq 0 ]]; then
     requested_suite_list+=("core")
 fi
 
+# define functions and env vars that help manipulate lists of tests
+source dst_set_integtest_env_vars.sh
+source dst_functions_for_integtest_lists.sh
+
+# look up a specified suite of tests
+fetch_test_suite() {
+    local -n target_list_ref=$1
+    local suite="${2}"
+    local suite_file="${SUITE_DIR}/${suite}.txt"
+    local line=""
+    local repos_in_suite=()
+    local full_test_name
+
+    while IFS="" read -r line || [ -n "$line" ]; do
+        if [[ -z "$line" ]]; then continue; fi
+
+        if [[ ! "$line" =~ ^[a-zA-Z-]+:[0-9a-zA-Z_-]+$ ]]; then
+            printf '\U1f7e1 WARNING: %s\n' \
+                "skipping malformed entry in ${suite_file}:" \
+                "  ${line}" \
+                "expected <repo_name>:<test_name>, with no trailing '.py' and no other whitespace
+                " >&2
+            continue
+        fi
+
+        full_test_name="`echo ${line} | sed 's,:,/,'`.py"
+        target_list_ref+=($full_test_name)
+        repo_name=`dirname ${full_test_name}`
+        repos_in_suite+=($repo_name)
+
+    done < "${suite_file}"
+
+    # verify that each of the tests actually exists
+    if [[ "${#target_list_ref[@]}" -gt 0 ]]; then
+        available_integtest_list=(`list_available_integtests.sh ${repos_in_suite[@]} 2>/dev/null`)
+        local idx
+        for idx in "${!target_list_ref[@]}"; do
+            full_test_name="${target_list_ref[$idx]}"
+            if ! string_in_list "${full_test_name}" "${available_integtest_list[@]}"; then
+                printf '\U1f7e1 WARNING: %s\n' \
+                       "requested integration test \"${full_test_name}\" in test suite:" \
+                       "${suite_file}" \
+                       "was not found in the list of available tests. Skipping this test.
+                " >&2
+                unset 'target_list_ref[idx]'
+            fi
+        done
+        # re-index the array to remove gaps
+        target_list_ref=("${target_list_ref[@]}")
+    fi
+}
+
 # if one or more test suite names were provided, load those tests first
-if [[ "${#requested_suite_list}" -gt 0 ]]; then
+if [[ "${#requested_suite_list[@]}" -gt 0 ]]; then
     echo ""
     echo "Fetching the list of integtests from the _${requested_suite_list[@]}_ suite(s)..."
     for test_suite in "${requested_suite_list[@]}"; do
@@ -406,7 +403,7 @@ if [[ "${#requested_suite_list}" -gt 0 ]]; then
 fi
 
 # if one or more repo names were provided, also load those
-if [[ "${#requested_repo_list}" -gt 0 ]]; then
+if [[ "${#requested_repo_list[@]}" -gt 0 ]]; then
 
     if string_in_list "all" "${requested_repo_list[@]}"; then
         echo ""
@@ -418,7 +415,6 @@ if [[ "${#requested_repo_list}" -gt 0 ]]; then
         fi
     fi
 
-    source dst_set_integtest_env_vars.sh
     if [[ -z "${excluded_repo_names}" ]]; then
         tmp_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} 2>/dev/null`)
     else
@@ -479,7 +475,7 @@ if [[ -n "${requested_test_names}" ]]; then
 fi
 
 # filter on excluded test suites
-if [[ "${#excluded_suite_list}" -gt 0 ]]; then
+if [[ "${#excluded_suite_list[@]}" -gt 0 ]]; then
     echo ""
     echo "Fetching the list of integtests from the _${excluded_suite_list[@]}_ suite(s)..."
     for test_suite in "${excluded_suite_list[@]}"; do
@@ -545,6 +541,15 @@ fi
 let number_of_individual_tests=${#filtered_integtest_list[@]}
 let total_number_of_tests=${number_of_individual_tests}*${individual_test_requested_iterations}*${full_set_requested_interations}
 
+# Removes the ANSI characters associated with formatting, including color coding and font styling
+CaptureOutputNoANSI() {
+    tee -a >(sed -u 's/\x1b\[[0-9;]*m//g' >> "$1")
+}
+# Captures the output to the specified file, without changing the output
+CaptureOutput() {
+    tee -a $1
+}
+
 # run the tests
 let overall_test_index=0  # this is only used for user feedback
 let full_set_loop_count=0
@@ -576,7 +581,6 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
             fi
 
             # determine the repository type, to help determine where to look for the test
-            source dst_set_integtest_env_vars.sh
             repo_type="`get_repo_type.sh ${test_repo}`"
 
             # handle tests in Python repositories
