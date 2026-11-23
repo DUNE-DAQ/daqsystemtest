@@ -185,6 +185,9 @@ while true; do
             for test_suite in "${tmp_list[@]}"; do
                 read -rd '' trimmed <<< "$test_suite"
                 if [[ "${trimmed}" == "extended" ]]; then
+                    echo ""
+                    echo "The extended' test suite is being re-mapped to run all integtests except..."
+                    echo "    the ones listed in the 'broken' and 'special_conditions' test suites."
                     requested_repo_list+=("all")
                     excluded_suite_list+=("core")
                     excluded_suite_list+=("broken")
@@ -381,7 +384,7 @@ fetch_test_suite() {
                 printf '\U1f7e1 WARNING: %s\n' \
                        "requested integration test \"${full_test_name}\" in test suite:" \
                        "${suite_file}" \
-                       "was not found in the list of available tests. Skipping this test.
+                       "was not found in the list of available tests. Skipping this integtest.
                 " >&2
                 unset 'target_list_ref[idx]'
             fi
@@ -393,8 +396,9 @@ fetch_test_suite() {
 
 # if one or more test suite names were provided, load those tests first
 if [[ "${#requested_suite_list[@]}" -gt 0 ]]; then
+    tmp_string=`echo "${requested_suite_list[@]}" | sed 's/ /, /'g`
     echo ""
-    echo "Fetching the list of integtests from the _${requested_suite_list[@]}_ suite(s)..."
+    echo "Fetching the list of integtests from the \"${tmp_string}\" suite(s)..."
     for test_suite in "${requested_suite_list[@]}"; do
         tmp_suite_list=()
         fetch_test_suite tmp_suite_list "$test_suite"
@@ -405,14 +409,18 @@ fi
 # if one or more repo names were provided, also load those
 if [[ "${#requested_repo_list[@]}" -gt 0 ]]; then
 
-    if string_in_list "all" "${requested_repo_list[@]}"; then
+    tmp_string=`echo "${requested_repo_list[@]}" | sed 's/ /, /'g`
+    optional_article=""
+    if ! string_in_list "all" "${requested_repo_list[@]}" && \
+            ! string_in_list "local" "${requested_repo_list[@]}"; then
+        optional_article=" the"
+    fi
+    if [[ "${#requested_suite_list[@]}" -gt 0 ]]; then
         echo ""
-        echo "Building the list of _all_ integtests..."
+        echo "Adding integtests from${optional_article} \"${tmp_string}\" repo(s)..."
     else
-        if string_in_list "local" "${requested_repo_list[@]}"; then
-            echo ""
-            echo "Building the list of _local_ integtests..."
-        fi
+        echo ""
+        echo "Fetching integtests for${optional_article} \"${tmp_string}\" repo(s)..."
     fi
 
     if [[ -z "${excluded_repo_names}" ]]; then
@@ -464,6 +472,9 @@ CURRENT_PID=$$
 # do the first level of test filtering
 filtered_integtest_list=(${initial_integtest_list[@]})
 if [[ -n "${excluded_repo_names}" ]]; then
+    tmp_string=`echo ${excluded_repo_names} | sed 's/|/, /g'`
+    echo ""
+    echo "Excluding integtests from \"${tmp_string}\" repo(s)..."
     IFS='|' read -ra excluded_repo_list <<< "$excluded_repo_names"
     remove_tests_by_repo filtered_integtest_list excluded_repo_list
 fi
@@ -476,8 +487,9 @@ fi
 
 # filter on excluded test suites
 if [[ "${#excluded_suite_list[@]}" -gt 0 ]]; then
+    tmp_string=`echo "${excluded_suite_list[@]}" | sed 's/ /, /'g`
     echo ""
-    echo "Fetching the list of integtests from the _${excluded_suite_list[@]}_ suite(s)..."
+    echo "Excluding integtests from the \"${tmp_string}\" suite(s)..."
     for test_suite in "${excluded_suite_list[@]}"; do
         tmp_suite_list=()
         fetch_test_suite tmp_suite_list "$test_suite"
