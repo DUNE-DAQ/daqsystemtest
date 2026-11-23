@@ -423,13 +423,13 @@ INITIAL_TIMESTAMP=`date '+%Y%m%d%H%M%S'`
 # 30-Dec-2025, KAB: check that the specified tmpdir exists and is writeable
 if [[ ! -d ${tmpdir_root} ]]; then
     echo ""
-    echo -e "\U0001F534 ERROR: directory \"${tmpdir_root}\" does not exist."
+    echo -e "\U0001F534 ERROR: Pytest output directory \"${tmpdir_root}\" does not exist."
     echo ""
     exit 1
 fi
 if [[ ! -w ${tmpdir_root} ]]; then
     echo ""
-    echo -e "\U0001F534 ERROR: directory \"${tmpdir_root}\" is not writeable in the current environment."
+    echo -e "\U0001F534 ERROR: Pytest output directory \"${tmpdir_root}\" is not writeable in the current environment."
     echo ""
     exit 1
 fi

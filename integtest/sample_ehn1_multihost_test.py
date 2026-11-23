@@ -76,10 +76,10 @@ wibeth_tpset_params = {
     "min_size_bytes": 72,
     "max_size_bytes": 120000,
     "debug_mask": 0x0,
-    "frag_sizes_by_record_ordinal": {  "first": {"min_size_bytes":     96, "max_size_bytes": 240000},
-                                      "second": {"min_size_bytes":     96, "max_size_bytes": 240000},
-                                        "last": {"min_size_bytes":     96, "max_size_bytes": 240000},
-                                     "default": {"min_size_bytes": 170000, "max_size_bytes": 230000} }
+    "frag_sizes_by_record_ordinal": {  "first": {"min_size_bytes":     96, "max_size_bytes": 242000},
+                                      "second": {"min_size_bytes":     96, "max_size_bytes": 242000},
+                                        "last": {"min_size_bytes":     96, "max_size_bytes": 242000},
+                                     "default": {"min_size_bytes": 180000, "max_size_bytes": 242000} }
 }
 # sizes: 128 is for one TC with zero TAs inside it (72+56)
 #        208 is for one TC with one TA inside it (72+56+80)
@@ -123,6 +123,27 @@ ignored_logfile_problems = {
     ]
 }
 
+# verify that the pytest tmpdir has been set to a multi-host (NFS) location
+pytest_tmpdir_looks_reasonable = False
+pytest_tmpdir = os.environ.get("PYTEST_DEBUG_TEMPROOT")
+if pytest_tmpdir is not None:
+    if os.path.isdir(pytest_tmpdir) and os.access(pytest_tmpdir, os.W_OK):
+        pytest_tmpdir_looks_reasonable = True
+    else:
+        print("")
+        print("")
+        if not os.path.isdir(pytest_tmpdir):
+            print(f"\N{LARGE RED CIRCLE} ERROR: the directory referenced by PYTEST_DEBUG_TEMPROOT ({pytest_tmpdir}) does not exist!")
+            print("")
+            pytest.skip(f"The directory referenced by PYTEST_DEBUG_TEMPROOT ({pytest_tmpdir}) does not exist.",
+                        allow_module_level=True)
+        else:
+            print(f"\N{LARGE RED CIRCLE} ERROR: the directory referenced by PYTEST_DEBUG_TEMPROOT ({pytest_tmpdir}) is not writeable!")
+            print("")
+            pytest.skip(f"The directory referenced by PYTEST_DEBUG_TEMPROOT ({pytest_tmpdir}) is not writeable.",
+                        allow_module_level=True)
+        print("")
+
 # Set up the software environment on each of the 4 computers needed for this test.
 # This serves two purposes: it verifies that we can ssh to
 # those computers (so we know that we are running at EHN1, etc.), and it pre-loads
@@ -134,7 +155,7 @@ computers_that_are_needed = ["np04-srv-021", "np04-srv-022", "np04-srv-028", "np
 computers_that_are_unreachable = []
 hostname = socket.getfqdn()
 sw_area_root = os.environ.get("DBT_AREA_ROOT")
-if sw_area_root is not None and ".cern.ch" in hostname:
+if sw_area_root is not None and ".cern.ch" in hostname and pytest_tmpdir_looks_reasonable:
     sw_setup_script = ""
     if os.path.exists(f"{sw_area_root}/env.sh"):
         sw_setup_script = "env.sh"
@@ -153,20 +174,8 @@ if sw_area_root is not None and ".cern.ch" in hostname:
         computers_that_are_unreachable = ["Unable to determine which software area setup script to use"]
 elif ".cern.ch" not in hostname:
     computers_that_are_unreachable = [f"This test is meant to be run at CERN (hostname {hostname} does not contain .cern.ch)"]
-else:
+elif sw_area_root is None:
     computers_that_are_unreachable = ["Unable to determine the value of the DBT_AREA_ROOT env var"]
-
-# verify that the pytest tmpdir has been set to a multi-host (NFS) location
-pytest_tmpdir_looks_reasonable = False
-pytest_tmpdir = os.environ.get("PYTEST_DEBUG_TEMPROOT")
-if pytest_tmpdir is not None:
-    if os.path.isdir(pytest_tmpdir):
-        pytest_tmpdir_looks_reasonable = True
-    else:
-        print("")
-        print("")
-        print(f"*** WARNING: the directory referenced by PYTEST_DEBUG_TEMPROOT ({pytest_tmpdir}) does not exist!")
-        print("")
 
 common_config_obj = data_classes.integtest_params_for_predefined_dunedaq_config()
 common_config_obj.op_env = "test"
