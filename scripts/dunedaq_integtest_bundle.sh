@@ -12,19 +12,24 @@ Usage:
 
 Options:
     -h, --help : prints out usage information
-    -r <the list of repositories for which integtests will be run>
-       - this can be the name of a single repo; it defaults to \"daqsystemtest\"
+    -s, --test-suite <list of test suites that will be run>
+       - this can be the name of a single suite, e.g. \"core\"
+       - it can be a pipe-delimited string with a list of test suite names, e.g. 'core|other'
+       - each test suite name should match a suite defined in test_suites/, e.g., 'core'
+       - the special value 'extended' will run all tests excluding those in the 'core' and 'broken' suites
+    -r <list of repositories for which integtests will be run>
+       - this can be the name of a single repo, e.g. \"daqsystemtest\"
        - it can be a pipe-delimited string with a list of repos, e.g. 'dfmodules|trigger'
        - it can have the special value of \"all\" - integtests in all repos will be run
        - it can have the special value of \"local\" - integtests in locally-cloned repos will be run
-    -R <the list of repositories to be excluded>
+    -R <list of repositories to be excluded>
        - this can be the name of a single repo
        - it can be a pipe-delimited string with a list of repos, e.g. 'dfmodules|trigger'
     -k, --include <pipe-delimited string to select the tests that will be run ('egrep -i' match to test name)>
     -x, --exclude <pipe-delimited string to specify tests to be excluded ('egrep -i' match to test name)>
-    -s, --test-suite <test_suite_name>
-        - should match a test suite defined in test_suites/, e.g., 'core'
-        - the special value 'extended' will run all tests excluding those contained in 'core'
+    -S <list of test suites to be excluded>
+       - this can be the name of a single suite
+       - it can be a pipe-delimited string with a list of suites, e.g. 'core|other'
     --random-subset <count> : randomly picks the specified number of tests from the results of -r/-k/-x
     --list-only : list the tests that match the requested patterns without running them
     --verbosity <level> : requested level of console messages, in range 1-6, where 1 is least, 6 is DRUNC debug
@@ -47,9 +52,12 @@ Options:
          --dunerc-option <option-name> <option-value> : Repeatable, run control arguments without leading dashes
              for example, --dunerc-option log-level debug
        - example: --pytest-options \"--skip-resource-checks --process-manager-type ssh-standalone --dunerc-option no-override-logs\"
+
+  For determining the initial set of tests that should be run, both test suites (-s) and requested
+  repositories (-r) are supported. If both are specified, the super-set of the requested tests is
+  determined. Then, the -R, -k, -x, and -S options are used to filter desired and unwanted tests.
 """
 }
-
 
 # function to report a problem with an invalid option value
 invalid_option_value() {
@@ -78,70 +86,10 @@ unexpected_command_arguments() {
     echo ""
 }
 
-# function to check for a specific string in a list
-string_in_list() {
-    # get the search string from the first argument
-    local search_string="$1"
-    shift
-
-    # read the remaining positional arguments into a local array
-    local local_arr=( "$@" )
-
-    # check for the presence of the search string
-    for item in "${local_arr[@]}"; do
-        if [[ "${item}" == "${search_string}" ]]; then
-            return 0
-        fi
-    done
-    return 1
-}
-
 # append a value to a (potentially empty) pipe-delimited string variable
 append_pipe_delimited() {
     local -n _target=$1
     _target="${_target:+${_target}|}$2"
-}
-
-load_test_suite() {
-    local suite="${1}"
-    local suite_file="${SUITE_DIR}/${suite}.txt"
-    local repo=""
-    local test=""
-    local line=""
-
-    # Core tests are defined in ./test_suites/core.txt
-    # "Extended" tests are defined as all non-core tests
-    if [[ "$suite" == "extended" ]]; then
-        suite_file="${SUITE_DIR}/core.txt"
-        requested_repo_list=("all")
-    fi
-
-    while IFS="" read -r line || [ -n "$line" ]; do
-        if [[ -z "$line" ]]; then continue; fi
-
-        if [[ ! "$line" =~ ^[a-zA-Z-]+:[0-9a-zA-Z_-]+$ ]]; then
-            printf '\U1f7e1 WARNING: %s\n' \
-                "skipping malformed entry in ${suite_file}:" \
-                "  ${line}" \
-                "expected <repo_name>:<test_name>, with no trailing '.py' an no other whitespace
-                " >&2
-            continue
-        fi
-
-        repo="$(echo "$line" | cut -d ':' -f 1)"
-        test="$(echo "$line" | cut -d ':' -f 2)"
-
-        if ! string_in_list "$repo" "${requested_repo_list[@]}" && [[ "${suite}" != "extended" ]]; then
-            requested_repo_list+=("$repo")
-        fi
-
-        if [[ "$suite" == "extended" ]]; then
-            append_pipe_delimited excluded_test_names "$test"
-        else
-            append_pipe_delimited requested_test_names "$test"
-        fi
-
-    done < "${suite_file}"
 }
 
 # 29-Dec-2025, KAB: Determine if a non-standard pytest tmpdir has been specified
@@ -150,16 +98,7 @@ load_test_suite() {
 # A user-specified command-line value for the tmpdir over-rides the value determined here.
 tmpdir_root=`dst_get_pytest_tmpdir`
 
-# Removes the ANSI characters associated with formatting, including color coding and font styling
-CaptureOutputNoANSI() {
-    tee -a >(sed -u 's/\x1b\[[0-9;]*m//g' >> "$1")
-}
-# Captures the output to the specified file, without changing the output
-CaptureOutput() {
-    tee -a $1
-}
-
-GETOPT_TEMP=$(getopt -o hr:R:k:x:s:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,test-suite:,tmpdir:,verbosity:,random-subset:,list-only,pytest-options:,log-retention-count:,log-retention-policy:,junit-xml -n "$0" -- "$@")
+GETOPT_TEMP=$(getopt -o hs:r:R:k:x:S:n:N: --long help,stop-on-failure,concise-output,include:,exclude:,test-suite:,tmpdir:,verbosity:,random-subset:,list-only,pytest-options:,log-retention-count:,log-retention-policy:,junit-xml -n "$0" -- "$@")
 if [ $? -ne 0 ]; then
     usage
     exit 1
@@ -173,11 +112,12 @@ let individual_test_requested_iterations=1
 let full_set_requested_interations=1
 let stop_on_failure=0
 exit_nonzero=""
+requested_suite_list=()
 requested_repo_list=()
 excluded_repo_names=""
 requested_test_names=""
 excluded_test_names=""
-test_suite=""
+excluded_suite_list=()
 log_retention_count_arg=""
 log_retention_policy_arg=""
 write_junit_xml="false"
@@ -205,7 +145,6 @@ while true; do
                 read -rd '' trimmed <<< "$repo"
                 requested_repo_list+=("${trimmed}")
             done
-
             shift 2
             ;;
         -R)
@@ -236,12 +175,51 @@ while true; do
             shift 2
             ;;
         -s|--test-suite)
-            if [[ ! -r "${SUITE_DIR}/${2}.txt" && "${2}" != "extended" ]]; then
-                echo
-                echo -e "\U0001F534 ERROR: No test suite named ${2} found in ${SUITE_DIR}; exiting..."
+            # check that a valid value was passed to this option
+            if [[ "$2" =~ ^- ]]; then
+                invalid_option_value $1 $2
                 exit 1
             fi
-            test_suite="$2"
+            # split a pipe-delimited string into individual elements, if needed
+            IFS='|' read -ra tmp_list <<< "$2"
+            for test_suite in "${tmp_list[@]}"; do
+                read -rd '' trimmed <<< "$test_suite"
+                if [[ "${trimmed}" == "extended" ]]; then
+                    echo ""
+                    echo "The \"extended\" test suite is being re-mapped to run all integtests except..."
+                    echo "    the ones listed in the \"broken\" and \"special_conditions\" test suites."
+                    requested_repo_list+=("all")
+                    excluded_suite_list+=("core")
+                    excluded_suite_list+=("broken")
+                else
+                    if [[ ! -r "${SUITE_DIR}/${trimmed}.txt" ]]; then
+                        echo
+                        echo -e "\U0001F534 ERROR: No test suite named \"${trimmed}\" found in \"${SUITE_DIR}\"; exiting..."
+                        exit 1
+                    else
+                        requested_suite_list+=("${trimmed}")
+                    fi
+                fi
+            done
+            shift 2
+            ;;
+        -S)
+            # check that a valid value was passed to this option
+            if [[ "$2" =~ ^- ]]; then
+                invalid_option_value $1 $2
+                exit 1
+            fi
+            # split a pipe-delimited string into individual elements, if needed
+            IFS='|' read -ra tmp_list <<< "$2"
+            for test_suite in "${tmp_list[@]}"; do
+                read -rd '' trimmed <<< "$test_suite"
+                if [[ ! -r "${SUITE_DIR}/${trimmed}.txt" ]]; then
+                    echo
+                    echo -e "\U0001F534 ERROR: No test suite named \"${trimmed}\" found in \"${SUITE_DIR}\"; exiting..."
+                    exit 1
+                fi
+                excluded_suite_list+=("${trimmed}")
+            done
             shift 2
             ;;
         -n)
@@ -349,57 +327,110 @@ if [ $# -ne 0 ]; then
     exit 1
 fi
 
-# assemble the basic elements for the pytest command that we will use
-if [[ "${#PYTEST_OPTIONS[@]}" -gt 0 ]]; then
-    PYTEST_BASE_COMMAND+=("${PYTEST_OPTIONS[@]}" "--")  # Add the requested options to the pytest command
-fi
-
 # remove any spurious spaces from test and repo name strings (these will be used in 'egrep' expressions)
 requested_test_names=`echo ${requested_test_names} | sed 's/\s//g'`
 excluded_test_names=`echo ${excluded_test_names} | sed 's/\s//g'`
 excluded_repo_names=`echo ${excluded_repo_names} | sed 's/\s//g'`
 
-if [[ -n "$test_suite" ]]; then
-    if [[ -n "${requested_repo_list[@]}" || -n "$excluded_repo_names" || -n "$requested_test_names" || -n "$excluded_test_names" ]]; then
-        echo ""
-        echo -e "\U1f7e1 WARNING: Combining a test suite with -r, -R, -k, and/or -x can lead to unintended consequences"
-        echo -e "\U1f7e1 WARNING: Consider defining your own test suite following the example(s) in $SUITE_DIR"
-        echo ""
-    fi
+# update the pytest command that we will use, if needed
+if [[ "${#PYTEST_OPTIONS[@]}" -gt 0 ]]; then
+    PYTEST_BASE_COMMAND+=("${PYTEST_OPTIONS[@]}" "--")  # Add the requested options to the pytest command
 fi
 
-# if a test suite name is provided, load those tests first
-if [[ -n "$test_suite" ]]; then
-    echo ""
-    echo "Building the list of integtests from the _${test_suite}_ suite..."
-    load_test_suite "$test_suite"
+# if no test suites and no requested repos were provided, we default to the 'core' test suite
+if [[ "${#requested_suite_list[@]}" -eq 0 ]] && [[ "${#requested_repo_list[@]}" -eq 0 ]]; then
+    requested_suite_list+=("core")
 fi
 
-# run the integtests from the daqsystemtest repo if no repo was specified
-if [[ "${#requested_repo_list}" -eq 0 ]]; then
-    requested_repo_list+=("daqsystemtest")
-    echo ""
-    echo "Integtests from the _daqsystemtest_ repo will be run..."
-fi
-
-# provide feedback to the user when a group of tests will be run
-if string_in_list "all" "${requested_repo_list[@]}" && [[ "${test_suite}" != "extended" ]]; then
-    echo ""
-    echo "Building the list of _all_ integtests..."
-else
-    if string_in_list "local" "${requested_repo_list[@]}"; then
-        echo ""
-        echo "Building the list of _local_ integtests..."
-    fi
-fi
-
-# determine the list of tests
+# define functions and env vars that help manipulate lists of tests
 source dst_set_integtest_env_vars.sh
-if [[ "${excluded_repo_names}" == "" ]]; then
-    initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} 2>/dev/null`)
-else
-    initial_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} -x "${excluded_repo_names}" 2>/dev/null`)
+source dst_functions_for_integtest_lists.sh
+
+# look up a specified suite of tests
+fetch_test_suite() {
+    local -n target_list_ref=$1
+    local suite="${2}"
+    local suite_file="${SUITE_DIR}/${suite}.txt"
+    local line=""
+    local repos_in_suite=()
+    local full_test_name
+
+    while IFS="" read -r line || [ -n "$line" ]; do
+        if [[ -z "$line" ]]; then continue; fi
+
+        if [[ ! "$line" =~ ^[a-zA-Z-]+:[0-9a-zA-Z_-]+$ ]]; then
+            printf '\U1f7e1 WARNING: %s\n' \
+                "skipping malformed entry in ${suite_file}:" \
+                "  ${line}" \
+                "expected <repo_name>:<test_name>, with no trailing '.py' and no other whitespace
+                " >&2
+            continue
+        fi
+
+        full_test_name="`echo ${line} | sed 's,:,/,'`.py"
+        target_list_ref+=($full_test_name)
+        repo_name=`dirname ${full_test_name}`
+        repos_in_suite+=($repo_name)
+
+    done < "${suite_file}"
+
+    # verify that each of the tests actually exists
+    if [[ "${#target_list_ref[@]}" -gt 0 ]]; then
+        available_integtest_list=(`list_available_integtests.sh ${repos_in_suite[@]} 2>/dev/null`)
+        local idx
+        for idx in "${!target_list_ref[@]}"; do
+            full_test_name="${target_list_ref[$idx]}"
+            if ! string_in_list "${full_test_name}" "${available_integtest_list[@]}"; then
+                printf '\U1f7e1 WARNING: %s\n' \
+                       "requested integration test \"${full_test_name}\" in test suite:" \
+                       "${suite_file}" \
+                       "was not found in the list of available tests. Skipping this integtest.
+                " >&2
+                unset 'target_list_ref[idx]'
+            fi
+        done
+        # re-index the array to remove gaps
+        target_list_ref=("${target_list_ref[@]}")
+    fi
+}
+
+# if one or more test suite names were provided, load those tests first
+if [[ "${#requested_suite_list[@]}" -gt 0 ]]; then
+    tmp_string=`echo "${requested_suite_list[@]}" | sed 's/ /, /'g`
+    echo ""
+    echo "Fetching the list of integtests from the \"${tmp_string}\" suite(s)..."
+    for test_suite in "${requested_suite_list[@]}"; do
+        tmp_suite_list=()
+        fetch_test_suite tmp_suite_list "$test_suite"
+        add_unique_elements_to_list initial_integtest_list tmp_suite_list
+    done
 fi
+
+# if one or more repo names were provided, also load those
+if [[ "${#requested_repo_list[@]}" -gt 0 ]]; then
+
+    tmp_string=`echo "${requested_repo_list[@]}" | sed 's/ /, /'g`
+    optional_article=""
+    if ! string_in_list "all" "${requested_repo_list[@]}" && \
+            ! string_in_list "local" "${requested_repo_list[@]}"; then
+        optional_article=" the"
+    fi
+    if [[ "${#requested_suite_list[@]}" -gt 0 ]]; then
+        echo ""
+        echo "Adding integtests from${optional_article} \"${tmp_string}\" repo(s)..."
+    else
+        echo ""
+        echo "Fetching integtests for${optional_article} \"${tmp_string}\" repo(s)..."
+    fi
+
+    if [[ -z "${excluded_repo_names}" ]]; then
+        tmp_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} 2>/dev/null`)
+    else
+        tmp_integtest_list=(`list_available_integtests.sh ${requested_repo_list[@]} -x "${excluded_repo_names}" 2>/dev/null`)
+    fi
+    add_unique_elements_to_list initial_integtest_list tmp_integtest_list
+fi
+
 if [[ ${#initial_integtest_list[@]} -eq 0 ]]; then
     echo ""
     echo "*** No integtests were found in the \"${requested_repo_list[@]}\" repo(s) [with \"${excluded_repo_names}\" repos excluded]."
@@ -409,7 +440,7 @@ fi
 
 # check if the numad daemon is running
 numad_grep_output=`ps -ef | grep numad | grep -v grep`
-if [[ "${numad_grep_output}" != "" ]]; then
+if [[ -n "${numad_grep_output}" ]]; then
     echo "*********************************************************************"
     echo "*** DANGER, DANGER, 'numad' appears to be running on this computer!"
     echo "*** 'ps' output:  ${numad_grep_output}"
@@ -439,17 +470,32 @@ ITGRUNNER_LOG_FILE="${pytest_user_dir}/dunedaq_integtest_bundle_${INITIAL_TIMEST
 CURRENT_PID=$$
 
 # do the first level of test filtering
-filtered_integtest_list=()
-let test_index=0
-for FULL_TEST_NAME in "${initial_integtest_list[@]}"; do
-    test_name=`basename ${FULL_TEST_NAME}`
-    requested_test=`echo ${test_name} | egrep -i ${requested_test_names:-${test_name}}`
-    excluded_test=`echo ${test_name} | egrep -i ${excluded_test_names:-nullnullnull}`
-    if [[ "${requested_test}" != "" ]] && [[ "${excluded_test}" == "" ]]; then
-        filtered_integtest_list+=("${FULL_TEST_NAME}")
-    fi
-    let test_index=${test_index}+1
-done
+filtered_integtest_list=(${initial_integtest_list[@]})
+if [[ -n "${excluded_repo_names}" ]]; then
+    tmp_string=`echo ${excluded_repo_names} | sed 's/|/, /g'`
+    echo ""
+    echo "Excluding integtests from \"${tmp_string}\" repo(s)..."
+    IFS='|' read -ra excluded_repo_list <<< "$excluded_repo_names"
+    remove_tests_by_repo filtered_integtest_list excluded_repo_list
+fi
+if [[ -n "${excluded_test_names}" ]]; then
+    remove_tests_with_egrep filtered_integtest_list excluded_test_names
+fi
+if [[ -n "${requested_test_names}" ]]; then
+    filter_tests_with_egrep filtered_integtest_list requested_test_names
+fi
+
+# filter on excluded test suites
+if [[ "${#excluded_suite_list[@]}" -gt 0 ]]; then
+    tmp_string=`echo "${excluded_suite_list[@]}" | sed 's/ /, /'g`
+    echo ""
+    echo "Excluding integtests from the \"${tmp_string}\" suite(s)..."
+    for test_suite in "${excluded_suite_list[@]}"; do
+        tmp_suite_list=()
+        fetch_test_suite tmp_suite_list "$test_suite"
+        remove_elements_from_list filtered_integtest_list tmp_suite_list
+    done
+fi
 
 # reduce the list of tests to a random subset, if requested
 if [[ $random_subset_count -gt 0 ]]; then
@@ -459,13 +505,13 @@ fi
 # check if any tests remain; provide hints to the user if not
 if [[ ${#filtered_integtest_list[@]} -eq 0 ]]; then
     matching_integtest_list=()
-    if  [[ "${requested_test_names}" != "" ]]; then
+    if  [[ -n "${requested_test_names}" ]]; then
         echo "...Looking for integtests..."
         full_integtest_list=(`list_available_integtests.sh 2>/dev/null`)
         for repo_test in "${full_integtest_list[@]}"; do
             test_name=`basename ${repo_test}`
             match_string=`echo ${test_name} | egrep ${requested_test_names}`
-            if [[ "${match_string}" != "" ]]; then
+            if [[ -n "${match_string}" ]]; then
                 matching_integtest_list+=(${repo_test})
             fi
         done
@@ -494,7 +540,7 @@ if [[ ${#filtered_integtest_list[@]} -eq 0 ]]; then
     exit 5
 fi
 
-if [[ "$only_list_tests" != "" ]]; then
+if [[ -n "$only_list_tests" ]]; then
     let idx=0
     echo ""
     echo "The following tests will be run:"
@@ -506,6 +552,15 @@ if [[ "$only_list_tests" != "" ]]; then
 fi
 let number_of_individual_tests=${#filtered_integtest_list[@]}
 let total_number_of_tests=${number_of_individual_tests}*${individual_test_requested_iterations}*${full_set_requested_interations}
+
+# Removes the ANSI characters associated with formatting, including color coding and font styling
+CaptureOutputNoANSI() {
+    tee -a >(sed -u 's/\x1b\[[0-9;]*m//g' >> "$1")
+}
+# Captures the output to the specified file, without changing the output
+CaptureOutput() {
+    tee -a $1
+}
 
 # run the tests
 let overall_test_index=0  # this is only used for user feedback
@@ -543,10 +598,10 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
             # handle tests in Python repositories
             if [[ "${repo_type}" == "Python" ]]; then
 
-                if [[ "${DST_LOCAL_PYTHON_VENV_DIR}" != "" ]]; then
+                if [[ -n "${DST_LOCAL_PYTHON_VENV_DIR}" ]]; then
                     if [[ -e "${DST_LOCAL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name}" ]] && \
                        [[ -e "${DST_LOCAL_PYTHON_SOURCE_DIR}/${test_repo}/src/${test_repo}/integtest/${test_name}" ]] && \
-                       [[ "`diff ${DST_LOCAL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name} ${DST_LOCAL_PYTHON_SOURCE_DIR}/${test_repo}/src/${test_repo}/integtest/${test_name}`" != "" ]]; then
+                       [[ -n "`diff ${DST_LOCAL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name} ${DST_LOCAL_PYTHON_SOURCE_DIR}/${test_repo}/src/${test_repo}/integtest/${test_name}`" ]]; then
                         echo ""
                         echo -e "\U1f7e1 WARNING: The version of ${test_name} in" | CaptureOutput ${ITGRUNNER_LOG_FILE}
                         echo -e "\U1f7e1 WARNING: ${DST_LOCAL_PYTHON_SOURCE_DIR}/${test_repo}/src/${test_repo}/integtest" | CaptureOutput ${ITGRUNNER_LOG_FILE}
@@ -564,7 +619,7 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                         echo -e "\U1f7e1 WARNING: package without the '-e' option (e.g. 'pip install .') or re-running 'dbt-build'." | CaptureOutput ${ITGRUNNER_LOG_FILE}
                     fi
 
-                elif [[ "${DST_BASEREL_PYTHON_VENV_DIR}" != "" ]] && \
+                elif [[ -n "${DST_BASEREL_PYTHON_VENV_DIR}" ]] && \
                      [[ -e "${DST_BASEREL_PYTHON_VENV_DIR}/${test_repo}/integtest/${test_name}" ]]; then
                     # remove any trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
                     if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
@@ -582,11 +637,11 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
             # handle tests in C++ repositories
             elif [[ "${repo_type}" == "CPP" ]]; then
 
-                if [[ "${DST_LOCAL_CPP_SOURCE_DIR}" != "" ]] && \
+                if [[ -n "${DST_LOCAL_CPP_SOURCE_DIR}" ]] && \
                    [[ -e "${DST_LOCAL_CPP_SOURCE_DIR}/${test_repo}/integtest/${test_name}" ]]; then
                     PYTEST_COMMAND+=(${DST_LOCAL_CPP_SOURCE_DIR}/${test_repo}/integtest/${test_name})
                     "${PYTEST_COMMAND[@]}" | CaptureOutputNoANSI ${ITGRUNNER_LOG_FILE}
-                elif [[ "${DST_BASEREL_CPP_SOURCE_DIR}" != "" ]] && \
+                elif [[ -n "${DST_BASEREL_CPP_SOURCE_DIR}" ]] && \
                      [[ -e "${DST_BASEREL_CPP_SOURCE_DIR}/${test_repo}/integtest/${test_name}" ]]; then
                     # remove any trailing "--" in PYTEST_COMMAND since we are adding more pytest options here
                     if [[ "${PYTEST_COMMAND[-1]}" == "--" ]]; then
@@ -624,7 +679,7 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                     if [[ -z "$exit_nonzero" ]]; then
                         exit_nonzero="true"
                     fi
-                    if [[ "`which jq 2>/dev/null`" != "" ]]; then
+                    if [[ -n "`which jq 2>/dev/null`" ]]; then
                         current_pytest_rundir=""
                         mapfile -t bundle_info_files < <(find "${pytest_user_dir}" -type f -name "bundle_script_info.json" -printf '%T@ %p\n' | grep -v 'failed-' | sort -nr | awk '{print $2}')
                         for info_file in "${bundle_info_files[@]}"; do
@@ -640,12 +695,12 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                         done
 
                         was_successfully_copied=""
-                        if [[ "${current_pytest_rundir}" != "" ]]; then
+                        if [[ -n "${current_pytest_rundir}" ]]; then
                             pytest_tmpdir=`echo ${current_pytest_rundir} | xargs -r dirname | xargs -r dirname`
-                            if [[ "${pytest_tmpdir}" != "" ]]; then
+                            if [[ -n "${pytest_tmpdir}" ]]; then
                                 pytest_rootdir=`echo ${pytest_tmpdir} | xargs -r dirname`
                                 pytest_basedir=`echo ${pytest_tmpdir} | xargs -r basename`
-                                if [[ "${pytest_rootdir}" != "" ]] && [[ "${pytest_basedir}" != "" ]]; then
+                                if [[ -n "${pytest_rootdir}" ]] && [[ -n "${pytest_basedir}" ]]; then
                                     new_dir="${pytest_rootdir}/failed-${pytest_basedir}"
                                     echo ""
                                     echo -e "\U1F535 Copying the files from failed test ${pytest_tmpdir} to ${new_dir}. \U1F535"
@@ -653,7 +708,7 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                                     echo -e "\U1F535 or when 10 newer failures happen, whichever comes first. \U1F535"
                                     # 15-Oct-2026, KAB: added use of rsync with a size limit to avoid
                                     # copying large files (e.g. large HDF5 data files)
-                                    if [[ "`which rsync 2>/dev/null`" != "" ]]; then
+                                    if [[ -n "`which rsync 2>/dev/null`" ]]; then
                                         rsync -a --max-size=200m "${pytest_tmpdir}/" "${new_dir}"
                                     else
                                         cp -pR "${pytest_tmpdir}" "${new_dir}"
@@ -673,7 +728,7 @@ while [[ ${full_set_loop_count} -lt ${full_set_requested_interations} ]]; do
                                 fi
                             fi
                         fi
-                        if [[ "${was_successfully_copied}" == "" ]]; then
+                        if [[ -z "${was_successfully_copied}" ]]; then
                             echo ""
                             echo -e "\U1f7e1 WARNING: Unable to copy the pytest directory for this failed test (${current_pytest_rundir}). \U1f7e1"
                         fi
@@ -731,7 +786,7 @@ echo -e "${colorized_summary_string}" | CaptureOutput ${ITGRUNNER_LOG_FILE}
 
 # check again if the numad daemon is running
 numad_grep_output=`ps -ef | grep numad | grep -v grep`
-if [[ "${numad_grep_output}" != "" ]]; then
+if [[ -n "${numad_grep_output}" ]]; then
     echo ""                                                                                 | CaptureOutput ${ITGRUNNER_LOG_FILE}
     echo "********************************************************************************" | CaptureOutput ${ITGRUNNER_LOG_FILE}
     echo "*** WARNING: 'numad' appears to be running on this computer!"                     | CaptureOutput ${ITGRUNNER_LOG_FILE}
