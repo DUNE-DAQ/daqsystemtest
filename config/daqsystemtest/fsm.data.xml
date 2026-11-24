@@ -363,7 +363,6 @@
 <obj class="FSMtransition" id="change_rate">
  <attr name="source" type="string" val="ready|running"/>
  <attr name="cmd" type="string" val="change_rate"/>
- <attr name="reload_configuration" type="bool" val="0"/>
  <rel name="pre_transition" class="FSMPreTransition" id="pre_change_rate"/>
 </obj>
 
@@ -371,21 +370,18 @@
  <attr name="source" type="string" val="initial"/>
  <attr name="dest" type="string" val="configured"/>
  <attr name="cmd" type="string" val="conf"/>
- <attr name="reload_configuration" type="bool" val="0"/>
 </obj>
 
 <obj class="FSMtransition" id="disable_triggers">
  <attr name="source" type="string" val="running"/>
  <attr name="dest" type="string" val="ready"/>
  <attr name="cmd" type="string" val="disable_triggers"/>
- <attr name="reload_configuration" type="bool" val="0"/>
 </obj>
 
 <obj class="FSMtransition" id="drain_dataflow_prod">
  <attr name="source" type="string" val="ready"/>
  <attr name="dest" type="string" val="dataflow_drained"/>
  <attr name="cmd" type="string" val="drain_dataflow"/>
- <attr name="reload_configuration" type="bool" val="0"/>
  <rel name="post_transition" class="FSMPostTransition" id="post_drain_dataflow_prod"/>
 </obj>
 
@@ -393,7 +389,6 @@
  <attr name="source" type="string" val="ready"/>
  <attr name="dest" type="string" val="dataflow_drained"/>
  <attr name="cmd" type="string" val="drain_dataflow"/>
- <attr name="reload_configuration" type="bool" val="0"/>
  <rel name="post_transition" class="FSMPostTransition" id="post_drain_dataflow_test"/>
 </obj>
 
@@ -401,35 +396,30 @@
  <attr name="source" type="string" val="ready"/>
  <attr name="dest" type="string" val="running"/>
  <attr name="cmd" type="string" val="enable_triggers"/>
- <attr name="reload_configuration" type="bool" val="0"/>
 </obj>
 
 <obj class="FSMtransition" id="generic_drain_dataflow">
  <attr name="source" type="string" val="ready"/>
  <attr name="dest" type="string" val="dataflow_drained"/>
  <attr name="cmd" type="string" val="drain_dataflow"/>
- <attr name="reload_configuration" type="bool" val="0"/>
 </obj>
 
 <obj class="FSMtransition" id="generic_start">
  <attr name="source" type="string" val="configured"/>
  <attr name="dest" type="string" val="ready"/>
  <attr name="cmd" type="string" val="start"/>
- <attr name="reload_configuration" type="bool" val="0"/>
 </obj>
 
 <obj class="FSMtransition" id="scrap">
  <attr name="source" type="string" val="configured"/>
  <attr name="dest" type="string" val="initial"/>
  <attr name="cmd" type="string" val="scrap"/>
- <attr name="reload_configuration" type="bool" val="0"/>
 </obj>
 
 <obj class="FSMtransition" id="start_prod">
  <attr name="source" type="string" val="configured"/>
  <attr name="dest" type="string" val="ready"/>
  <attr name="cmd" type="string" val="start"/>
- <attr name="reload_configuration" type="bool" val="0"/>
  <rel name="pre_transition" class="FSMPreTransition" id="pre_start_prod"/>
  <rel name="post_transition" class="FSMPostTransition" id="post_start_prod"/>
 </obj>
@@ -438,7 +428,6 @@
  <attr name="source" type="string" val="configured"/>
  <attr name="dest" type="string" val="ready"/>
  <attr name="cmd" type="string" val="start"/>
- <attr name="reload_configuration" type="bool" val="0"/>
  <rel name="pre_transition" class="FSMPreTransition" id="pre_start_test"/>
  <rel name="post_transition" class="FSMPostTransition" id="post_start_test"/>
 </obj>
@@ -447,14 +436,12 @@
  <attr name="source" type="string" val="trigger_sources_stopped"/>
  <attr name="dest" type="string" val="configured"/>
  <attr name="cmd" type="string" val="stop"/>
- <attr name="reload_configuration" type="bool" val="0"/>
 </obj>
 
 <obj class="FSMtransition" id="stop_trigger_sources">
  <attr name="source" type="string" val="dataflow_drained"/>
  <attr name="dest" type="string" val="trigger_sources_stopped"/>
  <attr name="cmd" type="string" val="stop_trigger_sources"/>
- <attr name="reload_configuration" type="bool" val="0"/>
 </obj>
 
 <obj class="Variable" id="file-logbook-file-name">
