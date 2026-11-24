@@ -186,8 +186,8 @@ while true; do
                 read -rd '' trimmed <<< "$test_suite"
                 if [[ "${trimmed}" == "extended" ]]; then
                     echo ""
-                    echo "The extended' test suite is being re-mapped to run all integtests except..."
-                    echo "    the ones listed in the 'broken' and 'special_conditions' test suites."
+                    echo "The \"extended\" test suite is being re-mapped to run all integtests except..."
+                    echo "    the ones listed in the \"broken\" and \"special_conditions\" test suites."
                     requested_repo_list+=("all")
                     excluded_suite_list+=("core")
                     excluded_suite_list+=("broken")
