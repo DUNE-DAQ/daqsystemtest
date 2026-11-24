@@ -63,7 +63,7 @@
 
 <oks-data>
 
-<info name="" type="" num-of-items="46" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="mroda" last-modified-on="mroda-xpsp" last-modification-time="20261030T113214"/>
+<info name="" type="" num-of-items="46" oks-format="data" oks-version="862f2957270" created-by="gjc" created-on="thinkpad" creation-time="20231207T110859" last-modified-by="mroda" last-modified-on="mroda-xpsp" last-modification-time="20261124T154042"/>
 
 <include>
  <file path="schema/confmodel/dunedaq.schema.xml"/>
@@ -272,6 +272,8 @@
 
 <obj class="FSMsequence" id="shutdown">
  <attr name="name" type="string" val="shutdown"/>
+ <attr name="add_initial_boot" type="bool" val="0"/>
+ <attr name="add_final_terminate" type="bool" val="1"/>
  <rel name="sequence">
   <ref class="FSMtransition" id="disable_triggers"/>
   <ref class="FSMtransition" id="generic_drain_dataflow"/>
@@ -283,6 +285,8 @@
 
 <obj class="FSMsequence" id="shutdown_prod">
  <attr name="name" type="string" val="shutdown"/>
+ <attr name="add_initial_boot" type="bool" val="0"/>
+ <attr name="add_final_terminate" type="bool" val="1"/>
  <rel name="sequence">
   <ref class="FSMtransition" id="disable_triggers"/>
   <ref class="FSMtransition" id="drain_dataflow_prod"/>
@@ -294,6 +298,8 @@
 
 <obj class="FSMsequence" id="shutdown_test">
  <attr name="name" type="string" val="shutdown"/>
+ <attr name="add_initial_boot" type="bool" val="0"/>
+ <attr name="add_final_terminate" type="bool" val="1"/>
  <rel name="sequence">
   <ref class="FSMtransition" id="disable_triggers"/>
   <ref class="FSMtransition" id="drain_dataflow_test"/>
@@ -305,6 +311,8 @@
 
 <obj class="FSMsequence" id="start_run">
  <attr name="name" type="string" val="start_run"/>
+ <attr name="add_initial_boot" type="bool" val="1"/>
+ <attr name="add_final_terminate" type="bool" val="0"/>
  <rel name="sequence">
   <ref class="FSMtransition" id="conf"/>
   <ref class="FSMtransition" id="generic_start"/>
@@ -314,6 +322,8 @@
 
 <obj class="FSMsequence" id="start_run_prod">
  <attr name="name" type="string" val="start_run"/>
+ <attr name="add_initial_boot" type="bool" val="1"/>
+ <attr name="add_final_terminate" type="bool" val="0"/>
  <rel name="sequence">
   <ref class="FSMtransition" id="conf"/>
   <ref class="FSMtransition" id="start_prod"/>
@@ -323,6 +333,8 @@
 
 <obj class="FSMsequence" id="start_run_test">
  <attr name="name" type="string" val="start_run"/>
+ <attr name="add_initial_boot" type="bool" val="1"/>
+ <attr name="add_final_terminate" type="bool" val="0"/>
  <rel name="sequence">
   <ref class="FSMtransition" id="conf"/>
   <ref class="FSMtransition" id="start_test"/>
@@ -332,6 +344,8 @@
 
 <obj class="FSMsequence" id="stop_run">
  <attr name="name" type="string" val="stop_run"/>
+ <attr name="add_initial_boot" type="bool" val="0"/>
+ <attr name="add_final_terminate" type="bool" val="0"/>
  <rel name="sequence">
   <ref class="FSMtransition" id="disable_triggers"/>
   <ref class="FSMtransition" id="generic_drain_dataflow"/>
@@ -342,6 +356,8 @@
 
 <obj class="FSMsequence" id="stop_run_prod">
  <attr name="name" type="string" val="stop_run"/>
+ <attr name="add_initial_boot" type="bool" val="0"/>
+ <attr name="add_final_terminate" type="bool" val="0"/>
  <rel name="sequence">
   <ref class="FSMtransition" id="disable_triggers"/>
   <ref class="FSMtransition" id="drain_dataflow_prod"/>
@@ -352,6 +368,8 @@
 
 <obj class="FSMsequence" id="stop_run_test">
  <attr name="name" type="string" val="stop_run"/>
+ <attr name="add_initial_boot" type="bool" val="0"/>
+ <attr name="add_final_terminate" type="bool" val="0"/>
  <rel name="sequence">
   <ref class="FSMtransition" id="disable_triggers"/>
   <ref class="FSMtransition" id="drain_dataflow_test"/>
